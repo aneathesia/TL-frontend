@@ -1,0 +1,21 @@
+@font-face {font-family: 'iconfont';
+	src: url('iconfont.eot');
+	src: url('iconfont.eot?#iefix') format('embedded-opentype'),
+	url('iconfont.woff') format('woff'),
+	url('iconfont.ttf') format('truetype'),
+	url('iconfont.svg#iconfont') format('svg');
+}
+	
+[class^="icon-"], [class*=" icon-"]{
+	font-family: 'iconfont' !important;
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	-webkit-text-stroke-width: 0.2px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: gayscale;
+}
+
+.icon-xiaolian:before{content:"\e62f";}

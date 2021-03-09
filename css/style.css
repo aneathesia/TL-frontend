@@ -1,0 +1,76 @@
+@charset "utf-8";
+/* 你自己的样式 */
+@font-face {
+    font-family: 'iconfont';  /* project id 2312522 */
+    src: url('//at.alicdn.com/t/font_2312522_khr4c0hby9n.eot');
+    src: url('//at.alicdn.com/t/font_2312522_khr4c0hby9n.eot?#iefix') format('embedded-opentype'),
+    url('//at.alicdn.com/t/font_2312522_khr4c0hby9n.woff2') format('woff2'),
+    url('//at.alicdn.com/t/font_2312522_khr4c0hby9n.woff') format('woff'),
+    url('//at.alicdn.com/t/font_2312522_khr4c0hby9n.ttf') format('truetype'),
+    url('//at.alicdn.com/t/font_2312522_khr4c0hby9n.svg#iconfont') format('svg');
+}
+.iconfont{
+    font-family:"iconfont";
+    font-size:20px;
+    font-style:normal;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-stroke-width: 0.2px;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#file ,#cornerfile{
+    appearance: initial;
+    background-color: initial;
+    cursor: pointer;
+    align-items: baseline;
+    color: inherit;
+    text-overflow: ellipsis;
+    white-space: pre;
+    text-align: start !important;
+    padding: initial;
+    border: initial;
+    overflow: hidden;
+    font-size: 15px;
+    width: 200px;
+}
+
+#upload,#cancel,#TLupload,#TLcancel, #downloadBtn, #filelist,#openBeFile{
+    appearance: push-button;
+    user-select: none;
+    white-space: pre;
+    align-items: flex-start;
+    text-align: center;
+    cursor: pointer;
+    font-size: 15px;
+    box-sizing: border-box;
+    padding: 1px 6px;
+}
+
+.Hui-aside label{
+    font-weight: unset;
+}
+
+#newprj{
+    appearance: push-button;
+    user-select: none;
+    white-space: pre;
+    align-items: flex-start;
+    text-align: center;
+    cursor: pointer;
+    font-size: 15px;
+    box-sizing: border-box;
+    padding: 1px 6px;
+}
+
+
+/*.closeBtn{*/
+/*    width: 3%;*/
+/*    font-size: 15px;*/
+/*    border: none;*/
+/*    background: unset;*/
+/*    float: right;*/
+/*    margin: 0 2px 2px 2px;*/
+/*}*/
+/*.closeBtn:hover{*/
+/*background-color: #FF0000;*/
+/*}*/

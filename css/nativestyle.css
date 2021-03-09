@@ -1,0 +1,207 @@
+@charset "utf-8";
+
+.mainbody {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+}
+
+.canvas {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.frame_settings {
+    position: absolute;
+    z-index: 9999;
+    float: left;
+    top: 20%;
+    left: 50%;
+    padding: 20px 20px 20px;
+    background: white;
+    border-radius: 3px;
+    -webkit-box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.tower_settings {
+    width: 25%;
+    position: absolute;
+    left: 16.8%;
+    top: 8.5%;
+    z-index: 9999;
+    float: left;
+    padding: 20px 20px 20px;
+    background: white;
+    border-radius: 3px;
+    -webkit-box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+.frame_settings:before ,.tower_settings:before{
+    content: '';
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    bottom: -1px;
+    left: -1px;
+    z-index: -1;
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+}
+
+.ui-resizable-helper { border: 1px dotted gray; }
+.frame_settings h1,.tower_settings h1 {
+    margin: -20px -20px 21px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #555;
+    text-align: center;
+    text-shadow: 0 1px white;
+    background: #f3f3f3;
+    border-radius: 3px 3px 0 0;
+    background-image: -webkit-linear-gradient(top, whiteffd, #eef2f5);
+    background-image: -moz-linear-gradient(top, whiteffd, #eef2f5);
+    background-image: -o-linear-gradient(top, whiteffd, #eef2f5);
+    background-image: linear-gradient(to bottom, whiteffd, #eef2f5);
+    -webkit-box-shadow: 0 1px whitesmoke;
+    box-shadow: 0 1px whitesmoke;
+}
+
+.frames{
+    width: 145px;
+    height: 105px;
+    margin: 10px auto;
+    border: 1px solid gainsboro;
+}
+.grid{
+    width: 145px;
+    height: 55px;
+    margin: 10px auto;
+    border: 1px solid gainsboro;
+}
+.frames p {
+    margin: 20px 0 0;
+    font-size: 12px;
+}
+.frames p:first-child ,.grid p:first-child{
+    margin-top: 0;
+}
+.frames input[type=text] {
+    width: 60px;
+    height: 18px;
+    font-size: 12px;
+    -webkit-appearance: auto;
+}
+.grid input[type=text]{
+    width: 30px;
+    height: 18px;
+    font-size: 12px;
+    -webkit-appearance: auto;
+}
+.grid p {
+    margin: 10px 0 0;
+    font-size: 12px;
+}
+.frame_settings p.confirm ,.tower_settings p.confirm{
+    text-align: right;
+}
+
+.tower_settings input[type=text]{
+    width: 60px;
+    font-size: 12px;
+    border: groove;
+    border-width: thin;
+    border-color: black;
+}
+
+.tower_settings input[type=button]{
+}
+
+.designParam {
+    width: 800px;
+    height: 365px;
+    left: 20%;
+    top: 20%;
+    position: relative;
+    z-index: 9999;
+    border: groove;
+    border-width: thin;
+    background-color: #F0F0F0;
+}
+.resTable{
+    width: 1000px;
+    height: 400px;
+    left: 10%;
+    top: 10%;
+    position: relative;
+    z-index: 9999;
+    border: groove;
+    border-width: thin;
+    background-color: #F0F0F0;
+ }
+.designParam h2{
+    font-size: 16px;
+    font-family: serif;
+    font-weight: bold;
+    padding: 3px;
+    border-bottom: groove;
+    border-width: thin;
+    background-color: #F8F8F8;
+}
+
+.paramBtn p{
+    margin: 3px 0 0;
+    font-size: 12px;
+    position: relative;
+    left: 10px;
+}
+
+.paramBtn button{
+    font-size: 15px;
+    position: relative;
+    height: 25px;
+    width: 130px;
+}
+
+.outlineDiv {
+    position: relative;
+    top: 3px;
+    left: 15px;
+    bottom: -7.5px;
+    border: groove;
+    width: 24%;
+    height: 88%;
+    overflow: auto;
+}
+
+.operateBtn {
+    position: relative;
+    left: 17px;
+    bottom: -7.5px;
+    width: 80px;
+    height: 88%;
+    overflow: auto;
+}
+
+.operateBtn button{
+    height: 25px;
+    width: 80px;
+}
+
+.detailsDiv {
+    position: relative;
+    top: 3px;
+    left: 23px;
+    bottom: -7.5px;
+    border: groove;
+    width: 44%;
+    height: 88%;
+    overflow: auto;
+}
+
+.table-header{
+    height: 25px;
+}
