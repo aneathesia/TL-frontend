@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Section Map</title>
+</head>
+<body>
+<form class="layui-form" action="">
+    <div class="layui-form-item">
+        <label class="layui-form-label">DEM文件</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">起始桩位</label>
+        <div class="layui-input-block">
+            <select name="Begin" lay-verify="required">
+                <option value=""></option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">终止桩位</label>
+        <div class="layui-input-block">
+            <select name="End" lay-verify="required">
+                <option value=""></option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">边线距离m</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">采样间距m</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">终止桩位</label>
+        <div class="layui-input-block">
+            <select name="End" lay-verify="required">
+                <option value=""></option>
+                <option value="0">三线断面</option>
+                <option value="1">中心断面</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+<script>
+    let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+    parent.layer.iframeAuto(index);
+
+
+</script>
+</body>
+</html>
