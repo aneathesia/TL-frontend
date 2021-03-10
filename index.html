@@ -339,11 +339,11 @@
 									}
 
 								});
-								list.unshift({
-									content:'test right click button',
-									//line:true,
-									onClick:function (){alert("test finish")}
-								});
+								// list.unshift({
+								// 	content:'test right click button',
+								// 	//line:true,
+								// 	onClick:function (){alert("test finish")}
+								// });
 								return list;
 							},
 			columnData: [
@@ -360,10 +360,10 @@
 					key: 'secdist',
 					text: '距离'
 				},{
-					key: 'x',
+					key: 'y',
 					text: '大地x坐标'
 				},{
-					key: 'y',
+					key: 'x',  //大地坐标坐标轴和平面坐标系的坐标轴不一致对掉xy 直接文本的读入会与xy不一致文本读入做一次function exchangexy
 					text: '大地y坐标'
 				}
 				,{
