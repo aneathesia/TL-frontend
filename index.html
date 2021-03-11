@@ -334,7 +334,7 @@
 										}
 
 										GridManager.refreshGrid(pile_tableId);
-										console.log("exchange data x y ");
+										console.log("exchanged data x y ");
 										console.log(pile_tabledata);
 									}
 
@@ -360,10 +360,10 @@
 					key: 'secdist',
 					text: '距离'
 				},{
-					key: 'y',
+					key: 'x',
 					text: '大地x坐标'
 				},{
-					key: 'x',  //大地坐标坐标轴和平面坐标系的坐标轴不一致对掉xy 直接文本的读入会与xy不一致文本读入做一次function exchangexy
+					key: 'y',  //大地坐标坐标轴和平面坐标系的坐标轴不一致对掉xy 直接文本的读入会与xy不一致文本读入做一次function exchangexy
 					text: '大地y坐标'
 				}
 				,{
@@ -426,8 +426,8 @@
 							//line:true,
 							onClick:function (){
 								console.log("right button checklist");
-								//GridManager.setCheckedData(towerlist_tableId,[]);
-								var del_tower=GridManager.getCheckedData(towerlist_tableId);
+
+								var del_tower=GridManager.getCheckedData(towerlist_tableId); //checkedtower need to delete former list
 								console.log(del_tower);
 								for(let i=0;i<del_tower.length;i++){
 									for(let j=0;j<towerlist_tabledata.length;j++){
@@ -439,8 +439,7 @@
 								console.log("tabledata changed");
 								console.log(towerlist_tabledata);
 								GridManager.refreshGrid(towerlist_tableId);
-
-
+								del_tower=GridManager.setCheckedData(towerlist_tableId,[]);
 							}
 						});
 						list.unshift({
@@ -559,7 +558,7 @@
 		console.log(fileObj);
 		var form = new FormData(); // FormData 对象
 		form.append("file", fileObj); // 文件对象
-		form.append("ProjectName", "March");//控制路径
+		form.append("ProjectName", prjName);//控制路径
 		$.ajax({
 			url: "http://202.114.118.138:8181/txtToJson", //提交的路径
 			type: "post",       //提交方式
@@ -570,7 +569,7 @@
 			success: function (res) {
 				console.log(res);
 				pile_tabledata =res;
-				GridManager.setAjaxData(pile_tableId,{"data":res});
+				GridManager.setAjaxData(pile_tableId,{"data":pile_tabledata});
 			}
 		});
 
@@ -578,7 +577,7 @@
 
 	$("#tb_pile_calc").click(function(){
 		var form = new FormData();
-		form.append("ProjectName", "March");
+		form.append("ProjectName", prjName);
 		console.log("begindata");
 		console.log(pile_tabledata);
 		form.append("table",JSON.stringify(pile_tabledata));
@@ -596,6 +595,13 @@
 					pile_tabledata=res.m_jPile;
 					//console.log(GridManager.getAjaxData(pile_tableId));
 					//need to caculate the secdist
+					for(let i=0;i<pile_tabledata.length;i++)
+					{
+						var temp;
+						temp=pile_tabledata[i].x;
+						pile_tabledata[i].x=pile_tabledata[i].y;
+						pile_tabledata[i].y=temp;
+					}   //系统坐标大地坐标相反对换
 					pile_tabledata[0].secdist=0;
 					for(let i=1;i<pile_tabledata.length;i++){
 						pile_tabledata[i].secdist=pile_tabledata[i].dist-pile_tabledata[i-1].dist;
@@ -608,7 +614,7 @@
 		var form = new FormData();
 		console.log(pile_tabledata);
 		form.append("table",JSON.stringify(pile_tabledata));
-		form.append("ProjectName", "March");
+		form.append("ProjectName", prjName);
 		$.ajax({
 			url: "http://202.114.118.138:8181/JsonTotxtfile", //提交的路径
 			type: "post",       //提交方式
@@ -624,7 +630,7 @@
 
 	$("#tb-towerlist-calc").click(function (){
 		var form = new FormData();
-		form.append("ProjectName", "March");
+		form.append("ProjectName",prjName);
 		console.log("begindata");
 		console.log(towerlist_tabledata);
 
@@ -645,6 +651,47 @@
 		})
 	})
 	//后台数据下载到本地
+
+
+
+	// DEM断面提取layer
+	var secDEM=[];
+	console.log(secDEM);
+	$("#inputDem").click(function (){
+		layer.open({
+			type:2,
+			title:'DEM断面提取',
+			area:['300px', '300px'],
+			content:'./SectionMap.html',
+			success: function(layero, index){
+				console.log(layero, index);
+				var body = layer.getChildFrame('body',index);
+				body.find('input').val('Hi，我是从父页来的');
+				var inputList = body.find('input');     //取得子页面中input输入框
+				var dataLists= [name,15,5];
+				for(var j = 0; j< inputList.length; j++){			//把父页面的数据放到子页面的input框中
+					body.find(inputList[j]).val(dataLists[j]);
+				}
+				var optionList=body.find('select');
+				console.log(optionList);
+				console.log(pile_tabledata);
+				for(let i=0;i<pile_tabledata.length;i++){
+					var newOption0 = new Option(pile_tabledata[i].name,i.toString());
+					var newOption1 = new Option(pile_tabledata[i].name,i.toString());
+					optionList[0].options.add(newOption0);
+					optionList[1].options.add(newOption1);
+				}
+
+			}
+
+		})
+	})
+
+	window.GetSecDem= function(transobj){
+			secDEM= transobj;
+			console.log("secDEM"+secDEM);
+	}
+
 	window.download = function() {
 		var text = $('#dembox option:selected').text();
 		console.log(text);
