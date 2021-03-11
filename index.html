@@ -520,16 +520,6 @@
 				function(){}
 		);
 	}
-// DEM断面提取layer
-	$("#inputDem").click(function (){
-		layer.open({
-			type:2,
-			title:'DEM断面提取',
-			area:['300px', '300px'],
-			content:'./SectionMap.html'
-
-		})
-	})
 
 	//pile table
 	$("#piletable").draggable();
@@ -662,6 +652,44 @@
 		})
 	})
 	//后台数据下载到本地
+
+
+
+	// DEM断面提取layer
+	let secDEM="dasddsd";
+	console.log(secDEM);
+	$("#inputDem").click(function (){
+		layer.open({
+			type:2,
+			title:'DEM断面提取',
+			area:['300px', '300px'],
+			content:'./SectionMap.html',
+			success: function(layero, index){
+				console.log(layero, index);
+				var body = layer.getChildFrame('body',index);
+				//var iframeWin = window[layero.find('iframe')[0]['name']]
+				//console.log(body.html())
+				body.find('input').val('Hi，我是从父页来的');
+				var inputList = body.find('input');     //取得子页面中input输入框
+				var dataLists= [name,15,5];
+				for(var j = 0; j< inputList.length; j++){			//把父页面的数据放到子页面的input框中
+					body.find(inputList[j]).val(dataLists[j]);
+				}
+				var optionList=body.find('select');
+				console.log(optionList);
+				console.log(pile_tabledata);
+				for(let i=0;i<pile_tabledata.length;i++){
+					var newOption0 = new Option(pile_tabledata[i].name,i.toString());
+					var newOption1 = new Option(pile_tabledata[i].name,i.toString());
+					optionList[0].options.add(newOption0);
+					optionList[1].options.add(newOption1);
+				}
+			}
+		})
+	})
+
+
+
 	window.download = function() {
 		var text = $('#dembox option:selected').text();
 		console.log(text);
