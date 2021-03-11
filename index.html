@@ -426,8 +426,8 @@
 							//line:true,
 							onClick:function (){
 								console.log("right button checklist");
-								//GridManager.setCheckedData(towerlist_tableId,[]);
-								var del_tower=GridManager.getCheckedData(towerlist_tableId);
+
+								var del_tower=GridManager.getCheckedData(towerlist_tableId); //checkedtower need to delete former list
 								console.log(del_tower);
 								for(let i=0;i<del_tower.length;i++){
 									for(let j=0;j<towerlist_tabledata.length;j++){
@@ -439,8 +439,7 @@
 								console.log("tabledata changed");
 								console.log(towerlist_tabledata);
 								GridManager.refreshGrid(towerlist_tableId);
-
-
+								del_tower=GridManager.setCheckedData(towerlist_tableId,[]);
 							}
 						});
 						list.unshift({
@@ -615,7 +614,7 @@
 		var form = new FormData();
 		console.log(pile_tabledata);
 		form.append("table",JSON.stringify(pile_tabledata));
-		form.append("ProjectName", "March");
+		form.append("ProjectName", prjName);
 		$.ajax({
 			url: "http://202.114.118.138:8181/JsonTotxtfile", //提交的路径
 			type: "post",       //提交方式
@@ -631,7 +630,7 @@
 
 	$("#tb-towerlist-calc").click(function (){
 		var form = new FormData();
-		form.append("ProjectName", "March");
+		form.append("ProjectName",prjName);
 		console.log("begindata");
 		console.log(towerlist_tabledata);
 
