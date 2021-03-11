@@ -655,7 +655,7 @@
 
 
 	// DEM断面提取layer
-	let secDEM="dasddsd";
+	var secDEM=[];
 	console.log(secDEM);
 	$("#inputDem").click(function (){
 		layer.open({
@@ -666,8 +666,6 @@
 			success: function(layero, index){
 				console.log(layero, index);
 				var body = layer.getChildFrame('body',index);
-				//var iframeWin = window[layero.find('iframe')[0]['name']]
-				//console.log(body.html())
 				body.find('input').val('Hi，我是从父页来的');
 				var inputList = body.find('input');     //取得子页面中input输入框
 				var dataLists= [name,15,5];
@@ -683,11 +681,16 @@
 					optionList[0].options.add(newOption0);
 					optionList[1].options.add(newOption1);
 				}
+
 			}
+
 		})
 	})
 
-
+	window.GetSecDem= function(transobj){
+			secDEM= transobj;
+			console.log("secDEM"+secDEM);
+	}
 
 	window.download = function() {
 		var text = $('#dembox option:selected').text();

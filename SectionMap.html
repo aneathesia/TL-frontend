@@ -66,21 +66,15 @@
 <script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
 <script>
     let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-
-    var corner = window.parent.pile_tabledata;
-    var sondem= window.parent.secDEM;
-    console.log(corner);
-    console.log(sondem);
-    console.log(index);
     //parent.layer.iframeAuto(index);
     function iframetrans(){
         //form element get
-        alert($("#beginOp").find("option:selected").text());
-        alert($("#endOp").find("option:selected").text());
-        alert($("#sectypeOp").find("option:selected").text());
-        alert($("input[name=inputfile]").val());
-        alert($("input[name=borderdist]").val());
-        alert($("input[name=sampledist]").val());
+        // alert($("#beginOp").find("option:selected").text());
+        // alert($("#endOp").find("option:selected").text());
+        // alert($("#sectypeOp").find("option:selected").text());
+        // alert($("input[name=inputfile]").val());
+        // alert($("input[name=borderdist]").val());
+        // alert($("input[name=sampledist]").val());
         //transmit to parentpage;
         var transobj={"begin":$("#beginOp").find("option:selected").text(),
             "end":$("#endOp").find("option:selected").text(),
@@ -89,7 +83,9 @@
             "sampledist":$("input[name=sampledist]").val()
         };
         console.log(JSON.stringify(transobj));
-        parent.layer.closeAll();
+        parent.secDEM=JSON.stringify(transobj);
+        parent.GetSecDem(JSON.stringify(transobj));  //将子窗口的参数传递给父窗口
+        parent.layer.close(index);
     }
 
 </script>
