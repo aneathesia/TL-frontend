@@ -334,7 +334,7 @@
 										}
 
 										GridManager.refreshGrid(pile_tableId);
-										console.log("exchange data x y ");
+										console.log("exchanged data x y ");
 										console.log(pile_tabledata);
 									}
 
@@ -360,10 +360,10 @@
 					key: 'secdist',
 					text: '距离'
 				},{
-					key: 'y',
+					key: 'x',
 					text: '大地x坐标'
 				},{
-					key: 'x',  //大地坐标坐标轴和平面坐标系的坐标轴不一致对掉xy 直接文本的读入会与xy不一致文本读入做一次function exchangexy
+					key: 'y',  //大地坐标坐标轴和平面坐标系的坐标轴不一致对掉xy 直接文本的读入会与xy不一致文本读入做一次function exchangexy
 					text: '大地y坐标'
 				}
 				,{
@@ -569,7 +569,7 @@
 		console.log(fileObj);
 		var form = new FormData(); // FormData 对象
 		form.append("file", fileObj); // 文件对象
-		form.append("ProjectName", "March");//控制路径
+		form.append("ProjectName", prjName);//控制路径
 		$.ajax({
 			url: "http://202.114.118.138:8181/txtToJson", //提交的路径
 			type: "post",       //提交方式
@@ -580,7 +580,7 @@
 			success: function (res) {
 				console.log(res);
 				pile_tabledata =res;
-				GridManager.setAjaxData(pile_tableId,{"data":res});
+				GridManager.setAjaxData(pile_tableId,{"data":pile_tabledata});
 			}
 		});
 
@@ -588,7 +588,7 @@
 
 	$("#tb_pile_calc").click(function(){
 		var form = new FormData();
-		form.append("ProjectName", "March");
+		form.append("ProjectName", prjName);
 		console.log("begindata");
 		console.log(pile_tabledata);
 		form.append("table",JSON.stringify(pile_tabledata));
@@ -606,6 +606,13 @@
 					pile_tabledata=res.m_jPile;
 					//console.log(GridManager.getAjaxData(pile_tableId));
 					//need to caculate the secdist
+					for(let i=0;i<pile_tabledata.length;i++)
+					{
+						var temp;
+						temp=pile_tabledata[i].x;
+						pile_tabledata[i].x=pile_tabledata[i].y;
+						pile_tabledata[i].y=temp;
+					}   //系统坐标大地坐标相反对换
 					pile_tabledata[0].secdist=0;
 					for(let i=1;i<pile_tabledata.length;i++){
 						pile_tabledata[i].secdist=pile_tabledata[i].dist-pile_tabledata[i-1].dist;
