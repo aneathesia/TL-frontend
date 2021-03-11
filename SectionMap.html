@@ -9,27 +9,23 @@
     <div class="layui-form-item">
         <label class="layui-form-label">DEM文件</label>
         <div class="layui-input-block">
-            <input type="text" name="title" required  lay-verify="required" placeholder="DEM文件输入" autocomplete="off" class="layui-input">
+            <input type="text" name="inputfile" required  lay-verify="required" placeholder="DEM文件输入" autocomplete="off" class="layui-input">
         </div>
     </div>
 
         <div class="layui-form-item" style="display: inline-block">
             <label class="layui-form-label">起始桩位</label>
             <div class="layui-input-block">
-                <select name="Begin" lay-verify="required">
-                    <option value=""></option>
-                    <option value="0">J0</option>
-                    <option value="1">J1</option>
+                <select name="Begin" lay-verify="required" id="beginOp">
+
                 </select>
             </div>
         </div>
         <div class="layui-form-item" style="display: inline-block">
             <label class="layui-form-label">终止桩位</label>
             <div class="layui-input-block">
-                <select name="End" lay-verify="required">
-                    <option value=""></option>
-                    <option value="0">J0</option>
-                    <option value="1">J1</option>
+                <select name="End" lay-verify="required" id="endOp">    //控制显示的个数
+
                 </select>
             </div>
         </div>
@@ -39,20 +35,20 @@
     <div class="layui-form-item" style="display: inline-block" >
         <label class="layui-form-label">边线距离m</label>
         <div class="layui-input-block">
-            <input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 40%">
+            <input type="text" name="borderdist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 40%">
         </div>
     </div>
     <div class="layui-form-item" style="display: inline-block">
         <label class="layui-form-label">采样间距m</label>
         <div class="layui-input-block">
-            <input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 40%">
+            <input type="text" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 40%">
         </div>
     </div>
 </div>
     <div class="layui-form-item">
         <label class="layui-form-label">端面线设置</label>
         <div class="layui-input-block">
-            <select name="End" lay-verify="required">
+            <select name="sectype" lay-verify="required" id="sectypeOp">
                 <option value=""></option>
                 <option value="0">三线断面</option>
                 <option value="1">中心断面</option>
@@ -62,16 +58,39 @@
 
     <div class="layui-form-item" style="text-align-last: right">
         <div class="layui-input-block">
-            <button class="layui-btn" lay-submit lay-filter="formDemo">确定</button>
+            <button class="layui-btn layui-layer-close" lay-submit lay-filter="formDemo" id="submit" onclick="iframetrans()">确定</button>
             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
         </div>
     </div>
 </form>
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
 <script>
     let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-    console.log(index)
-    //parent.layer.iframeAuto(index);
 
+    var corner = window.parent.pile_tabledata;
+    var sondem= window.parent.secDEM;
+    console.log(corner);
+    console.log(sondem);
+    console.log(index);
+    //parent.layer.iframeAuto(index);
+    function iframetrans(){
+        //form element get
+        alert($("#beginOp").find("option:selected").text());
+        alert($("#endOp").find("option:selected").text());
+        alert($("#sectypeOp").find("option:selected").text());
+        alert($("input[name=inputfile]").val());
+        alert($("input[name=borderdist]").val());
+        alert($("input[name=sampledist]").val());
+        //transmit to parentpage;
+        var transobj={"begin":$("#beginOp").find("option:selected").text(),
+            "end":$("#endOp").find("option:selected").text(),
+            "inputfile":$("input[name=inputfile]").val(),
+            "borderdist":$("input[name=borderdist]").val(),
+            "sampledist":$("input[name=sampledist]").val()
+        };
+        console.log(JSON.stringify(transobj));
+        parent.layer.closeAll();
+    }
 
 </script>
 </body>
