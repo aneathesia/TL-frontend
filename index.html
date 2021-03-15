@@ -215,7 +215,7 @@
 <!--				<p>对话框内容…</p>-->
 <!--			</div>-->
 <!--			<div class="modal-footer">-->
-<!--				<button class="btn btn-primary">确定</button>-->
+<!--				<button class="btn btn-primary">确定</bu	tton>-->
 <!--				<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>-->
 <!--			</div>-->
 <!--		</div>-->
@@ -363,7 +363,7 @@
 					key: 'x',
 					text: '大地x坐标'
 				},{
-					key: 'y',  //大地坐标坐标轴和平面坐标系的坐标轴不一致对掉xy 直接文本的读入会与xy不一致文本读入做一次function exchangexy
+					key: 'y',
 					text: '大地y坐标'
 				}
 				,{
@@ -658,33 +658,41 @@
 	var secDEM=[];
 	console.log(secDEM);
 	$("#inputDem").click(function (){
-		layer.open({
-			type:2,
-			title:'DEM断面提取',
-			area:['300px', '300px'],
-			content:'./SectionMap.html',
-			success: function(layero, index){
-				console.log(layero, index);
-				var body = layer.getChildFrame('body',index);
-				body.find('input').val('Hi，我是从父页来的');
-				var inputList = body.find('input');     //取得子页面中input输入框
-				var dataLists= [name,15,5];
-				for(var j = 0; j< inputList.length; j++){			//把父页面的数据放到子页面的input框中
-					body.find(inputList[j]).val(dataLists[j]);
-				}
-				var optionList=body.find('select');
-				console.log(optionList);
-				console.log(pile_tabledata);
-				for(let i=0;i<pile_tabledata.length;i++){
-					var newOption0 = new Option(pile_tabledata[i].name,i.toString());
-					var newOption1 = new Option(pile_tabledata[i].name,i.toString());
-					optionList[0].options.add(newOption0);
-					optionList[1].options.add(newOption1);
+		//转角文件exist
+		if(parent.document.getElementById('tb_pile_input').files[0]==null){alert("选择转角文件");}
+		else {
+			layer.open({
+				type: 2,
+				title: 'DEM断面提取',
+				area: ['300px', '300px'],
+				maxmin: true,
+				content: './SectionMap.html',
+				success: function (layero, index) {
+					console.log(layero, index);
+					var body = layer.getChildFrame('body', index);
+					// body.find('input').val('Hi，我是从父页来的');
+					var inputList = body.find('input');     //取得子页面中input输入框
+					var dataLists = [name, 15, 5];
+					for (var j = 0; j < inputList.length; j++) {			//把父页面的数据放到子页面的input框中
+						body.find(inputList[j]).val(dataLists[j]);
+					}
+					var optionList = body.find('select');
+					console.log(optionList);
+					console.log(pile_tabledata);
+					for (let i = 0; i < pile_tabledata.length; i++) {
+						var newOption0 = new Option(pile_tabledata[i].name, i.toString());
+						var newOption1 = new Option(pile_tabledata[i].name, i.toString());
+						optionList[0].options.add(newOption0);
+						optionList[1].options.add(newOption1);
+					}
+
+				},
+				yes: function (index, layero) {
+					console.log("yes function feedback" + layero + "" + index);
 				}
 
-			}
-
-		})
+			})
+		}
 	})
 
 	window.GetSecDem= function(transobj){
