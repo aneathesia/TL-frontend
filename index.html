@@ -731,6 +731,7 @@
 		xhr.send()
 	}
 	//新建工程
+	{
 	$('#newprj').click(function(){
 		for (let i = 0; i < allChildren.length; i++){
 			group.remove(allChildren[i]);
@@ -4975,6 +4976,7 @@
 			}
 		});
 	}
+	}
 	//draw
 	{
 	/* 预设格网参数 */
@@ -5381,11 +5383,12 @@
 		}
 
 		var request = new XMLHttpRequest();
-		request.open("get","dem.json");
+		request.open("get","JsonMap.json");
 		request.send(null);
 		request.onload = function () {
 			if (request.status == 200){
 				var json = JSON.parse(request.responseText);
+				console.log(json);
 				leftLineCor = json.DEM[0].LEFT;//左边线
 				rightLineCor = json.DEM[0].RIGHT;//右边线
 				midLineCor = json.DEM[0].MID;//中心断面
@@ -5539,6 +5542,7 @@
 			console.log(yige);
 		}
 	}
+
 	function createWireTemp(tempTowerlist){
 
 		let wirelistTemp = [];
@@ -5581,6 +5585,7 @@
 	/* 获取射线与平面相交的交点 */
 	var raycaster = new THREE.Raycaster();
 	var mouse = new THREE.Vector2();
+
 	function getIntersects(event) {
 		mouse.x = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
 		mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
@@ -5594,6 +5599,7 @@
 		intersects = ray.intersectPlane(planeGround,intersects);//计算相机到射线的对象，可能有多个对象，返回一个数组，按照距离相机远近排列
 		return intersects;//返回向量
 	}
+
 	function getIntersectsObject(event) {
 		var towerArr = [];
 		mouse.x = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
