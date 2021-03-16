@@ -4986,18 +4986,21 @@
 	var leftX = new Array();var leftY = new Array();
 	var rightX = new Array();var rightY = new Array();
 	var yMin = 100;var yMax = verSize;var xMax = 0;
-	var group = new THREE.Group();
+	var framegroup = new THREE.Group();
+	let l_linegroup=new THREE.Group();let m_linegroup=new THREE.Group();let r_linegroup=new THREE.Group();
+
 	var allChildren = [];var dem = [];	var towerList = [];
 	var leftLineCor,rightLineCor,midLineCor,cornerCor;
 	var corner = new Array();
 	var show = true;
 	var centerDem;//中心断面
 	var mainCanvas = document.querySelector("#iframe_box canvas");//画布
+	var DEM;
 
 	//清空当前画布
 	function reclear(){
 		for (let i = 0; i < allChildren.length; i++){
-			group.remove(allChildren[i]);
+			framegroup.remove(allChildren[i]);
 		}
 		for (let i = 0; i < scene.children.length; i++){
 			if (scene.children[i].name === "dem"||scene.children[i].name === "corner"){
@@ -5036,7 +5039,7 @@
 			scene.remove(towerList[i]);
 		}
 		for (let i = 0; i < allChildren.length; i++) {
-			group.remove(allChildren[i]);
+			framegroup.remove(allChildren[i]);
 		}
 		yMin = 100; divisions = 10;verSize = 160;horSize = 300;
 		initContent();
@@ -5064,9 +5067,9 @@
 		verSize = width * 150 /500;
 		horSize = dis/10;
 		for (let i = 0; i < allChildren.length; i++){
-			group.remove(allChildren[i]);
+			framegroup.remove(allChildren[i]);
 		}
-		group.remove(group.children);
+		framegroup.remove(framegroup.children);
 		initContent();
 	}
 
@@ -5128,7 +5131,7 @@
 
 	/* 图幅格网绘制 */
 	function initContent() {
-		scene.add(group);
+		scene.add(framegroup);
 
 		//外轮廓
 		var gridBound = new THREE.PlaneGeometry(horSize + 30,verSize + 100  );
@@ -5137,7 +5140,7 @@
 		grid.position.x =(horSize-30)/2;
 		grid.position.y = (verSize-4 * divisions-50)/2;
 		var box = new THREE.BoxHelper( grid, 0x0000ff );
-		group.add(box);
+		framegroup.add(box);
 		//居中
 		var bbox = new THREE.Box3().setFromObject(box)
 		cameraX = (bbox.max.x - bbox.min.x)/2;
@@ -5157,7 +5160,7 @@
 		var yAxis = new THREE.Line(yAxisGeo, new THREE.LineBasicMaterial({
 			color: 0xff0000
 		}));
-		group.add(yAxis);
+		framegroup.add(yAxis);
 
 		//左侧高程刻度线
 		var scalelineGeo = new THREE.Geometry();
@@ -5167,12 +5170,12 @@
 		for (let i = 0; i < verSize / 10 ; i++) {
 			var scaleline = new THREE.Line(scalelineGeo,new THREE.LineBasicMaterial({color: 0x455454}));
 			scaleline.position.y= i * divisions;
-			group.add(scaleline);
+			framegroup.add(scaleline);
 			var number = parseInt(yMin/10) * 10+ i*divisions;
 			var text = number.toString();
 			var scale = createSprite(text,"#000000",0,32,9,i * divisions-5,0);
 			scale.name = "gaochengscale";
-			group.add(scale);
+			framegroup.add(scale);
 		}
 
 		//横格网轴
@@ -5189,37 +5192,37 @@
 				gridHor = new THREE.Line(horGeometry, new THREE.LineBasicMaterial({color: 0x455454}));//用geometry和material创建line
 				gridHor.position.y = i * divisions ; //设置line的位置
 				gridHor.name = "gridHor";
-				group.add(gridHor);
+				framegroup.add(gridHor);
 
 				var plangridHor1 = gridHor.clone();
 				var plangridHor2 = gridHor.clone();
 				var plangridHor3 = gridHor.clone();
 				plangridHor1.name = "";plangridHor2.name = "";plangridHor3.name = "";
 				plangridHor1.position.y = -42; plangridHor2.position.y = -50; plangridHor3.position.y = -58 ;
-				group.add(plangridHor1);
-				group.add(plangridHor2);
-				group.add(plangridHor3);
+				framegroup.add(plangridHor1);
+				framegroup.add(plangridHor2);
+				framegroup.add(plangridHor3);
 			}
 			else {
 				var line = new THREE.Line(horizonGeo, new THREE.LineBasicMaterial({color: 0x455454}));
 				line.position.y = - 40; //设置line的位置
 
 				var gaocheng = createSprite("1956年黄海高程系","#ff0000",0,32,4.5,-20,Math.PI/2);
-				group.add(gaocheng);
+				framegroup.add(gaocheng);
 				var planLine = line.clone();//平面图下边界
 				planLine.position.y = -60;
 				var planeText = createSprite("平面图","#ff0000",0,32,1.5,-57,0);
-				group.add(planeText);
+				framegroup.add(planeText);
 				var textArr = ["            桩间距离","               里程","               档距","            杆塔位置","   耐张段长/代表档距"];
 				for (let j = 0; j < 5; j++) {
 					var disLine = line.clone();//桩间距离下边界
 					disLine.position.y = -60- (j+1)*5;
-					group.add(disLine);
+					framegroup.add(disLine);
 					var note = createSprite(textArr[j],"#ff0000",0,32,-10,-64- (j+1)*5,0);
-					group.add(note);
+					framegroup.add(note);
 				}
-				group.add(planLine);
-				group.add(line);
+				framegroup.add(planLine);
+				framegroup.add(line);
 			}
 		}
 		//纵格网轴
@@ -5240,24 +5243,24 @@
 			if (i === 0){
 				boundary.position.x = i * divisions ;
 				boundary.rotation.z = Math.PI / 2; //绕y轴旋转90度
-				group.add(boundary);
+				framegroup.add(boundary);
 			}
 			else {
 				gridVer.position.x = i * divisions ;
 				gridVer.rotation.z = Math.PI / 2; //绕y轴旋转90度
 				gridVer.name="gridVer";
-				group.add(gridVer);
+				framegroup.add(gridVer);
 			}
 			var planVer = new THREE.Line(planGeo, new THREE.LineBasicMaterial({color: 0x324132}));
 			planVer.name = "gridVer";
 			planVer.position.x = i*divisions;
-			group.add(planVer);
+			framegroup.add(planVer);
 			let x = createSprite(i,"#ff0000",0,32,19+i*divisions,-73,0);
-			group.add(x);
+			framegroup.add(x);
 		}
 		allChildren = [];
-		for (let i = 0; i < group.children.length; i++) {
-			allChildren.push(group.children[i]);
+		for (let i = 0; i < framegroup.children.length; i++) {
+			allChildren.push(framegroup.children[i]);
 		}
 
 		//图纸参数设置框
@@ -5270,9 +5273,9 @@
 			check.click(function () {
 				index ++ ;
 				let grid = [];
-				for (let i = 0; i<group.children.length; i++){
-					if (group.children[i].name === "gridVer"||group.children[i].name === "gridHor") {
-						grid.push(group.children[i]);
+				for (let i = 0; i<framegroup.children.length; i++){
+					if (framegroup.children[i].name === "gridVer"||framegroup.children[i].name === "gridHor") {
+						grid.push(framegroup.children[i]);
 					}
 				}
 				if (index % 2 === 1){
@@ -5292,14 +5295,90 @@
 	var tempDif = 0;
 	var dif = 0;
 	/* DEM绘制函数 */
+	function drawDEM_whj(DEM){
+		console.log(DEM);
+		console.log(DEM.MID,DEM.LEFT,DEM.RIGHT);
+		yMin=DEM.MID[0].Section[0].z
+		for(let i=0;i<DEM.MID.length;i++){
+			for(let j=0;j<DEM.MID[i].Section.length;j++){
+				if(yMax<DEM.MID[i].Section[j].z){yMax=DEM.MID[i].Section[j].z;}
+				if(yMin>DEM.MID[i].Section[j].z){yMin=DEM.MID[i].Section[j].z;}
+			}
+		}
+		for(let i=0;i<DEM.LEFT.length;i++){
+			for(let j=0;j<DEM.LEFT[i].Section.length;j++){
+				if(yMax<DEM.LEFT[i].Section[j].z){yMax=DEM.LEFT[i].Section[j].z;}
+				if(yMin>DEM.MID[i].Section[j].z){yMin=DEM.MID[i].Section[j].z;}
+			}
+		}
+		for(let i=0;i<DEM.RIGHT.length;i++){
+			for(let j=0;j<DEM.RIGHT[i].Section.length;j++){
+				if(yMax<DEM.RIGHT[i].Section[j].z){yMax=DEM.RIGHT[i].Section[j].z;}
+				if(yMin>DEM.MID[i].Section[j].z){yMin=DEM.MID[i].Section[j].z;}
+			}
+		}
+
+		tempDif = yMax - yMin;
+		dif = (parseInt((yMax - yMin)/10) + 2 ) * 10;
+		verSize = dif ;
+		xMax = (parseInt(DEM.RIGHT[DEM.RIGHT.length-1].Section[DEM.RIGHT[DEM.RIGHT.length-1].Section.length-1].x/10) + 1 ) * 10; //X last element
+		horSize = xMax/10;
+		initContent();
+		// draw object group;
+		// 中心断面 object
+		var m_material = new THREE.LineBasicMaterial( { color: 0x000000 } );
+		var m_line = new Array();
+		//m_line.length=DEM.MID.length;
+		for(let i=0;i<DEM.MID.length;i++){
+			var m_vertice = new THREE.Geometry();
+			for(let j=0;j<DEM.MID[i].Section.length;j++) {
+				m_vertice.vertices.push(new THREE.Vector3(DEM.MID[i].Section[j].x / 10, DEM.MID[i].Section[j].z - yMin, 0));
+			}
+			m_line[i]= new THREE.Line(m_vertice,m_material);m_line.name = "Section"+i.toString();
+			m_linegroup.add(m_line[i]);
+
+		}
+		scene.add(m_linegroup);
+
+		var l_material = new THREE.LineDashedMaterial( { color: 0x0000ff ,dashSize:3, gapSize:1} );
+		var l_line = new Array();
+		l_line.length=DEM.LEFT.length;
+		for(let i=0;i<DEM.LEFT.length;i++){
+			var l_vertice = new THREE.Geometry();
+			for(let j=0;j<DEM.LEFT[i].Section.length;j++) {
+				l_vertice.vertices.push(new THREE.Vector3(DEM.LEFT[i].Section[j].x / 10, DEM.LEFT[i].Section[j].z - yMin, 0));
+			}
+			l_line[i]= new THREE.Line(l_vertice,l_material);l_line.name = "Section"+i.toString();
+			l_linegroup.add(l_line[i]);
+
+		}
+		scene.add(l_linegroup);
+
+		var r_material = new THREE.LineBasicMaterial( { color: 0x00ff00,dashSize:2,gapSize:2 } );
+		var r_line = new Array();
+		r_line.length=DEM.RIGHT.length;
+		for(let i=0;i<DEM.RIGHT.length;i++){
+			var r_vertice = new THREE.Geometry();
+			for(let j=0;j<DEM.RIGHT[i].Section.length;j++) {
+				r_vertice.vertices.push(new THREE.Vector3(DEM.RIGHT[i].Section[j].x / 10, DEM.RIGHT[i].Section[j].z - yMin, 0));
+			}
+			r_line[i]= new THREE.Line(r_vertice,r_material);r_line[i].name = "RIGHT"+"-"+i.toString();
+			r_linegroup.add(r_line[i]);
+
+		}
+		scene.add(r_linegroup);
+
+		console.log(r_line,r_linegroup);
+	}
 	function drawDEM(leftLineCor,rightLineCor,midLineCor,cornerCor){
 
 		for (let i = 0; i < allChildren.length; i++){
-			group.remove(allChildren[i]);
+			framegroup.remove(allChildren[i]);
 		}
 		midCoordinate.length = midLineCor.length;
 		leftCoordinate.length = leftLineCor.length;
 		rightCoordinate.length = rightLineCor.length;
+		console.log(rightCoordinate.length);
 		// midCoordinate.length =leftCoordinate.length = rightCoordinate.length =midLineCor.length;
 		for (let i = 0 ; i < midCoordinate.length ; i++){
 			midCoordinate[i] = new Array();
@@ -5325,6 +5404,8 @@
 		for (let i = 0 ; i <rightCoordinate.length ; i++){
 			rightX[i] = rightCoordinate[i][0];rightY[i] = rightCoordinate[i][1];
 		}
+		//
+
 
 		yMax = Math.max.apply(Math,y);
 		yMin = Math.min.apply(Math,y);
@@ -5337,6 +5418,20 @@
 		horSize = xMax/10;
 
 		initContent();
+		// 中心断面 object
+		// var c_material = new THREE.LineBasicMaterial( { color: 0x000000 } );
+		// var c_lineframegroup = new Array();
+		// for(let i=0;i<DEM.MID.size();i++){
+		// 	var c_vertice = new THREE.Geometry();
+		// 	for(let j=0;j<DEM.MID[i].section.size;j++) {
+		// 		c_vertice.vertices.push(new THREE.Vector3(DEM.MID[i].section[j].x / 10, DEM.MID[i].section[j].z - yMin, 0));
+		// 	}
+		// 	var  c_line= new THREE.Line(c_vertice,c_material);c_line.name = "Section"+i.toString();
+		// 	c_lineframegroup.push(c_line);
+		// 	scene.add(c_line);
+		// }
+		//
+		// consolo.log(c_linegroup);
 
 		/* 中心断面绘制 */
 		var material = new THREE.LineBasicMaterial( { color: 0x000000 } );
@@ -5379,7 +5474,7 @@
 	$("#inputDem").click(function () {
 
 		for (let i = 0; i < allChildren.length; i++){
-			group.remove(allChildren[i]);
+			framegroup.remove(allChildren[i]);
 		}
 
 		var request = new XMLHttpRequest();
@@ -5388,25 +5483,31 @@
 		request.onload = function () {
 			if (request.status == 200){
 				var json = JSON.parse(request.responseText);
-				console.log(json);
-				leftLineCor = json.DEM[0].LEFT;//左边线
-				rightLineCor = json.DEM[0].RIGHT;//右边线
-				midLineCor = json.DEM[0].MID;//中心断面
-				cornerCor = json.GEO;//转角
-				drawDEM(leftLineCor,rightLineCor,midLineCor,cornerCor);
+				 DEM = json.DEM;
 
-				$('#inputCorner').click(function () {
-					/* 转角投影线绘制 */
-					drawGeo(cornerCor);
-				})
+				console.log(DEM);
 
+				// leftLineCor = DEM[0].LEFT ;
+				// rightLineCor = DEM[0].RIGHT;
+				// midLineCor =DEM[0].MID;
+				// cornerCor ;
+				// console.log(leftLineCor,rightLineCor,midLineCor);
+				//drawDEM(leftLineCor,rightLineCor,midLineCor,cornerCor);
+				drawDEM_whj(DEM);
+
+
+				// $('#inputCorner').click(function () {
+				// 	/* 转角投影线绘制 */
+				// 	drawGeo(cornerCor);
+				// })
+				console.log(framegroup.children);
 				allChildren = [];
-				for (let i = 0; i < group.children.length; i++) {
-					allChildren.push(group.children[i]);
+				for (let i = 0; i < framegroup.children.length; i++) {
+					allChildren.push(framegroup.children[i]);
 				}
-
-				savedJson.DEM = json.DEM;
-				savedJson.GEO = json.GEO;
+				//
+				// savedJson.DEM = json.DEM;
+				// savedJson.GEO = json.GEO;
 			}
 		}
 	});
@@ -5474,7 +5575,8 @@
 		towMesh.position.z = 0;
 		towMesh.name = "tower";
 
-		tempTowerlist.push(towerlist[towerlist.length-1]);
+		tempTowerlist.push(towerlist[towerlist.length-1]);   //3.16 whj
+
 		tempTowerlist.push({"Name" : "G0",
 			"Distance" : pos.x * 10,
 			"High" : pos.y + yMin,
@@ -5547,6 +5649,8 @@
 
 		let wirelistTemp = [];
 		var lineMaterial = new THREE.LineBasicMaterial({color: 0x000000});
+		console.log("temptowerlist");
+		console.log(tempTowerlist);
 		if (tempTowerlist.length > 1){
 			let wireLength = tempTowerlist.length - 1;
 			wirelistTemp.length = wireLength;
@@ -5597,7 +5701,14 @@
 		var ray = raycaster.ray;//获取射线
 		var intersects = new THREE.Vector3();
 		intersects = ray.intersectPlane(planeGround,intersects);//计算相机到射线的对象，可能有多个对象，返回一个数组，按照距离相机远近排列
-		return intersects;//返回向量
+		console.log(intersects);//返回向量
+		return	intersects;
+
+		// const mouseVector = new THREE.Vector3();
+		// mouseVector.set(mouse.x,mouse.y,0.5);
+		// raycaster.setFromCamera(mouseVector,camera);
+		// console.log(raycaster.intersectObject(m_linegroup,true));
+		// return raycaster.intersectObject(m_linegroup,true);
 	}
 
 	function getIntersectsObject(event) {
@@ -5624,6 +5735,7 @@
 	//放置杆塔
 	function onMouseDown(event) {
 		intersects = getIntersects(event);
+		console.log("intersects",intersects);
 		tempintersects = intersects;
 
 		if (event.button === 0 ){
@@ -5634,9 +5746,12 @@
 
 			if (intersects.x<horSize &&intersects.x>0 && intersects.y<verSize && intersects.y>0){
 				var tempLine2Cor = [];
-				console.log(intersects);
-				for (let i = 0; i < centerDem.geometry.vertices.length; i++) {
-					tempLine2Cor.push([centerDem.geometry.vertices[i].x,centerDem.geometry.vertices[i].y]);
+				console.log("intersects mlinegroup");;
+				console.log(m_linegroup);
+				for (let i = 0; i < m_linegroup.children.length; i++) {
+					for(let j=0;j<m_linegroup.children[i].geometry.vertices.length;j++){
+						tempLine2Cor.push([m_linegroup.children[i].geometry.vertices[j].x,m_linegroup.children[i].geometry.vertices[j].y]);
+					}
 				}
 				var tempLine2 = turf.lineString(tempLine2Cor);
 				var temppointLine1 = turf.lineString([[tempintersects.x,tempintersects.y],[tempintersects.x,0]]);
@@ -5654,33 +5769,6 @@
 				var temppoints = new THREE.Points(temppointsGeometry, pointsMaterial);
 				pointArray.push(temppoints);console.log(pointArray);
 				putInd++;
-				// var lineMaterial = new THREE.LineBasicMaterial({color: 0x000000});
-
-				// if (pointArray.length >= 2){
-				// 	// let midX = pointArray[0].geometry.vertices[0].x + (pointArray[1].geometry.vertices[0].x-pointArray[0].geometry.vertices[0].x)/2;
-				// 	// let midY = pointArray[0].geometry.vertices[0].y + (pointArray[1].geometry.vertices[0].y-pointArray[0].geometry.vertices[0].y)/2 - 5;
-				// 	// var midPoint = new THREE.Vector3(midX, midY, 0);
-				// 	//
-				// 	// var curve = new THREE.CatmullRomCurve3([
-				// 	// 	new THREE.Vector3(pointArray[0].geometry.vertices[0].x, pointArray[0].geometry.vertices[0].y+40, 0),
-				// 	// 	midPoint,
-				// 	// 	new THREE.Vector3(pointArray[1].geometry.vertices[0].x, pointArray[1].geometry.vertices[0].y+40, 0)
-				// 	// ]);
-				// 	// let interPoints = curve.getPoints(50);
-				// 	// let geomertry = new THREE.BufferGeometry().setFromPoints(interPoints);
-				// 	// let line = new THREE.Line(geomertry,lineMaterial);line.position.x += 1;
-				// 	// line.name = "wire";line.geometry.name = putInd;
-				// 	// console.log(line);
-				// 	// let line2 = line.clone();let line3 = line.clone();
-				// 	// line2.position.y = line.position.y - 5;line2.material = line2.material.clone();line2.material.color.set("#ff0000");
-				// 	// line3.position.y = line.position.y - 10;line3.material = line3.material.clone();line3.material.color.set("#0000ff");
-				// 	//
-				// 	// pointArray.shift();
-				// 	// scene.add(line);
-				// 	// scene.add(line2);
-				// 	// scene.add(line3);
-				// 	// putInd++;
-				// }
 
 				var pos = new THREE.Vector3(points.geometry.vertices[0].x,points.geometry.vertices[0].y,0);
 				var tempLine1 = turf.lineString([[pos.x,pos.y],[pos.x,0]]);
@@ -5712,7 +5800,13 @@
 	}
 	function onMouseMove(event) {
 		intersects = getIntersects(event);
+		console.log("onMousemove");
+
 		tempintersects = intersects;
+		console.log(tempintersects);
+
+		console.log("m_linegroup");
+		//console.log(m_linegroup,m_linegroup.children.length,m_linegroup.children[0].geometry.vertices.length,m_linegroup.children[0].geometry.vertices[0],m_linegroup.children[0].geometry.vertices[0].x,m_linegroup.children[0].geometry.vertices[0].y);
 		if (intersects.x<horSize &&intersects.x>0 && intersects.y<verSize && intersects.y>0){
 			if (scene.getObjectByName('line1_move')) {
 				scene.remove(scene.getObjectByName('line1_move'));
@@ -5729,8 +5823,11 @@
 
 
 			var tempLine2Cor = [];
-			for (let i = 0; i < centerDem.geometry.vertices.length; i++) {
-				tempLine2Cor.push([centerDem.geometry.vertices[i].x,centerDem.geometry.vertices[i].y]);
+
+			for (let i = 0; i < m_linegroup.children.length; i++) {
+				for(let j=0;j<m_linegroup.children[i].geometry.vertices.length;j++){
+					tempLine2Cor.push([m_linegroup.children[i].geometry.vertices[j].x,m_linegroup.children[i].geometry.vertices[j].y]);
+				}
 			}
 			var tempLine2 = turf.lineString(tempLine2Cor);
 			var temppointLine1 = turf.lineString([[tempintersects.x,tempintersects.y],[tempintersects.x,0]]);
@@ -5897,7 +5994,7 @@
 		sceneY += movementY * 0.5;
 
 		// console.log(camera.fov);
-		console.log(camera);
+		//console.log(camera);
 		camera.position.set(cameraX, cameraY, cameraZ);
 		camera.lookAt(sceneX, sceneY, sceneZ);
 		camera.updateProjectionMatrix();
