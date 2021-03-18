@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE HTML>
-<>
+<html>
 <head>
 	<meta charset="utf-8">
 	<meta name="renderer" content="webkit|ie-comp|ie-stand">
@@ -29,7 +29,7 @@
     <![endif]-->
 	<title>架空输电线路勘测设计一体化系统</title>
 </head>
-< class="mainbody">
+<body class="mainbody">
 <style>
 	@import url(./css/nativestyle.css);
 </style>
@@ -203,7 +203,8 @@
 		<button class="xbutton xround close_btn" id="towerlistcloseTable"style="text-align-last: right">关闭</button>
 	</div>
 </div>
-//modal demp
+
+
 <!--<div id="modal-demo" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
 <!--	<div class="modal-dialog">-->
 <!--		<div class="modal-content radius">-->
@@ -270,7 +271,15 @@
 	</div>
 	<div id="iframe_box" class="Hui-article">
 	</div>
+	<footer id="footermsg" class="footer mt-20" style="z-index: 100;position: fixed;bottom: 0;height: 50px">
+		<div class="container-fluid">
+
+		</div>
+	</footer>
 </section>
+
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
 <script src="https://cdn.bootcss.com/FileSaver.js/2014-11-29/FileSaver.js"></script>
@@ -285,7 +294,7 @@
 
 <script type="module">
 	import { CSS2DRenderer, CSS2DObject } from './js/CSS2DRenderer.js';
-	import {Points} from "./js/three.module";
+	//import {Points} from "./js/three.module";
 
 	//系统设置
 	var prjName;//新建工程名
@@ -4989,8 +4998,8 @@
 	var yMin = 100;var yMax = verSize;var xMax = 0;
 	var framegroup = new THREE.Group();
 	let l_linegroup=new THREE.Group();let m_linegroup=new THREE.Group();let r_linegroup=new THREE.Group();
-		let l_pointsgroup=new THREE.Group();let m_pointsgroup=new THREE.Group();let r_pointsgroup=new THREE.Group();
-
+	//	let l_pointsgroup=new THREE.Group();let m_pointsgroup=new THREE.Group();let r_pointsgroup=new THREE.Group();
+			let DEM_pgroup=new THREE.Group();
 	var allChildren = [];var dem = [];	var towerList = [];
 	var leftLineCor,rightLineCor,midLineCor,cornerCor;
 	var corner = new Array();
@@ -5342,10 +5351,10 @@
 			m_points[i] = new THREE.Points(m_vertice,mp_material);
 			m_points[i].visible=false;
 			m_linegroup.add(m_line[i]);
-			m_pointsgroup.add(m_points[i]);
+			DEM_pgroup.add(m_points[i]);
 		}
 		scene.add(m_linegroup);
-		scene.add(m_pointsgroup);
+		scene.add(DEM_pgroup);
 
 
 		var l_material = new THREE.LineDashedMaterial( { color: 0x0000ff ,dashSize:3, gapSize:1} );
@@ -5362,10 +5371,10 @@
 			l_linegroup.add(l_line[i]);
 			l_points[i] = new THREE.Points(l_vertice,lp_material);
 			l_points[i].visible=false;
-			l_pointsgroup.add(l_points[i]);
+			DEM_pgroup.add(l_points[i]);
 		}
 		scene.add(l_linegroup);
-		scene.add(l_pointsgroup);
+		scene.add(DEM_pgroup);
 
 		var r_material = new THREE.LineBasicMaterial( { color: 0x00ff00,dashSize:2,gapSize:2 } );
 		var rp_material = new THREE.PointsMaterial({color:0x888888,size:2.0});
@@ -5381,10 +5390,10 @@
 			r_linegroup.add(r_line[i]);
 			r_points[i] = new THREE.Points(r_vertice,rp_material);
 			r_points[i].visible=false;
-			r_pointsgroup.add(r_points[i]);
+			DEM_pgroup.add(r_points[i]);
 		}
 		scene.add(r_linegroup);
-		scene.add(r_pointsgroup);
+		scene.add(DEM_pgroup);
 
 	}
 	function drawDEM(leftLineCor,rightLineCor,midLineCor,cornerCor){
@@ -6010,6 +6019,7 @@
 		camera.updateProjectionMatrix();
 		renderer.render(scene, camera);
 		labelRenderer.render( scene, camera );
+		var coord =getIntersects(event);
 	}
 	function onDocumentMouseUp(event) {
 		document.removeEventListener('mousemove', onDocumentMouseMove);
@@ -6018,6 +6028,7 @@
 
 	let selectedObj = null;
 	let selectedPoint = null;
+
 	function onDocumentSelected(event) {
 		//var intersect=getIntersects(event);
 		//getIntersectsObject()
@@ -6042,23 +6053,62 @@
 
 			selectedObj=null;
 		}
+		for(let i=0;i<scene.children.length;i++){
+			if(scene.children[i].name =="redpoint"){
+				console.log("name =redpoint");
+				scene.remove(scene.children[i]);
+			}
+		}
+		console.log("clear redpoint");
+		console.log(scene.children);
+		if(selectedPoint){
+			console.log("change visiual");
+			console.log(selectedPoint);
+			selectedPoint.visible = false;
+			selectedPoint = null;
+		}
 		const intersects = getIntersectsMapObj(event);
 
 		const coord_inter =getIntersects(event);
 
 		console.log("mouse position");
 		console.log(coord_inter);
-		console.log(m_pointsgroup.children);
-		for(let i=0; i< m_pointsgroup.children.length;i++){
-			for(let j=0;j<m_pointsgroup.children[i].geometry.vertices.length;j++){
-				if((m_pointsgroup.children[i].geometry.vertices[j].x-coord_inter.x)<0.2&&
-						(m_pointsgroup.children[i].geometry.vertices[j].y-coord_inter.y<0.2)){
-					selectedPoint = new Points();
+		console.log(DEM_pgroup.children[0]);
+		console.log(DEM_pgroup.children[0].geometry.vertices[0].x);
+		//m_pointsgroup.children[5].visible = true;
+		//judge position;
+		// selectedPoint = m_pointsgroup.children[5];
+		// selectedPoint.visible =true;
+		console.log("judge");
+		console.log(selectedPoint);
+		console.log(DEM_pgroup.children.length);
+		console.log(DEM_pgroup.children[0].geometry.vertices.length);
+		for(let i=0;i<DEM_pgroup.children.length;i++){
+			var num = scene.children.length;
+			console.log(num);
+			for(let j=0;j<DEM_pgroup.children[i].geometry.vertices.length;j++){
+				if(Math.abs(DEM_pgroup.children[i].geometry.vertices[j].x-coord_inter.x)<0.5&&Math.abs(DEM_pgroup.children[i].geometry.vertices[j].y-coord_inter.y)<0.5){
+					selectedPoint = DEM_pgroup.children[i];
+					selectedPoint.visible =true;
+					//create point;
+					var red = new THREE.Geometry();
+					red.vertices.push(new THREE.Vector3(DEM_pgroup.children[i].geometry.vertices[j].x,DEM_pgroup.children[i].geometry.vertices[j].y,0));
+					var redmaterial= new THREE.PointsMaterial({color:0xff0000,size:2.0});
+					var redpoint =new THREE.Points(red,redmaterial);
+					redpoint.name="redpoint";
+					console.log(redpoint);
+					scene.add(redpoint);
 					break;
 				}
+
 			}
-			if(selectedPoint!=null){}  //point mid right left;
+
+			if(scene.children.length!=num){console.log(scene.children.length);break;}
 		}
+
+		console.log("selectedPointbe");
+		console.log(selectedPoint);
+
 
 			if (intersects.length > 0) {
 				const res = intersects.filter(function (res) {
@@ -6073,7 +6123,7 @@
 			}
 
 		console.log("selected end ");
-		console.log(scene.children);
+			console.log(scene.children);
 		console.log(selectedObj);
 	}
 	function getIntersectsMapObj(event){
@@ -6109,6 +6159,17 @@
 		renderer.setSize(canvasdiv.offsetWidth, canvasdiv.offsetHeight);
 		labelRenderer.setSize(canvasdiv.offsetWidth, canvasdiv.offsetHeight );
 	}
+	function onDocumentMsg(event){
+		var coord = getIntersects(event);
+		var redpoint;
+		//console.log("x,z",coord.x,coord.y);
+		for(let i=0;i<scene.children.length;i++){
+			if(scene.children[i].name=="redpoint"){redpoint=scene.children[i];break;}
+		}
+		//console.log(redpoint);
+		window.document.getElementById("footermsg").textContent = "		累距："+ coord.x.toString()+"	 高程: "+(coord.y+yMin).toString();
+		window.document.getElementById("footermsg").textContent="	Δx:	"+(coord.x-redpoint.geometry.vertices[0].x).toString()+"	Δz:	"+(coord.y-redpoint.geometry.vertices[0].y).toString();
+	}
 
 	/* 初始化 */
 	function init() {
@@ -6121,6 +6182,7 @@
 		document.addEventListener('DOMMouseScroll', onDocumentMouseWheel, false);//兼容火狐
 		document.addEventListener('mousedown', onDocumentMouseDown, false);
 		document.addEventListener('mousedown', onDocumentSelected, false);
+		document.addEventListener('mousemove', onDocumentMsg, false);
 		/*鼠标放置杆塔*/
 		$("#putTower").click(function () {
 			document.removeEventListener('mousedown', towerDelete);
