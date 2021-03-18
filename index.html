@@ -5504,7 +5504,7 @@
 		}
 
 		var request = new XMLHttpRequest();
-		request.open("get","JsonMap.json");
+		request.open("get","JsonMap.Json");
 		request.send(null);
 		request.onload = function () {
 			if (request.status == 200){
@@ -6083,6 +6083,18 @@
 		console.log(selectedPoint);
 		console.log(DEM_pgroup.children.length);
 		console.log(DEM_pgroup.children[0].geometry.vertices.length);
+
+		if (intersects.length > 0) {
+			const res = intersects.filter(function (res) {
+				return res && res.object;
+			})[0];
+			console.log("res,resobj");
+			console.log(res && res.object);
+			if (res && res.object) {
+				selectedObj = res.object;
+				selectedObj.material = new THREE.LineBasicMaterial({color: 0xFF0011});
+			}
+		}
 		for(let i=0;i<DEM_pgroup.children.length;i++){
 			var num = scene.children.length;
 			console.log(num);
@@ -6096,7 +6108,7 @@
 					var redmaterial= new THREE.PointsMaterial({color:0xff0000,size:2.0});
 					var redpoint =new THREE.Points(red,redmaterial);
 					redpoint.name="redpoint";
-					console.log(redpoint);
+					redpoint.userData={"dem":selectedObj.name,"j":j};
 					scene.add(redpoint);
 					break;
 				}
@@ -6106,25 +6118,8 @@
 			if(scene.children.length!=num){console.log(scene.children.length);break;}
 		}
 
-		console.log("selectedPointbe");
-		console.log(selectedPoint);
 
 
-			if (intersects.length > 0) {
-				const res = intersects.filter(function (res) {
-					return res && res.object;
-				})[0];
-				console.log("res,resobj");
-				console.log(res && res.object);
-				if (res && res.object) {
-					selectedObj = res.object;
-					selectedObj.material = new THREE.LineBasicMaterial({color: 0xFF0011});
-				}
-			}
-
-		console.log("selected end ");
-			console.log(scene.children);
-		console.log(selectedObj);
 	}
 	function getIntersectsMapObj(event){
 
@@ -6164,11 +6159,15 @@
 		var redpoint;
 		//console.log("x,z",coord.x,coord.y);
 		for(let i=0;i<scene.children.length;i++){
-			if(scene.children[i].name=="redpoint"){redpoint=scene.children[i];break;}
+			if(scene.children[i].name=="redpoint"){redpoint=scene.children[i];console.log(redpoint.userData);break;}
 		}
-		//console.log(redpoint);
+		//console.log(redpoint.userData);
 		window.document.getElementById("footermsg").textContent = "		累距："+ coord.x.toString()+"	 高程: "+(coord.y+yMin).toString();
-		window.document.getElementById("footermsg").textContent="	Δx:	"+(coord.x-redpoint.geometry.vertices[0].x).toString()+"	Δz:	"+(coord.y-redpoint.geometry.vertices[0].y).toString();
+		window.document.getElementById("footermsg").textContent=redpoint.userData.dem+"第"+redpoint.userData.j+"点，"+
+				"坐标" +redpoint.geometry.vertices[0].x+","+redpoint.geometry.vertices[0].y+
+				"		累距："+ coord.x.toString()+"	 高程: "+(coord.y+yMin).toString()+
+				"			Δx:	" +(coord.x-redpoint.geometry.vertices[0].x).toString()+
+				"	Δz:	"+(coord.y-redpoint.geometry.vertices[0].y).toString();
 	}
 
 	/* 初始化 */
