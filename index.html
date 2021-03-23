@@ -275,6 +275,131 @@
 	var columndataLeft = [{key: 'id', text: 'NO'}, {key: 'name', text: '型号/名称/图号'}];//表头
 	var columndataRight = [{key: 'name', text: '参数名称'}, {key: 'value', text: '参数数值'}];//表头
 
+	let mp={
+		"m_Ver": "TLCAD_MAP_FILE",
+		"m_VerIdent": 2008,
+		"m_Volumns": "NSCCJ-",
+		"m_MapName": "XXX输电线路工程",
+		"m_MapSubName": "",
+		"m_ObjectAttr": 0,
+		"m_ObjectName": "0:中心断面",
+		"m_ObjectAttrEx": 2001,
+		"m_HighSystem": "1956年黄海高程系",
+		"m_dScale": 2.828255100361637,
+		"m_DScale": 5000.0,
+		"m_HScale": 500.0,
+		"m_CScale": 1000.0,
+		"m_MapLength": 4225,
+		"m_MapWidth": 3509,
+		"m_prefixLength": 45,
+		"m_suffixlength": 0,
+		"m_mk": [
+			{
+				"From": 0.0,
+				"High": 1080.0,
+				"Bs": 0.0,
+				"As": 0.0
+			},
+			{
+				"From": 0.0,
+				"High": 0.0,
+				"Bs": 0.0,
+				"As": 0.0
+			},
+			{
+				"From": 0.0,
+				"High": 0.0,
+				"Bs": 0.0,
+				"As": 0.0
+			},
+			{
+				"From": 0.0,
+				"High": 0.0,
+				"Bs": 0.0,
+				"As": 0.0
+			},
+			{
+				"From": 0.0,
+				"High": 0.0,
+				"Bs": 0.0,
+				"As": 0.0
+			},
+			{
+				"From": 0.0,
+				"High": 0.0,
+				"Bs": 0.0,
+				"As": 0.0
+			},
+			{
+				"From": 0.0,
+				"High": 0.0,
+				"Bs": 0.0,
+				"As": 0.0
+			}
+		],
+		"m_markCount": 1,
+		"m_From": 0.0,
+		"m_To": 20900.0,
+		"m_Frame": [
+			40,
+			45,
+			50,
+			55,
+			60,
+			65,
+			70,
+			80,
+			90,
+			95,
+			100,
+			110,
+			130,
+			155,
+			170
+		],
+		"m_Table": 0,
+		"m_TablePosition": 0,
+		"m_TableType": 0,
+		"m_TabHigh": 0,
+		"m_StandardFrame": 0,
+		"m_CircleFrame": 0,
+		"m_SignFrame": 0,
+		"m_ShowProfile": 1,
+		"m_ShowSurveyPoint": 1,
+		"m_ShowPointName": 1,
+		"m_ShowPointY": 0,
+		"m_showAllPoint": 0,
+		"m_ShowPowerLine": 1,
+		"m_showNoTower": 0,
+		"m_ShowSafeLine": 0,
+		"m_ShowCrossLine": 0,
+		"m_ShowGPile": 0,
+		"m_ShowZPile": 0,
+		"m_ShowJPile": 1,
+		"m_ShowTower": 1,
+		"m_ShowMainGrid": 1,
+		"m_ShowSubGrid": 0,
+		"m_pGrid": 2,
+		"m_hGrid": 2,
+		"m_Grid": 20,
+		"m_HZ": "仿宋_GB2312",
+		"m_StartPile": "J1",
+		"m_StartDistance": 0.0,
+		"m_StartHigh": 100.0,
+		"m_Count": 100,
+		"m_Current": 1,
+		"m_CurrentDesign": 0,
+		"m_TurnAngle": 2,
+		"m_TurnAngle2": 2,
+		"m_DisplayFromX": 0.0,
+		"m_DisplayFromZ": 2157.0,
+		"m_DisplayToX": 1530.0,
+		"m_DisplayToZ": 2297.0,
+		"m_sideWidth": 15.0,
+		"m_planUp": 0.0,
+		"m_selSize": 6,
+		"m_dynamicPlan": 0
+	}
 
 // mptable init
 	{
@@ -618,37 +743,51 @@
 	})
 	//后台数据下载到本地
 
+	let drawintial = [];
+	drawintial.push(mp.m_Volumns);	drawintial.push(mp.m_MapWidth);	drawintial.push(mp.m_suffixlength);
+	drawintial.push(mp.m_From);	drawintial.push(mp.m_To);	drawintial.push(mp.m_To-mp.m_From);
+	drawintial.push(mp.m_Grid);	drawintial.push(mp.m_pGrid);	drawintial.push(mp.m_hGrid);
+	drawintial.push(mp.m_ShowMainGrid);	drawintial.push(mp.m_ShowSubGrid);	drawintial.push(mp.m_dynamicPlan);
+	drawintial.push(mp.m_showNoTower);	drawintial.push(mp.m_ShowTower);	drawintial.push(mp.m_ShowCrossLine);
+	drawintial.push(mp.m_ShowSafeLine);	drawintial.push(mp.m_ShowZPile);	drawintial.push(mp.m_ShowJPile);
+	drawintial.push(mp.m_ShowGPile);
+	drawintial.push(mp.m_DScale);	drawintial.push(mp.m_HScale);drawintial.push(mp.m_CScale);
+	drawintial.push(mp.m_StandardFrame);	drawintial.push(mp.m_CircleFrame);drawintial.push(mp.m_SignFrame);
+	drawintial.push(mp.m_showAllPoint);	drawintial.push(mp.m_ShowSurveyPoint);drawintial.push(mp.m_ShowPointName);drawintial.push(mp.m_ShowPointY);
+	drawintial.push(mp.m_sideWidth);	drawintial.push(mp.m_HighSystem);
+
+	console.log(drawintial);
 	$("#drawingpara").click(function(){
 		layer.open({
 			type:2,
 			title:'图纸参数',
-			area:['500px','650px'],
+			area:['700px','360px'],
 			maxmin:true,
 			content:'./drawingpara.html',
 			success:function (layero,index) {
 				console.log(layero,index);
 				var body = layer.getChildFrame('body',index);
 				console.log(body);
+				let i=0;
+				body.find('input').each(function () {
+					if($(this).attr("type")=="checkbox"){
+							if(drawintial[i]==1){
+								console.log(drawintial[i]);
+								$(this).prop("checked","true");
+							}
+							//else $(this).prop("checked","false");
+					}
+					else $(this).val(drawintial[i]);
+					i++;
+				})
 			}
 		})
 	})
 
-let m_prefixLength = 45;
-let m_Frame=[40,
-	45,
-	50,
-	55,
-	60,
-	65,
-	70,
-	80,
-	90,
-	95,
-	100,
-	110,
-	130,
-	155,
-	170]
+	window.updatedrawing=function(drawpara) {
+		console.log(drawpara);
+	}
+
 	$("#framepara").click(function(){
 		layer.open({
 			type:2,
@@ -662,19 +801,18 @@ let m_Frame=[40,
 				console.log(body);
 				var inputList = body.find('input');
 				for (var j = 0; j < inputList.length-1; j++) {			//把父页面的数据放到子页面的input框中
-					body.find(inputList[j]).val(m_Frame[14-j]-m_Frame[14-j-1]);
+					body.find(inputList[j]).val(mp.m_Frame[14-j]-mp.m_Frame[14-j-1]);
 				}
-				body.find(inputList[14]).val(m_Frame[0]);
-				body.find(inputList[15]).val(m_prefixLength);
+				body.find(inputList[14]).val(mp.m_Frame[0]);
+				body.find(inputList[15]).val(mp.m_prefixLength);
 			}
 		})
 	})
 
 	window.updatemp=function(mppara) {
-		m_prefixLength=mppara.m_prefixLength;
-		m_Frame=mppara.m_Frame;
-		console.log(m_prefixLength);
-		console.log(m_Frame);
+		mp.m_prefixLength = mppara.m_prefixLength;
+		mp.m_Frame = mppara.m_Frame;
+		console.log(mp);
 	}
 
 
@@ -5730,19 +5868,20 @@ let m_Frame=[40,
 	var mouse = new THREE.Vector2();
 
 	function getIntersects(event) {
-		mouse.x = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
-		mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
+		if(mainCanvas!=null) {
+			mouse.x = ((event.clientX - mainCanvas.getBoundingClientRect().left) / mainCanvas.offsetWidth) * 2 - 1;
+			mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top) / mainCanvas.offsetHeight) * 2 + 1;
 
-		var normal = new THREE.Vector3(0, 0, 1);
-		var planeGround = new THREE.Plane(normal, 0);//创建平面
+			var normal = new THREE.Vector3(0, 0, 1);
+			var planeGround = new THREE.Plane(normal, 0);//创建平面
 
-		raycaster.setFromCamera(mouse, camera);//从相机发出一条射线经过鼠标点击的位置
-		var ray = raycaster.ray;//获取射线
-		var intersects = new THREE.Vector3();
-		intersects = ray.intersectPlane(planeGround,intersects);//计算相机到射线的对象，可能有多个对象，返回一个数组，按照距离相机远近排列
+			raycaster.setFromCamera(mouse, camera);//从相机发出一条射线经过鼠标点击的位置
+			var ray = raycaster.ray;//获取射线
+			var intersects = new THREE.Vector3();
+			intersects = ray.intersectPlane(planeGround, intersects);//计算相机到射线的对象，可能有多个对象，返回一个数组，按照距离相机远近排列
 
-		return	intersects;
-
+			return intersects;
+		}
 		// const mouseVector = new THREE.Vector3();
 		// mouseVector.set(mouse.x,mouse.y,0.5);
 		// raycaster.setFromCamera(mouseVector,camera);
@@ -6073,8 +6212,8 @@ let m_Frame=[40,
 				scene.remove(scene.children[i]);
 			}
 		}
-		console.log("clear redpoint");
-		console.log(scene.children);
+		// console.log("clear redpoint");
+		// console.log(scene.children);
 		if(selectedPoint){
 			console.log("change visiual");
 			console.log(selectedPoint);
@@ -6083,6 +6222,7 @@ let m_Frame=[40,
 		}
 		const intersects = getIntersectsMapObj(event);
 
+		if(intersects==undefined) return ;
 		const coord_inter =getIntersects(event);
 
 		console.log("mouse position");
@@ -6137,6 +6277,7 @@ let m_Frame=[40,
 	}
 	function getIntersectsMapObj(event){
 
+		if(mainCanvas==null) return undefined;
 		mouse.x = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
 		mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
 		const mouseVector = new THREE.Vector3();
@@ -6170,18 +6311,25 @@ let m_Frame=[40,
 	}
 	function onDocumentMsg(event){
 		var coord = getIntersects(event);
+
 		var redpoint;
-		//console.log("x,z",coord.x,coord.y);
-		for(let i=0;i<scene.children.length;i++){
-			if(scene.children[i].name=="redpoint"){redpoint=scene.children[i];console.log(redpoint.userData);break;}
+		if(coord!=undefined) {
+			//console.log("x,z",coord.x,coord.y);
+			for (let i = 0; i < scene.children.length; i++) {
+				if (scene.children[i].name == "redpoint") {
+					redpoint = scene.children[i];
+					console.log(redpoint.userData);
+					break;
+				}
+			}
+			//console.log(redpoint.userData);
+			window.document.getElementById("footermsg").textContent = "		累距：" + coord.x.toString() + "	 高程: " + (coord.y + yMin).toString();
+			window.document.getElementById("footermsg").textContent = redpoint.userData.dem + "第" + redpoint.userData.j + "点，" +
+					"坐标" + redpoint.geometry.vertices[0].x + "," + redpoint.geometry.vertices[0].y +
+					"		累距：" + coord.x.toString() + "	 高程: " + (coord.y + yMin).toString() +
+					"			Δx:	" + (coord.x - redpoint.geometry.vertices[0].x).toString() +
+					"	Δz:	" + (coord.y - redpoint.geometry.vertices[0].y).toString();
 		}
-		//console.log(redpoint.userData);
-		window.document.getElementById("footermsg").textContent = "		累距："+ coord.x.toString()+"	 高程: "+(coord.y+yMin).toString();
-		window.document.getElementById("footermsg").textContent=redpoint.userData.dem+"第"+redpoint.userData.j+"点，"+
-				"坐标" +redpoint.geometry.vertices[0].x+","+redpoint.geometry.vertices[0].y+
-				"		累距："+ coord.x.toString()+"	 高程: "+(coord.y+yMin).toString()+
-				"			Δx:	" +(coord.x-redpoint.geometry.vertices[0].x).toString()+
-				"	Δz:	"+(coord.y-redpoint.geometry.vertices[0].y).toString();
 	}
 
 	/* 初始化 */

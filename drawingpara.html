@@ -6,84 +6,171 @@
 </head>
 <body>
 
-
-<!--<div style="width: 200px">-->
-<!--    <div class="layui-form-item" style="display: inline-block">-->
-<!--        <label class="layui-form-label" style="width: 20%">卷册号</label>-->
-<!--        <input type="text"  required  lay-verify="required" autocomplete="off" class="layui-input" style="float: right;width: 60%;">-->
-<!--    </div>-->
-<!--    <div class="layui-form-item" style="display: inline-block">-->
-<!--        <label class="layui-form-label" style="width: 20%">卷册号</label>-->
-<!--        <input type="text"  required  lay-verify="required" autocomplete="off" class="layui-input" style="float: right;width: 60%;">-->
-<!--    </div>-->
-<!--    <div class="layui-form-item" style="display: inline-block">-->
-<!--        <label class="layui-form-label" style="width: 20%">卷册号</label>-->
-<!--        <input type="text"  required  lay-verify="required" autocomplete="off" class="layui-input" style="float: right;width: 60%;">-->
-<!--    </div>-->
-<!--</div>-->
-
-
+<div style="width:650px;height:150px;">
     <div style="float: left;width: 200px;padding: 2px;" >
-        <div class="layui-form-item">
-            <div class="layui-input-block">
-                <label class="layui-form-label" >卷册号</label>
-                <input type="text" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="float:right;width: 40%">
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <label class="layui-form-label" >卷册号</label>
+                    <input type="text" lay-verify="required" class="layui-input" style="float:right;width: 40%">
+                </div>
             </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label" style="float: left">图纸宽度mm</label>
-            <div class="layui-input-block">
-                <input type="text" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="float:right;width: 40%">
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="float: left">图纸宽度mm</label>
+                <div class="layui-input-block">
+                    <input type="text" lay-verify="required" class="layui-input" style="float:right;width: 40%">
+                </div>
             </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label" style="float: left">增加长度mm</label>
-            <div class="layui-input-block">
-                <input type="text" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="float:right;width: 40%">
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="float: left">增加长度mm</label>
+                <div class="layui-input-block">
+                    <input type="text" lay-verify="required" class="layui-input" style="float:right;width: 40%">
+                </div>
             </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label" style="float: left">起点累距 m</label>
-            <div class="layui-input-block">
-                <input type="text" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="float:right;width: 40%">
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="float: left">起点累距 m</label>
+                <div class="layui-input-block">
+                    <input type="text" lay-verify="required" class="layui-input" style="float:right;width: 40%">
+                </div>
             </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label" style="float: left">终点累距 m</label>
-            <div class="layui-input-block">
-                <input type="text" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="float:right;width: 40%">
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="float: left">终点累距 m</label>
+                <div class="layui-input-block">
+                    <input type="text" lay-verify="required" class="layui-input" style="float:right;width: 40%">
+                </div>
             </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label" style="float: left">累距长度 m</label>
-            <div class="layui-input-block">
-                <input type="text" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="float:right;width: 40%">
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="float: left">累距长度 m</label>
+                <div class="layui-input-block">
+                    <input type="text" lay-verify="required" class="layui-input" style="float:right;width: 40%">
+                </div>
             </div>
+
         </div>
 
+    <div style="width: 200px;float: left;padding: 2px;">
+        <div style="display: inline-block" >
+            <label class="layui-form-label" >主格网线间距mm</label>
+            <input type="text" lay-verify="required" class="layui-input" style="width: 20%;float:right;">
+        </div>
+        <div style="display: inline-block">
+            <label class="layui-form-label" >平面格网点间距</label>
+            <input type="text" lay-verify="required" class="layui-input" style="width: 20%;float:right;">
+        </div>
+        <div style="display: inline-block">
+            <label class="layui-form-label" >断面格网点间距</label>
+            <input type="text" lay-verify="required" class="layui-input" style="width: 20%;float:right;">
+        </div>
+        <div style="display: inline-block">
+            <input type="checkbox" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 50px;float:left;">
+            <label class="layui-form-label" >显示主格网线</label>
+        </div>
+        <div style="display: inline-block">
+            <input type="checkbox" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 50px;float:left;">
+            <label class="layui-form-label" >显示细格网线</label>
+        </div>
+        <div style="display: inline-block">
+            <input type="checkbox" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 50px;float:left;">
+            <label class="layui-form-label" >平面跟随断面</label>
+        </div>
     </div>
 
-<div style="width: 250px;float: left;padding: 2px;">
-    <div class="layui-form-item">
-        <div class="layui-input-block">
-            <label class="layui-form-label" >主格网线间距mm</label>
-            <input type="text" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 50px">
+    <div style="width: 200px;float: left;padding: 2px;">
+        <div style="display: inline-block">
+            <input type="checkbox" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 50px;float:left;">
+            <label class="layui-form-label" >显示优化排位设置</label>
         </div>
-        <div class="layui-input-block">
-            <label class="layui-form-label" >平面网格点间距</label>
-            <input type="text" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 50px;">
-
+        <div style="display: inline-block">
+            <input type="checkbox" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 50px;float:left;">
+            <label class="layui-form-label" >显示排位信息</label>
         </div>
-        <div class="layui-input-block">
-            <label class="layui-form-label" >断面网格点间距</label>
-            <input type="text" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 50px;">
-
+        <div style="display: inline-block">
+            <input type="checkbox" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 50px;float:left;">
+            <label class="layui-form-label" >显示导线跨越</label>
         </div>
+        <div style="display: inline-block">
+            <input type="checkbox" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 50px;float:left;">
+            <label class="layui-form-label" >显示导线对地</label>
+        </div>
+        <div style="display: inline-block">
+            <input type="checkbox" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 50px;float:left;">
+            <label class="layui-form-label" >显示直线桩位</label>
+        </div>
+        <div style="display: inline-block">
+            <input type="checkbox" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 50px;float:left;">
+            <label class="layui-form-label" >显示转角桩位</label>
+        </div>
+        <div style="display: inline-block">
+            <input type="checkbox" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 50px;float:left;">
+            <label class="layui-form-label" >显示杆塔位置</label>
+        </div>
+    </div>
+</div>
+<div style="width: 650px;height: 100px;">
+    <div style="width: 200px;float: left;padding: 2px;">
+        <div style="display: inline-block" >
+            <label class="layui-form-label" >平面比例</label>
+            <input type="text" lay-verify="required" class="layui-input" style="width: 20%;float:right;">
+        </div>
+        <div style="display: inline-block">
+            <label class="layui-form-label" >高程比例</label>
+            <input type="text" lay-verify="required" class="layui-input" style="width: 20%;float:right;">
+        </div>
+        <div style="display: inline-block">
+            <label class="layui-form-label" >横断面比例尺</label>
+            <input type="text" lay-verify="required" class="layui-input" style="width: 20%;float:right;">
+        </div>
+    </div>
 
+    <div style="width: 200px;float:left;padding: 2px;">
+        <div style="display: inline-block">
+            <input type="checkbox" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 50px;float:left;">
+            <label class="layui-form-label" >显示标准卷册框</label>
+        </div>
+        <div style="display: inline-block">
+            <input type="checkbox" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 50px;float:left;">
+            <label class="layui-form-label" >显示圆形卷册框</label>
+        </div>
+        <div style="display: inline-block">
+            <input type="checkbox" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 50px;float:left;">
+            <label class="layui-form-label" >显示签名框</label>
+        </div>
+    </div>
+
+    <div style="width:200px;float: left;padding: 2px;">
+        <div style="display: inline-block">
+            <input type="checkbox" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 50px;float:left;">
+            <label class="layui-form-label" >显示所有地物点</label>
+        </div>
+        <div style="display: inline-block">
+            <input type="checkbox" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 50px;float:left;">
+            <label class="layui-form-label" >显示测量点</label>
+        </div>
+        <div style="display: inline-block">
+            <input type="checkbox" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 50px;float:left;">
+            <label class="layui-form-label" >显示测量点代码</label>
+        </div>
+        <div style="display: inline-block">
+            <input type="checkbox" name="sampledist" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 50px;float:left;">
+            <label class="layui-form-label" >显示测量点偏距</label>
+        </div>
     </div>
 </div>
 
+<div style="width: 650px;height: 30px;">
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <label class="layui-form-label" >边线宽度 m</label>
+            <input type="text" lay-verify="required" class="layui-input" style="width: 50px">
+            <label class="layui-form-label" >高程系统</label>
+            <input type="text" lay-verify="required" class="layui-input" style="width: 40%;">
+        </div>
+    </div>
+</div>
 
+<div class="layui-layer-btn" style="width:650px;display: flex;justify-content: space-around;">
+    <button class="layui-layer-btn layui-layer-close" onclick="mpUpdate()">ok</button>
+    <button class="layui-layer-btn layui-btn-primary">cancel</button>
+</div>
 
 </body>
 </html>
