@@ -80,6 +80,12 @@
 				<ul>
 					<li><a href="#"><label id="designparameter">设计参数</label></a></li>
 				</ul>
+				<ul>
+					<li><a href="#"><label id="framepara">图框参数</label></a></li>
+				</ul>
+				<ul>
+					<li><a href="#"><label id="drawingpara">图纸参数</label></a></li>
+				</ul>
 			</dd>
 		</dl>
 		<dl id="menu-input">
@@ -126,6 +132,53 @@
 		</div>
 	</div>
 </aside>
+<div class ="designParam" id="piletable" style="height: 400px;">
+	<div>
+		<h4 style="margin-left: 2%;" id="piletable_title">转角直线表</h4>
+	</div>
+
+	<table id="mpile_table"></table>
+	<div class="line" style="outline-color: #1b1b1b;line-height: 5px;">-----</div>
+	<div style="display: inline;">
+		<!--		<button class="input-file" id="opentxt">文件上传</button>-->
+
+			<button class="xbutton xround"  style="margin-left:5px;">		<input type="file" id ="tb_pile_input"> </button>
+			<button class="xbutton xround" id="tb_pile_calc" style="text-align-last: right">计算</button>
+			<button class="xbutton xround" id="tb-pile-save" style="text-align-last: right">保存</button>
+			<button class="xbutton xround close_btn" id="closeTable"style="text-align-last: right">关闭</button>
+
+	</div>
+</div>
+<div class ="designParam" id="towerlisttable" style="height: 400px;">
+	<div>
+		<h4 style="margin-left: 2%;" id="towerlisttable_title">杆塔排位成果表</h4>
+	</div>
+	<table id="towerlist_table"></table>
+	<div style="text-align-last:right">
+		<button class="xbutton xround" id="tb-towerlist-calc" style="text-align-last: right">计算</button>
+		<button class="xbutton xround close_btn" id="towerlistcloseTable"style="text-align-last: right">关闭</button>
+	</div>
+</div>
+
+
+<!--<div id="modal-demo" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
+<!--	<div class="modal-dialog">-->
+<!--		<div class="modal-content radius">-->
+<!--			<div class="modal-header">-->
+<!--				<h3 class="modal-title">对话框标题</h3>-->
+<!--				<a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void(0);">×</a>-->
+<!--			</div>-->
+<!--			<div class="modal-body">-->
+<!--				<p>对话框内容…</p>-->
+<!--			</div>-->
+<!--			<div class="modal-footer">-->
+<!--				<button class="btn btn-primary">确定</bu	tton>-->
+<!--				<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--	</div>-->
+<!--</div>-->
+
 <div class="designParam" id="Paramtable">
 	<div class = "designParamtitle">
 		<h2 id="h2title">详细设计参数</h2>
@@ -565,6 +618,64 @@
 	})
 	//后台数据下载到本地
 
+	$("#drawingpara").click(function(){
+		layer.open({
+			type:2,
+			title:'图纸参数',
+			area:['500px','650px'],
+			maxmin:true,
+			content:'./drawingpara.html',
+			success:function (layero,index) {
+				console.log(layero,index);
+				var body = layer.getChildFrame('body',index);
+				console.log(body);
+			}
+		})
+	})
+
+let m_prefixLength = 45;
+let m_Frame=[40,
+	45,
+	50,
+	55,
+	60,
+	65,
+	70,
+	80,
+	90,
+	95,
+	100,
+	110,
+	130,
+	155,
+	170]
+	$("#framepara").click(function(){
+		layer.open({
+			type:2,
+			title:'图框参数',
+			area:['500px','650px'],
+			maxmin:true,
+			content:'./framepara.html',
+			success:function (layero,index) {
+				console.log(layero,index);
+				var body = layer.getChildFrame('body',index);
+				console.log(body);
+				var inputList = body.find('input');
+				for (var j = 0; j < inputList.length-1; j++) {			//把父页面的数据放到子页面的input框中
+					body.find(inputList[j]).val(m_Frame[14-j]-m_Frame[14-j-1]);
+				}
+				body.find(inputList[14]).val(m_Frame[0]);
+				body.find(inputList[15]).val(m_prefixLength);
+			}
+		})
+	})
+
+	window.updatemp=function(mppara) {
+		m_prefixLength=mppara.m_prefixLength;
+		m_Frame=mppara.m_Frame;
+		console.log(m_prefixLength);
+		console.log(m_Frame);
+	}
 
 
 	// DEM断面提取layer
@@ -6039,7 +6150,7 @@
 		if(raycaster.intersectObjects(l_linegroup.children,true)[0]!=undefined){obj.push(raycaster.intersectObjects(l_linegroup.children,true)[0]);}
 		if(raycaster.intersectObjects(r_linegroup.children,true)[0]!=undefined){obj.push(raycaster.intersectObjects(r_linegroup.children,true)[0]);}
 
-		console.log(obj);
+		//console.log(obj);
 		return obj;
 	}
 
