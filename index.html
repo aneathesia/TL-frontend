@@ -743,21 +743,23 @@
 	})
 	//后台数据下载到本地
 
-	let drawintial = [];
-	drawintial.push(mp.m_Volumns);	drawintial.push(mp.m_MapWidth);	drawintial.push(mp.m_suffixlength);
-	drawintial.push(mp.m_From);	drawintial.push(mp.m_To);	drawintial.push(mp.m_To-mp.m_From);
-	drawintial.push(mp.m_Grid);	drawintial.push(mp.m_pGrid);	drawintial.push(mp.m_hGrid);
-	drawintial.push(mp.m_ShowMainGrid);	drawintial.push(mp.m_ShowSubGrid);	drawintial.push(mp.m_dynamicPlan);
-	drawintial.push(mp.m_showNoTower);	drawintial.push(mp.m_ShowTower);	drawintial.push(mp.m_ShowCrossLine);
-	drawintial.push(mp.m_ShowSafeLine);	drawintial.push(mp.m_ShowZPile);	drawintial.push(mp.m_ShowJPile);
-	drawintial.push(mp.m_ShowGPile);
-	drawintial.push(mp.m_DScale);	drawintial.push(mp.m_HScale);drawintial.push(mp.m_CScale);
-	drawintial.push(mp.m_StandardFrame);	drawintial.push(mp.m_CircleFrame);drawintial.push(mp.m_SignFrame);
-	drawintial.push(mp.m_showAllPoint);	drawintial.push(mp.m_ShowSurveyPoint);drawintial.push(mp.m_ShowPointName);drawintial.push(mp.m_ShowPointY);
-	drawintial.push(mp.m_sideWidth);	drawintial.push(mp.m_HighSystem);
 
-	console.log(drawintial);
+
 	$("#drawingpara").click(function(){
+
+		let drawintial = [];
+		drawintial.push(mp.m_Volumns);	drawintial.push(mp.m_MapWidth);	drawintial.push(mp.m_suffixlength);
+		drawintial.push(mp.m_From);	drawintial.push(mp.m_To);	drawintial.push(mp.m_To-mp.m_From);
+		drawintial.push(mp.m_Grid);	drawintial.push(mp.m_pGrid);	drawintial.push(mp.m_hGrid);
+		drawintial.push(mp.m_ShowMainGrid);	drawintial.push(mp.m_ShowSubGrid);	drawintial.push(mp.m_dynamicPlan);
+		drawintial.push(mp.m_showNoTower);	drawintial.push(mp.m_ShowTower);	drawintial.push(mp.m_ShowCrossLine);
+		drawintial.push(mp.m_ShowSafeLine);	drawintial.push(mp.m_ShowZPile);	drawintial.push(mp.m_ShowJPile);
+		drawintial.push(mp.m_ShowGPile);
+		drawintial.push(mp.m_DScale);	drawintial.push(mp.m_HScale);drawintial.push(mp.m_CScale);
+		drawintial.push(mp.m_StandardFrame);	drawintial.push(mp.m_CircleFrame);drawintial.push(mp.m_SignFrame);
+		drawintial.push(mp.m_showAllPoint);	drawintial.push(mp.m_ShowSurveyPoint);drawintial.push(mp.m_ShowPointName);drawintial.push(mp.m_ShowPointY);
+		drawintial.push(mp.m_sideWidth);	drawintial.push(mp.m_HighSystem);
+
 		layer.open({
 			type:2,
 			title:'图纸参数',
@@ -784,8 +786,19 @@
 		})
 	})
 
-	window.updatedrawing=function(drawpara) {
-		console.log(drawpara);
+	window.updatedrawing=function(draw_list) {
+		mp.m_Volumns=draw_list[0];	mp.m_MapWidth=draw_list[1];	mp.m_suffixlength=draw_list[2];
+		mp.m_From=draw_list[3];	mp.m_To=draw_list[4];	//mp.m_To-mp.m_From=draw_list[5];
+		mp.m_Grid=draw_list[6];	mp.m_pGrid=draw_list[7];	mp.m_hGrid=draw_list[8];
+		mp.m_ShowMainGrid=draw_list[9];	mp.m_ShowSubGrid=draw_list[10];	mp.m_dynamicPlan=draw_list[11];
+		mp.m_showNoTower=draw_list[12];	mp.m_ShowTower=draw_list[13];	mp.m_ShowCrossLine=draw_list[14];
+		mp.m_ShowSafeLine=draw_list[15];	mp.m_ShowZPile=draw_list[16];	mp.m_ShowJPile=draw_list[17];
+		mp.m_ShowGPile=draw_list[18];
+		mp.m_DScale=draw_list[19];	mp.m_HScale=draw_list[20];mp.m_CScale=draw_list[21];
+		mp.m_StandardFrame=draw_list[22];	mp.m_CircleFrame=draw_list[23];mp.m_SignFrame=draw_list[24];
+		mp.m_showAllPoint=draw_list[25];	mp.m_ShowSurveyPoint=draw_list[26];mp.m_ShowPointName=draw_list[27];mp.m_ShowPointY=draw_list[28];
+		mp.m_sideWidth=draw_list[29];	mp.m_HighSystem=draw_list[30];
+		console.log(mp);
 	}
 
 	$("#framepara").click(function(){

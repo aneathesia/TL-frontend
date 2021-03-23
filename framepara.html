@@ -74,7 +74,7 @@
             <button class="layui-layer-btn layui-layer-close" onclick="mpUpdate()">确认修改</button>
         </div>
         <div class="layui-input-block">
-            <button type="reset" class="layui-layer-btn layui-btn-primary">取消操作</button>
+            <button type="reset" class="layui-layer-btn layui-btn-primary"  onclick="mpclose()">取消操作</button>
         </div>
     </div>
 
@@ -85,7 +85,7 @@
         let mp_list=[];
         let framepara = [];
         function mpUpdate(){
-
+            mp_list =[];
             $(".layui-input").each(function () {   //获取同类型 layer input
                 mp_list.push($(this).val());
             })
@@ -98,7 +98,10 @@
             var mppara = {"m_prefixLength": mp_list[15], "m_Frame" : framepara }
             parent.updatemp(mppara);
             parent.layer.close(index);
-        }
+        };
+        function mpclose(){
+            parent.layer.close(index);
+        };
 
 
     </script>
