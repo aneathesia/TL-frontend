@@ -5218,7 +5218,7 @@
 			framegroup.remove(allChildren[i]);
 		}
 		yMin = 100; divisions = 10;verSize = 160;horSize = 300;
-		initContent();
+		window.initContent();
 		mainCanvas = document.querySelector("#iframe_box canvas");
 		console.log(mainCanvas);
 	})
@@ -5246,7 +5246,7 @@
 			framegroup.remove(allChildren[i]);
 		}
 		framegroup.remove(framegroup.children);
-		initContent();
+		window.initContent;
 	}
 
 	var scene, camera, renderer, controls, labelRenderer;
@@ -5306,9 +5306,12 @@
 	}
 
 	/* 图幅格网绘制 */
-	function initContent() {
+	window.initContent= function() {
 		scene.add(framegroup);
 
+		for (let i = 0; i < allChildren.length; i++){
+			framegroup.remove(allChildren[i]);
+		}
 		console.log(mp.m_Frame,verSize);
 		//外轮廓
 		var gridBound = new THREE.PlaneGeometry(horSize + 30,verSize + mp.m_Frame[14]  );
@@ -5382,17 +5385,18 @@
 				line.position.y = - (mp.m_Frame[14]-mp.m_Frame[9]); //设置line的位置
 
 				var gaocheng = createSprite("1956年黄海高程系","#ff0000",0,32,4.5,-20,Math.PI/2);
+				gaocheng
 				framegroup.add(gaocheng);
 				var planLine = line.clone();//平面图下边界
-				planLine.position.y = -(mp.m_Frame[14]-mp.m_Frame[6]);
-				var planeText = createSprite("平面图","#ff0000",0,32,1.5,(line.position.y+planLine.position.y)/2,0);
+				planLine.position.y = -(mp.m_Frame[14]-mp.m_Frame[5]);
+				var planeText = createSprite("平面图","#ff0000",0,100,1.5,(line.position.y+planLine.position.y)/2,0);  //100 mframe[]
 				framegroup.add(planeText);
 				var textArr = ["            桩间距离","               里程","               档距","            杆塔位置","   耐张段长/代表档距"];
-				for (let j = 5; j >=0 ; j--) {
+				for (let j = 4; j >=0 ; j--) {
 					var disLine = line.clone();//桩间距离下边界
 					disLine.position.y = -(mp.m_Frame[14]-mp.m_Frame[j]);
 					framegroup.add(disLine);
-					var note = createSprite(textArr[5-j],"#ff0000",0,32,-10,-(mp.m_Frame[14]-mp.m_Frame[j-2]),0);
+					var note = createSprite(textArr[4-j],"#ff0000",0,60,-10,-(mp.m_Frame[14]-mp.m_Frame[j]),0);
 					framegroup.add(note);
 				}
 				framegroup.add(planLine);
@@ -5404,11 +5408,11 @@
 		verGeometry.vertices.push(new THREE.Vector3(0, 0, 0)); //添加顶点
 		verGeometry.vertices.push(new THREE.Vector3(verSize , 0, 0));
 		var verBound = new THREE.Geometry();
-		verBound.vertices.push(new THREE.Vector3(0 - 4 * divisions-55, 0, 0)); //添加顶点
+		verBound.vertices.push(new THREE.Vector3(-mp.m_Frame[14], 0, 0)); //添加顶点
 		verBound.vertices.push(new THREE.Vector3(verSize , 0, 0));
 		var planGeo = new THREE.Geometry();
-		planGeo.vertices.push(new THREE.Vector3(10, -58, 0)); //添加顶点
-		planGeo.vertices.push(new THREE.Vector3(10 , -42, 0));
+		planGeo.vertices.push(new THREE.Vector3(0,mp.m_Frame[8]-mp.m_Frame[14], 0)); //添加顶点
+		planGeo.vertices.push(new THREE.Vector3(0, mp.m_Frame[6]-mp.m_Frame[14], 0));
 		verGeometry.verticesNeedUpdate = true;
 		verBound.verticesNeedUpdate = true;
 		for (var i = 0, len = horSize / divisions; i < len; i++) {
@@ -5428,8 +5432,10 @@
 			var planVer = new THREE.Line(planGeo, new THREE.LineBasicMaterial({color: 0x324132}));
 			planVer.name = "gridVer";
 			planVer.position.x = i*divisions;
+			//planVer.position.y = -(mp.m_Frame[14]-mp.m_Frame[]);
 			framegroup.add(planVer);
-			let x = createSprite(i,"#ff0000",0,32,19+i*divisions,-73,0);
+			let x = createSprite(i,"#ff0000",0,100,19+i*divisions,mp.m_Frame[4]-mp.m_Frame[14],0);
+
 			framegroup.add(x);
 		}
 		allChildren = [];
@@ -5497,7 +5503,7 @@
 		verSize = dif ;
 		xMax = (parseInt(DEM.RIGHT[DEM.RIGHT.length-1].Section[DEM.RIGHT[DEM.RIGHT.length-1].Section.length-1].x/10) + 1 ) * 10; //X last element
 		horSize = xMax/10;
-		initContent();
+		window.initContent();
 		// draw object group;
 		// 中心断面 object
 		var m_material = new THREE.LineBasicMaterial( { color: 0x000000 } );
@@ -5606,7 +5612,7 @@
 		xMax = (parseInt(x[x.length - 1]/10) + 1 ) * 10;
 		horSize = xMax/10;
 
-		initContent();
+		window.initContent();
 		// 中心断面 object
 		// var c_material = new THREE.LineBasicMaterial( { color: 0x000000 } );
 		// var c_lineframegroup = new Array();
@@ -6137,54 +6143,56 @@
 		}
 	}
 
-	/*    鼠标缩放移动事件     */
-	function onDocumentMouseWheel(event) {
-		let factor = 15;
-		//从鼠标位置转化为webgl屏幕坐标位置
-		let glScreenX = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
-		let glScreenY = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
-		let vector = new THREE.Vector3(glScreenX, glScreenY, 0);
-		//从屏幕向量转为3d空间向量
-		vector.unproject(camera);
-		let target = new THREE.Vector3(0, 0, 0);
-		//相机偏移量
-		vector.sub(camera.position).setLength(factor);
-		if (event.deltaY < 0) {
-			camera.position.add(vector);
-			target.add(vector);
-		} else {
-			camera.position.sub( vector);
-			target.sub(vector);
-		}
-		cameraZ = camera.position.z;
-		camera.updateProjectionMatrix();
-		renderer.render(scene, camera);
-		labelRenderer.render( scene, camera );
-	}
-	function onDocumentMouseDown(event) {
-		if (event.button != 1) return;
-		event.preventDefault();
-		document.addEventListener('mousemove', onDocumentMouseMove, false);
-		document.addEventListener('mouseup', onDocumentMouseUp, false);
-	}
-	function onDocumentMouseMove(event) {
-		var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-		var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
-		//console.log("x="+movementX+"   y="+movementY);
-		cameraX -= movementX * 0.5;
-		sceneX -= movementX * 0.5;
-		cameraY += movementY * 0.5;
-		sceneY += movementY * 0.5;
+		/*    鼠标缩放移动事件     */
+		function onDocumentMouseWheel(event) {
+			let factor = 60;
+			console.log(factor)
+			//从鼠标位置转化为webgl屏幕坐标位置
+			let glScreenX = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
+			let glScreenY = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
+			let vector = new THREE.Vector3(glScreenX, glScreenY, 0);
+			//从屏幕向量转为3d空间向量
+			vector.unproject(camera);
+			let target = new THREE.Vector3(0, 0, 0);
+			//相机偏移量
+			vector.sub(camera.position).setLength(factor);
+			if (event.deltaY < 0) {
+				camera.position.add(vector);
+				target.add(vector);
+			} else {
+				camera.position.sub( vector);
+				target.sub(vector);
+			}
 
-		// console.log(camera.fov);
-		//console.log(camera);
-		camera.position.set(cameraX, cameraY, cameraZ);
-		camera.lookAt(sceneX, sceneY, sceneZ);
-		camera.updateProjectionMatrix();
-		renderer.render(scene, camera);
-		labelRenderer.render( scene, camera );
-		var coord =getIntersects(event);
-	}
+			cameraX = camera.position.x;
+			cameraY = camera.position.y;
+			cameraZ = camera.position.z;
+
+			camera.updateProjectionMatrix();
+			renderer.render(scene, camera);
+			labelRenderer.render( scene, camera );
+		}
+		function onDocumentMouseDown(event) {
+			if (event.button != 1) return;
+			event.preventDefault();
+			document.addEventListener('mousemove', onDocumentMouseMove, false);
+			document.addEventListener('mouseup', onDocumentMouseUp, false);
+		}
+		function onDocumentMouseMove(event) {
+			var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+			var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+			cameraX -= movementX * 0.5;
+			sceneX -= movementX * 0.5;
+			cameraY += movementY * 0.5;
+			sceneY += movementY * 0.5;
+			cameraZ = camera.position.z;
+
+			camera.position.set(cameraX, cameraY, cameraZ);
+			// camera.lookAt(sceneX, sceneY, sceneZ);
+			camera.updateProjectionMatrix();
+			renderer.render(scene, camera);
+			labelRenderer.render( scene, camera );
+		}
 	function onDocumentMouseUp(event) {
 		document.removeEventListener('mousemove', onDocumentMouseMove);
 		document.removeEventListener('mouseup', onDocumentMouseUp);
