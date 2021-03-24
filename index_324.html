@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE HTML>
-<html>
+<>
 <head>
 	<meta charset="utf-8">
 	<meta name="renderer" content="webkit|ie-comp|ie-stand">
@@ -80,12 +80,6 @@
 				<ul>
 					<li><a href="#"><label id="designparameter">设计参数</label></a></li>
 				</ul>
-				<ul>
-					<li><a href="#"><label id="framepara">图框参数</label></a></li>
-				</ul>
-				<ul>
-					<li><a href="#"><label id="drawingpara">图纸参数</label></a></li>
-				</ul>
 			</dd>
 		</dl>
 		<dl id="menu-input">
@@ -101,10 +95,14 @@
 			<dt><i class="Hui-iconfont">&#xe647; </i><label id="hand"> 手工排位</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
 				<ul>
-					<li><a href="#"><label id="putTower">放置杆塔</label></a></li>
-					<li><a href="#"><label id="deleteTower">删除杆塔</label></a></li>
-					<!--					<li><a href="#"><label id="moveTower">移动杆塔</label></a></li>-->
-					<li><a href="#"><label id="saveTower">保存排杆</label></a></li>
+					<li id="putTower"><a href="#"><label>放置杆塔</label></a></li>
+					<li id="deleteTower"><a href="#"><label>删除杆塔</label></a></li>
+					<li id="moveTower"><a href="#"><label>移动杆塔</label></a></li>
+					<li id="insertTower"><a href="#"><label>插入杆塔</label></a></li>
+					<li id="riseTower"><a href="#"><label>升高杆塔</label></a></li>
+					<li id="fallTower"><a href="#"><label>降低杆塔</label></a></li>
+					<li id="editTower"><a href="#"><label>修改排杆</label></a></li>
+					<li id="saveTower"><a href="#"><label>保存排杆</label></a></li>
 				</ul>
 			</dd>
 		</dl>
@@ -132,6 +130,63 @@
 		</div>
 	</div>
 </aside>
+<!--排杆编辑-->
+<div class="tower_settings" id="towerset" style="display: none">
+	<h1 id="tower_settings_title">前进方向排杆</h1>
+	<form method="post" action="TL_BL.html" id="towInfor">
+		<p>基本耐张段长 <input style="width: 25%;" disabled="disabled" type="text" id="naizhang" value="0" placeholder=""></p>
+		<p>前侧代表档距 <input style="width: 25%;" disabled="disabled" type="text" id="dangju" value="0" placeholder=""></p>
+		<p>导线 最大K值 <input style="width: 25%;" disabled="disabled" type="text" id="maxK" value="7.333" placeholder=""></p>
+		<p>地线 最小K值 <input style="width: 25%;" disabled="disabled" type="text" id="minK" value="7.550" placeholder=""></p>
+		<p>编号 <input style="width: 25%;" type="text" id="towId" name="towId" value="G0" placeholder=""></p>
+		<p><input name="towType" type="radio" value="" checked="checked">直线塔 <input name="towType" type="radio" value="">转角塔 <input name="towType" type="radio" value="">门架</p>
+		<p>塔型
+			<select style="width: 40%;">
+				<option value ="ZMVA41">ZMVA41</option>
+			</select>
+			高
+			<select id="towerheight">
+				<option value ="45">45</option>
+				<option value ="42">42</option>
+				<option value ="39">39</option>
+				<option value ="36">36</option>
+				<option value ="33">33</option>
+				<option value ="30">30</option>
+				<option value ="27">27</option>
+				<option value ="24">24</option>
+			</select>
+		</p>
+		<p>累距 <input style="width: 32%;" type="text" id="dis" name="dis" value="0.00" placeholder=""> 基降 <input style="width: 22%;" type="text" id="flow" name="flow" value="0.0" placeholder=""></p>
+		<p>桩位
+			<select  id="pilelist" style="width: 35%;">
+			</select>
+			差距 <input style="width: 22%;" type="text" id="gap" name="gap" value="0" placeholder="">
+		</p>
+		<p>高程 <input style="width: 35%;" type="text" id="hei" name="hei" value="0.00" placeholder="">
+		<p class="confirm">
+			<input type="button" id="saveBtn" name="saveBtn" value="保存">
+			<input type="button" id="closeBtn" name="closeBtn" value="关闭">
+		</p>
+	</form>
+</div>
+<!--图纸参数-->
+<!--<div class="frame_settings">
+	<h1>图纸参数</h1>
+	<form method="post" action="TL_BL.html" id="submitForm">
+		<div class="frames">
+			<p>图纸宽度mm <input type="text" id="frameWid" name="frameWid" value="" placeholder="500"></p>
+			<p>终点累距m <input type="text" id="sumDis" name="sumDis" value="" placeholder="3000"></p>
+		</div>
+		<div class="grid">
+			<p>主格网线间距mm <input type="text" id="gridDis" name="gridDis" value="" placeholder="20"></p>
+			<p><input type="checkbox" name="checkbox" id="showGrid" checked="checked"><span>显示主格网线</span></p>
+		</div>
+		<p class="confirm">
+			<input type="button" id="confirmBtn" name="confirmBtn" value="ok" onclick="confirmOk()">
+			<input type="button" id="exitBtn" name="exit" value="cancel">
+		</p>
+	</form>
+</div>-->
 <div class ="designParam" id="piletable" style="height: 400px;">
 	<div>
 		<h4 style="margin-left: 2%;" id="piletable_title">转角直线表</h4>
@@ -159,8 +214,7 @@
 		<button class="xbutton xround close_btn" id="towerlistcloseTable"style="text-align-last: right">关闭</button>
 	</div>
 </div>
-
-
+//modal demp
 <!--<div id="modal-demo" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
 <!--	<div class="modal-dialog">-->
 <!--		<div class="modal-content radius">-->
@@ -172,7 +226,7 @@
 <!--				<p>对话框内容…</p>-->
 <!--			</div>-->
 <!--			<div class="modal-footer">-->
-<!--				<button class="btn btn-primary">确定</bu	tton>-->
+<!--				<button class="btn btn-primary">确定</button>-->
 <!--				<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>-->
 <!--			</div>-->
 <!--		</div>-->
@@ -234,9 +288,6 @@
 	</footer>
 </section>
 
-
-
-
 <script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
 <script src="https://cdn.bootcss.com/FileSaver.js/2014-11-29/FileSaver.js"></script>
 <script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
@@ -246,11 +297,11 @@
 <script type="text/javascript" src="./js/movediv.js"></script>
 <script type="text/javascript" src="./js/three.js"></script>
 <script type="text/javascript" src="./js/gm.js"></script>
+<script src="./js/DragControls1.js"></script>
 
 
 <script type="module">
 	import { CSS2DRenderer, CSS2DObject } from './js/CSS2DRenderer.js';
-	//import {Points} from "./js/three.module";
 
 	//系统设置
 	var prjName;//新建工程名
@@ -259,6 +310,7 @@
 	var data = [];
 	var towerHei = 45;//塔高
 	var towerlist = [];//塔组
+	var m_start,m_end;
 	var wirelist = [];//导线组
 	var savedJson = {"DEM":"","GEO":"","pwf":"","prk":"","Lao":""};//保存json
 
@@ -275,131 +327,6 @@
 	var columndataLeft = [{key: 'id', text: 'NO'}, {key: 'name', text: '型号/名称/图号'}];//表头
 	var columndataRight = [{key: 'name', text: '参数名称'}, {key: 'value', text: '参数数值'}];//表头
 
-	let mp={
-		"m_Ver": "TLCAD_MAP_FILE",
-		"m_VerIdent": 2008,
-		"m_Volumns": "NSCCJ-",
-		"m_MapName": "XXX输电线路工程",
-		"m_MapSubName": "",
-		"m_ObjectAttr": 0,
-		"m_ObjectName": "0:中心断面",
-		"m_ObjectAttrEx": 2001,
-		"m_HighSystem": "1956年黄海高程系",
-		"m_dScale": 2.828255100361637,
-		"m_DScale": 5000.0,
-		"m_HScale": 500.0,
-		"m_CScale": 1000.0,
-		"m_MapLength": 4225,
-		"m_MapWidth": 3509,
-		"m_prefixLength": 45,
-		"m_suffixlength": 0,
-		"m_mk": [
-			{
-				"From": 0.0,
-				"High": 1080.0,
-				"Bs": 0.0,
-				"As": 0.0
-			},
-			{
-				"From": 0.0,
-				"High": 0.0,
-				"Bs": 0.0,
-				"As": 0.0
-			},
-			{
-				"From": 0.0,
-				"High": 0.0,
-				"Bs": 0.0,
-				"As": 0.0
-			},
-			{
-				"From": 0.0,
-				"High": 0.0,
-				"Bs": 0.0,
-				"As": 0.0
-			},
-			{
-				"From": 0.0,
-				"High": 0.0,
-				"Bs": 0.0,
-				"As": 0.0
-			},
-			{
-				"From": 0.0,
-				"High": 0.0,
-				"Bs": 0.0,
-				"As": 0.0
-			},
-			{
-				"From": 0.0,
-				"High": 0.0,
-				"Bs": 0.0,
-				"As": 0.0
-			}
-		],
-		"m_markCount": 1,
-		"m_From": 0.0,
-		"m_To": 20900.0,
-		"m_Frame": [
-			40,
-			45,
-			50,
-			55,
-			60,
-			65,
-			70,
-			80,
-			90,
-			95,
-			100,
-			110,
-			130,
-			155,
-			170
-		],
-		"m_Table": 0,
-		"m_TablePosition": 0,
-		"m_TableType": 0,
-		"m_TabHigh": 0,
-		"m_StandardFrame": 0,
-		"m_CircleFrame": 0,
-		"m_SignFrame": 0,
-		"m_ShowProfile": 1,
-		"m_ShowSurveyPoint": 1,
-		"m_ShowPointName": 1,
-		"m_ShowPointY": 0,
-		"m_showAllPoint": 0,
-		"m_ShowPowerLine": 1,
-		"m_showNoTower": 0,
-		"m_ShowSafeLine": 0,
-		"m_ShowCrossLine": 0,
-		"m_ShowGPile": 0,
-		"m_ShowZPile": 0,
-		"m_ShowJPile": 1,
-		"m_ShowTower": 1,
-		"m_ShowMainGrid": 1,
-		"m_ShowSubGrid": 0,
-		"m_pGrid": 2,
-		"m_hGrid": 2,
-		"m_Grid": 20,
-		"m_HZ": "仿宋_GB2312",
-		"m_StartPile": "J1",
-		"m_StartDistance": 0.0,
-		"m_StartHigh": 100.0,
-		"m_Count": 100,
-		"m_Current": 1,
-		"m_CurrentDesign": 0,
-		"m_TurnAngle": 2,
-		"m_TurnAngle2": 2,
-		"m_DisplayFromX": 0.0,
-		"m_DisplayFromZ": 2157.0,
-		"m_DisplayToX": 1530.0,
-		"m_DisplayToZ": 2297.0,
-		"m_sideWidth": 15.0,
-		"m_planUp": 0.0,
-		"m_selSize": 6,
-		"m_dynamicPlan": 0
-	}
 
 // mptable init
 	{
@@ -411,32 +338,32 @@
 				ajaxData: {"data":pile_tabledata},
 				ajaxType: 'POST',
 				//supportMenu: true,// 默认为true
-							menuHandler: list => {
-								list.unshift({
-									content: '交换X Y',
-									//line: true,
-									onClick: function(){
-										for(let i=0;i<pile_tabledata.length;i++)
-										{
-											var temp;
-											temp=pile_tabledata[i].x;
-											pile_tabledata[i].x=pile_tabledata[i].y;
-											pile_tabledata[i].y=temp;
-										}
+				menuHandler: list => {
+					list.unshift({
+						content: '交换X Y',
+						//line: true,
+						onClick: function(){
+							for(let i=0;i<pile_tabledata.length;i++)
+							{
+								var temp;
+								temp=pile_tabledata[i].x;
+								pile_tabledata[i].x=pile_tabledata[i].y;
+								pile_tabledata[i].y=temp;
+							}
 
-										GridManager.refreshGrid(pile_tableId);
-										console.log("exchanged data x y ");
-										console.log(pile_tabledata);
-									}
+							GridManager.refreshGrid(pile_tableId);
+							console.log("exchanged data x y ");
+							console.log(pile_tabledata);
+						}
 
-								});
-								// list.unshift({
-								// 	content:'test right click button',
-								// 	//line:true,
-								// 	onClick:function (){alert("test finish")}
-								// });
-								return list;
-							},
+					});
+					// list.unshift({
+					// 	content:'test right click button',
+					// 	//line:true,
+					// 	onClick:function (){alert("test finish")}
+					// });
+					return list;
+				},
 			columnData: [
 				{
 					key: 'name',
@@ -454,7 +381,7 @@
 					key: 'x',
 					text: '大地x坐标'
 				},{
-					key: 'y',
+					key: 'y',  //大地坐标坐标轴和平面坐标系的坐标轴不一致对掉xy 直接文本的读入会与xy不一致文本读入做一次function exchangexy
 					text: '大地y坐标'
 				}
 				,{
@@ -481,13 +408,13 @@
 // towerlist table init
 	{
 		var towerlist_tabledata=[];
-		console.log("towerlist begin data");
-		console.log(towerlist_tabledata);
-		console.log("tihuan data");
+		// console.log("towerlist begin data");
+		// console.log(towerlist_tabledata);
+		// console.log("tihuan data");
 		towerlist_tabledata=towerlist;  //table data format different with towerlist_tabledata parameters default
-		console.log(towerlist_tabledata);
+		// console.log(towerlist_tabledata);
 		var towerlist_tableId=document.getElementById("towerlist_table");
-		console.log(pile_tableId);
+		// console.log(pile_tableId);
 		var tb_towerlist=new GridManager(towerlist_tableId,{
 					gridManagerName: 'TL-towerlisttable',
 					ajaxData: {"data":towerlist_tabledata},
@@ -517,8 +444,8 @@
 							//line:true,
 							onClick:function (){
 								console.log("right button checklist");
-
-								var del_tower=GridManager.getCheckedData(towerlist_tableId); //checkedtower need to delete former list
+								//GridManager.setCheckedData(towerlist_tableId,[]);
+								var del_tower=GridManager.getCheckedData(towerlist_tableId);
 								console.log(del_tower);
 								for(let i=0;i<del_tower.length;i++){
 									for(let j=0;j<towerlist_tabledata.length;j++){
@@ -527,10 +454,64 @@
 										}
 									}
 								}
+								console.log("tabledelete",towerlist);
+								console.log(towerlist_tabledata);
+
+								let deletelist = [];
+								for (let i = 0; i < scene.children.length; i++){
+									if (scene.children[i].name === "fixTower"||scene.children[i].name === "fixwire1" ||scene.children[i].name === "fixwire2"||scene.children[i].name === "fixwire3"||scene.children[i].name === "fixwire4"){
+										deletelist.push(scene.children[i]);
+									}
+								}
+								for (let i = 0; i < deletelist.length; i++) {scene.remove(deletelist[i]);}
+								console.log(m_end)
+								m_end = towerlist.length - 1;
+								for (let i = 0; i < towerlist_tabledata.length; i++) {
+									let towMesh = tower1(towerHei);
+									towMesh.position.x = towerlist_tabledata[i].Distance/10;
+									towMesh.position.y = towerlist_tabledata[i].High - yMin;
+									towMesh.position.z = 0;
+									towMesh.name = "fixTower";
+									towMesh.geometry.name = towerlist_tabledata[i].Name;
+									scene.add(towMesh);
+								}
+
+								for (let i = m_start; i < m_end; i++) {
+									DisplayFawCurve4(towerlist_tabledata[i],towerlist_tabledata[i+1], "fixwire");
+								}
+								let towerlist1 = towerlist_tabledata;
+								console.log(towerlist1);
+								// let pos = [];
+								// for (let i = 0; i < towerlist1.length; i++) {
+								// 	pos.push(new THREE.Vector3(towerlist1[i].Distance/10,towerlist1[i].High - yMin,0));
+								//
+								//
+								// 	let towerLineWid = 1;
+								// 	let tower = new THREE.Shape();
+								// 	tower.moveTo(0,0);
+								// 	tower.lineTo(2,0);tower.lineTo(2,towerLineWid);tower.lineTo(1.5,towerLineWid);
+								// 	tower.lineTo(1.5,towerHei-5-towerLineWid);tower.lineTo(3.5,towerHei-5-towerLineWid);
+								// 	tower.lineTo(3.5,towerHei-5);tower.lineTo(1.5,towerHei-5);tower.lineTo(1.5,towerHei);
+								// 	tower.lineTo(0.5,towerHei);tower.lineTo(0.5,towerHei-5);tower.lineTo(-1.5,towerHei-5);
+								// 	tower.lineTo(-1.5,towerHei-5-towerLineWid);tower.lineTo(0.5,towerHei-5-towerLineWid);
+								// 	tower.lineTo(0.5,towerLineWid);tower.lineTo(0,towerLineWid);
+								// 	tower.lineTo(0,0);
+								//
+								// 	let towerGroup = new THREE.ShapeGeometry(tower);
+								// 	let towMaterial = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.DoubleSide } );
+								// 	var towMesh = new THREE.Mesh( towerGroup, towMaterial ) ;
+								// 	towMesh.renderOrder = towerHei;
+								// 	towMesh.position.x = pos[i].x;
+								// 	towMesh.position.y = pos[i].y;
+								// 	towMesh.position.z = 0;
+								// 	towMesh.name = "fixTower";
+								// 	scene.add(towMesh);
+								//
+								// }
+								// createWire(towerlist1,0);
 								console.log("tabledata changed");
 								console.log(towerlist_tabledata);
 								GridManager.refreshGrid(towerlist_tableId);
-								del_tower=GridManager.setCheckedData(towerlist_tableId,[]);
 							}
 						});
 						list.unshift({
@@ -669,37 +650,38 @@
 	$("#tb_pile_calc").click(function(){
 		var form = new FormData();
 		form.append("ProjectName", prjName);
-		console.log("begindata");
-		console.log(pile_tabledata);
+		// console.log("begindata");
+		// console.log(pile_tabledata);
 		form.append("table",JSON.stringify(pile_tabledata));
 		//console.log(pile_table.m_jPile);   //txt append jsondata
 		$.ajax({
-				url: "http://202.114.118.138:8181/tbCalc", //提交的路径
-				type: "post",       //提交方式
-				data: form,    //提交的数据
-				// dataType:"json",
-				contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-				processData: false,
-				success: function (res) {
-					console.log("caculate cacu res");
-					console.log(res.m_jPile);
-					pile_tabledata=res.m_jPile;
-					//console.log(GridManager.getAjaxData(pile_tableId));
-					//need to caculate the secdist
-					for(let i=0;i<pile_tabledata.length;i++)
-					{
-						var temp;
-						temp=pile_tabledata[i].x;
-						pile_tabledata[i].x=pile_tabledata[i].y;
-						pile_tabledata[i].y=temp;
-					}   //系统坐标大地坐标相反对换
-					pile_tabledata[0].secdist=0;
-					for(let i=1;i<pile_tabledata.length;i++){
-						pile_tabledata[i].secdist=pile_tabledata[i].dist-pile_tabledata[i-1].dist;
-					}
-					GridManager.setAjaxData(pile_tableId,{"data":pile_tabledata});
+			url: "http://202.114.118.138:8181/tbCalc", //提交的路径
+			type: "post",       //提交方式
+			data: form,    //提交的数据
+			// dataType:"json",
+			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+			processData: false,
+			success: function (res) {
+				// console.log("caculate cacu res");
+				// console.log(res.m_jPile);
+				pile_tabledata=res.m_jPile;
+				//console.log(GridManager.getAjaxData(pile_tableId));
+				//need to caculate the secdist
+				for(let i=0;i<pile_tabledata.length;i++)
+				{
+					var temp;
+					temp=pile_tabledata[i].x;
+					pile_tabledata[i].x=pile_tabledata[i].y;
+					pile_tabledata[i].y=temp;
+				}   //系统坐标大地坐标相反对换
+				pile_tabledata[0].secdist=0;
+				for(let i=1;i<pile_tabledata.length;i++){
+					pile_tabledata[i].secdist=pile_tabledata[i].dist-pile_tabledata[i-1].dist;
 				}
-})})
+				GridManager.setAjaxData(pile_tableId,{"data":pile_tabledata});
+			}
+		})
+	})
 
 	$("#tb-pile-save").click(function (){
 		var form = new FormData();
@@ -721,7 +703,7 @@
 
 	$("#tb-towerlist-calc").click(function (){
 		var form = new FormData();
-		form.append("ProjectName",prjName);
+		form.append("ProjectName", prjName);
 		console.log("begindata");
 		console.log(towerlist_tabledata);
 
@@ -741,93 +723,6 @@
 			}
 		})
 	})
-	//后台数据下载到本地
-
-
-
-	$("#drawingpara").click(function(){
-
-		let drawintial = [];
-		drawintial.push(mp.m_Volumns);	drawintial.push(mp.m_MapWidth);	drawintial.push(mp.m_suffixlength);
-		drawintial.push(mp.m_From);	drawintial.push(mp.m_To);	drawintial.push(mp.m_To-mp.m_From);
-		drawintial.push(mp.m_Grid);	drawintial.push(mp.m_pGrid);	drawintial.push(mp.m_hGrid);
-		drawintial.push(mp.m_ShowMainGrid);	drawintial.push(mp.m_ShowSubGrid);	drawintial.push(mp.m_dynamicPlan);
-		drawintial.push(mp.m_showNoTower);	drawintial.push(mp.m_ShowTower);	drawintial.push(mp.m_ShowCrossLine);
-		drawintial.push(mp.m_ShowSafeLine);	drawintial.push(mp.m_ShowZPile);	drawintial.push(mp.m_ShowJPile);
-		drawintial.push(mp.m_ShowGPile);
-		drawintial.push(mp.m_DScale);	drawintial.push(mp.m_HScale);drawintial.push(mp.m_CScale);
-		drawintial.push(mp.m_StandardFrame);	drawintial.push(mp.m_CircleFrame);drawintial.push(mp.m_SignFrame);
-		drawintial.push(mp.m_showAllPoint);	drawintial.push(mp.m_ShowSurveyPoint);drawintial.push(mp.m_ShowPointName);drawintial.push(mp.m_ShowPointY);
-		drawintial.push(mp.m_sideWidth);	drawintial.push(mp.m_HighSystem);
-
-		layer.open({
-			type:2,
-			title:'图纸参数',
-			area:['700px','360px'],
-			maxmin:true,
-			content:'./drawingpara.html',
-			success:function (layero,index) {
-				console.log(layero,index);
-				var body = layer.getChildFrame('body',index);
-				console.log(body);
-				let i=0;
-				body.find('input').each(function () {
-					if($(this).attr("type")=="checkbox"){
-							if(drawintial[i]==1){
-								console.log(drawintial[i]);
-								$(this).prop("checked","true");
-							}
-							//else $(this).prop("checked","false");
-					}
-					else $(this).val(drawintial[i]);
-					i++;
-				})
-			}
-		})
-	})
-
-	window.updatedrawing=function(draw_list) {
-		mp.m_Volumns=draw_list[0];	mp.m_MapWidth=draw_list[1];	mp.m_suffixlength=draw_list[2];
-		mp.m_From=draw_list[3];	mp.m_To=draw_list[4];	//mp.m_To-mp.m_From=draw_list[5];
-		mp.m_Grid=draw_list[6];	mp.m_pGrid=draw_list[7];	mp.m_hGrid=draw_list[8];
-		mp.m_ShowMainGrid=draw_list[9];	mp.m_ShowSubGrid=draw_list[10];	mp.m_dynamicPlan=draw_list[11];
-		mp.m_showNoTower=draw_list[12];	mp.m_ShowTower=draw_list[13];	mp.m_ShowCrossLine=draw_list[14];
-		mp.m_ShowSafeLine=draw_list[15];	mp.m_ShowZPile=draw_list[16];	mp.m_ShowJPile=draw_list[17];
-		mp.m_ShowGPile=draw_list[18];
-		mp.m_DScale=draw_list[19];	mp.m_HScale=draw_list[20];mp.m_CScale=draw_list[21];
-		mp.m_StandardFrame=draw_list[22];	mp.m_CircleFrame=draw_list[23];mp.m_SignFrame=draw_list[24];
-		mp.m_showAllPoint=draw_list[25];	mp.m_ShowSurveyPoint=draw_list[26];mp.m_ShowPointName=draw_list[27];mp.m_ShowPointY=draw_list[28];
-		mp.m_sideWidth=draw_list[29];	mp.m_HighSystem=draw_list[30];
-		console.log(mp);
-	}
-
-	$("#framepara").click(function(){
-		layer.open({
-			type:2,
-			title:'图框参数',
-			area:['500px','650px'],
-			maxmin:true,
-			content:'./framepara.html',
-			success:function (layero,index) {
-				console.log(layero,index);
-				var body = layer.getChildFrame('body',index);
-				console.log(body);
-				var inputList = body.find('input');
-				for (var j = 0; j < inputList.length-1; j++) {			//把父页面的数据放到子页面的input框中
-					body.find(inputList[j]).val(mp.m_Frame[14-j]-mp.m_Frame[14-j-1]);
-				}
-				body.find(inputList[14]).val(mp.m_Frame[0]);
-				body.find(inputList[15]).val(mp.m_prefixLength);
-			}
-		})
-	})
-
-	window.updatemp=function(mppara) {
-		mp.m_prefixLength = mppara.m_prefixLength;
-		mp.m_Frame = mppara.m_Frame;
-		console.log(mp);
-	}
-
 
 	// DEM断面提取layer
 	var secDEM=[];
@@ -871,10 +766,12 @@
 	})
 
 	window.GetSecDem= function(transobj){
-			secDEM= transobj;
-			console.log("secDEM"+secDEM);
+		secDEM= transobj;
+		console.log("secDEM"+secDEM);
 	}
 
+
+	//后台数据下载到本地
 	window.download = function() {
 		var text = $('#dembox option:selected').text();
 		console.log(text);
@@ -906,7 +803,6 @@
 		xhr.send()
 	}
 	//新建工程
-	{
 	$('#newprj').click(function(){
 		for (let i = 0; i < allChildren.length; i++){
 			group.remove(allChildren[i]);
@@ -4191,7 +4087,7 @@
 				dem.push(scene.children[i]);
 			}
 			if (scene.children[i].name === "fixTower"||scene.children[i].name === "wire"){
-				towerList.push(scene.children[i]);     //capital
+				towerList.push(scene.children[i]);
 			}
 		}
 		for (let i = 0; i < dem.length; i++) {
@@ -4240,7 +4136,7 @@
 				dem.push(scene.children[i]);
 			}
 			if (scene.children[i].name === "fixTower"||scene.children[i].name === "wire"){
-				towerList.push(scene.children[i]);   //capital
+				towerList.push(scene.children[i]);
 			}
 		}
 		for (let i = 0; i < dem.length; i++) {
@@ -5151,12 +5047,11 @@
 			}
 		});
 	}
-	}
+	
 	//draw
 	{
 	/* 预设格网参数 */
-	var verSize = 160;var horSize = 300; var ydivision=mp.m_HScale*mp.m_Grid/1000; var xdivision = mp.m_DScale*mp.m_Grid/1000;var Gridsize = mp.m_Grid;
-	console.log("initial paremeter",ydivision,xdivision);
+	var divisions = 10;var verSize = 160;var horSize = 300;
 	var width,dis,gridHor,gridVer;
 	var x = new Array();var y = new Array();
 	var leftX = new Array();var leftY = new Array();
@@ -5164,8 +5059,8 @@
 	var yMin = 100;var yMax = verSize;var xMax = 0;
 	var framegroup = new THREE.Group();
 	let l_linegroup=new THREE.Group();let m_linegroup=new THREE.Group();let r_linegroup=new THREE.Group();
-	//	let l_pointsgroup=new THREE.Group();let m_pointsgroup=new THREE.Group();let r_pointsgroup=new THREE.Group();
-			let DEM_pgroup=new THREE.Group();
+	let DEM_pgroup=new THREE.Group();
+	var group = new THREE.Group();
 	var allChildren = [];var dem = [];	var towerList = [];
 	var leftLineCor,rightLineCor,midLineCor,cornerCor;
 	var corner = new Array();
@@ -5173,6 +5068,15 @@
 	var centerDem;//中心断面
 	var mainCanvas = document.querySelector("#iframe_box canvas");//画布
 	var DEM;
+
+	//线、气象条件初始默认值
+	var UseLine = prk.CONDUCTOR[0];
+	var UseWeather = prk.WEATHER[0];
+	var section = prk.SECTION[0];
+
+	var theLine = UseLine,theWeather = UseWeather;
+	var designLine = 1;
+	var xmin = 0; var xmax = 0;
 
 	//清空当前画布
 	function reclear(){
@@ -5183,8 +5087,8 @@
 			if (scene.children[i].name === "dem"||scene.children[i].name === "corner"){
 				dem.push(scene.children[i]);
 			}
-			if (scene.children[i].name === "fixTower"||scene.children[i].name === "wire"){
-				towerList.push(scene.children[i]);      //capital
+			if (scene.children[i].name === "fixTower"||scene.children[i].name === "fixwire1" || scene.children[i].name === "fixwire2" ||scene.children[i].name === "fixwire3"||scene.children[i].name === "fixwire4"){
+				towerList.push(scene.children[i]);
 			}
 		}
 		for (let i = 0; i < dem.length; i++) {
@@ -5206,7 +5110,7 @@
 				dem.push(scene.children[i]);
 			}
 			if (scene.children[i].name === "fixTower"||scene.children[i].name === "wire"){
-				towerList.push(scene.children[i]);   //capital
+				towerList.push(scene.children[i]);
 			}
 		}
 		for (let i = 0; i < dem.length; i++) {
@@ -5218,8 +5122,8 @@
 		for (let i = 0; i < allChildren.length; i++) {
 			framegroup.remove(allChildren[i]);
 		}
-		yMin = 100; ydivision= 10; xdivision =100; verSize = 200;horSize =300; Gridsize = 10;    //先设大小   再按distance/length 比例尺绘制
-		window.initContent();
+		yMin = 100; divisions = 10;verSize = 160;horSize = 300;
+		initContent();
 		mainCanvas = document.querySelector("#iframe_box canvas");
 		console.log(mainCanvas);
 	})
@@ -5247,7 +5151,7 @@
 			framegroup.remove(allChildren[i]);
 		}
 		framegroup.remove(framegroup.children);
-		window.initContent();
+		initContent();
 	}
 
 	var scene, camera, renderer, controls, labelRenderer;
@@ -5260,9 +5164,9 @@
 		scene = new THREE.Scene();
 	}
 	/* 相机 */
-	var fov = 90;
+	var fov = 45;
 	var near = 0.1;
-	var far = 10000;  //  variable parameter by graph
+	var far = 10000;
 	function initCamera() {
 		camera = new THREE.PerspectiveCamera(fov, canvasdiv.offsetWidth / canvasdiv.offsetHeight, near, far);
 		camera.position.set(cameraX, cameraY, cameraZ);
@@ -5307,19 +5211,15 @@
 	}
 
 	/* 图幅格网绘制 */
-	window.initContent= function() {
+	function initContent() {
 		scene.add(framegroup);
 
-		for (let i = 0; i < allChildren.length; i++){
-			framegroup.remove(allChildren[i]);
-		}
-		console.log(mp.m_Frame,verSize);
 		//外轮廓
-		var gridBound = new THREE.PlaneGeometry(horSize +30,verSize + mp.m_Frame[14]  );  //30 parameter replace?
+		var gridBound = new THREE.PlaneGeometry(horSize + 30,verSize + 100  );
 		var material = new THREE.LineBasicMaterial({ color: 0x0000ff});
 		var grid = new THREE.Mesh(gridBound,material);
-		grid.position.x =(horSize -30)/2;
-		grid.position.y = (verSize - mp.m_Frame[14])/2;
+		grid.position.x =(horSize-30)/2;
+		grid.position.y = (verSize-4 * divisions-50)/2;
 		var box = new THREE.BoxHelper( grid, 0x0000ff );
 		framegroup.add(box);
 		//居中
@@ -5336,7 +5236,7 @@
 		//左侧坐标轴
 		var yAxisGeo = new THREE.Geometry();
 		yAxisGeo.verticesNeedUpdate = true;
-		yAxisGeo.vertices.push(new THREE.Vector3(-4,mp.m_Frame[9]-mp.m_Frame[14], 0));
+		yAxisGeo.vertices.push(new THREE.Vector3(-4, -4 * divisions, 0));
 		yAxisGeo.vertices.push(new THREE.Vector3(-4, verSize, 0));
 		var yAxis = new THREE.Line(yAxisGeo, new THREE.LineBasicMaterial({
 			color: 0xff0000
@@ -5348,13 +5248,14 @@
 		scalelineGeo.verticesNeedUpdate = true;
 		scalelineGeo.vertices.push(new THREE.Vector3(-5,0,0));
 		scalelineGeo.vertices.push(new THREE.Vector3(-4,0,0));
-		for (let i = 0; i < verSize / Gridsize ; i++) {
+		for (let i = 0; i < verSize / 10 ; i++) {
 			var scaleline = new THREE.Line(scalelineGeo,new THREE.LineBasicMaterial({color: 0x455454}));
-			scaleline.position.y= i * Gridsize;
+			scaleline.position.y= i * divisions;
 			framegroup.add(scaleline);
-			var number = parseInt(yMin/10) * 10+ i*ydivision;
+			// var number = parseInt(yMin/10) * 10+ i*divisions;
+			var number = Math.round(yMin) + i*divisions;
 			var text = number.toString();
-			var scale = createSprite(text,"#000000",0,32,9,i * Gridsize-5,0);
+			var scale = createSprite(text,"#000000",0,32,9,i * divisions-5,0);
 			scale.name = "gaochengscale";
 			framegroup.add(scale);
 		}
@@ -5366,38 +5267,40 @@
 		horGeometry.vertices.push(new THREE.Vector3(horSize , 0, 0));
 		var horizonGeo = new THREE.Geometry();
 		horizonGeo.vertices.push(new THREE.Vector3(-30, 0, 0)); //添加顶点
-		horizonGeo.vertices.push(new THREE.Vector3(horSize, 0, 0));
+		horizonGeo.vertices.push(new THREE.Vector3(horSize , 0, 0));
 
-		for (var i = 0, len = verSize / Gridsize + 1 ; i <= len; i++) {
+		for (var i = 0, len = verSize / divisions + 1 ; i <= len; i++) {
 			if (i < len){
 				gridHor = new THREE.Line(horGeometry, new THREE.LineBasicMaterial({color: 0x455454}));//用geometry和material创建line
-				gridHor.position.y = i * Gridsize ; //设置line的位置
+				gridHor.position.y = i * divisions ; //设置line的位置
 				gridHor.name = "gridHor";
 				framegroup.add(gridHor);
-				for(let j = 0; j<9;j++){
-					var plangrid =  gridHor.clone();
-					plangrid.name = "plangrid"+j.toString();
-					plangrid.position.y=-(mp.m_Frame[14]-mp.m_Frame[j]);
-					framegroup.add(plangrid);
-				}
+
+				var plangridHor1 = gridHor.clone();
+				var plangridHor2 = gridHor.clone();
+				var plangridHor3 = gridHor.clone();
+				plangridHor1.name = "";plangridHor2.name = "";plangridHor3.name = "";
+				plangridHor1.position.y = -42; plangridHor2.position.y = -50; plangridHor3.position.y = -58 ;
+				framegroup.add(plangridHor1);
+				framegroup.add(plangridHor2);
+				framegroup.add(plangridHor3);
 			}
 			else {
 				var line = new THREE.Line(horizonGeo, new THREE.LineBasicMaterial({color: 0x455454}));
-				line.position.y = - (mp.m_Frame[14]-mp.m_Frame[9]); //设置line的位置
+				line.position.y = - 40; //设置line的位置
 
 				var gaocheng = createSprite("1956年黄海高程系","#ff0000",0,32,4.5,-20,Math.PI/2);
-				gaocheng
 				framegroup.add(gaocheng);
 				var planLine = line.clone();//平面图下边界
-				planLine.position.y = -(mp.m_Frame[14]-mp.m_Frame[5]);
-				var planeText = createSprite("平面图","#ff0000",0,100,1.5,(line.position.y+planLine.position.y)/2,0);  //100 mframe[]
+				planLine.position.y = -60;
+				var planeText = createSprite("平面图","#ff0000",0,32,1.5,-57,0);
 				framegroup.add(planeText);
 				var textArr = ["            桩间距离","               里程","               档距","            杆塔位置","   耐张段长/代表档距"];
-				for (let j = 4; j >=0 ; j--) {
+				for (let j = 0; j < 5; j++) {
 					var disLine = line.clone();//桩间距离下边界
-					disLine.position.y = -(mp.m_Frame[14]-mp.m_Frame[j]);
+					disLine.position.y = -60- (j+1)*5;
 					framegroup.add(disLine);
-					var note = createSprite(textArr[4-j],"#ff0000",0,60,-10,-(mp.m_Frame[14]-mp.m_Frame[j]),0);
+					var note = createSprite(textArr[j],"#ff0000",0,32,-10,-64- (j+1)*5,0);
 					framegroup.add(note);
 				}
 				framegroup.add(planLine);
@@ -5409,34 +5312,32 @@
 		verGeometry.vertices.push(new THREE.Vector3(0, 0, 0)); //添加顶点
 		verGeometry.vertices.push(new THREE.Vector3(verSize , 0, 0));
 		var verBound = new THREE.Geometry();
-		verBound.vertices.push(new THREE.Vector3(-mp.m_Frame[14], 0, 0)); //添加顶点
+		verBound.vertices.push(new THREE.Vector3(0 - 4 * divisions-55, 0, 0)); //添加顶点
 		verBound.vertices.push(new THREE.Vector3(verSize , 0, 0));
 		var planGeo = new THREE.Geometry();
-		planGeo.vertices.push(new THREE.Vector3(0,mp.m_Frame[8]-mp.m_Frame[14], 0)); //添加顶点
-		planGeo.vertices.push(new THREE.Vector3(0, mp.m_Frame[6]-mp.m_Frame[14], 0));
+		planGeo.vertices.push(new THREE.Vector3(10, -58, 0)); //添加顶点
+		planGeo.vertices.push(new THREE.Vector3(10 , -42, 0));
 		verGeometry.verticesNeedUpdate = true;
 		verBound.verticesNeedUpdate = true;
-		for (var i = 0, len = horSize / Gridsize; i < len; i++) {
+		for (var i = 0, len = horSize / divisions; i < len; i++) {
 			gridVer = new THREE.Line(verGeometry, new THREE.LineBasicMaterial({color: 0x324132}));
 			var boundary = new THREE.Line(verBound, new THREE.LineBasicMaterial({color: 0x324132}));
 			if (i === 0){
-				boundary.position.x = i * Gridsize ;
+				boundary.position.x = i * divisions ;
 				boundary.rotation.z = Math.PI / 2; //绕y轴旋转90度
 				framegroup.add(boundary);
 			}
 			else {
-				gridVer.position.x = i * Gridsize ;
+				gridVer.position.x = i * divisions ;
 				gridVer.rotation.z = Math.PI / 2; //绕y轴旋转90度
 				gridVer.name="gridVer";
 				framegroup.add(gridVer);
 			}
 			var planVer = new THREE.Line(planGeo, new THREE.LineBasicMaterial({color: 0x324132}));
 			planVer.name = "gridVer";
-			planVer.position.x = i*Gridsize;
-			//planVer.position.y = -(mp.m_Frame[14]-mp.m_Frame[]);
+			planVer.position.x = i*divisions;
 			framegroup.add(planVer);
-			let x = createSprite(i*xdivision/100,"#ff0000",0,100,19+i*Gridsize,mp.m_Frame[4]-mp.m_Frame[14],0);
-
+			let x = createSprite(i,"#ff0000",0,32,19+i*divisions,-73,0);
 			framegroup.add(x);
 		}
 		allChildren = [];
@@ -5477,100 +5378,98 @@
 	var dif = 0;
 	/* DEM绘制函数 */
 	function drawDEM_whj(DEM){
-		console.log(DEM);
-		console.log(DEM.MID,DEM.LEFT,DEM.RIGHT);
-		yMin=DEM.MID[0].Section[0].z
-		for(let i=0;i<DEM.MID.length;i++){
-			for(let j=0;j<DEM.MID[i].Section.length;j++){
-				if(yMax<DEM.MID[i].Section[j].z){yMax=DEM.MID[i].Section[j].z;}
-				if(yMin>DEM.MID[i].Section[j].z){yMin=DEM.MID[i].Section[j].z;}
+			console.log(DEM);
+			console.log(DEM.MID,DEM.LEFT,DEM.RIGHT);
+			yMin=DEM.MID[0].Section[0].z
+			for(let i=0;i<DEM.MID.length;i++){
+				for(let j=0;j<DEM.MID[i].Section.length;j++){
+					if(yMax<DEM.MID[i].Section[j].z){yMax=DEM.MID[i].Section[j].z;}
+					if(yMin>DEM.MID[i].Section[j].z){yMin=DEM.MID[i].Section[j].z;}
+				}
 			}
-		}
-		for(let i=0;i<DEM.LEFT.length;i++){
-			for(let j=0;j<DEM.LEFT[i].Section.length;j++){
-				if(yMax<DEM.LEFT[i].Section[j].z){yMax=DEM.LEFT[i].Section[j].z;}
-				if(yMin>DEM.MID[i].Section[j].z){yMin=DEM.MID[i].Section[j].z;}
+			for(let i=0;i<DEM.LEFT.length;i++){
+				for(let j=0;j<DEM.LEFT[i].Section.length;j++){
+					if(yMax<DEM.LEFT[i].Section[j].z){yMax=DEM.LEFT[i].Section[j].z;}
+					if(yMin>DEM.MID[i].Section[j].z){yMin=DEM.MID[i].Section[j].z;}
+				}
 			}
-		}
-		for(let i=0;i<DEM.RIGHT.length;i++){
-			for(let j=0;j<DEM.RIGHT[i].Section.length;j++){
-				if(yMax<DEM.RIGHT[i].Section[j].z){yMax=DEM.RIGHT[i].Section[j].z;}
-				if(yMin>DEM.MID[i].Section[j].z){yMin=DEM.MID[i].Section[j].z;}
+			for(let i=0;i<DEM.RIGHT.length;i++){
+				for(let j=0;j<DEM.RIGHT[i].Section.length;j++){
+					if(yMax<DEM.RIGHT[i].Section[j].z){yMax=DEM.RIGHT[i].Section[j].z;}
+					if(yMin>DEM.MID[i].Section[j].z){yMin=DEM.MID[i].Section[j].z;}
+				}
 			}
-		}
 
-		//tempDif = yMax - yMin;
-		//dif = (parseInt((yMax - yMin)/10) + 2 ) * 10;
-		ydivision = 10 ; xdivision = 100 ;
-
-		xMax = parseInt(DEM.RIGHT[DEM.RIGHT.length-1].Section[DEM.RIGHT[DEM.RIGHT.length-1].Section.length-1].x); //X last element
-		horSize = xMax/xdivision*Gridsize;      //+add  border
-		verSize = (yMax - yMin)/ydivision*Gridsize;  //+add  border
-
-		console.log(horSize,verSize,xdivision,ydivision,xMax,"frame");
-
-		window.initContent();
-		// draw object group;
-		// 中心断面 object
-		var m_material = new THREE.LineBasicMaterial( { color: 0x000000 } );
-		var mp_material = new THREE.PointsMaterial({color:0x888888,size:2.0});
-		var m_line = new Array();
-		var m_points=new Array();
-		//m_line.length=DEM.MID.length;
-		for(let i=0;i<DEM.MID.length;i++){
-			var m_vertice = new THREE.Geometry();
-			for(let j=0;j<DEM.MID[i].Section.length;j++) {
-				m_vertice.vertices.push(new THREE.Vector3(DEM.MID[i].Section[j].x / xdivision*Gridsize, (DEM.MID[i].Section[j].z - yMin)/ydivision*Gridsize, 0));
+			tempDif = yMax - yMin;
+			dif = (parseInt((yMax - yMin)/10) + 2 ) * 10;
+			verSize = dif ;
+			xMax = (parseInt(DEM.RIGHT[DEM.RIGHT.length-1].Section[DEM.RIGHT[DEM.RIGHT.length-1].Section.length-1].x/10) + 1 ) * 10; //X last element
+			horSize = xMax/10;
+			initContent();
+			// draw object group;
+			// 中心断面 object
+			var m_material = new THREE.LineBasicMaterial( { color: 0x000000 } );
+			var mp_material = new THREE.PointsMaterial({color:0x888888,size:2.0});
+			var m_line = new Array();
+			var m_points=new Array();
+			//m_line.length=DEM.MID.length;
+			for(let i=0;i<DEM.MID.length;i++){
+				var m_vertice = new THREE.Geometry();
+				for(let j=0;j<DEM.MID[i].Section.length;j++) {
+					m_vertice.vertices.push(new THREE.Vector3(DEM.MID[i].Section[j].x / 10, DEM.MID[i].Section[j].z - yMin, 0));
+				}
+				m_line[i]= new THREE.Line(m_vertice,m_material);m_line[i].name = "MID"+"-"+i.toString();
+				m_points[i] = new THREE.Points(m_vertice,mp_material);
+				m_points[i].visible=false;
+				m_linegroup.add(m_line[i]);
+				DEM_pgroup.add(m_points[i]);
 			}
-			m_line[i]= new THREE.Line(m_vertice,m_material);m_line[i].name = "MID"+"-"+i.toString();
-			m_points[i] = new THREE.Points(m_vertice,mp_material);
-			m_points[i].visible=false;
-			m_linegroup.add(m_line[i]);
-			DEM_pgroup.add(m_points[i]);
-		}
-		scene.add(m_linegroup);
-		scene.add(DEM_pgroup);
+			scene.add(m_linegroup);
+			scene.add(DEM_pgroup);
 
 
-		var l_material = new THREE.LineDashedMaterial( { color: 0x0000ff ,dashSize:3, gapSize:1} );
-		var lp_material = new THREE.PointsMaterial({color:0x888888,size:2.0});
-		var l_line = new Array();
-		var l_points= new Array();
-		l_line.length=DEM.LEFT.length;
-		for(let i=0;i<DEM.LEFT.length;i++){
-			var l_vertice = new THREE.Geometry();
-			for(let j=0;j<DEM.LEFT[i].Section.length;j++) {
-				l_vertice.vertices.push(new THREE.Vector3(DEM.LEFT[i].Section[j].x / xdivision*Gridsize, (DEM.LEFT[i].Section[j].z - yMin)/ydivision*Gridsize, 0));
+			var l_material = new THREE.LineDashedMaterial( { color: 0x0000ff ,dashSize:3, gapSize:1} );
+			var lp_material = new THREE.PointsMaterial({color:0x888888,size:2.0});
+			var l_line = new Array();
+			var l_points= new Array();
+			l_line.length=DEM.LEFT.length;
+			for(let i=0;i<DEM.LEFT.length;i++){
+				var l_vertice = new THREE.Geometry();
+				for(let j=0;j<DEM.LEFT[i].Section.length;j++) {
+					l_vertice.vertices.push(new THREE.Vector3(DEM.LEFT[i].Section[j].x / 10, DEM.LEFT[i].Section[j].z - yMin, 0));
+				}
+				l_line[i]= new THREE.Line(l_vertice,l_material);l_line[i].name = "LEFT"+"-"+i.toString();
+				l_line[i].computeLineDistances();
+				l_linegroup.add(l_line[i]);
+				l_points[i] = new THREE.Points(l_vertice,lp_material);
+				l_points[i].visible=false;
+				DEM_pgroup.add(l_points[i]);
 			}
-			l_line[i]= new THREE.Line(l_vertice,l_material);l_line[i].name = "LEFT"+"-"+i.toString();
-			l_linegroup.add(l_line[i]);
-			l_points[i] = new THREE.Points(l_vertice,lp_material);
-			l_points[i].visible=false;
-			DEM_pgroup.add(l_points[i]);
-		}
-		scene.add(l_linegroup);
-		scene.add(DEM_pgroup);
+			scene.add(l_linegroup);
+			scene.add(DEM_pgroup);
 
-		var r_material = new THREE.LineBasicMaterial( { color: 0x00ff00,dashSize:2,gapSize:2 } );
-		var rp_material = new THREE.PointsMaterial({color:0x888888,size:2.0});
-		var r_line = new Array();
-		var r_points= new Array();
-		r_line.length=DEM.RIGHT.length;
-		for(let i=0;i<DEM.RIGHT.length;i++){
-			var r_vertice = new THREE.Geometry();
-			for(let j=0;j<DEM.RIGHT[i].Section.length;j++) {
-				r_vertice.vertices.push(new THREE.Vector3(DEM.RIGHT[i].Section[j].x / xdivision*Gridsize, (DEM.RIGHT[i].Section[j].z - yMin)/ydivision*Gridsize, 0));
+			var r_material = new THREE.LineBasicMaterial( { color: 0x00ff00,dashSize:2,gapSize:2 } );
+			var rp_material = new THREE.PointsMaterial({color:0x888888,size:2.0});
+			var r_line = new Array();
+			var r_points= new Array();
+			r_line.length=DEM.RIGHT.length;
+			for(let i=0;i<DEM.RIGHT.length;i++){
+				var r_vertice = new THREE.Geometry();
+				for(let j=0;j<DEM.RIGHT[i].Section.length;j++) {
+					r_vertice.vertices.push(new THREE.Vector3(DEM.RIGHT[i].Section[j].x / 10, DEM.RIGHT[i].Section[j].z - yMin, 0));
+				}
+				r_line[i]= new THREE.Line(r_vertice,r_material);
+				r_line[i].name = "RIGHT"+"-"+i.toString();
+				r_line[i].computeLineDistances();
+				r_linegroup.add(r_line[i]);
+				r_points[i] = new THREE.Points(r_vertice,rp_material);
+				r_points[i].visible=false;
+				DEM_pgroup.add(r_points[i]);
 			}
-			r_line[i]= new THREE.Line(r_vertice,r_material);r_line[i].name = "RIGHT"+"-"+i.toString();
-			r_linegroup.add(r_line[i]);
-			r_points[i] = new THREE.Points(r_vertice,rp_material);
-			r_points[i].visible=false;
-			DEM_pgroup.add(r_points[i]);
-		}
-		scene.add(r_linegroup);
-		scene.add(DEM_pgroup);
+			scene.add(r_linegroup);
+			scene.add(DEM_pgroup);
 
-	}
+		}
 	function drawDEM(leftLineCor,rightLineCor,midLineCor,cornerCor){
 
 		for (let i = 0; i < allChildren.length; i++){
@@ -5579,7 +5478,6 @@
 		midCoordinate.length = midLineCor.length;
 		leftCoordinate.length = leftLineCor.length;
 		rightCoordinate.length = rightLineCor.length;
-		console.log(rightCoordinate.length);
 		// midCoordinate.length =leftCoordinate.length = rightCoordinate.length =midLineCor.length;
 		for (let i = 0 ; i < midCoordinate.length ; i++){
 			midCoordinate[i] = new Array();
@@ -5605,8 +5503,6 @@
 		for (let i = 0 ; i <rightCoordinate.length ; i++){
 			rightX[i] = rightCoordinate[i][0];rightY[i] = rightCoordinate[i][1];
 		}
-		//
-
 
 		yMax = Math.max.apply(Math,y);
 		yMin = Math.min.apply(Math,y);
@@ -5618,21 +5514,7 @@
 		xMax = (parseInt(x[x.length - 1]/10) + 1 ) * 10;
 		horSize = xMax/10;
 
-		window.initContent();
-		// 中心断面 object
-		// var c_material = new THREE.LineBasicMaterial( { color: 0x000000 } );
-		// var c_lineframegroup = new Array();
-		// for(let i=0;i<DEM.MID.size();i++){
-		// 	var c_vertice = new THREE.Geometry();
-		// 	for(let j=0;j<DEM.MID[i].section.size;j++) {
-		// 		c_vertice.vertices.push(new THREE.Vector3(DEM.MID[i].section[j].x / 10, DEM.MID[i].section[j].z - yMin, 0));
-		// 	}
-		// 	var  c_line= new THREE.Line(c_vertice,c_material);c_line.name = "Section"+i.toString();
-		// 	c_lineframegroup.push(c_line);
-		// 	scene.add(c_line);
-		// }
-		//
-		// consolo.log(c_linegroup);
+		initContent();
 
 		/* 中心断面绘制 */
 		var material = new THREE.LineBasicMaterial( { color: 0x000000 } );
@@ -5672,73 +5554,917 @@
 		}
 	}
 	//DEM绘制
+	// $("#inputDem").click(function () {
+	//
+	// 	for (let i = 0; i < allChildren.length; i++){
+	// 		group.remove(allChildren[i]);
+	// 	}
+	//
+	// 	var request = new XMLHttpRequest();
+	// 	request.open("get","dem.json");
+	// 	request.send(null);
+	// 	request.onload = function () {
+	// 		if (request.status == 200){
+	// 			var json = JSON.parse(request.responseText);
+	// 			leftLineCor = json.DEM[0].LEFT;//左边线
+	// 			rightLineCor = json.DEM[0].RIGHT;//右边线
+	// 			midLineCor = json.DEM[0].MID;//中心断面
+	// 			cornerCor = json.GEO;//转角
+	// 			drawDEM(leftLineCor,rightLineCor,midLineCor,cornerCor);
+	//
+	// 			$('#inputCorner').click(function () {
+	// 				/* 转角投影线绘制 */
+	// 				drawGeo(cornerCor);
+	// 			})
+	//
+	// 			allChildren = [];
+	// 			for (let i = 0; i < group.children.length; i++) {
+	// 				allChildren.push(group.children[i]);
+	// 			}
+	//
+	// 			savedJson.DEM = json.DEM;
+	// 			savedJson.GEO = json.GEO;
+	// 		}
+	// 	}
+	// });
 	$("#inputDem").click(function () {
 
-		for (let i = 0; i < allChildren.length; i++){
-			framegroup.remove(allChildren[i]);
+			for (let i = 0; i < allChildren.length; i++){
+				framegroup.remove(allChildren[i]);
+			}
+
+			var request = new XMLHttpRequest();
+			request.open("get","JsonMap.Json");
+			request.send(null);
+			request.onload = function () {
+				if (request.status == 200){
+					var json = JSON.parse(request.responseText);
+					DEM = json.DEM;
+					// cornerCor ;
+					drawDEM_whj(DEM);
+
+					// $('#inputCorner').click(function () {
+					// 	/* 转角投影线绘制 */
+					// 	drawGeo(cornerCor);
+					// })
+					console.log(framegroup.children);
+					allChildren = [];
+					for (let i = 0; i < framegroup.children.length; i++) {
+						allChildren.push(framegroup.children[i]);
+					}
+				}
+			}
+		});
+
+
+	/* 悬链线相关函数 */
+	window.ComputeLoad = function() {
+		var a0=1;							//风压不均匀系数
+		var p=1.2255;						//空气密度 ρ
+		var g=9.80665;						//重力加速度 ｍ/ｓ^2
+		var Usc = 1.0;						//体型系数
+		var B =   1.0;						//覆冰时风荷载增大系数
+		var Uz =  1.0;						//风速高度变化系数
+		var Bc =  1.0;						//风荷载调整系数βc
+
+		for (let i = 0; i < theWeather.num; i++) {
+			let v = theWeather.TWI[i].v; //风速
+			let b = theWeather.TWI[i].b; //覆冰
+			//体型系数取值
+			if (b>0 || theLine.d < 17.0){
+				Usc = 1.2;
+			}
+			else {Usc = 1.1;}
+
+			//风速高度变化系数取值
+			if (i == 3){
+				Uz = Math.pow(theWeather.h / 10, theWeather.alfa * 2);
+			}else {
+				Uz = 1;
+			}
+
+			//覆冰时风荷载增大系数取值
+			if (b==5) B = 1.1;
+			else if (b ==10) B = 1.2;
+			else if (b == 15) B = 1.3;
+			else if (b >= 20) B = 1.5;
+			else B = 1;
+
+			//风压不均匀系数及风荷载调整系数取值
+			if (designLine ==1){
+				if (v<20) a0 =1;
+				else if (v >= 20&&v<27) a0 = 0.85;
+				else if (v>= 27&&v<31.5) a0 = 0.75;
+				else a0 = 0.70;
+			}
+			else if(designLine == 0){
+				if (v<20) a0 =1;
+				else if (v >= 20&&v<27) a0 = 0.75;
+				else if (v>= 27) a0 = 0.61;
+			}
+			else if (designLine > 10){
+				if(designLine<=200)
+					a0 = 0.80;
+				else if(designLine>200 && designLine<=250)
+					a0= 0.80 -(designLine-200)/50*(0.80-0.74);
+				else if(designLine>250 && designLine<=300)
+					a0 =0.74 -(designLine-250)/50*(0.74-0.70);
+				else if(designLine >300 && designLine<=350)
+					a0 =0.70 -(designLine-300)/50*(0.70-0.67);
+				else if(designLine >350 && designLine<=400)
+					a0 =0.67 -(designLine-350)/50*(0.67-0.65);
+				else if(designLine >400 && designLine<=450)
+					a0 =0.65 -(designLine-400)/50*(0.65-0.63);
+				else if(designLine >450 && designLine<=500)
+					a0= 0.63 -(designLine-450)/50*(0.63-0.62);
+				else if(designLine >500 && designLine<550)
+					a0 =0.62 -(designLine-500)/50*(0.62-0.61);
+				else if(designLine >=550)
+					a0 = 0.61;
+			}
+
+			theWeather.TWI[i].P1 = theLine.p1*g;										//自荷载
+			theWeather.TWI[i].P2 = 0.9*Math.PI*b*(b+theLine.d)*g*1E-3;						//冰荷载
+			theWeather.TWI[i].P3 = theWeather.TWI[i].P1+theWeather.TWI[i].P2;			//自荷载加冰荷载
+			theWeather.TWI[i].P4 = a0*v*v/1600*Uz*Usc*Bc*theLine.d ;					//无冰风荷载
+			theWeather.TWI[i].P5 = a0*v*v/1600*Uz*Usc*Bc*(theLine.d+2*b)*B;			//覆冰时风荷载
+			theWeather.TWI[i].P6 = Math.sqrt(theWeather.TWI[i].P1 * theWeather.TWI[i].P1 + theWeather.TWI[i].P4 * theWeather.TWI[i].P4);							//无冰时综合荷载
+			theWeather.TWI[i].P7 = Math.sqrt(theWeather.TWI[i].P3 * theWeather.TWI[i].P3 + theWeather.TWI[i].P5 * theWeather.TWI[i].P5);
+			theWeather.TWI[i].angle = Math.atan(theWeather.TWI[i].P5/theWeather.TWI[i].P3);	//风偏角的弧度值
+			theWeather.TWI[i].angle = theWeather.TWI[i].angle/Math.PI *180.0;				//风偏角的度数值βο
+		}
+	}
+	window.initializeData = function(UseWeather,UseLine,u,lineDesign){
+		theWeather = UseWeather;
+		theLine =    UseLine;
+		if (theLine.type!= 0){
+			// theWeather.TWI[4].b = theWeather.TWI[4].b + prk.PRIMARY.dIce;(出错地点）
+			theWeather.TWI[4].b = 5 + prk.PRIMARY.dIce;
+		}
+		theLine.F = theLine.F/u;
+		theLine.S_p = theLine.Tp*theLine.k/theLine.A;
+		theLine.S_m = theLine.S_p/theLine.F;
+		theLine.S_a = theLine.S_p * theLine.C;
+
+		theWeather.h = prk.PRIMARY.windH;
+		theWeather.alfa =prk.PRIMARY.alfa;
+
+		designLine = lineDesign;
+		ComputeLoad();
+	}
+	window.FindUsingSection = function(x) {
+		x= x+5;
+		for(let i=0;i<prk.SECTION.length;i++)
+		{
+			if(x>=prk.SECTION[i].from && x<=prk.SECTION[i].to)
+				return i;
+		}
+		return -1;
+	}
+	window.FindUsingLine = function(i) {
+		for(let j=0;i >-1 && j<prk.CONDUCTOR.length;j++)
+		{
+			if(prk.SECTION[i].powerLine==prk.CONDUCTOR[j].name)
+				return j;
+		}
+		return -1;
+	}
+	window.FindUsingGLine = function(i) {
+		for(let j=0;i >-1 && j<prk.CONDUCTOR.length;j++)
+		{
+			if(prk.SECTION[i].groundLine==prk.CONDUCTOR[j].name)
+				return j;
+		}
+		return -1;
+	}
+	window.FindUsingWeather = function(i) {
+		for(let j=0;i >-1 && j<prk.WEATHER.length;j++)
+		{
+			if(prk.SECTION[i].wertherName == prk.WEATHER[j].name)
+				return j;
+		}
+		return -1;
+	}
+	window.FindTower = function(tower){
+		for(let i=0;i<prk.TOWER.length;i++)
+		{
+			if(tower.TowerType==prk.TOWER[i].Name
+					&& tower.TowerHigh>=prk.TOWER[i].StartHigh && tower.TowerHigh<=prk.TOWER[i].EndHigh)
+				return i;
+		}
+		return -1;
+	}
+	window.initializeDataBool = function(x,u,isPower,designLine){
+		UseLine = prk.CONDUCTOR[0];
+		UseWeather = prk.WEATHER[0];
+		section = prk.SECTION[0];
+		let l = 0,w=0,gl = 0,SectionNo = 0;
+		SectionNo = FindUsingSection(x);
+		if (SectionNo <0) return false;
+		section = prk.SECTION[SectionNo];
+		if (isPower){
+			l = FindUsingLine(SectionNo);
+			if(l<0)	return false;
+			UseLine = prk.CONDUCTOR[l];
+			UseLine.k = section.pLineK;
+			UseLine.F = section.pLineF;
+			UseLine.C = section.pLineC;
+		}
+		else {
+			l = FindUsingGLine(SectionNo);
+			if(l<0) return false;
+			UseLine = prk.CONDUCTOR[l];
+			UseLine.k = section.gLineK;
+			UseLine.F = section.gLineF;
+			UseLine.C = section.gLineC;
 		}
 
-		var request = new XMLHttpRequest();
-		request.open("get","JsonMap.Json");
-		request.send(null);
-		request.onload = function () {
-			if (request.status == 200){
-				var json = JSON.parse(request.responseText);
-				 DEM = json.DEM;
+		w = FindUsingWeather(SectionNo);
+		if(w<0) return false;
+		UseWeather = prk.WEATHER[w];
 
-				console.log(DEM);
+		initializeData(UseWeather,UseLine,u,designLine);
+		return true;
+	}
+	window.GetCtlCondition = function(l) {
+		let ctrl;
+		let max_Fmx = -99999999;
+		for (let i = 0; i < theWeather.num && i < 5; i++) {
+			if (i === 0){
+				theWeather.TWI[i].Fmx = theLine.E * Math.pow(theWeather.TWI[i].P7/theLine.A * l,2)/(24*Math.pow(theLine.S_a,2)) - theLine.S_a - theLine.a * theLine.E * theWeather.TWI[i].t;
+			}else {
+				theWeather.TWI[i].Fmx = theLine.E * Math.pow(theWeather.TWI[i].P7/theLine.A * l,2.0) / (24.0*Math.pow(theLine.S_m,2.0)) - theLine.S_m - theLine.a*theLine.E* theWeather.TWI[i].t;
+			}
 
-				// leftLineCor = DEM[0].LEFT ;
-				// rightLineCor = DEM[0].RIGHT;
-				// midLineCor =DEM[0].MID;
-				// cornerCor ;
-				// console.log(leftLineCor,rightLineCor,midLineCor);
-				//drawDEM(leftLineCor,rightLineCor,midLineCor,cornerCor);
-				drawDEM_whj(DEM);
-
-
-				// $('#inputCorner').click(function () {
-				// 	/* 转角投影线绘制 */
-				// 	drawGeo(cornerCor);
-				// })
-				console.log(framegroup.children);
-				allChildren = [];
-				for (let i = 0; i < framegroup.children.length; i++) {
-					allChildren.push(framegroup.children[i]);
-				}
-				//
-				// savedJson.DEM = json.DEM;
-				// savedJson.GEO = json.GEO;
+			if(theWeather.TWI[i].Fmx>max_Fmx)							//获取当前代表档距下的控制条件
+			{
+				max_Fmx = theWeather.TWI[i].Fmx;
+				ctrl = i;
 			}
 		}
-	});
+		return ctrl;
+	}
+	window.GetStrain = function(l,cosa,condition) {
+		let S = 0;
+		let ctrl = GetCtlCondition(l);
+		let b,d;
+		let Sm,rm,r,E,a;
+		if (ctrl == condition){return ctrl == 0?theLine.S_a:theLine.S_m;}
+		if (ctrl == 0){Sm = theLine.S_a;}
+		else Sm = theLine.S_m;
+		rm = theWeather.TWI[ctrl].P7/theLine.A;
+		E = theLine.E;
+		a = theLine.a;
+		r = theWeather.TWI[condition].P7/theLine.A;
+		b = Sm - rm*rm*l*l*E*Math.pow(cosa,3)/(24*Sm*Sm) + a*E*cosa*(theWeather.TWI[ctrl].t - theWeather.TWI[condition].t);
+		d = r*r*l*l*E*Math.pow(cosa,3)/24;
+		S = GetEquationValue(1,-b,0,-d,9999);
+		return S;
+	}
+	window.GetEquationValue = function(a,b,c,d,maxX) {
+		let A,B,C,delta;
+		let x0=0,x1,x2,x3;
+		let zero = 1E-4;
+		A = b*b-3.0*a*c;
+		B = b*c -9.0*a*d;
+		C = c*c - 3.0*b*d;
+		delta = B*B - 4*A*C;
+		if(Math.abs(A-B)<zero && Math.abs(A)<zero)
+			x0 = -b/3.0/a;
+		else if(Math.abs(delta)<zero)
+		{
+			let K;
+			K = B/A;
+			x1 = -b/a+K;
+			x2 = -K/2.0;
 
+			if(x1>0 && x1<=maxX)
+				x0 = x1;
+			else if(x2>0 && x2<=maxX)
+				x0 = x2;
+		}
+		else if(delta>0)
+		{
+			let Y1,Y2;
+			Y1 = A*b + 3.0*a*(-B+Math.sqrt(delta))/2.0;
+			Y2 = A*b + 3.0*a*(-B-Math.sqrt(delta))/2.0;
+			let t1 = Math.pow( Math.abs(Y1) ,1.0/3.0 );
+			let t2 = Math.pow( Math.abs(Y2) ,1.0/3.0 );
+			if(Y1<0) t1 = -t1;
+			if(Y2<0) t2 = -t2;
+			x0 = ( -b-t1-t2 ) / (3.0*a);
+
+		}
+		else if(delta<0)
+		{
+			let sita,T;
+			T = (2.0*A*b-3.0*a*B) / (2.0*Math.pow(A,3.0/2.0));
+			sita = Math.acos(T);
+			x1 = ( -b-2.0*Math.sqrt(A)*Math.cos(sita/3.0) )/3.0/a;
+			x2 = ( -b+Math.sqrt(A)*(Math.cos(sita/3.0)+Math.sqrt(3.0)*Math.sin(sita/3.0)) ) /(3.0*a) ;
+			x3 = ( -b+Math.sqrt(A)*(Math.cos(sita/3.0)-Math.sqrt(3.0)*Math.sin(sita/3.0)) ) /(3.0*a) ;
+			if(x1>0 && x1<=maxX)
+				x0 = x1;
+			else if(x2>0 && x2<=maxX)
+				x0 = x2;
+			else if(x3>0 && x3<=maxX)
+				x0 = x3;
+		}
+		return x0 ;
+	}
+	window.GetMaxK = function(l,cosa,currentConditon) {
+		let ctrl = GetCtlCondition(l) ;
+		let S;let max_K = -99999999;
+		for (let i = 0; i < 5; i++) {
+			S = GetStrain(l,cosa,i);
+			if (theWeather.TWI[i].P7 / (2.0*S*theLine.A) >max_K){
+				currentConditon = i;
+				max_K = theWeather.TWI[i].P7 / (2.0*S*theLine.A);
+			}
+		}
+		return max_K;
+	}
+	window.GetMinK = function(l,cosa,currentConditon){
+		let ctrl = GetCtlCondition(l);								//控制条件序号
+		let S;													//应力
+		let min_K = 99999999;									//最大K值
+		for(let j = 0;j<5;j++)										//气象条件下的电线应力（力学计算P118）
+		{
+			S = GetStrain(l,cosa,j);								//计算应力
+			if(theWeather.TWI[j].P7 / (2.0*S*theLine.A) <min_K)
+			{
+				currentConditon = j;
+				min_K = theWeather.TWI[j].P7 / (2.0*S*theLine.A);
+			}
+		}
+		return min_K;
+	}
+	window.GetLoad = function(condition,no) {
+		if(no==1)
+			return theWeather.TWI[condition].P1;
+		else if(no==2)
+			return theWeather.TWI[condition].P2;
+		else if(no==3)
+			return theWeather.TWI[condition].P3;
+		else if(no==4)
+			return theWeather.TWI[condition].P4;
+		else if(no==5)
+			return theWeather.TWI[condition].P5;
+		else if(no==6)
+			return theWeather.TWI[condition].P6;
+		else if(no==7)
+			return theWeather.TWI[condition].P7;
+		else
+			return 0;
+	}
+	window.FindInsulate = function(insulateName) {
+		if(insulateName=="")
+			return -1;
+		for(let i=0;i<prk.INSULATE.length;i++)
+		{
+			if(insulateName==prk.INSULATE[i].name)
+				return i;
+		}
+		return -1;
+	}
+	window.GetDown2Top = function(towerType) {
+		for(let i=0;i<prk.TOWER.length;i++)
+		{
+			if(prk.TOWER[i].Name==towerType)
+				return prk.TOWER[i].upToMid+prk.TOWER[i].upToTop+prk.TOWER[i].minToDown;
+		}
+		return 0;
+	}
+	window.ComputeHugeHigh = function() {
+		for (let i = m_start; i <= m_end; i++) {
+			let down2top = GetDown2Top(towerlist[i].TowerType);
+			//计算杆塔的悬点高程
+			if(towerlist[i].Status==0)
+				towerlist[i].hugeHigh = towerlist[i].High + towerlist[i].Base + towerlist[i].TowerHigh - towerlist[i].InsulatorLength;
+			else
+				towerlist[i].hugeHigh = towerlist[i].High + towerlist[i].Base + towerlist[i].TowerHigh ;
+			//地线悬点高
+			towerlist[i].hugeGround = towerlist[i].High + towerlist[i].Base + towerlist[i].TowerHigh + down2top;
+		}
+
+		ComputeLk();
+		ComputeK2();
+		ComputeLhLv();
+		ComputeGK2();
+	}
+	window.ComputeLk = function() {
+		let start,end;//耐张段起始转角，终止转角
+		let l,x,y,cosb,length,t,cosBk;
+		start = m_start;
+		end = m_end;
+		while (start < m_end){
+			end = start + 1;
+			if (end < 0) end = m_end;
+
+			length = 0; x = 0; y = 0; t = 0;
+			for (let i = start; i < end; i++) {
+				length += (towerlist[i+1].Distance - towerlist[i].Distance);//towerlist l2
+				cosb = Math.cos(Math.atan((towerlist[i+1].hugeHigh - towerlist[i].hugeHigh)/(towerlist[i+1].Distance - towerlist[i].Distance)));
+				t += (towerlist[i+1].Distance - towerlist[i].Distance)/cosb/cosb;
+				x += Math.pow((towerlist[i+1].Distance - towerlist[i].Distance),3) * Math.pow(cosb,2);
+				y += (towerlist[i+1].Distance - towerlist[i].Distance)/cosb;
+			}
+			cosBk = y/t;
+			if (end - start >1) l = Math.sqrt(x/y) / cosBk;
+			else l = length;
+
+			for (let i = start; i < end; i++) {
+				towerlist[i].Lk = l;
+				towerlist[i].L = length;
+				towerlist[i].cosa = cosBk;
+				if (((end - start) == 1) && ((towerlist[i+1].Distance - towerlist[i].Distance) <= prk.PRIMARY.InsularMaxL)){
+					towerlist[i].bInsular = true;
+				}
+				else{
+					towerlist[i].bInsular = false;
+					towerlist[i].constant = 0;
+				}
+			}
+			start = end;//从终止转角继续查找下一个转角
+		}
+	}
+	window.ComputeIsolate = function(t1,t2,k,constA,kMaxT,constMaxT) {
+		//风压高度变化系数
+		let Kh = Math.pow(prk.PRIMARY.windH/10,prk.PRIMARY.alfa);
+		//判别函数值 线长系数 应力 弧垂
+		let F = [],K = [],S = [],f = [];
+		//档距
+		let m_l = t2.Distance-t1.Distance;
+		//绝缘子串参数
+		let m_length,m_weights,m_weight,m_area;
+		//控制应力
+		let m_Tav,m_Tmax,m_Ttract;
+		//分裂数
+		let n = theLine.num;
+		let insulateName ;
+		if(t1.InsulatePA!="")
+			insulateName =t1.InsulatePA;
+		else if(t1.InsulatePB!="")
+			insulateName =t1.InsulatePB;
+		else if(t2.InsulatePA!="")
+			insulateName =t2.InsulatePA;
+		else if(t2.InsulatePB!="")
+			insulateName =t2.InsulatePB;
+		let indexIsolate = FindInsulate(insulateName);
+		if(indexIsolate !=-1)
+		{
+			m_length = prk.INSULATE[indexIsolate].Length;
+			m_weight = prk.INSULATE[indexIsolate].Weight;
+			m_weights = prk.INSULATE[indexIsolate].Weight +prk.INSULATE[indexIsolate].IceWeight*prk.INSULATE[indexIsolate].Num*prk.INSULATE[indexIsolate].Join;
+			m_area = prk.INSULATE[indexIsolate].area*prk.INSULATE[indexIsolate].Num*prk.INSULATE[indexIsolate].Join;
+		}
+		else
+		{
+			m_length = t1.InsulatorLength;
+			m_weight = 200;
+			m_weights =300;
+			m_area =   1.0;
+		}
+		m_Tav =  theLine.Tp*theLine.k*theLine.C;
+		m_Tmax = theLine.Tp*theLine.k/theLine.F;
+		m_Ttract = m_Tmax;
+		let bata = Math.atan((t2.hugeHigh-t1.hugeHigh)/m_l);
+		let cl0 = m_length*Math.cos(bata);
+		let deltaL = 0;
+		let A = theLine.A;
+		let E = theLine.E;
+		let a = theLine.a;
+		let g = 9.8;
+		let G =0 ;
+		let ctrl = 0;
+		let ctrlK=0,Fmax=-99999;
+		let l1,W1,rb,tz,r,rs,T,aa;
+		for(let i=0;i<10;i++)
+		{
+			r = GetLoad(i,7)/A;
+			if(theWeather.TWI[i].b>0)
+				G = Math.sqrt((m_weights*g)*(m_weights*g),(m_area*Math.pow(theWeather.TWI[i].v*Kh,2)/1.600)*(m_area*Math.pow(theWeather.TWI[i].v*Kh,2)/1.600))/n;
+			else
+				G = Math.sqrt((m_weight* g)*(m_weight* g),(m_area*Math.pow(theWeather.TWI[i].v*Kh,2)/1.600)*(m_area*Math.pow(theWeather.TWI[i].v*Kh,2)/1.600))/n;
+			if( i==5)		//安装工况 施工观测弧垂 一端有串
+			{
+				S[i] = m_Ttract/A;
+				l1 = m_l- cl0;
+				W1 = l1*r/Math.cos(bata);
+				rb = r/Math.cos(bata);
+				tz = l1*(l1+3*cl0) + 6*cl0*G/(A*W1*rb)*(W1+2.0*G/3.0/A) - 3*cl0*cl0*Math.pow(W1+G/A,2)/(m_l*W1*rb);
+				K[i] = r*r*E*Math.pow(Math.cos(bata),3)/24 *tz;
+				deltaL = prk.PRIMARY.pLTract;
+			}
+			else			// 竣工情况 两端有串
+			{
+				if(i==0)
+					S[i] = m_Tav/A;
+				else
+					S[i] = m_Tmax/A;
+				l1 = m_l- 2*cl0;
+				W1 = l1 * r/Math.cos(bata);
+				rb = r/Math.cos(bata);
+				tz =  l1*(l1+6*cl0) + 12*G*cl0*(W1+2.0*G/3.0/A)/(W1*rb*A);
+				K[i] = r*r*E*Math.pow(Math.cos(bata),3)/24 *tz;
+				deltaL =0;
+			}
+			F[i] = K[i]/Math.pow(S[i],2)  -( S[i]+ a*E*Math.cos(bata)*theWeather.TWI[i].t - E*deltaL*Math.pow(Math.cos(bata),2)/l1);
+			if((i==0 || i==2 || i==4 || i==5 )&&F[i]>Fmax)
+			{
+				ctrl = i;
+				Fmax = F[i];
+				ctrlK  = K[i];
+			}
+		}
+
+		let f0 = -99999;
+		for(let i =0;i<10;i++)
+		{
+			T = theWeather.TWI[i].t;
+			aa = Fmax +a*E*Math.cos(bata)*T;
+			S[i] =0;
+			f[i] =0;
+			if(theWeather.TWI[i].b>0)
+				G = Math.sqrt((m_weights*g)*(m_weights*g),(m_area*Math.pow(theWeather.TWI[i].v*Kh,2)/1.600)*(m_area*Math.pow(theWeather.TWI[i].v*Kh,2)/1.600))/n;
+			else
+				G = Math.sqrt((m_weight* g)*(m_weight* g),(m_area*Math.pow(theWeather.TWI[i].v*Kh,2)/1.600)*(m_area*Math.pow(theWeather.TWI[i].v*Kh,2)/1.600))/n;
+			rs = G/A/m_length;
+			r = GetLoad(i,7)/A;
+			if(i==ctrl)
+			{
+				if(i ==0)
+					S[i] = m_Tav/A;
+				else if(i ==5)
+					S[i] = m_Ttract/A;
+				else
+					S[i] = m_Tmax/A;
+			}
+			else
+			{
+				S[i] = GetEquationValue(1.0,aa,0,-K[i],9999);
+			}
+			f[i] = ( r*m_l*m_l/8 + (rs-r)*cl0*cl0/2 ) / S[i]/Math.cos(bata);
+			if(i!=9  && f[i]>f0)
+			{
+				k = r/2/S[i];
+				constA = (rs-r)*cl0*cl0/2/S[i];
+				f0 = f[i];
+			}
+			else if(i ==9)
+			{
+				kMaxT = r/2/S[i];
+				constMaxT = (rs-r)*cl0*cl0/2/S[i];
+			}
+		}
+	}
+	window.ComputeK = function(l0,sita) {
+		let k=0;
+		let condition = -1;
+		k = GetMaxK(l0, sita,condition);
+		return k;
+	}
+	window.ComputeK2 = function() {
+		for (let i = m_start; i < m_end; i++) {
+			initializeDataBool(towerlist[i].Distance,towerlist[i].u,true,1);
+			if (towerlist[i].bInsular){
+				let k,constant,kMaxT,constMaxT;
+				ComputeIsolate(towerlist[i],towerlist[i+1],k,constant,kMaxT,constMaxT);
+				towerlist[i].kPline = k;
+				towerlist[i].kWind  = k;
+				towerlist[i].kMaxT  = kMaxT;
+				towerlist[i].constant = constant;
+				towerlist[i].constMaxT = constMaxT;
+			}else {
+				towerlist[i].kPline = ComputeK(towerlist[i].Lk,towerlist[i].cosa);
+				towerlist[i].kWind = GetLoad(3,7)/theLine.A/GetStrain(towerlist[i].Lk,towerlist[i].cosa,3)/2.0;
+				towerlist[i].kMaxT = GetLoad(9,7)/theLine.A/GetStrain(towerlist[i].Lk,towerlist[i].cosa,9)/2.0;
+			}
+		}
+	}
+	window.GetLoaLob = function(l0,cosa,condition,l,h,Loa,Lob) {
+		let s, p,r;
+		s = GetStrain(l0,  cosa,condition);
+		p = theWeather.TWI[condition].P7;//r为综合比载
+		r = p/theLine.A;
+		Loa = l/2.0 - s/r*arcsh(r*h/(2*s*sinh(r*l/2.0/s)));
+		//Lob = l/2.0 + s/r*arcsh(r*h/(2*s*sinh(r*l/2.0/s)));
+		Lob = l - Loa;
+	}
+	window.GetLoaLob2 = function(k,l,h) {
+		let Loa = l/2.0 - arcsh(k*h/sinh(k*l))/2.0/k;
+		let Lob = l - Loa;
+		let lo = new Array(Loa,Lob);
+		return lo
+
+	}
+	window.ComputeLH = function() {
+		let sita;
+		let indexComputeLH = -1;
+		let count = towerlist.length;
+		if (count > 0){
+			towerlist[0].Lh1 = 0;
+			towerlist[count-1].Lh2 = 0;
+			for(let i=m_start;i<m_end;i++)
+			{
+				//计算单侧水平档距
+				sita = Math.atan((towerlist[i+1].hugeHigh-towerlist[i].hugeHigh)/(towerlist[i+1].Distance - towerlist[i].Distance));
+				towerlist[i].Lh2 = (towerlist[i+1].Distance - towerlist[i].Distance)/Math.cos(sita)/2;
+				towerlist[i+1].Lh1 = (towerlist[i+1].Distance - towerlist[i].Distance)/Math.cos(sita)/2;
+			}
+			for(let i=m_start;i<=m_end;i++)
+			{
+				towerlist[i].Lh = towerlist[i].Lh1 + towerlist[i].Lh2;
+				indexComputeLH = FindTower(towerlist[i]);
+				if(indexComputeLH>0)
+				{
+					if(prk.TOWER[indexComputeLH].LH<towerlist[i].Lh)
+						towerlist[i].towererror = true;
+					else
+						towerlist[i].towererror = false;
+				}
+			}
+		}
+
+	}
+	window.ComputeLV = function(condition) {
+		let Loa,Lob;
+		let Lo = [];
+		let indexComputeLV= -1;
+		let k=0;
+		let count = towerlist.length;
+		if (count > 0) {
+			towerlist[0].Lv1 = 0;
+			towerlist[count-1].Lv2 = 0;
+			for(let i=m_start;i<m_end;i++)
+			{
+				//计算单侧垂直档距
+				if(condition<0)
+					k = towerlist[i].kPline;
+				else
+				{
+					initializeDataBool(towerlist[i].Distance,towerlist[i].u,true,1);
+					k = GetLoad(condition,7)/theLine.A/GetStrain(towerlist[i].Lk,towerlist[i].cosa,condition)/2.0;
+				}
+				Lo = GetLoaLob2(k, (towerlist[i+1].Distance - towerlist[i].Distance), towerlist[i+1].hugeHigh-towerlist[i].hugeHigh)
+				Loa = Lo[0];
+				Lob = Lo[1];
+				towerlist[i].Lv2 = Loa;
+				towerlist[i+1].Lv1 = Lob;
+			}
+			for(let i=m_start;i<=m_end;i++)
+			{
+				if(condition<0)
+				{
+					towerlist[i].Lv = towerlist[i].Lv1 + towerlist[i].Lv2;
+					indexComputeLV = FindTower(towerlist[i]);
+					if(indexComputeLV>0)
+					{
+						if(prk.TOWER[indexComputeLV].LV<towerlist[i].Lv)
+							towerlist[i].towererror = true;
+						else
+							towerlist[i].towererror = false;
+					}
+				}
+				else if(condition == 1)
+					towerlist[i].lvMaxTemp = towerlist[i].Lv1 + towerlist[i].Lv2;
+				else if(condition == 2)
+					towerlist[i].lvMinTemp = towerlist[i].Lv1 + towerlist[i].Lv2;
+				else if(condition == 3)
+					towerlist[i].lvMaxWind = towerlist[i].Lv1 + towerlist[i].Lv2;
+				else if(condition == 4)
+					towerlist[i].lvMaxIce  = towerlist[i].Lv1 + towerlist[i].Lv2;
+			}
+		}
+	}
+	window.ComputeLhLv = function() {
+		ComputeLH();
+		ComputeLV(-1);
+	}
+	window.ComputeGK = function(l0,cosa) {
+		let k= 0;
+		let condition = -1;
+		k = GetMinK(l0, cosa,condition);
+		return k;
+	}
+	window.ComputeGK2 = function() {
+		for(let i=m_start;i<m_end;i++)
+		{
+			initializeDataBool(towerlist[i].Distance,1,false,1);
+			towerlist[i].kGround = ComputeGK(towerlist[i].Lk,1);
+		}
+	}
+	//最低点三角
+	function DisplayFawLowest(x,y,x0,material) {
+		material = new THREE.LineBasicMaterial( { color: 0x000000 } );
+		let trianH = 0.5 * Math.tan(50 * (Math.PI/180));
+		console.log("三角形")
+		console.log(trianH);
+		let leftP = new THREE.Vector3(x/10+0.5-0.5,y - yMin + trianH,0);
+		let rightP = new THREE.Vector3(x/10+0.5+0.5,y - yMin + trianH,0);
+		let bottomP = new THREE.Vector3(x/10+0.5,y - yMin,0);
+		let triangleGeo = new THREE.Geometry();
+		triangleGeo.vertices.push(bottomP);
+		triangleGeo.vertices.push(leftP);
+		triangleGeo.vertices.push(rightP);
+		triangleGeo.vertices.push(bottomP);
+
+		let triangle =new THREE.Line(triangleGeo,material);
+		scene.add(triangle);
+	}
+	//弧垂
+	window.DisplayFawCurve = function(x1,y1,x2,y2,k,x0,bInsular,constt,length,material, name) {
+
+		if (x1 < 0) return;
+		let f,l1,l2,l,x3, y3;
+		let loa,h;
+		let endL,startL;
+		let ptCount =0;
+		let insertPoint = [];
+
+		l1 = 0;
+		l = x2-x1;
+		h = y2-y1;
+		loa = l/2.0 - arcsh(k*h/sinh(k*l))/2.0/k;
+		if(!bInsular)
+		{
+			startL=x1 + length;
+			endL = Math.min(x2,xMax);
+			ptCount = parseInt(endL - startL)+1;
+			for(let i=0;i<ptCount &&i< 2048 ;i++ )
+			{
+				l1 = 1.0*i + startL-x1;
+				l2 = l - l1;
+				if(i!=ptCount-1)//非最后点
+				{
+					//P180手册公式
+					f = l1*h/l +( sinh(k*(2*loa-l1)) * sinh(k*l1) )/k;
+					x3 = x1 + l1;
+					y3 = (l1*y2+l2*y1)/l-f;
+					// y3 = y1-sinh(k*l2-arcsh(k*(y2-y1))/sinh(k*l)) * sinh(k*l1) /k;
+				}
+				else if(x2 <= xmax)	//最后一点
+				{
+					x3 = x2;
+					y3 = y2;
+				}
+				insertPoint.push(new THREE.Vector3(x3/10 + 0.5, y3 - yMin, 0))
+			}
+		}
+		else
+		{
+			startL=x1;
+			endL = Math.min( x2-length*Math.cos(Math.atan(h/l)),xMax );
+			ptCount = parseInt (endL - startL)+2;
+			for(let i=0;i<ptCount;i++ )
+			{
+				if(i==0)			//第一点
+				{
+					x3 = x1;
+					y3 = y1;
+				}
+				else if(i!=ptCount-1)//中间点
+				{
+					l1 = 1.0*(i-1) + startL-x1;
+					l2 = l - l1;
+					//P193手册公式
+					f =( k*l1*(l-l1) + constt )/Math.cos(Math.atan(h/l));
+					x3 = x1 + l1;
+					y3 = (l1*y2+l2*y1)/l-f;
+				}
+				else if(x2<=xMax)	//最后一点
+				{
+					x3 = x2;
+					y3 = y2;
+				}
+				insertPoint.push(new THREE.Vector3(x3/10, y3 - yMin, 0))
+			}
+		}
+		// var conductMaterial = new THREE.LineBasicMaterial( { color: 0xff00ff } );
+		var conductGeo = new THREE.Geometry();
+		for (let i = 0 ; i <insertPoint.length ; i++){
+			conductGeo.vertices.push(insertPoint[i]);
+		}
+		var conductObj = new THREE.Line( conductGeo, material );
+		conductObj.name = name;
+		scene.add(conductObj);
+	}
+	window.DisplayFawCurve2 = function(x1,y1,x2,y2,k,dspLwst,bInsular,constt,length,material, name) {
+		if( x2-x1<10 || x2-x1>3000 || Math.abs(y1-y2)>2000 ) {
+			return;
+		}
+		let f,l1,l2,l;
+		let loa,h,xx,yy;
+		// let insertPoint = [];
+		let lx1 = x1,lx2 = x2;
+		l1 = 0;
+		l = x2-x1;
+		h = y2-y1;
+		xx = (x1+x2)/2;
+		if(k==0) k = 300*1E-6;
+		//计算弧垂最低点坐标
+		loa = l/2.0 - arcsh(k*h/sinh(k*l))/2.0/k;
+		f = loa*h/l +( sinh(k*(2*loa-loa)) * sinh(k*loa) )/k;
+		l = x2 - x1;
+		l1 = loa;
+		l2 = l-loa;
+		xx = x1 + loa;
+		yy = (l1*y2+l2*y1)/l-f;
+
+		// if (dspLwst)
+		// DisplayFawLowest(xx,  yy-constt, lx1, material);
+		DisplayFawCurve( x1, y1, x2, y2, k, lx1, bInsular, constt,length,material, name);
+
+		//显示超出范围的弧垂
+		if((xx<x1 || xx>x2) && dspLwst)
+		{
+			if(xx<x1)
+			{
+				x2 = x1;
+				y2 = y1;
+				x1 = xx;
+				y1 = yy;
+			}
+			else
+			{
+				x1 = x2;
+				y1 = y2;
+				x2 = yy;
+				y2 = yy;
+			}
+			DisplayFawCurve(x1, y1, x2, y2, k, lx1, bInsular, constt,length, name);
+		}
+	}
+	window.DisplayFawCurve3 = function(tower1, tower2, kPower, kGround, name){
+		let constt=0;
+		if(tower1.displayKType==0)
+			constt = tower1.constant;
+		else if(tower1.displayKType==1)
+			constt = tower1.constMaxT;
+		if(tower1.displayGround){
+			let wire_material = new THREE.LineBasicMaterial({color: 0x000000});
+			DisplayFawCurve2(tower1.Distance,tower1.hugeGround,tower2.Distance,tower2.hugeGround,kGround,false,false,0,0,wire_material, name+"1");
+		}
+		if(tower1.displayPower){
+			let wire_material1 = new THREE.LineBasicMaterial({color: 0x000000});
+			DisplayFawCurve2(tower1.Distance,tower1.hugeHigh, tower2.Distance,tower2.hugeHigh,kPower,true,
+					tower1.bInsular,constt,tower1.InsulatorLength,wire_material1, name+"2");
+		}
+		if(tower1.displaySafe){
+			let wire_material2 = new THREE.LineBasicMaterial({color: 0x0000ff});
+			DisplayFawCurve2(tower1.Distance,tower1.hugeHigh-tower1.LandDist, tower2.Distance,tower2.hugeHigh-tower1.LandDist,
+					kPower,false,tower1.bInsular,constt,tower1.InsulatorLength,wire_material2, name+"3");
+		}
+		if(tower1.displayCross){
+			let wire_material3 = new THREE.LineBasicMaterial({color: 0xff0000});
+			DisplayFawCurve2(tower1.Distance,tower1.hugeHigh-tower1.ElecDist, tower2.Distance,tower2.hugeHigh-tower1.ElecDist,
+					kPower,false,tower1.bInsular,constt,tower1.InsulatorLength,wire_material3, name+"4");
+		}
+	}
+	window.DisplayFawCurve4 = function(tower1,tower2, name){
+		if(tower1.displayKType==0){
+			DisplayFawCurve3(tower1, tower2, tower1.kPline, tower1.kGround, name);
+		}
+		// else if(tower1.displayKType==1)
+		// 	DisplayFawCurve3(tower1, tower2, tower1.kMaxT,  tower1.kGround);
+	}
+
+	// m_start = 0;
+	// m_end = towerlist.length - 1;
+	// ComputeHugeHigh();
+	var towerLineWid = 0.5;
 	/* 创建杆塔函数 */
-	function createTower(pos,index){
-		console.log(index);
-		let towerLineWid = 1;
+	window.tower1 = function(towerHei) {
 
 		let tower = new THREE.Shape();
 		tower.moveTo(0,0);
-		tower.lineTo(2,0);tower.lineTo(2,towerLineWid);tower.lineTo(1.5,towerLineWid);
-		tower.lineTo(1.5,towerHei-5-towerLineWid);tower.lineTo(3.5,towerHei-5-towerLineWid);
-		tower.lineTo(3.5,towerHei-5);tower.lineTo(1.5,towerHei-5);tower.lineTo(1.5,towerHei);
-		tower.lineTo(0.5,towerHei);tower.lineTo(0.5,towerHei-5);tower.lineTo(-1.5,towerHei-5);
-		tower.lineTo(-1.5,towerHei-5-towerLineWid);tower.lineTo(0.5,towerHei-5-towerLineWid);
-		tower.lineTo(0.5,towerLineWid);tower.lineTo(0,towerLineWid);
+		tower.lineTo(1,0);tower.lineTo(1,towerLineWid);tower.lineTo(0.75,towerLineWid);
+		tower.lineTo(0.75,towerHei-4.5-towerLineWid);tower.lineTo(1.5,towerHei-4.5-towerLineWid);
+		tower.lineTo(1.5,towerHei-4.5);tower.lineTo(0.75,towerHei-4.5);tower.lineTo(0.75,towerHei);
+		tower.lineTo(0.25,towerHei);tower.lineTo(0.25,towerHei-4.5);tower.lineTo(-0.5,towerHei-4.5);
+		tower.lineTo(-0.5,towerHei-4.5-towerLineWid);tower.lineTo(0.25,towerHei-4.5-towerLineWid);
+		tower.lineTo(0.25,towerLineWid);tower.lineTo(0,towerLineWid);
 		tower.lineTo(0,0);
 
 		let towerGroup = new THREE.ShapeGeometry(tower);
 		let towMaterial = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.DoubleSide } );
 		var towMesh = new THREE.Mesh( towerGroup, towMaterial ) ;
+		towMesh.renderOrder = towerHei;
+		return towMesh;
+	}
+	window.createTower = function(pos,index){
+		var towMesh = tower1(towerHei);
 		towMesh.position.x = pos.x;
 		towMesh.position.y = pos.y;
 		towMesh.position.z = 0;
 		towMesh.name = "fixTower";
-		towerlist.push({"Name" : "G" + index,
+		towMesh.geometry.name = "G" + index;
+		towerlist.push({
+			"Name" : "G" + index,
 			"Distance" : pos.x * 10,
 			"High" : pos.y + yMin,
 			"TowerType" : "ZMVA41",
+			"Base": 0,
 			"TowerHigh" : towerHei,
 			"Status" : 0,
 			"InsulatorLength": 4.5,
@@ -5749,39 +6475,63 @@
 			"InsulatePB": "X01",
 			"InsulatePBNum": -1,
 			"InsulatePC": "",
-			"InsulatePCNum": 0});
+			"InsulatePCNum": 0,
+			"hugeHigh":0,
+			"hugeGround" : 0,		// 地线悬挂点高程
+			"Lk": 0,
+			"L": 0,
+			"cosa":1,
+			"bInsular":false,
+			"constant": 0,
+			"u": 1,
+			"kPline": 0,			//导线大号侧k值系数
+			"kGround": 0,		//地线大号侧K值系数
+			"kWind": 0,			//大风条件前视档k值系数
+			"kMaxT": 0,			//70度高温k值系数
+			"constMaxT": 0,
+			"Lh": 0,				// 水平档距
+			"Lh1": 0,			// 小号侧垂直档距
+			"Lh2": 0,			// 大号侧垂直档距
+			"Lv" : 0,				// 垂直档距
+			"Lv1" : 0,			// 小号侧水平档距
+			"Lv2" : 0,			// 大号侧水平档距
+			"lvMinTemp": 0,//最低气温垂直档距
+			"lvMaxTemp": 0,//最高气温垂直档距
+			"lvMaxIce": 0,//最大覆冰垂直档距
+			"lvMaxWind": 0,//最大风垂直档距
+			"displayKType": 0,	//k值类型，0为最大弧垂 1为最高线温
+			"displayGround":0,		//显示地线
+			"displayPower" : 1,		//显示导线
+			"displaySafe" :  1,	//显示导线对地
+			"displayCross" : 1,		//显示导线跨越
+			"LandDist" : 8.5,		// 对地安全距离
+			"ElecDist" : 6.0	// 电力线安全距离
+		});
+		m_start = 0;
+		m_end = towerlist.length - 1;
+		ComputeHugeHigh();
 		scene.add(towMesh);
-		createWire(towerlist, index);
+
+		if (m_end >= 1) {
+			DisplayFawCurve4(towerlist[m_end - 1],towerlist[m_end], "fixwire");
+		}
 		return towMesh;
 	}
 	var tempTowerlist =[];
 	function createTowerTemp(pos){
 		tempTowerlist = [];
-		let towerLineWid = 1;
-		let tower = new THREE.Shape();
-		tower.moveTo(0,0);
-		tower.lineTo(2,0);tower.lineTo(2,towerLineWid);tower.lineTo(1.5,towerLineWid);
-		tower.lineTo(1.5,towerHei-5-towerLineWid);tower.lineTo(3.5,towerHei-5-towerLineWid);
-		tower.lineTo(3.5,towerHei-5);tower.lineTo(1.5,towerHei-5);tower.lineTo(1.5,towerHei);
-		tower.lineTo(0.5,towerHei);tower.lineTo(0.5,towerHei-5);tower.lineTo(-1.5,towerHei-5);
-		tower.lineTo(-1.5,towerHei-5-towerLineWid);tower.lineTo(0.5,towerHei-5-towerLineWid);
-		tower.lineTo(0.5,towerLineWid);tower.lineTo(0,towerLineWid);
-		tower.lineTo(0,0);
-
-		let towerGroup = new THREE.ShapeGeometry(tower);
-		let towMaterial = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.DoubleSide } );
-		var towMesh = new THREE.Mesh( towerGroup, towMaterial ) ;
+		var towMesh = tower1(towerHei);
 		towMesh.position.x = pos.x;
 		towMesh.position.y = pos.y;
 		towMesh.position.z = 0;
 		towMesh.name = "tower";
 
-		tempTowerlist.push(towerlist[towerlist.length-1]);
-
-		tempTowerlist.push({"Name" : "G0",
+		towerlist.push({
+			"Name" : "G",
 			"Distance" : pos.x * 10,
 			"High" : pos.y + yMin,
 			"TowerType" : "ZMVA41",
+			"Base": 0,
 			"TowerHigh" : towerHei,
 			"Status" : 0,
 			"InsulatorLength": 4.5,
@@ -5792,126 +6542,143 @@
 			"InsulatePB": "X01",
 			"InsulatePBNum": -1,
 			"InsulatePC": "",
-			"InsulatePCNum": 0});
-		createWireTemp(tempTowerlist);
+			"InsulatePCNum": 0,
+			"hugeHigh":0,
+			"hugeGround" : 0,		// 地线悬挂点高程
+			"Lk": 0,
+			"L": 0,
+			"cosa":1,
+			"bInsular":false,
+			"constant": 0,
+			"u": 1,
+			"kPline": 0,			//导线大号侧k值系数
+			"kGround": 0,		//地线大号侧K值系数
+			"kWind": 0,			//大风条件前视档k值系数
+			"kMaxT": 0,			//70度高温k值系数
+			"constMaxT": 0,
+			"Lh": 0,				// 水平档距
+			"Lh1": 0,			// 小号侧垂直档距
+			"Lh2": 0,			// 大号侧垂直档距
+			"Lv" : 0,				// 垂直档距
+			"Lv1" : 0,			// 小号侧水平档距
+			"Lv2" : 0,			// 大号侧水平档距
+			"lvMinTemp": 0,//最低气温垂直档距
+			"lvMaxTemp": 0,//最高气温垂直档距
+			"lvMaxIce": 0,//最大覆冰垂直档距
+			"lvMaxWind": 0,//最大风垂直档距
+			"displayKType": 0,	//k值类型，0为最大弧垂 1为最高线温
+			"displayGround":0,		//显示地线
+			"displayPower" : 1,		//显示导线
+			"displaySafe" :  1,	//显示导线对地
+			"displayCross" : 1,		//显示导线跨越
+			"LandDist" : 8.5,		// 对地安全距离
+			"ElecDist" : 6.0	// 电力线安全距离
+		});
+		m_end = towerlist.length - 1;
+		ComputeHugeHigh();
+
 		scene.add(towMesh);
-	}
-
-	/* 创建导线函数 */
-	function createWire(towerlist, index){
-		console.log(index);
-		var lineMaterial = new THREE.LineBasicMaterial({color: 0x000000});
-		if (towerlist.length > 1){
-			let wireLength = towerlist.length - 1;
-			wirelist.length = wireLength;
-			wirelist[wireLength] = [];
-
-			for (let i = 0; i < wireLength; i++) {
-				wirelist[i] = [new THREE.Vector3(towerlist[i].Distance/10, towerlist[i].High - yMin + 40, 0),new THREE.Vector3(towerlist[i+1].Distance/10, towerlist[i+1].High - yMin + 40, 0)]
-			}
-			console.log(wirelist);
-
-			let midArr = []; let midX = []; let midY = [];
-			for (let i = 0; i < wireLength; i++) {
-				midX[i] = wirelist[i][0].x + (wirelist[i][1].x - wirelist[i][0].x)/2;
-				midY[i] = wirelist[i][0].y + (wirelist[i][1].y - wirelist[i][0].y)/2 - 15;
-				midArr[i] = new THREE.Vector3(midX[i], midY[i], 0);
-			}
-
-			var wireCurve1 = [];var wireCurve2 = [];var wireCurve3 = [];
-			for (let i = 0; i < wireLength; i++) {
-				var curve = new THREE.CatmullRomCurve3([wirelist[i][0], midArr[i], wirelist[i][1]]);
-				let interPoints = curve.getPoints(50);
-				let geomertry = new THREE.BufferGeometry().setFromPoints(interPoints);
-				let line1 = new THREE.Line(geomertry,lineMaterial); line1.position.x += 1;
-				line1.name = "wire";line1.geometry.name = index - 1;
-				let line2 = line1.clone();let line3 = line1.clone();
-				line2.position.y = line1.position.y - 5;line2.material = line2.material.clone();
-				line2.material.color.set("#ff0000");
-				line3.position.y = line1.position.y - 10;line3.material = line3.material.clone();
-				line3.material.color.set("#0000ff");
-				// line1.name = '"wire"';line2.name = 'line2_move';line3.name = 'line3_move';
-				scene.add(line1);scene.add(line2);scene.add(line3);
-				console.log(line1);
-				wireCurve1.push(line1);wireCurve2.push(line2);wireCurve3.push(line3);
-			}
-			let yige =[]
-			console.log(scene.children);
-			for (let i = 0; i < scene.children.length; i++) {
-				if (scene.children[i].name === "wire") {
-					yige.push(scene.children[i]);
-				}
-			}
-			console.log(yige);
+		if (m_end > 0) {
+			DisplayFawCurve4(towerlist[m_end - 1],towerlist[m_end], "move_wire");
 		}
+		towerlist.pop();
+		m_end = towerlist.length - 1;
+		ComputeHugeHigh();
 	}
 
-	function createWireTemp(tempTowerlist){
-
-		let wirelistTemp = [];
-		var lineMaterial = new THREE.LineBasicMaterial({color: 0x000000});
-
-		if (tempTowerlist[0]!=undefined){
-			let wireLength = tempTowerlist.length - 1;
-			wirelistTemp.length = wireLength;
-			wirelistTemp[wireLength] = [];
-
-			for (let i = 0; i < wireLength; i++) {
-				wirelistTemp[i] = [new THREE.Vector3(tempTowerlist[i].Distance/10, tempTowerlist[i].High - yMin + 40, 0),new THREE.Vector3(tempTowerlist[i+1].Distance/10, tempTowerlist[i+1].High - yMin + 40, 0)]
-			}
-
-			let midArr = []; let midX = []; let midY = [];
-			for (let i = 0; i < wireLength; i++) {
-				midX[i] = wirelistTemp[i][0].x + (wirelistTemp[i][1].x - wirelistTemp[i][0].x)/2;
-				midY[i] = wirelistTemp[i][0].y + (wirelistTemp[i][1].y - wirelistTemp[i][0].y)/2 - 15;
-				midArr[i] = new THREE.Vector3(midX[i], midY[i], 0);
-			}
-
-			var wireCurve1 = [];var wireCurve2 = [];var wireCurve3 = [];
-			for (let i = 0; i < wireLength; i++) {
-				var curve = new THREE.CatmullRomCurve3([wirelistTemp[i][0], midArr[i], wirelistTemp[i][1]]);
-				let interPoints = curve.getPoints(50);
-				let geomertry = new THREE.BufferGeometry().setFromPoints(interPoints);
-				let line1 = new THREE.Line(geomertry,lineMaterial); line1.position.x += 1;
-				line1.name = 'line1_move';
-				let line2 = line1.clone();let line3 = line1.clone();
-				line2.position.y = line1.position.y - 5;line2.material = line2.material.clone();
-				line2.material.color.set("#ff0000");
-				line3.position.y = line1.position.y - 10;line3.material = line3.material.clone();
-				line3.material.color.set("#0000ff");
-				line2.name = 'line2_move';line3.name = 'line3_move';
-				scene.add(line1);scene.add(line2);scene.add(line3);
-				wireCurve1.push(line1);wireCurve2.push(line2);wireCurve3.push(line3);
-			}
-		}
-	}
+	// /* 创建导线函数 (暂停使用)*/
+	// window.createWire = function(towerlist, index){
+	// 	var lineMaterial = new THREE.LineBasicMaterial({color: 0x000000});
+	// 	if (towerlist.length > 1){
+	// 		let wireLength = towerlist.length - 1;
+	// 		wirelist.length = wireLength;
+	// 		wirelist[wireLength] = [];
+	//
+	// 		for (let i = 0; i < wireLength; i++) {
+	// 			wirelist[i] = [new THREE.Vector3(towerlist[i].Distance/10, towerlist[i].High - yMin + towerlist[i].TowerHigh - 5, 0),new THREE.Vector3(towerlist[i+1].Distance/10, towerlist[i+1].High - yMin + towerlist[i+1].TowerHigh - 5, 0)]
+	// 		}
+	//
+	// 		let midArr = []; let midX = []; let midY = [];
+	// 		for (let i = 0; i < wireLength; i++) {
+	// 			midX[i] = wirelist[i][0].x + (wirelist[i][1].x - wirelist[i][0].x)/2;
+	// 			midY[i] = wirelist[i][0].y + (wirelist[i][1].y - wirelist[i][0].y)/2 - 15;
+	// 			midArr[i] = new THREE.Vector3(midX[i], midY[i], 0);
+	// 		}
+	//
+	// 		var wireCurve1 = [];var wireCurve2 = [];var wireCurve3 = [];
+	// 		for (let i = 0; i < wireLength; i++) {
+	// 			var curve = new THREE.CatmullRomCurve3([wirelist[i][0], midArr[i], wirelist[i][1]]);
+	// 			let interPoints = curve.getPoints(50);
+	// 			let geomertry = new THREE.BufferGeometry().setFromPoints(interPoints);
+	// 			let line1 = new THREE.Line(geomertry,lineMaterial); line1.position.x += 1;
+	// 			line1.name = "wire";
+	// 			// line1.geometry.name = index - 1;
+	// 			let line2 = line1.clone();let line3 = line1.clone();
+	// 			line2.position.y = line1.position.y - 5;line2.material = line2.material.clone();
+	// 			line2.material.color.set("#ff0000");
+	// 			line3.position.y = line1.position.y - 10;line3.material = line3.material.clone();
+	// 			line3.material.color.set("#0000ff");
+	// 			scene.add(line1);scene.add(line2);scene.add(line3);
+	// 			wireCurve1.push(line1);wireCurve2.push(line2);wireCurve3.push(line3);
+	// 		}
+	// 	}
+	//
+	// }
+	// function createWireTemp(tempTowerlist){
+	//
+	// 		let wirelistTemp = [];
+	// 		var lineMaterial = new THREE.LineBasicMaterial({color: 0x000000});
+	// 		if (tempTowerlist.length > 1){
+	// 			let wireLength = tempTowerlist.length - 1;
+	// 			wirelistTemp.length = wireLength;
+	// 			wirelistTemp[wireLength] = [];
+	//
+	// 			for (let i = 0; i < wireLength; i++) {
+	// 				wirelistTemp[i] = [new THREE.Vector3(tempTowerlist[i].Distance/10, tempTowerlist[i].High - yMin + 40, 0),new THREE.Vector3(tempTowerlist[i+1].Distance/10, tempTowerlist[i+1].High - yMin + 40, 0)]
+	// 			}
+	//
+	// 			let midArr = []; let midX = []; let midY = [];
+	// 			for (let i = 0; i < wireLength; i++) {
+	// 				midX[i] = wirelistTemp[i][0].x + (wirelistTemp[i][1].x - wirelistTemp[i][0].x)/2;
+	// 				midY[i] = wirelistTemp[i][0].y + (wirelistTemp[i][1].y - wirelistTemp[i][0].y)/2 - 15;
+	// 				midArr[i] = new THREE.Vector3(midX[i], midY[i], 0);
+	// 			}
+	//
+	// 			var wireCurve1 = [];var wireCurve2 = [];var wireCurve3 = [];
+	// 			for (let i = 0; i < wireLength; i++) {
+	// 				var curve = new THREE.CatmullRomCurve3([wirelistTemp[i][0], midArr[i], wirelistTemp[i][1]]);
+	// 				let interPoints = curve.getPoints(50);
+	// 				let geomertry = new THREE.BufferGeometry().setFromPoints(interPoints);
+	// 				let line1 = new THREE.Line(geomertry,lineMaterial); line1.position.x += 1;
+	// 				line1.name = 'line1_move';
+	// 				let line2 = line1.clone();let line3 = line1.clone();
+	// 				line2.position.y = line1.position.y - 5;line2.material = line2.material.clone();
+	// 				line2.material.color.set("#ff0000");
+	// 				line3.position.y = line1.position.y - 10;line3.material = line3.material.clone();
+	// 				line3.material.color.set("#0000ff");
+	// 				line2.name = 'line2_move';line3.name = 'line3_move';
+	// 				scene.add(line1);scene.add(line2);scene.add(line3);
+	// 				wireCurve1.push(line1);wireCurve2.push(line2);wireCurve3.push(line3);
+	// 			}
+	// 		}
+	// 	}
 
 	/* 获取射线与平面相交的交点 */
 	var raycaster = new THREE.Raycaster();
 	var mouse = new THREE.Vector2();
-
 	function getIntersects(event) {
-		if(mainCanvas!=null) {
-			mouse.x = ((event.clientX - mainCanvas.getBoundingClientRect().left) / mainCanvas.offsetWidth) * 2 - 1;
-			mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top) / mainCanvas.offsetHeight) * 2 + 1;
+		mouse.x = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
+		mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
 
-			var normal = new THREE.Vector3(0, 0, 1);
-			var planeGround = new THREE.Plane(normal, 0);//创建平面
+		var normal = new THREE.Vector3(0, 0, 1);
+		var planeGround = new THREE.Plane(normal, 0);//创建平面
 
-			raycaster.setFromCamera(mouse, camera);//从相机发出一条射线经过鼠标点击的位置
-			var ray = raycaster.ray;//获取射线
-			var intersects = new THREE.Vector3();
-			intersects = ray.intersectPlane(planeGround, intersects);//计算相机到射线的对象，可能有多个对象，返回一个数组，按照距离相机远近排列
-
-			return intersects;
-		}
-		// const mouseVector = new THREE.Vector3();
-		// mouseVector.set(mouse.x,mouse.y,0.5);
-		// raycaster.setFromCamera(mouseVector,camera);
-		// console.log(raycaster.intersectObject(m_linegroup,true));
-		// return raycaster.intersectObject(m_linegroup,true);
+		raycaster.setFromCamera(mouse, camera);//从相机发出一条射线经过鼠标点击的位置
+		var ray = raycaster.ray;//获取射线
+		var intersects = new THREE.Vector3();
+		intersects = ray.intersectPlane(planeGround,intersects);//计算相机到射线的对象，可能有多个对象，返回一个数组，按照距离相机远近排列
+		return intersects;//返回向量
 	}
-
 	function getIntersectsObject(event) {
 		var towerArr = [];
 		mouse.x = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
@@ -5936,7 +6703,6 @@
 	//放置杆塔
 	function onMouseDown(event) {
 		intersects = getIntersects(event);
-		console.log("intersects",intersects);
 		tempintersects = intersects;
 
 		if (event.button === 0 ){
@@ -5946,87 +6712,104 @@
 			}
 
 			if (intersects.x<horSize &&intersects.x>0 && intersects.y<verSize && intersects.y>0){
+				putInd = towerlist.length;
 				var tempLine2Cor = [];
-				console.log("intersects mlinegroup");;
-				console.log(m_linegroup);
+				// for (let i = 0; i < centerDem.geometry.vertices.length; i++) {
+				// 	tempLine2Cor.push([centerDem.geometry.vertices[i].x, centerDem.geometry.vertices[i].y]);
+				// }
 				for (let i = 0; i < m_linegroup.children.length; i++) {
 					for(let j=0;j<m_linegroup.children[i].geometry.vertices.length;j++){
 						tempLine2Cor.push([m_linegroup.children[i].geometry.vertices[j].x,m_linegroup.children[i].geometry.vertices[j].y]);
 					}
 				}
 				var tempLine2 = turf.lineString(tempLine2Cor);
-				var temppointLine1 = turf.lineString([[tempintersects.x,tempintersects.y],[tempintersects.x,0]]);
+				var temppointLine1 = turf.lineString([[tempintersects.x, tempintersects.y + 500], [tempintersects.x, 0]]);
 				var interPoint1 = turf.lineIntersect(temppointLine1, tempLine2);
 				tempintersects = new THREE.Vector3(tempintersects.x, interPoint1.features[0].geometry.coordinates[1], 0);
-				console.log(tempintersects);
 
 				var pointsGeometry = new THREE.Geometry();
 				pointsGeometry.vertices.push(intersects);
 				var temppointsGeometry = new THREE.Geometry();
 				temppointsGeometry.vertices.push(tempintersects);
 
-				var pointsMaterial = new THREE.PointsMaterial({color:0xff0000, size: 3});
+				var pointsMaterial = new THREE.PointsMaterial({color: 0xff0000, size: 3});
 				var points = new THREE.Points(pointsGeometry, pointsMaterial);
 				var temppoints = new THREE.Points(temppointsGeometry, pointsMaterial);
-				pointArray.push(temppoints);console.log(pointArray);
-				putInd++;
-
-				var pos = new THREE.Vector3(points.geometry.vertices[0].x,points.geometry.vertices[0].y,0);
-				var tempLine1 = turf.lineString([[pos.x,pos.y],[pos.x,0]]);
+				pointArray.push(temppoints);
+				// putInd++;
+				var pos = new THREE.Vector3(points.geometry.vertices[0].x, points.geometry.vertices[0].y, 0);
+				var tempLine1 = turf.lineString([[pos.x, pos.y], [pos.x, 0]]);
 				var interPoint = turf.lineIntersect(tempLine1, tempLine2);
 				pos = new THREE.Vector3(points.geometry.vertices[0].x, interPoint.features[0].geometry.coordinates[1], 0);
-				createTower(pos,putInd-1);
+				createTower(pos, putInd);
+
+
+				let disToPile = []
+				for (let i = 0; i < pile_tabledata.length; i++) {
+					disToPile.push({
+						"name": pile_tabledata[i].name,
+						"dis": Math.abs(pile_tabledata[i].dist - pos.x * 10),
+						"value": i
+					})
+				}
+				disToPile.sort(compare("dis"));
+				$("#pilelist").val(disToPile[0].value);
+				let gap;
+				for (let i = 0; i < pile_tabledata.length; i++) {
+					if (pile_tabledata[i].name == disToPile[0].name) {
+						gap = pos.x * 10 - pile_tabledata[i].dist;
+					}
+				}
+				let gaptoPile = document.getElementById("gap");
+				console.log("gap pile", gap)
+				gaptoPile.value = gap.toFixed(2);
 				//whj 3.7 refresh GridManager 获取的只有参数  需要发起ajax请求帮助计算填充表格
 				console.log("set tower");
-				console.log(towerlist);
-				towerlist_tabledata=towerlist;
+				towerlist_tabledata = towerlist;
 				GridManager.refreshGrid(towerlist_tableId);
+
+				var inputId = document.getElementById("towId");
+				inputId.value = "G" + putInd;
+
 			}
 		}
 		if (event.button === 2){
+			for (let i = m_start; i < m_end; i++) {
+				DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
+			}
 			putInd = 0;
 			window_mouse = false;
 			document.removeEventListener("mousemove",onMouseMove);
 			document.removeEventListener("mousedown",onMouseDown);
-			console.log(window_mouse);
-			if (scene.getObjectByName('line_move1')||scene.getObjectByName('tower')||scene.getObjectByName('line2_move')||scene.getObjectByName('line3_move')){
-				scene.remove(scene.getObjectByName('line1_move'));
+			if (scene.getObjectByName("move_wire1")||scene.getObjectByName('tower')||scene.getObjectByName("move_wire2")||scene.getObjectByName('move_wire3')||scene.getObjectByName('move_wire4')){
+				scene.remove(scene.getObjectByName('move_wire1'));
 				scene.remove(scene.getObjectByName('tower'));
-				scene.remove(scene.getObjectByName('line2_move'));
-				scene.remove(scene.getObjectByName('line3_move'));
+				scene.remove(scene.getObjectByName('move_wire2'));
+				scene.remove(scene.getObjectByName('move_wire3'));
+				scene.remove(scene.getObjectByName('move_wire4'));
 				// pointArray.shift();
 				pointArray = [];
 			}
+			console.log("afterset",towerlist);
 		}
 	}
 	function onMouseMove(event) {
 		intersects = getIntersects(event);
-
 		tempintersects = intersects;
 		if (intersects.x<horSize &&intersects.x>0 && intersects.y<verSize && intersects.y>0){
-			if (scene.getObjectByName('line1_move')) {
-				scene.remove(scene.getObjectByName('line1_move'));
-			}
-			if (scene.getObjectByName('line2_move')) {
-				scene.remove(scene.getObjectByName('line2_move'));
-			}
-			if (scene.getObjectByName('line3_move')) {
-				scene.remove(scene.getObjectByName('line3_move'));
-			}
-			if (scene.getObjectByName('tower')) {
-				scene.remove(scene.getObjectByName('tower'));
-			}
-
+			clearTempTow();
 
 			var tempLine2Cor = [];
-
+			// for (let i = 0; i < centerDem.geometry.vertices.length; i++) {
+			// 	tempLine2Cor.push([centerDem.geometry.vertices[i].x,centerDem.geometry.vertices[i].y]);
+			// }
 			for (let i = 0; i < m_linegroup.children.length; i++) {
 				for(let j=0;j<m_linegroup.children[i].geometry.vertices.length;j++){
 					tempLine2Cor.push([m_linegroup.children[i].geometry.vertices[j].x,m_linegroup.children[i].geometry.vertices[j].y]);
 				}
 			}
 			var tempLine2 = turf.lineString(tempLine2Cor);
-			var temppointLine1 = turf.lineString([[tempintersects.x,tempintersects.y],[tempintersects.x,0]]);
+			var temppointLine1 = turf.lineString([[tempintersects.x,tempintersects.y  + 500],[tempintersects.x,0]]);
 			var interPoint1 = turf.lineIntersect(temppointLine1, tempLine2);
 			tempintersects = new THREE.Vector3(intersects.x, interPoint1.features[0].geometry.coordinates[1], 0);
 			var pos = new THREE.Vector3(intersects.x, intersects.y, 0);
@@ -6035,65 +6818,80 @@
 			pos = new THREE.Vector3(intersects.x, interPoint.features[0].geometry.coordinates[1], 0);
 			createTowerTemp(pos);
 
+			let disToPile = []
+			for (let i = 0; i < pile_tabledata.length; i++) {
+				disToPile.push({"name": pile_tabledata[i].name,
+					"dis":Math.abs(pile_tabledata[i].dist - pos.x * 10),
+					"value":i
+				})
+			}
+			disToPile.sort(compare("dis"));
+			$("#pilelist").val(disToPile[0].value);
+			let gap;
+			for (let i = 0; i < pile_tabledata.length; i++) {
+				if (pile_tabledata[i].name == disToPile[0].name){
+					gap = pos.x * 10 - pile_tabledata[i].dist;
+				}
+			}
+			let gaptoPile = document.getElementById("gap");
+			gaptoPile.value = gap.toFixed(2);
+
+			var inputDis = document.getElementById("dis");
+			var inputHei = document.getElementById("hei");
+			let disNum = pos.x * 10;
+			let heiNum = pos.y + yMin;
+			inputDis.value = disNum.toFixed(2);
+			inputHei.value = heiNum.toFixed(2);
+		}
+	}
+	//清除动态排杆中的临时数据
+	function clearTempTow(){
+		if (scene.getObjectByName('move_wire1')) {
+			scene.remove(scene.getObjectByName('move_wire1'));
+		}
+		if (scene.getObjectByName('move_wire2')) {
+			scene.remove(scene.getObjectByName('move_wire2'));
+		}
+		if (scene.getObjectByName('move_wire3')) {
+			scene.remove(scene.getObjectByName('move_wire3'));
+		}
+		if (scene.getObjectByName('move_wire4')) {
+			scene.remove(scene.getObjectByName('move_wire4'));
+		}
+		if (scene.getObjectByName('tower')) {
+			scene.remove(scene.getObjectByName('tower'));
 		}
 	}
 	//保存排杆
 	$("#saveTower").click(function () {
-		let allTow = [];
-		towerlist = [];
-		for (let i = 0; i < scene.children.length; i++) {
-			if (scene.children[i].isMesh) {
-				allTow.push(scene.children[i]);
+			console.log(towerlist);
+			var towerpwf = {"TOWERLIST":towerlist};
+			savedJson.pwf = towerpwf;
+			var pwfStr = JSON.stringify(towerpwf);
+			var formData = new FormData();
+
+			formData.append("pwf",pwfStr);
+			formData.append("ProjectName", prjName);
+			console.log(formData.get('pwf'));
+
+			if (towerlist.length > 0){
+				$.ajax({
+					url: "http://202.114.118.138:8181/pwfsave", //提交的路径
+					type: "post",       //提交方式
+					data: formData,    //提交的数据
+					// dataType:"json",
+					contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+					processData: false,
+					success: function (data) {
+						console.log(data);
+						alert("保存成功！");
+					},
+					error: function (errorMsg) {
+						alert(errorMsg);
+					}
+				});
 			}
-		}
-
-		for (let i = 0; i < allTow.length; i++) {
-			towerlist.push({"Name" : "G" + i,
-				"Distance" : allTow[i].position.x * 10,
-				"High" : allTow[i].position.y + yMin,
-				"TowerType" : "ZMVA41",
-				"TowerHigh" : towerHei,
-				"Status" : 0,
-				"InsulatorLength": 4.5,
-				"ConnectLength": 0.0,
-				"InsulateP": "",
-				"InsulatePA": "X01",
-				"InsulatePANum": -1,
-				"InsulatePB": "X01",
-				"InsulatePBNum": -1,
-				"InsulatePC": "",
-				"InsulatePCNum": 0})
-		}
-		console.log(towerlist);
-		var towerpwf = {"TOWERLIST":towerlist};
-		savedJson.pwf = towerpwf;
-		console.log(towerpwf);
-		var pwfStr = JSON.stringify(towerpwf);
-		console.log(pwfStr)
-		var formData = new FormData();
-
-		formData.append("pwf",pwfStr);
-		formData.append("ProjectName", prjName);
-		console.log(formData.get('pwf'));
-
-		if (towerlist.length > 0){
-			$.ajax({
-				url: "http://202.114.118.138:8181/pwfsave", //提交的路径
-				type: "post",       //提交方式
-				data: formData,    //提交的数据
-				// dataType:"json",
-				contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-				processData: false,
-				success: function (data) {
-					console.log(data);
-					alert("保存成功！");
-				},
-				error: function (errorMsg) {
-					alert(errorMsg);
-				}
-			});
-		}
-	})
+		})
 	savedJson.pwf = towerlist;
 	//保存json文件到本地（固定路径）
 	$("#saveJson").click(function () {
@@ -6104,101 +6902,601 @@
 	})
 	//删除杆塔
 	function towerDelete(event) {
-		// document.body.style.cursor = "url(./css/cancel.ico) 12 12, default";
-		var intersectsTower = getIntersectsObject(event);
-		console.log(intersectsTower[0]);
-		intersectsTower[0].object.material = new THREE.LineBasicMaterial({color: 0x00ffff});
-		var msg = "删除杆塔";
-		var index = 0;var inx = 0;
-		let allTow = [];
-		let towlistDe = [];
+		// document.body.style.cursor = "url(./css/cancel.ico) 9 9, default";
+		if (event.button === 0){
+			var intersectsTower = getIntersectsObject(event);
+			console.log("picked", intersectsTower[0]);
+			// intersectsTower[0].object.material = new THREE.LineBasicMaterial({color: 0x00ffff});
+			var msg = "删除杆塔";
+			let deleteWire = [];
+			let currentTow = [];
+			if (confirm(msg) === true) {
+				scene.remove(intersectsTower[0].object);
+				for (let i = 0; i < scene.children.length; i++) {
+					if (scene.children[i].name === "fixwire1" || scene.children[i].name === "fixwire2" || scene.children[i].name === "fixwire3" || scene.children[i].name === "fixwire4") {
+						deleteWire.push(scene.children[i]);
+					}
+				}
+				for (let i = 0; i < deleteWire.length; i++) {
+					scene.remove(deleteWire[i]);
+				}
+				towerlist.removed(intersectsTower[0].object.geometry.name)
+				console.log(towerlist);
+				let deleteInd = towerlist.findindexOf(intersectsTower[0].object.geometry.name);
+				console.log("deleteind", deleteInd)
+				m_end = towerlist.length - 1;
+				towerlist.sort(compare('Distance'));
+				for (let i = 0; i < towerlist.length; i++) {
+					towerlist[i].Name = "G" + i;
+				}
 
-		let wireTemp = [];
-		console.log(intersectsTower);
-		if (confirm(msg) === true){
-			scene.remove(intersectsTower[0].object);
+				for (let i = m_start; i < m_end; i++) {
+					DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
+				}
+
+				console.log(scene.children)
+				scene.children.sort(compare('position'))
+				for (let i = 0; i < scene.children.length; i++) {
+					if (scene.children[i].name == "fixTower") {
+						currentTow.push({
+							"posX": scene.children[i].position.x,
+							"object": scene.children[i]
+						});
+					}
+				}
+				console.log(currentTow)
+				currentTow.sort(compare('posX'))
+				for (let j = 0; j < currentTow.length; j++) {
+					for (let i = 0; i < scene.children.length; i++) {
+						if (scene.children[i].uuid == currentTow[j].object.uuid) {
+							scene.children[i].geometry.name = "G" + j;
+						}
+					}
+				}
+				console.log(towerlist);
+				towerlist_tabledata = towerlist;
+				console.log(towerlist_tabledata);
+				GridManager.setAjaxData(towerlist_tableId, {"data": towerlist_tabledata});
+				GridManager.refreshGrid(towerlist_tableId);
+			} else {
+				return false;
+			}
+		}
+		if (event.button === 2){
+			document.body.style.cursor = "default";
+			document.removeEventListener("mousedown", towerDelete);
+		}
+	}
+	//插入杆塔
+	function towerInsert(event) {
+		if (event.button === 0){
+			let currentTow = [];
+			let deleteWire = [];
+			console.log(event);
+			intersects = getIntersects(event);
+			tempintersects = intersects;
+
+			var tempLine2Cor = [];
+			console.log(intersects);
+			for (let i = 0; i < centerDem.geometry.vertices.length; i++) {
+				tempLine2Cor.push([centerDem.geometry.vertices[i].x,centerDem.geometry.vertices[i].y]);
+			}
+			var tempLine2 = turf.lineString(tempLine2Cor);
+			var temppointLine1 = turf.lineString([[tempintersects.x,tempintersects.y],[tempintersects.x,0]]);
+			var interPoint1 = turf.lineIntersect(temppointLine1, tempLine2);
+			tempintersects = new THREE.Vector3(tempintersects.x, interPoint1.features[0].geometry.coordinates[1], 0);
+			console.log(tempintersects);
+
+			var pointsGeometry = new THREE.Geometry();
+			pointsGeometry.vertices.push(intersects);
+			var temppointsGeometry = new THREE.Geometry();
+			temppointsGeometry.vertices.push(tempintersects);
+
+			var pointsMaterial = new THREE.PointsMaterial({color:0xff0000, size: 3});
+			var points = new THREE.Points(pointsGeometry, pointsMaterial);
+			var temppoints = new THREE.Points(temppointsGeometry, pointsMaterial);
+			pointArray.push(temppoints);console.log(pointArray);
+			putInd++;
+
+			var pos = new THREE.Vector3(points.geometry.vertices[0].x,points.geometry.vertices[0].y,0);
+			var tempLine1 = turf.lineString([[pos.x,pos.y],[pos.x,0]]);
+			var interPoint = turf.lineIntersect(tempLine1, tempLine2);
+			pos = new THREE.Vector3(points.geometry.vertices[0].x, interPoint.features[0].geometry.coordinates[1], 0);
+
+			var towMesh = tower1(towerHei);
+			towMesh.position.x = pos.x;
+			towMesh.position.y = pos.y;
+			towMesh.position.z = 0;
+			towMesh.name = "fixTower";
+			scene.add(towMesh);
+			console.log("before",towerlist)
+
 			for (let i = 0; i < scene.children.length; i++) {
-				if (scene.children[i].isMesh) {
-					scene.children[i].children = index;
-					allTow.push(scene.children[i]);
-					index++;
+				if (scene.children[i].name === "fixwire1" || scene.children[i].name === "fixwire2" || scene.children[i].name === "fixwire3" || scene.children[i].name === "fixwire4") {
+					deleteWire.push(scene.children[i]);
 				}
 			}
-			console.log(allTow);
-			for (let i = 0; i < allTow.length; i++) {
-				towlistDe.push({
-					"Distance" : allTow[i].position.x * 10,
-					"High" : allTow[i].position.y + yMin})
+			console.log(deleteWire)
+			for(let i = 0; i < deleteWire.length; i++){
+				scene.remove(deleteWire[i]);
 			}
-			console.log(towlistDe);
-			console.log("ee");
+
+			console.log("before end",m_end)
+			towerlist.push({
+				"Name" : "G" + towerlist.length,
+				"Distance" : pos.x * 10,
+				"High" : pos.y + yMin,
+				"TowerType" : "ZMVA41",
+				"Base": 0,
+				"TowerHigh" : towerHei,
+				"Status" : 0,
+				"InsulatorLength": 4.5,
+				"ConnectLength": 0.0,
+				"InsulateP": "",
+				"InsulatePA": "X01",
+				"InsulatePANum": -1,
+				"InsulatePB": "X01",
+				"InsulatePBNum": -1,
+				"InsulatePC": "",
+				"InsulatePCNum": 0,
+				"hugeHigh":0,
+				"hugeGround" : 0,		// 地线悬挂点高程
+				"Lk": 0,
+				"L": 0,
+				"cosa":1,
+				"bInsular":false,
+				"constant": 0,
+				"u": 1,
+				"kPline": 0,			//导线大号侧k值系数
+				"kGround": 0,		//地线大号侧K值系数
+				"kWind": 0,			//大风条件前视档k值系数
+				"kMaxT": 0,			//70度高温k值系数
+				"constMaxT": 0,
+				"Lh": 0,				// 水平档距
+				"Lh1": 0,			// 小号侧垂直档距
+				"Lh2": 0,			// 大号侧垂直档距
+				"Lv" : 0,				// 垂直档距
+				"Lv1" : 0,			// 小号侧水平档距
+				"Lv2" : 0,			// 大号侧水平档距
+				"lvMinTemp": 0,//最低气温垂直档距
+				"lvMaxTemp": 0,//最高气温垂直档距
+				"lvMaxIce": 0,//最大覆冰垂直档距
+				"lvMaxWind": 0,//最大风垂直档距
+				"displayKType": 0,	//k值类型，0为最大弧垂 1为最高线温
+				"displayGround":0,		//显示地线
+				"displayPower" : 1,		//显示导线
+				"displaySafe" :  1,	//显示导线对地
+				"displayCross" : 1,		//显示导线跨越
+				"LandDist" : 8.5,		// 对地安全距离
+				"ElecDist" : 6.0	// 电力线安全距离
+			});
+			console.log("then",towerlist)
+			m_end = towerlist.length - 1;
+			ComputeHugeHigh();
+			towerlist.sort(compare('Distance'));
+			for (let i = 0; i < towerlist.length; i++) {
+				towerlist[i].Name = "G" + i;
+			}
+			console.log("after",towerlist)
+			for (let i = m_start; i < m_end; i++) {
+				DisplayFawCurve4(towerlist[i],towerlist[i+1], "fixwire");
+			}
+
+			console.log(scene.children)
+			scene.children.sort(compare('position'))
 			for (let i = 0; i < scene.children.length; i++) {
-				if (scene.children[i].name === "wire") {
+				if (scene.children[i].name == "fixTower") {
+					currentTow.push({
+						"posX":scene.children[i].position.x,
+						"object":scene.children[i]
+					});
+				}
+			}
+			console.log(currentTow)
+			currentTow.sort(compare('posX'))
+			for (let j = 0; j < currentTow.length; j++) {
+				for (let i = 0; i < scene.children.length; i++) {
+					if (scene.children[i].uuid == currentTow[j].object.uuid){
+						scene.children[i].geometry.name = "G" + j;
+					}
+				}
+			}
+
+			let disToPile = []
+			for (let i = 0; i < pile_tabledata.length; i++) {
+				disToPile.push({"name": pile_tabledata[i].name,
+					"dis":Math.abs(pile_tabledata[i].dist - pos.x * 10),
+					"value":i
+				})
+			}
+			disToPile.sort(compare("dis"));
+			$("#pilelist").val(disToPile[0].value);
+			let gap;
+			for (let i = 0; i < pile_tabledata.length; i++) {
+				if (pile_tabledata[i].name == disToPile[0].name){
+					gap = pos.x * 10 - pile_tabledata[i].dist;
+				}
+			}
+			let gaptoPile = document.getElementById("gap");
+			console.log("gap pile", gap)
+			gaptoPile.value = gap.toFixed(2);
+			var inputId = document.getElementById("towId");
+			inputId.value = "G" + towerlist.length;
+			var inputDis = document.getElementById("dis");
+			var inputHei = document.getElementById("hei");
+			let disNum = pos.x * 10;
+			let heiNum = pos.y + yMin;
+			inputDis.value = disNum.toFixed(2);
+			inputHei.value = heiNum.toFixed(2);
+
+			console.log(towerlist);
+			towerlist_tabledata=towerlist;
+			console.log(towerlist_tabledata);
+			GridManager.setAjaxData(towerlist_tableId,{"data":towerlist_tabledata});
+			GridManager.refreshGrid(towerlist_tableId);
+		}
+		if (event.button === 2){
+			document.removeEventListener("mousedown",towerInsert);
+		}
+	}
+	//移动杆塔
+	function initDragControls() {
+		var index = 0;var inx = 0;
+		// 过滤不是 Mesh 的物体,例如辅助网格
+		var objects = [];
+		let allTow = [];
+		let wireTemp = [];
+		for (let i = 0; i < scene.children.length; i++) {
+			if (scene.children[i].isMesh) {
+				scene.children[i].children = index;
+				objects.push(scene.children[i]);
+				index++;
+			}
+		}
+		var dragControls = new THREE.DragControls(objects, camera, document,centerDem);// 初始化拖拽控件
+		dragControls.enabled = true;
+		dragControls.addEventListener('hoveron', function (event) {}); // 鼠标略过
+		dragControls.addEventListener('dragstart', function (event) {
+		});// 开始拖拽
+		//拖拽
+		dragControls.addEventListener('drag',function (event) {
+			clearTempTow();
+			intersects = event.object;
+			// console.log("drag_event",event)
+			// console.log("drag_object",event.object)
+			scene.remove(event.object);
+			intersects.geometry.dispose()
+
+			var tempPoints = intersects.position;
+			console.log("drag_pos",tempPoints)
+			// createTower(tempPoints,index);
+			var tempLine2Cor = [];
+			for (let i = 0; i < centerDem.geometry.vertices.length; i++) {
+				tempLine2Cor.push([centerDem.geometry.vertices[i].x,centerDem.geometry.vertices[i].y]);
+			}
+			var tempLine2 = turf.lineString(tempLine2Cor);
+			var points = new THREE.Vector3(tempPoints.x,tempPoints.y + 500,0);
+			var tempLine1 = turf.lineString([[points.x,points.y],[points.x,0]]);
+			var interPoint = turf.lineIntersect(tempLine1, tempLine2);
+			points = new THREE.Vector3(tempPoints.x, interPoint.features[0].geometry.coordinates[1], 0);
+
+			var towMesh = tower1(towerHei);
+			towMesh.position.x = points.x;
+			towMesh.position.y = points.y;
+			towMesh.position.z = 0;
+			towMesh.name = "tower";
+			scene.add(towMesh);
+
+			for (let i = 0; i < scene.children.length; i++) {
+				if (scene.children[i].name === "fixwire1"||scene.children[i].name === "fixwire2"||scene.children[i].name === "fixwire3"||scene.children[i].name === "fixwire4") {
 					wireTemp.push(scene.children[i]);
 				}
 			}
 			for(let i = 0; i < wireTemp.length; i++){
 				scene.remove(wireTemp[i]);
 			}
-			createWire(towlistDe,index)
-			inx ++ ;
+		});
+		// 拖拽结束
+		dragControls.addEventListener('dragend', function (event) {
+			intersects = event.object;
+			let geoName = intersects.geometry.name
+			console.log("dragend",intersects)
+			scene.remove(event.object);
+			intersects.geometry.dispose();
+
+			var tempPoints = intersects.position;
+			console.log(towerlist);
+			var tempLine2Cor = [];
+			for (let i = 0; i < centerDem.geometry.vertices.length; i++) {
+				tempLine2Cor.push([centerDem.geometry.vertices[i].x,centerDem.geometry.vertices[i].y]);
+			}
+			var tempLine2 = turf.lineString(tempLine2Cor);
+			var points = new THREE.Vector3(tempPoints.x,tempPoints.y + 500,0);
+			var tempLine1 = turf.lineString([[points.x,points.y],[points.x,0]]);
+			var interPoint = turf.lineIntersect(tempLine1, tempLine2);
+			points = new THREE.Vector3(tempPoints.x, interPoint.features[0].geometry.coordinates[1], 0);
+
+			var towMesh = tower1(towerHei);
+			towMesh.position.x = points.x;
+			towMesh.position.y = points.y;
+			towMesh.position.z = 0;
+			towMesh.name = "fixTower";
+			towMesh.geometry.name = geoName
+			scene.add(towMesh);
+
+			for (let i = 0; i < towerlist.length; i++) {
+				if (towerlist[i].Name == geoName){
+					towerlist[i].Distance = towMesh.position.x * 10;
+					towerlist[i].High = towMesh.position.y + yMin;
+				}
+			}
+			m_end = towerlist.length - 1;
+			ComputeHugeHigh();
+
+			for (let i = m_start; i < m_end; i++) {
+				DisplayFawCurve4(towerlist[i],towerlist[i+1], "fixwire");
+			}
+
+			towerlist_tabledata=towerlist;
+			console.log(towerlist_tabledata);
+			GridManager.setAjaxData(towerlist_tableId,{"data":towerlist_tabledata});
+			GridManager.refreshGrid(towerlist_tableId);
+			console.log(dragControls.dispose)
+			dragControls.dispose// dragControls.enabled = false;
+		});
+	}
+	//升高杆塔
+	function riseTower(event){
+		// document.body.style.cursor = "url(./css/rise.ico) 9 9, default";
+		if (event.button === 0) {
+			var intersectsTower = getIntersectsObject(event);
+			console.log(intersectsTower[0]);
+			let tempTowerHei = intersectsTower[0].object.renderOrder;
+			let deleteWire = [];
+
+			if (tempTowerHei < 45) {
+				tempTowerHei += 3;
+				scene.remove(intersectsTower[0].object);
+			} else return tempTowerHei;
+
+			var tempPoints = intersectsTower[0].object.position;
+			var tempLine2Cor = [];
+			for (let i = 0; i < centerDem.geometry.vertices.length; i++) {
+				tempLine2Cor.push([centerDem.geometry.vertices[i].x, centerDem.geometry.vertices[i].y]);
+			}
+			var tempLine2 = turf.lineString(tempLine2Cor);
+			var points = new THREE.Vector3(tempPoints.x, tempPoints.y + 500, 0);
+			var tempLine1 = turf.lineString([[points.x, points.y], [points.x, 0]]);
+			var interPoint = turf.lineIntersect(tempLine1, tempLine2);
+			points = new THREE.Vector3(tempPoints.x, interPoint.features[0].geometry.coordinates[1], 0);
+			// createTower(points, inx);
+
+			var towMesh = tower1(tempTowerHei);
+			towMesh.position.x = points.x;
+			towMesh.position.y = points.y;
+			towMesh.position.z = 0;
+			towMesh.name = "fixTower";
+			towMesh.geometry.name = intersectsTower[0].object.geometry.name;
+			scene.add(towMesh);
+
+			for (let i = 0; i < scene.children.length; i++) {
+				if (scene.children[i].name === "fixwire1" || scene.children[i].name === "fixwire2" || scene.children[i].name === "fixwire3" || scene.children[i].name === "fixwire4") {
+					deleteWire.push(scene.children[i]);
+				}
+			}
+			console.log(deleteWire)
+			for (let i = 0; i < deleteWire.length; i++) {
+				scene.remove(deleteWire[i]);
+			}
+
+			for (let i = 0; i < towerlist.length; i++) {
+				if (towerlist[i].Name == towMesh.geometry.name) {
+					towerlist[i].TowerHigh = tempTowerHei
+				}
+			}
+
+			ComputeHugeHigh();
+			for (let i = m_start; i < m_end; i++) {
+				DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
+			}
+			console.log(towerlist);
+			towerlist_tabledata = towerlist;
+			console.log(towerlist_tabledata);
+			GridManager.setAjaxData(towerlist_tableId, {"data": towerlist_tabledata});
+			GridManager.refreshGrid(towerlist_tableId);
+		}
+		if (event.button === 2){
 			document.body.style.cursor = "default";
-			document.removeEventListener("mousedown",towerDelete);
-		}else {
-			return false;
+			document.removeEventListener("mousedown",riseTower);
+		}
+	}
+	//降低杆塔
+	function fallTower(event){
+		// document.body.style.cursor = "url(./css/fall.ico) 9 9, default";
+		if (event.button === 0) {
+			var intersectsTower = getIntersectsObject(event);
+			console.log(intersectsTower[0]);
+			let tempTowerHei = intersectsTower[0].object.renderOrder;
+
+			if (tempTowerHei > 24) {
+				tempTowerHei -= 3;
+				scene.remove(intersectsTower[0].object);
+			} else return tempTowerHei;
+			intersectsTower[0].object.renderOrder = tempTowerHei;
+			let deleteWire = [];
+
+			var tempPoints = intersectsTower[0].object.position;
+			var tempLine2Cor = [];
+			for (let i = 0; i < centerDem.geometry.vertices.length; i++) {
+				tempLine2Cor.push([centerDem.geometry.vertices[i].x, centerDem.geometry.vertices[i].y]);
+			}
+			var tempLine2 = turf.lineString(tempLine2Cor);
+			var points = new THREE.Vector3(tempPoints.x, tempPoints.y + 500, 0);
+			var tempLine1 = turf.lineString([[points.x, points.y], [points.x, 0]]);
+			var interPoint = turf.lineIntersect(tempLine1, tempLine2);
+			points = new THREE.Vector3(tempPoints.x, interPoint.features[0].geometry.coordinates[1], 0);
+			// createTower(points, inx);
+
+			var towMesh = tower1(tempTowerHei);
+			towMesh.position.x = points.x;
+			towMesh.position.y = points.y;
+			towMesh.position.z = 0;
+			towMesh.name = "fixTower";
+			towMesh.geometry.name = intersectsTower[0].object.geometry.name;
+			scene.add(towMesh);
+
+			for (let i = 0; i < scene.children.length; i++) {
+				if (scene.children[i].name === "fixwire1" || scene.children[i].name === "fixwire2" || scene.children[i].name === "fixwire3" || scene.children[i].name === "fixwire4") {
+					deleteWire.push(scene.children[i]);
+				}
+			}
+			console.log(deleteWire)
+			for (let i = 0; i < deleteWire.length; i++) {
+				scene.remove(deleteWire[i]);
+			}
+
+			for (let i = 0; i < towerlist.length; i++) {
+				if (towerlist[i].Name == towMesh.geometry.name) {
+					towerlist[i].TowerHigh = tempTowerHei
+				}
+			}
+
+			ComputeHugeHigh();
+			for (let i = m_start; i < m_end; i++) {
+				DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
+			}
+
+			console.log(towerlist);
+			towerlist_tabledata = towerlist;
+			console.log(towerlist_tabledata);
+			GridManager.setAjaxData(towerlist_tableId, {"data": towerlist_tabledata});
+			GridManager.refreshGrid(towerlist_tableId);
+		}
+		if (event.button === 2){
+			document.body.style.cursor = "default";
+			document.removeEventListener("mousedown",fallTower);
+		}
+	}
+	//修改杆塔
+	function editTower(event){
+		if (event.button === 0) {
+			var intersectsTower = getIntersectsObject(event);
+			$("#towerset").mouseover(function () {
+				console.log("鼠标进入")
+				document.removeEventListener('mousedown', editTower);
+			})
+			$("#towerset").mouseout(function () {
+			})
+			let name = intersectsTower[0].object.geometry.name;
+			console.log("edit_name", name);
+			let idInput = document.getElementById("towId");
+			idInput.value = name;
+			let disInput = document.getElementById("dis");
+			disInput.value = (intersectsTower[0].object.position.x * 10).toFixed(2);
+			let highInput = document.getElementById("hei");
+			highInput.value = (intersectsTower[0].object.position.y + yMin).toFixed(2);
+
+			let TowerHighInput = document.getElementById("towerheight")
+			TowerHighInput.value = Number(intersectsTower[0].object.renderOrder);
+			let oldTowerHigh = intersectsTower[0].object.renderOrder;
+
+			let pileInput = document.getElementById("pilelist");
+			let gapInput = document.getElementById("gap");
+			let disToPile = []
+			for (let i = 0; i < pile_tabledata.length; i++) {
+				disToPile.push({
+					"name": pile_tabledata[i].name,
+					"dis": Math.abs(pile_tabledata[i].dist - intersectsTower[0].object.position.x * 10),
+					"value": i
+				})
+			}
+			disToPile.sort(compare("dis"));
+			pileInput.value = disToPile[0].value;
+			let gap;
+			for (let i = 0; i < pile_tabledata.length; i++) {
+				if (pile_tabledata[i].name == disToPile[0].name) {
+					gap = intersectsTower[0].object.position.x * 10 - pile_tabledata[i].dist;
+				}
+			}
+			console.log("gap pile", gap)
+			gapInput.value = gap.toFixed(2);
+
+			$("#saveBtn").click(function () {
+				for (let i = 0; i < towerlist.length; i++) {
+					if (towerlist[i].Name == name) {
+						towerlist[i].Distance = Number(disInput.value);
+						towerlist[i].High = Number(highInput.value);
+						towerlist[i].TowerHigh = Number(TowerHighInput.value);
+						ComputeHugeHigh();
+						if (i > 0 && i < towerlist.length) {
+							DisplayFawCurve4(towerlist[i - 1], towerlist[i], "fixwire");
+							DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
+						} else DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
+					}
+				}
+
+				console.log("after edit", towerlist)
+
+				intersectsTower[0].object.position.x = disInput.value / 10;
+				intersectsTower[0].object.position.y = highInput.value - yMin;
+				intersectsTower[0].object.scale.set(1, TowerHighInput.value / oldTowerHigh, 1);
+			})
+		}
+		if (event.button === 2){
+			document.body.style.cursor = "default";
+			document.removeEventListener("mousedown",editTower);
 		}
 	}
 
-		/*    鼠标缩放移动事件     */
-		function onDocumentMouseWheel(event) {
-			let factor = 60;
-			console.log(factor)
-			//从鼠标位置转化为webgl屏幕坐标位置
-			let glScreenX = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
-			let glScreenY = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
-			let vector = new THREE.Vector3(glScreenX, glScreenY, 0);
-			//从屏幕向量转为3d空间向量
-			vector.unproject(camera);
-			let target = new THREE.Vector3(0, 0, 0);
-			//相机偏移量
-			vector.sub(camera.position).setLength(factor);
-			if (event.deltaY < 0) {
-				camera.position.add(vector);
-				target.add(vector);
-			} else {
-				camera.position.sub( vector);
-				target.sub(vector);
-			}
-
-			cameraX = camera.position.x;
-			cameraY = camera.position.y;
-			cameraZ = camera.position.z;
-
-			camera.updateProjectionMatrix();
-			renderer.render(scene, camera);
-			labelRenderer.render( scene, camera );
+	/*    鼠标缩放移动事件     */
+	function onDocumentMouseWheel(event) {
+		let factor = 15;
+		//从鼠标位置转化为webgl屏幕坐标位置
+		let glScreenX = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
+		let glScreenY = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
+		let vector = new THREE.Vector3(glScreenX, glScreenY, 0);
+		//从屏幕向量转为3d空间向量
+		vector.unproject(camera);
+		let target = new THREE.Vector3(0, 0, 0);
+		//相机偏移量
+		vector.sub(camera.position).setLength(factor);
+		if (event.deltaY < 0) {
+			camera.position.add(vector);
+			target.add(vector);
+		} else {
+			camera.position.sub( vector);
+			target.sub(vector);
 		}
-		function onDocumentMouseDown(event) {
-			if (event.button != 1) return;
-			event.preventDefault();
-			document.addEventListener('mousemove', onDocumentMouseMove, false);
-			document.addEventListener('mouseup', onDocumentMouseUp, false);
-		}
-		function onDocumentMouseMove(event) {
-			var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-			var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
-			cameraX -= movementX * 0.5;
-			sceneX -= movementX * 0.5;
-			cameraY += movementY * 0.5;
-			sceneY += movementY * 0.5;
-			cameraZ = camera.position.z;
 
-			camera.position.set(cameraX, cameraY, cameraZ);
-			// camera.lookAt(sceneX, sceneY, sceneZ);
-			camera.updateProjectionMatrix();
-			renderer.render(scene, camera);
-			labelRenderer.render( scene, camera );
-		}
+		cameraX = camera.position.x;
+		cameraY = camera.position.y;
+		cameraZ = camera.position.z;
+
+		camera.updateProjectionMatrix();
+		renderer.render(scene, camera);
+		labelRenderer.render( scene, camera );
+	}
+	function onDocumentMouseDown(event) {
+		if (event.button != 1) return;
+		event.preventDefault();
+		document.addEventListener('mousemove', onDocumentMouseMove, false);
+		document.addEventListener('mouseup', onDocumentMouseUp, false);
+	}
+	function onDocumentMouseMove(event) {
+		var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+		var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+		cameraX -= movementX * 0.5;
+		sceneX -= movementX * 0.5;
+		cameraY += movementY * 0.5;
+		sceneY += movementY * 0.5;
+		cameraZ = camera.position.z;
+
+		camera.position.set(cameraX, cameraY, cameraZ);
+		// camera.lookAt(sceneX, sceneY, sceneZ);
+		camera.updateProjectionMatrix();
+		renderer.render(scene, camera);
+		labelRenderer.render( scene, camera );
+	}
 	function onDocumentMouseUp(event) {
 		document.removeEventListener('mousemove', onDocumentMouseMove);
 		document.removeEventListener('mouseup', onDocumentMouseUp);
@@ -6237,8 +7535,8 @@
 				scene.remove(scene.children[i]);
 			}
 		}
-		// console.log("clear redpoint");
-		// console.log(scene.children);
+		console.log("clear redpoint");
+		console.log(scene.children);
 		if(selectedPoint){
 			console.log("change visiual");
 			console.log(selectedPoint);
@@ -6247,7 +7545,6 @@
 		}
 		const intersects = getIntersectsMapObj(event);
 
-		if(intersects==undefined) return ;
 		const coord_inter =getIntersects(event);
 
 		console.log("mouse position");
@@ -6302,7 +7599,6 @@
 	}
 	function getIntersectsMapObj(event){
 
-		if(mainCanvas==null) return undefined;
 		mouse.x = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
 		mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
 		const mouseVector = new THREE.Vector3();
@@ -6316,17 +7612,37 @@
 		if(raycaster.intersectObjects(l_linegroup.children,true)[0]!=undefined){obj.push(raycaster.intersectObjects(l_linegroup.children,true)[0]);}
 		if(raycaster.intersectObjects(r_linegroup.children,true)[0]!=undefined){obj.push(raycaster.intersectObjects(r_linegroup.children,true)[0]);}
 
-		//console.log(obj);
+		console.log(obj);
 		return obj;
 	}
 
+	/* 删除数组指定项 */
+	Array.prototype.findindexOf = function(val) {
+		for (var i = 0; i < this.length; i++) {
+			if (this[i].Name == val) return i;
+		}
+		return -1;
+	};
+	Array.prototype.removed = function(val) {
+		var index = this.findindexOf(val);
+		if (index > -1) {
+			this.splice(index, 1);
+		}
+	};
 	/*禁止右键菜单*/
 	function blockContextmen(){
 		if(window.event){
 			window.event.returnValue=false;
 		}
 	}
-
+	/* 比较排序 */
+	function compare(property){
+		return function(a,b){
+			var value1 = a[property];
+			var value2 = b[property];
+			return value1 - value2;
+		}
+	}
 	/* 窗口自动适应 */
 	function onWindowResize() {
 		camera.aspect = canvasdiv.offsetWidth / canvasdiv.offsetHeight;
@@ -6336,53 +7652,75 @@
 	}
 	function onDocumentMsg(event){
 		var coord = getIntersects(event);
-
 		var redpoint;
-		if(coord!=undefined) {
-			//console.log("x,z",coord.x,coord.y);
-			for (let i = 0; i < scene.children.length; i++) {
-				if (scene.children[i].name == "redpoint") {
-					redpoint = scene.children[i];
-					console.log(redpoint.userData);
-					break;
-				}
-			}
-			//console.log(redpoint.userData);
-			window.document.getElementById("footermsg").textContent = "		累距：" + coord.x.toString() + "	 高程: " + (coord.y + yMin).toString();
-			window.document.getElementById("footermsg").textContent = redpoint.userData.dem + "第" + redpoint.userData.j + "点，" +
-					"坐标" + redpoint.geometry.vertices[0].x + "," + redpoint.geometry.vertices[0].y +
-					"		累距：" + coord.x.toString() + "	 高程: " + (coord.y + yMin).toString() +
-					"			Δx:	" + (coord.x - redpoint.geometry.vertices[0].x).toString() +
-					"	Δz:	" + (coord.y - redpoint.geometry.vertices[0].y).toString();
+		//console.log("x,z",coord.x,coord.y);
+		for(let i=0;i<scene.children.length;i++){
+			if(scene.children[i].name=="redpoint"){redpoint=scene.children[i];console.log(redpoint.userData);break;}
 		}
+		//console.log(redpoint.userData);
+		window.document.getElementById("footermsg").textContent = "		累距："+ coord.x.toString()+"	 高程: "+(coord.y+yMin).toString();
+		window.document.getElementById("footermsg").textContent=redpoint.userData.dem+"第"+redpoint.userData.j+"点，"+
+				"坐标" +redpoint.geometry.vertices[0].x+","+redpoint.geometry.vertices[0].y+
+				"		累距："+ coord.x.toString()+"	 高程: "+(coord.y+yMin).toString()+
+				"			Δx:	" +(coord.x-redpoint.geometry.vertices[0].x).toString()+
+				"	Δz:	"+(coord.y-redpoint.geometry.vertices[0].y).toString();
 	}
-
 	/* 初始化 */
 	function init() {
 		initScene();
 		initCamera();
 		initRender();
 		initLight();
+
+		// var orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
+		// orbitControls.target = new THREE.Vector3(0, 0, 0);//控制焦点
+		// orbitControls.autoRotate = false;//将自动旋转关闭
+
 		/* 事件监听 */
 		document.addEventListener('mousewheel', onDocumentMouseWheel, false);//兼容ie chrome
 		document.addEventListener('DOMMouseScroll', onDocumentMouseWheel, false);//兼容火狐
 		document.addEventListener('mousedown', onDocumentMouseDown, false);
-		document.addEventListener('mousedown', onDocumentSelected, false);
-		document.addEventListener('mousemove', onDocumentMsg, false);
 		/*鼠标放置杆塔*/
 		$("#putTower").click(function () {
+			document.getElementById("towerset").style.display = "block";
+			let title = document.getElementById("tower_settings_title");
+			title.innerHTML = "前进方向排杆"
+			let Select = document.getElementById("pilelist");
+			Select.options.length = 0;
+			for (let i = 0; i < pile_tabledata.length; i++) {
+				$("#pilelist").append("<option value='"+i+"'>"+pile_tabledata[i].name+"</option>");
+			}
+
 			document.removeEventListener('mousedown', towerDelete);
+			document.removeEventListener('mousedown', riseTower);
+			document.removeEventListener('mousedown', fallTower);
+			document.removeEventListener('mousedown', towerInsert);
+			document.removeEventListener('mousedown', editTower);
 			document.addEventListener('mousedown', onMouseDown, false);
 			document.addEventListener('mousemove', onMouseMove, false);
 		})
 		/*鼠标删除杆塔*/
 		$("#deleteTower").click(function () {
+			document.removeEventListener('mousedown', onMouseDown);
+			document.removeEventListener('mousedown', riseTower);
+			document.removeEventListener('mousedown', fallTower);
+			document.removeEventListener('mousedown', towerInsert);
+			document.removeEventListener('mousedown', editTower);
+			document.body.style.cursor = "url(./css/cancel.ico) 9 9, default";
+			document.addEventListener("mousedown",towerDelete,false);
+		})
+		/*鼠标插入杆塔*/
+		$("#insertTower").click(function () {
+			document.getElementById("towerset").style.display = "block";
+			let title = document.getElementById("tower_settings_title");
+			title.innerHTML = "插入杆塔"
 
 			document.removeEventListener('mousedown', onMouseDown);
-			// Delete();
-			document.body.style.cursor = "url(./css/cancel.ico) 12 12, default";
-			document.addEventListener("mousedown",towerDelete,false)
-			// document.addEventListener('mousedown', towerDelete, false);
+			document.removeEventListener('mousedown', riseTower);
+			document.removeEventListener('mousedown', towerDelete);
+			document.removeEventListener('mousedown', fallTower);
+			document.removeEventListener('mousedown', editTower);
+			document.addEventListener("mousedown",towerInsert,false);
 		})
 		/* 鼠标移动杆塔 */
 		$("#moveTower").click(function () {
@@ -6390,10 +7728,46 @@
 			document.removeEventListener('mousedown', towerDelete);
 			document.removeEventListener('mousedown', onMouseDown);
 			document.removeEventListener('mouseup', onDocumentMouseUp);
-			document.removeEventListener('mousemove',onMouseMove);
+			document.removeEventListener('mousedown', towerInsert);
+			document.removeEventListener('mousedown', riseTower);
+			document.removeEventListener('mousedown', fallTower);
+			document.removeEventListener('mousedown', towerInsert);
+			document.removeEventListener('mousedown', editTower);
 			document.removeEventListener('mousemove', onDocumentMouseMove);
-			document.removeEventListener('keydown',onDocumentKeyDown);
 			initDragControls();
+		})
+		/*鼠标升高杆塔*/
+		$("#riseTower").click(function(){
+			document.removeEventListener('mousedown', onMouseDown);
+			document.removeEventListener('mousedown', towerDelete);
+			document.removeEventListener('mousedown', fallTower);
+			document.removeEventListener('mousedown', towerInsert);
+			document.removeEventListener('mousedown', editTower);
+			document.body.style.cursor = "url(./css/rise.ico) 9 9, default";
+			document.addEventListener("mousedown",riseTower,false);
+		})
+		/*鼠标降低杆塔*/
+		$("#fallTower").click(function(){
+			document.removeEventListener('mousedown', onMouseDown);
+			document.removeEventListener('mousedown', towerDelete);
+			document.removeEventListener('mousedown', riseTower);
+			document.removeEventListener('mousedown', towerInsert);
+			document.removeEventListener('mousedown', editTower);
+			document.body.style.cursor = "url(./css/fall.ico) 9 9, default";
+			document.addEventListener("mousedown",fallTower,false);
+		})
+		/*修改杆塔*/
+		$("#editTower").click(function () {
+			document.getElementById("towerset").style.display = "block";
+			let title = document.getElementById("tower_settings_title");
+			title.innerHTML = "修改杆塔"
+
+			document.removeEventListener('mousedown', onMouseDown);
+			document.removeEventListener('mousedown', riseTower);
+			document.removeEventListener('mousedown', towerDelete);
+			document.removeEventListener('mousedown', fallTower);
+			document.removeEventListener('mousedown', towerInsert);
+			document.addEventListener("mousedown",editTower,false);
 		})
 		window.addEventListener('resize', onWindowResize, false);
 		document.oncontextmenu=blockContextmen;//关闭右键默认菜单
@@ -6412,5 +7786,15 @@
 		animate();
 	})();
 
+	}
+
+	//sinh arcsh函数
+	function sinh(x) {
+		let a = (Math.exp(x) - Math.exp(-x))/2;
+		return a;
+	}
+	function arcsh(x) {
+		let a = Math.log(x + Math.sqrt(x * x +1));
+		return a;
 	}
 </script>
