@@ -5155,7 +5155,8 @@
 	//draw
 	{
 	/* 预设格网参数 */
-	var divisions = 10;var verSize = 160;var horSize = 300;
+	var verSize = 160;var horSize = 300; var ydivision=mp.m_HScale*mp.m_Grid/1000; var xdivision = mp.m_DScale*mp.m_Grid/1000;var Gridsize = mp.m_Grid;
+	console.log("initial paremeter",ydivision,xdivision);
 	var width,dis,gridHor,gridVer;
 	var x = new Array();var y = new Array();
 	var leftX = new Array();var leftY = new Array();
@@ -5217,7 +5218,7 @@
 		for (let i = 0; i < allChildren.length; i++) {
 			framegroup.remove(allChildren[i]);
 		}
-		yMin = 100; divisions = 10;verSize = 160;horSize = 300;
+		yMin = 100; ydivision= 10; xdivision =100; verSize = 200;horSize =300; Gridsize = 10;    //先设大小   再按distance/length 比例尺绘制
 		window.initContent();
 		mainCanvas = document.querySelector("#iframe_box canvas");
 		console.log(mainCanvas);
@@ -5246,7 +5247,7 @@
 			framegroup.remove(allChildren[i]);
 		}
 		framegroup.remove(framegroup.children);
-		window.initContent;
+		window.initContent();
 	}
 
 	var scene, camera, renderer, controls, labelRenderer;
@@ -5259,9 +5260,9 @@
 		scene = new THREE.Scene();
 	}
 	/* 相机 */
-	var fov = 45;
+	var fov = 90;
 	var near = 0.1;
-	var far = 10000;
+	var far = 10000;  //  variable parameter by graph
 	function initCamera() {
 		camera = new THREE.PerspectiveCamera(fov, canvasdiv.offsetWidth / canvasdiv.offsetHeight, near, far);
 		camera.position.set(cameraX, cameraY, cameraZ);
@@ -5314,11 +5315,11 @@
 		}
 		console.log(mp.m_Frame,verSize);
 		//外轮廓
-		var gridBound = new THREE.PlaneGeometry(horSize + 30,verSize + mp.m_Frame[14]  );
+		var gridBound = new THREE.PlaneGeometry(horSize +30,verSize + mp.m_Frame[14]  );  //30 parameter replace?
 		var material = new THREE.LineBasicMaterial({ color: 0x0000ff});
 		var grid = new THREE.Mesh(gridBound,material);
-		grid.position.x =(horSize-30)/2;
-		grid.position.y = (verSize-mp.m_Frame[14])/2;
+		grid.position.x =(horSize -30)/2;
+		grid.position.y = (verSize - mp.m_Frame[14])/2;
 		var box = new THREE.BoxHelper( grid, 0x0000ff );
 		framegroup.add(box);
 		//居中
@@ -5335,7 +5336,7 @@
 		//左侧坐标轴
 		var yAxisGeo = new THREE.Geometry();
 		yAxisGeo.verticesNeedUpdate = true;
-		yAxisGeo.vertices.push(new THREE.Vector3(-4, -4 * divisions, 0));
+		yAxisGeo.vertices.push(new THREE.Vector3(-4,mp.m_Frame[9]-mp.m_Frame[14], 0));
 		yAxisGeo.vertices.push(new THREE.Vector3(-4, verSize, 0));
 		var yAxis = new THREE.Line(yAxisGeo, new THREE.LineBasicMaterial({
 			color: 0xff0000
@@ -5347,13 +5348,13 @@
 		scalelineGeo.verticesNeedUpdate = true;
 		scalelineGeo.vertices.push(new THREE.Vector3(-5,0,0));
 		scalelineGeo.vertices.push(new THREE.Vector3(-4,0,0));
-		for (let i = 0; i < verSize / 10 ; i++) {
+		for (let i = 0; i < verSize / Gridsize ; i++) {
 			var scaleline = new THREE.Line(scalelineGeo,new THREE.LineBasicMaterial({color: 0x455454}));
-			scaleline.position.y= i * divisions;
+			scaleline.position.y= i * Gridsize;
 			framegroup.add(scaleline);
-			var number = parseInt(yMin/10) * 10+ i*divisions;
+			var number = parseInt(yMin/10) * 10+ i*ydivision;
 			var text = number.toString();
-			var scale = createSprite(text,"#000000",0,32,9,i * divisions-5,0);
+			var scale = createSprite(text,"#000000",0,32,9,i * Gridsize-5,0);
 			scale.name = "gaochengscale";
 			framegroup.add(scale);
 		}
@@ -5365,12 +5366,12 @@
 		horGeometry.vertices.push(new THREE.Vector3(horSize , 0, 0));
 		var horizonGeo = new THREE.Geometry();
 		horizonGeo.vertices.push(new THREE.Vector3(-30, 0, 0)); //添加顶点
-		horizonGeo.vertices.push(new THREE.Vector3(horSize , 0, 0));
+		horizonGeo.vertices.push(new THREE.Vector3(horSize, 0, 0));
 
-		for (var i = 0, len = verSize / divisions + 1 ; i <= len; i++) {
+		for (var i = 0, len = verSize / Gridsize + 1 ; i <= len; i++) {
 			if (i < len){
 				gridHor = new THREE.Line(horGeometry, new THREE.LineBasicMaterial({color: 0x455454}));//用geometry和material创建line
-				gridHor.position.y = i * divisions ; //设置line的位置
+				gridHor.position.y = i * Gridsize ; //设置line的位置
 				gridHor.name = "gridHor";
 				framegroup.add(gridHor);
 				for(let j = 0; j<9;j++){
@@ -5415,26 +5416,26 @@
 		planGeo.vertices.push(new THREE.Vector3(0, mp.m_Frame[6]-mp.m_Frame[14], 0));
 		verGeometry.verticesNeedUpdate = true;
 		verBound.verticesNeedUpdate = true;
-		for (var i = 0, len = horSize / divisions; i < len; i++) {
+		for (var i = 0, len = horSize / Gridsize; i < len; i++) {
 			gridVer = new THREE.Line(verGeometry, new THREE.LineBasicMaterial({color: 0x324132}));
 			var boundary = new THREE.Line(verBound, new THREE.LineBasicMaterial({color: 0x324132}));
 			if (i === 0){
-				boundary.position.x = i * divisions ;
+				boundary.position.x = i * Gridsize ;
 				boundary.rotation.z = Math.PI / 2; //绕y轴旋转90度
 				framegroup.add(boundary);
 			}
 			else {
-				gridVer.position.x = i * divisions ;
+				gridVer.position.x = i * Gridsize ;
 				gridVer.rotation.z = Math.PI / 2; //绕y轴旋转90度
 				gridVer.name="gridVer";
 				framegroup.add(gridVer);
 			}
 			var planVer = new THREE.Line(planGeo, new THREE.LineBasicMaterial({color: 0x324132}));
 			planVer.name = "gridVer";
-			planVer.position.x = i*divisions;
+			planVer.position.x = i*Gridsize;
 			//planVer.position.y = -(mp.m_Frame[14]-mp.m_Frame[]);
 			framegroup.add(planVer);
-			let x = createSprite(i,"#ff0000",0,100,19+i*divisions,mp.m_Frame[4]-mp.m_Frame[14],0);
+			let x = createSprite(i*xdivision/100,"#ff0000",0,100,19+i*Gridsize,mp.m_Frame[4]-mp.m_Frame[14],0);
 
 			framegroup.add(x);
 		}
@@ -5498,11 +5499,16 @@
 			}
 		}
 
-		tempDif = yMax - yMin;
-		dif = (parseInt((yMax - yMin)/10) + 2 ) * 10;
-		verSize = dif ;
-		xMax = (parseInt(DEM.RIGHT[DEM.RIGHT.length-1].Section[DEM.RIGHT[DEM.RIGHT.length-1].Section.length-1].x/10) + 1 ) * 10; //X last element
-		horSize = xMax/10;
+		//tempDif = yMax - yMin;
+		//dif = (parseInt((yMax - yMin)/10) + 2 ) * 10;
+		ydivision = 10 ; xdivision = 100 ;
+
+		xMax = parseInt(DEM.RIGHT[DEM.RIGHT.length-1].Section[DEM.RIGHT[DEM.RIGHT.length-1].Section.length-1].x); //X last element
+		horSize = xMax/xdivision*Gridsize;      //+add  border
+		verSize = (yMax - yMin)/ydivision*Gridsize;  //+add  border
+
+		console.log(horSize,verSize,xdivision,ydivision,xMax,"frame");
+
 		window.initContent();
 		// draw object group;
 		// 中心断面 object
@@ -5514,7 +5520,7 @@
 		for(let i=0;i<DEM.MID.length;i++){
 			var m_vertice = new THREE.Geometry();
 			for(let j=0;j<DEM.MID[i].Section.length;j++) {
-				m_vertice.vertices.push(new THREE.Vector3(DEM.MID[i].Section[j].x / 10, DEM.MID[i].Section[j].z - yMin, 0));
+				m_vertice.vertices.push(new THREE.Vector3(DEM.MID[i].Section[j].x / xdivision*Gridsize, (DEM.MID[i].Section[j].z - yMin)/ydivision*Gridsize, 0));
 			}
 			m_line[i]= new THREE.Line(m_vertice,m_material);m_line[i].name = "MID"+"-"+i.toString();
 			m_points[i] = new THREE.Points(m_vertice,mp_material);
@@ -5534,7 +5540,7 @@
 		for(let i=0;i<DEM.LEFT.length;i++){
 			var l_vertice = new THREE.Geometry();
 			for(let j=0;j<DEM.LEFT[i].Section.length;j++) {
-				l_vertice.vertices.push(new THREE.Vector3(DEM.LEFT[i].Section[j].x / 10, DEM.LEFT[i].Section[j].z - yMin, 0));
+				l_vertice.vertices.push(new THREE.Vector3(DEM.LEFT[i].Section[j].x / xdivision*Gridsize, (DEM.LEFT[i].Section[j].z - yMin)/ydivision*Gridsize, 0));
 			}
 			l_line[i]= new THREE.Line(l_vertice,l_material);l_line[i].name = "LEFT"+"-"+i.toString();
 			l_linegroup.add(l_line[i]);
@@ -5553,7 +5559,7 @@
 		for(let i=0;i<DEM.RIGHT.length;i++){
 			var r_vertice = new THREE.Geometry();
 			for(let j=0;j<DEM.RIGHT[i].Section.length;j++) {
-				r_vertice.vertices.push(new THREE.Vector3(DEM.RIGHT[i].Section[j].x / 10, DEM.RIGHT[i].Section[j].z - yMin, 0));
+				r_vertice.vertices.push(new THREE.Vector3(DEM.RIGHT[i].Section[j].x / xdivision*Gridsize, (DEM.RIGHT[i].Section[j].z - yMin)/ydivision*Gridsize, 0));
 			}
 			r_line[i]= new THREE.Line(r_vertice,r_material);r_line[i].name = "RIGHT"+"-"+i.toString();
 			r_linegroup.add(r_line[i]);
