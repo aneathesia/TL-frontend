@@ -5368,42 +5368,39 @@
 		horizonGeo.vertices.push(new THREE.Vector3(-30, 0, 0)); //添加顶点
 		horizonGeo.vertices.push(new THREE.Vector3(horSize, 0, 0));
 
-		for (var i = 0, len = verSize / Gridsize + 1 ; i <= len; i++) {
-			if (i < len){
+		for (var i = 0, len = verSize /Gridsize ; i <= len; i++) {
 				gridHor = new THREE.Line(horGeometry, new THREE.LineBasicMaterial({color: 0x455454}));//用geometry和material创建line
 				gridHor.position.y = i * Gridsize ; //设置line的位置
 				gridHor.name = "gridHor";
 				framegroup.add(gridHor);
-				for(let j = 0; j<9;j++){
-					var plangrid =  gridHor.clone();
-					plangrid.name = "plangrid"+j.toString();
-					plangrid.position.y=-(mp.m_Frame[14]-mp.m_Frame[j]);
-					framegroup.add(plangrid);
-				}
-			}
-			else {
-				var line = new THREE.Line(horizonGeo, new THREE.LineBasicMaterial({color: 0x455454}));
-				line.position.y = - (mp.m_Frame[14]-mp.m_Frame[9]); //设置line的位置
-
-				var gaocheng = createSprite("1956年黄海高程系","#ff0000",0,32,4.5,-20,Math.PI/2);
-				gaocheng
-				framegroup.add(gaocheng);
-				var planLine = line.clone();//平面图下边界
-				planLine.position.y = -(mp.m_Frame[14]-mp.m_Frame[5]);
-				var planeText = createSprite("平面图","#ff0000",0,100,1.5,(line.position.y+planLine.position.y)/2,0);  //100 mframe[]
-				framegroup.add(planeText);
-				var textArr = ["            桩间距离","               里程","               档距","            杆塔位置","   耐张段长/代表档距"];
-				for (let j = 4; j >=0 ; j--) {
-					var disLine = line.clone();//桩间距离下边界
-					disLine.position.y = -(mp.m_Frame[14]-mp.m_Frame[j]);
-					framegroup.add(disLine);
-					var note = createSprite(textArr[4-j],"#ff0000",0,60,-10,-(mp.m_Frame[14]-mp.m_Frame[j]),0);
-					framegroup.add(note);
-				}
-				framegroup.add(planLine);
-				framegroup.add(line);
-			}
 		}
+			for(let j = 0; j<9;j++){
+				var plangrid =  gridHor.clone();
+				plangrid.name = "plangrid"+j.toString();
+				plangrid.position.y=-(mp.m_Frame[14]-mp.m_Frame[j]);
+				framegroup.add(plangrid);
+			}
+
+					var line = new THREE.Line(horizonGeo, new THREE.LineBasicMaterial({color: 0x455454}));
+					line.position.y = - (mp.m_Frame[14]-mp.m_Frame[9]); //设置line的位置
+
+					var gaocheng = createSprite("1956年黄海高程系","#ff0000",0,32,4.5,-20,Math.PI/2);
+					framegroup.add(gaocheng);
+					var planLine = line.clone();//平面图下边界
+					planLine.position.y = -(mp.m_Frame[14]-mp.m_Frame[5]);
+					var planeText = createSprite("平面图","#ff0000",0,100,1.5,(line.position.y+planLine.position.y)/2,0);  //100 mframe[]
+					framegroup.add(planeText);
+					var textArr = ["            桩间距离","               里程","               档距","            杆塔位置","   耐张段长/代表档距"];
+					for (let j = 4; j >=0 ; j--) {
+						var disLine = line.clone();//桩间距离下边界
+						disLine.position.y = -(mp.m_Frame[14]-mp.m_Frame[j]);
+						framegroup.add(disLine);
+						var note = createSprite(textArr[4-j],"#ff0000",0,60,-10,-(mp.m_Frame[14]-mp.m_Frame[j]),0);
+						framegroup.add(note);
+					}
+		framegroup.add(planLine);
+		framegroup.add(line);
+
 		//纵格网轴
 		var verGeometry = new THREE.Geometry();
 		verGeometry.vertices.push(new THREE.Vector3(0, 0, 0)); //添加顶点
@@ -5507,7 +5504,7 @@
 		horSize = xMax/xdivision*Gridsize;      //+add  border
 		verSize = (yMax - yMin)/ydivision*Gridsize;  //+add  border
 
-		console.log(horSize,verSize,xdivision,ydivision,xMax,"frame");
+		console.log(horSize,verSize,xdivision,ydivision,xMax,yMin,"frame");
 
 		window.initContent();
 		// draw object group;
