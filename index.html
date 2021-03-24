@@ -5309,12 +5309,13 @@
 	function initContent() {
 		scene.add(framegroup);
 
+		console.log(mp.m_Frame,verSize);
 		//外轮廓
-		var gridBound = new THREE.PlaneGeometry(horSize + 30,verSize + 100  );
+		var gridBound = new THREE.PlaneGeometry(horSize + 30,verSize + mp.m_Frame[14]  );
 		var material = new THREE.LineBasicMaterial({ color: 0x0000ff});
 		var grid = new THREE.Mesh(gridBound,material);
 		grid.position.x =(horSize-30)/2;
-		grid.position.y = (verSize-4 * divisions-50)/2;
+		grid.position.y = (verSize-mp.m_Frame[14])/2;
 		var box = new THREE.BoxHelper( grid, 0x0000ff );
 		framegroup.add(box);
 		//居中
@@ -5369,32 +5370,29 @@
 				gridHor.position.y = i * divisions ; //设置line的位置
 				gridHor.name = "gridHor";
 				framegroup.add(gridHor);
-
-				var plangridHor1 = gridHor.clone();
-				var plangridHor2 = gridHor.clone();
-				var plangridHor3 = gridHor.clone();
-				plangridHor1.name = "";plangridHor2.name = "";plangridHor3.name = "";
-				plangridHor1.position.y = -42; plangridHor2.position.y = -50; plangridHor3.position.y = -58 ;
-				framegroup.add(plangridHor1);
-				framegroup.add(plangridHor2);
-				framegroup.add(plangridHor3);
+				for(let j = 0; j<9;j++){
+					var plangrid =  gridHor.clone();
+					plangrid.name = "plangrid"+j.toString();
+					plangrid.position.y=-(mp.m_Frame[14]-mp.m_Frame[j]);
+					framegroup.add(plangrid);
+				}
 			}
 			else {
 				var line = new THREE.Line(horizonGeo, new THREE.LineBasicMaterial({color: 0x455454}));
-				line.position.y = - 40; //设置line的位置
+				line.position.y = - (mp.m_Frame[14]-mp.m_Frame[9]); //设置line的位置
 
 				var gaocheng = createSprite("1956年黄海高程系","#ff0000",0,32,4.5,-20,Math.PI/2);
 				framegroup.add(gaocheng);
 				var planLine = line.clone();//平面图下边界
-				planLine.position.y = -60;
-				var planeText = createSprite("平面图","#ff0000",0,32,1.5,-57,0);
+				planLine.position.y = -(mp.m_Frame[14]-mp.m_Frame[6]);
+				var planeText = createSprite("平面图","#ff0000",0,32,1.5,(line.position.y+planLine.position.y)/2,0);
 				framegroup.add(planeText);
 				var textArr = ["            桩间距离","               里程","               档距","            杆塔位置","   耐张段长/代表档距"];
-				for (let j = 0; j < 5; j++) {
+				for (let j = 5; j >=0 ; j--) {
 					var disLine = line.clone();//桩间距离下边界
-					disLine.position.y = -60- (j+1)*5;
+					disLine.position.y = -(mp.m_Frame[14]-mp.m_Frame[j]);
 					framegroup.add(disLine);
-					var note = createSprite(textArr[j],"#ff0000",0,32,-10,-64- (j+1)*5,0);
+					var note = createSprite(textArr[5-j],"#ff0000",0,32,-10,-(mp.m_Frame[14]-mp.m_Frame[j-2]),0);
 					framegroup.add(note);
 				}
 				framegroup.add(planLine);
