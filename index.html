@@ -245,12 +245,14 @@
 <script type="text/javascript" src="./js/H-ui.admin.js"></script>
 <script type="text/javascript" src="./js/movediv.js"></script>
 <script type="text/javascript" src="./js/three.js"></script>
+<script type="text/javascript" src="./js/three.module.js"></script>
 <script type="text/javascript" src="./js/gm.js"></script>
 
 
 <script type="module">
 	import { CSS2DRenderer, CSS2DObject } from './js/CSS2DRenderer.js';
-	//import {Points} from "./js/three.module";
+	// import {Group} from './js/three.module.js';
+	// import {Points} from './js/three.module.js';
 
 	//系统设置
 	var prjName;//新建工程名
@@ -799,6 +801,13 @@
 		mp.m_showAllPoint=draw_list[25];	mp.m_ShowSurveyPoint=draw_list[26];mp.m_ShowPointName=draw_list[27];mp.m_ShowPointY=draw_list[28];
 		mp.m_sideWidth=draw_list[29];	mp.m_HighSystem=draw_list[30];
 		console.log(mp);
+		console.log(scene.children);
+		ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =10;
+		horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
+
+		console.log(horSize,verSize,xdivision,ydivision,mp.m_Grid,Gridsize,mp.m_CScale,"update drawing");
+		drawDEM_whj(DEM);
+		console.log(scene.children);
 	}
 
 	$("#framepara").click(function(){
@@ -5161,7 +5170,7 @@
 	var x = new Array();var y = new Array();
 	var leftX = new Array();var leftY = new Array();
 	var rightX = new Array();var rightY = new Array();
-	var yMin = 100;var yMax = verSize;var xMax = 0;
+	var yMin = 100;var yMax = verSize;var xMax = 0; var xMin =0 ;
 	var framegroup = new THREE.Group();
 	let l_linegroup=new THREE.Group();let m_linegroup=new THREE.Group();let r_linegroup=new THREE.Group();
 	//	let l_pointsgroup=new THREE.Group();let m_pointsgroup=new THREE.Group();let r_pointsgroup=new THREE.Group();
@@ -5218,7 +5227,7 @@
 		for (let i = 0; i < allChildren.length; i++) {
 			framegroup.remove(allChildren[i]);
 		}
-		yMin = 100; ydivision= 10; xdivision =100; verSize = 200;horSize =300; Gridsize = 10;    //先设大小   再按distance/length 比例尺绘制
+		yMin = 100; ydivision= 10; xdivision =100; verSize = 200;horSize =300; Gridsize = 5;    //先设大小   再按distance/length 比例尺绘制
 		window.initContent();
 		mainCanvas = document.querySelector("#iframe_box canvas");
 		console.log(mainCanvas);
@@ -5473,7 +5482,30 @@
 	var tempDif = 0;
 	var dif = 0;
 	/* DEM绘制函数 */
-	function drawDEM_whj(DEM){
+	window.drawDEM_whj=function (DEM){
+		console.log(scene.children ,"drawscenechildren");
+		console.log(m_linegroup.children.length,"m_linegroup length");
+		if(m_linegroup.children.length!=0){
+
+			// for ( let i = 0; i < m_linegroup.children.length; i ++ ) {
+			//
+			// 	const object = m_linegroup.children[ i ];
+			//
+			// 	object.parent = null;
+			//
+			// 	//object.dispatchEvent( _removedEvent );
+			// }
+			m_linegroup.children.length = 0;    //清空group   clear（）not defined  altered
+		}
+		if(r_linegroup.children.length!=0){r_linegroup.children.length = 0;}
+		if(l_linegroup.children.length!=0){l_linegroup.children.length = 0;}
+		if(DEM_pgroup.children.length!=0){DEM_pgroup.children.length = 0;}
+
+			console.log(m_linegroup.children.length,"after remove ");
+		// if(l_linegroup.children.length!=0){l_linegroup.clear();}
+		// if(r_linegroup.children.length!=0){r_linegroup.clear();}
+		// if(DEM_pgroup.children.length!=0){DEM_pgroup.clear();}
+
 		console.log(DEM);
 		console.log(DEM.MID,DEM.LEFT,DEM.RIGHT);
 		yMin=DEM.MID[0].Section[0].z
@@ -5496,15 +5528,18 @@
 			}
 		}
 
-		//tempDif = yMax - yMin;
+		//起算标记
+		yMin =  (parseInt(yMin/ydivision))*ydivision;
+		xMin =  (parseInt(xMin/xdivision))*xdivision;
+
+			//tempDif = yMax - yMin;
 		//dif = (parseInt((yMax - yMin)/10) + 2 ) * 10;
-		ydivision = 10 ; xdivision = 100 ;
 
-		xMax = parseInt(DEM.RIGHT[DEM.RIGHT.length-1].Section[DEM.RIGHT[DEM.RIGHT.length-1].Section.length-1].x); //X last element
-		horSize = xMax/xdivision*Gridsize;      //+add  border
-		verSize = (yMax - yMin)/ydivision*Gridsize;  //+add  border
+		// xMax = parseInt(DEM.RIGHT[DEM.RIGHT.length-1].Section[DEM.RIGHT[DEM.RIGHT.length-1].Section.length-1].x); //X last element
+		// horSize = xMax/xdivision*Gridsize;      //+add  border
+		// verSize = (yMax - yMin)/ydivision*Gridsize;  //+add  border
 
-		console.log(horSize,verSize,xdivision,ydivision,xMax,yMin,"frame");
+		console.log(horSize,verSize,xdivision,ydivision,xMin,yMin,Gridsize,"frame");    //坐标系转换
 
 		window.initContent();
 		// draw object group;
@@ -5517,7 +5552,7 @@
 		for(let i=0;i<DEM.MID.length;i++){
 			var m_vertice = new THREE.Geometry();
 			for(let j=0;j<DEM.MID[i].Section.length;j++) {
-				m_vertice.vertices.push(new THREE.Vector3(DEM.MID[i].Section[j].x / xdivision*Gridsize, (DEM.MID[i].Section[j].z - yMin)/ydivision*Gridsize, 0));
+				m_vertice.vertices.push(new THREE.Vector3((DEM.MID[i].Section[j].x - xMin)/ xdivision*Gridsize, (DEM.MID[i].Section[j].z - yMin)/ydivision*Gridsize, 0));
 			}
 			m_line[i]= new THREE.Line(m_vertice,m_material);m_line[i].name = "MID"+"-"+i.toString();
 			m_points[i] = new THREE.Points(m_vertice,mp_material);
@@ -5526,7 +5561,7 @@
 			DEM_pgroup.add(m_points[i]);
 		}
 		scene.add(m_linegroup);
-		scene.add(DEM_pgroup);
+		//scene.add(DEM_pgroup);
 
 
 		var l_material = new THREE.LineDashedMaterial( { color: 0x0000ff ,dashSize:3, gapSize:1} );
@@ -5537,7 +5572,7 @@
 		for(let i=0;i<DEM.LEFT.length;i++){
 			var l_vertice = new THREE.Geometry();
 			for(let j=0;j<DEM.LEFT[i].Section.length;j++) {
-				l_vertice.vertices.push(new THREE.Vector3(DEM.LEFT[i].Section[j].x / xdivision*Gridsize, (DEM.LEFT[i].Section[j].z - yMin)/ydivision*Gridsize, 0));
+				l_vertice.vertices.push(new THREE.Vector3((DEM.LEFT[i].Section[j].x -xMin)/ xdivision*Gridsize, (DEM.LEFT[i].Section[j].z - yMin)/ydivision*Gridsize, 0));
 			}
 			l_line[i]= new THREE.Line(l_vertice,l_material);l_line[i].name = "LEFT"+"-"+i.toString();
 			l_linegroup.add(l_line[i]);
@@ -5546,7 +5581,7 @@
 			DEM_pgroup.add(l_points[i]);
 		}
 		scene.add(l_linegroup);
-		scene.add(DEM_pgroup);
+		//scene.add(DEM_pgroup);
 
 		var r_material = new THREE.LineBasicMaterial( { color: 0x00ff00,dashSize:2,gapSize:2 } );
 		var rp_material = new THREE.PointsMaterial({color:0x888888,size:2.0});
@@ -5556,7 +5591,7 @@
 		for(let i=0;i<DEM.RIGHT.length;i++){
 			var r_vertice = new THREE.Geometry();
 			for(let j=0;j<DEM.RIGHT[i].Section.length;j++) {
-				r_vertice.vertices.push(new THREE.Vector3(DEM.RIGHT[i].Section[j].x / xdivision*Gridsize, (DEM.RIGHT[i].Section[j].z - yMin)/ydivision*Gridsize, 0));
+				r_vertice.vertices.push(new THREE.Vector3((DEM.RIGHT[i].Section[j].x-xMin) / xdivision*Gridsize, (DEM.RIGHT[i].Section[j].z - yMin)/ydivision*Gridsize, 0));
 			}
 			r_line[i]= new THREE.Line(r_vertice,r_material);r_line[i].name = "RIGHT"+"-"+i.toString();
 			r_linegroup.add(r_line[i]);
