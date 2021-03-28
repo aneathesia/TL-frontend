@@ -802,7 +802,7 @@
 		mp.m_sideWidth=draw_list[29];	mp.m_HighSystem=draw_list[30];
 		console.log(mp);
 		console.log(scene.children);
-		ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =10;
+		ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =mp.m_Grid;
 		horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
 		xMin = mp.m_From;
 		console.log(horSize,verSize,xdivision,ydivision,mp.m_Grid,Gridsize,mp.m_CScale, mp.m_From,"update drawing");
@@ -5227,7 +5227,7 @@
 		for (let i = 0; i < allChildren.length; i++) {
 			framegroup.remove(allChildren[i]);
 		}
-		yMin = 100; ydivision= 10; xdivision =100; verSize = 200;horSize =300; Gridsize = 5;    //先设大小   再按distance/length 比例尺绘制
+		yMin = 100; ydivision= 10; xdivision =100; verSize = 200;horSize =300; Gridsize =10;    //先设大小   再按distance/length 比例尺绘制
 		window.initContent();
 		mainCanvas = document.querySelector("#iframe_box canvas");
 		console.log(mainCanvas);
@@ -5382,7 +5382,7 @@
 			var scaleline = new THREE.Line(scalelineGeo,new THREE.LineBasicMaterial({color: 0x455454}));
 			scaleline.position.y= i * Gridsize;
 			framegroup.add(scaleline);
-			var number = parseInt(yMin/10) * 10+ i*ydivision;
+			var number = yMin+ i*ydivision;
 			var text = number.toString();
 			var scale = createSprite(text,"#000000",0,32,9,i * Gridsize-5,0);
 			scale.name = "gaochengscale";
@@ -5462,7 +5462,7 @@
 			planVer.position.x = i*Gridsize;
 			//planVer.position.y = -(mp.m_Frame[14]-mp.m_Frame[]);
 			framegroup.add(planVer);
-			let x = createSprite(i*xdivision/100,"#ff0000",0,100,19+i*Gridsize,mp.m_Frame[4]-mp.m_Frame[14],0);
+			let x = createSprite(xMin+i*xdivision/100,"#ff0000",0,100,19+i*Gridsize,mp.m_Frame[4]-mp.m_Frame[14],0);
 
 			framegroup.add(x);
 		}
@@ -6408,12 +6408,12 @@
 				}
 			}
 			//console.log(redpoint.userData);
-			window.document.getElementById("footermsg").textContent = "		累距：" + coord.x.toString() + "	 高程: " + (coord.y + yMin).toString();
+			window.document.getElementById("footermsg").textContent = "		累距：" + (coord.x/Gridsize*xdivision+xMin).toFixed(2) + "	 高程: " + (coord.y/Gridsize*ydivision + yMin).toFixed(2);
 			window.document.getElementById("footermsg").textContent = redpoint.userData.dem + "第" + redpoint.userData.j + "点，" +
-					"坐标" + redpoint.geometry.vertices[0].x + "," + redpoint.geometry.vertices[0].y +
-					"		累距：" + coord.x.toString() + "	 高程: " + (coord.y + yMin).toString() +
-					"			Δx:	" + (coord.x - redpoint.geometry.vertices[0].x).toString() +
-					"	Δz:	" + (coord.y - redpoint.geometry.vertices[0].y).toString();
+					"坐标" + (redpoint.geometry.vertices[0].x/Gridsize*xdivision+xMin).toFixed(2) + "," + (redpoint.geometry.vertices[0].y/Gridsize*ydivision+yMin).toFixed(2)+
+					"		累距：" + (coord.x/Gridsize*xdivision+xMin).toFixed(2) + "	 高程: " + (coord.y/Gridsize*ydivision + yMin).toFixed(2) +
+					"			Δx:	" + ((coord.x - redpoint.geometry.vertices[0].x)/Gridsize*xdivision).toFixed(2) +
+					"	Δz:	" + ((coord.y - redpoint.geometry.vertices[0].y)/Gridsize*ydivision).toFixed(2);     // coordination convert
 		}
 	}
 
