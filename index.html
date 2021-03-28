@@ -804,8 +804,8 @@
 		console.log(scene.children);
 		ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =10;
 		horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
-
-		console.log(horSize,verSize,xdivision,ydivision,mp.m_Grid,Gridsize,mp.m_CScale,"update drawing");
+		xMin = mp.m_From;
+		console.log(horSize,verSize,xdivision,ydivision,mp.m_Grid,Gridsize,mp.m_CScale, mp.m_From,"update drawing");
 		drawDEM_whj(DEM);
 		console.log(scene.children);
 	}
@@ -5259,7 +5259,7 @@
 		window.initContent();
 	}
 
-	var scene, camera, renderer, controls, labelRenderer;
+	var scene, camera, renderer, controls, labelRenderer; let cameraHelper;
 	var cameraX = 0 , cameraY = 0 , cameraZ=250;
 	var sceneX = 0 , sceneY = 0, sceneZ = 0;
 	var canvasdiv = document.getElementById('iframe_box');
@@ -5269,7 +5269,7 @@
 		scene = new THREE.Scene();
 	}
 	/* 相机 */
-	var fov = 90;
+	var fov = 45;
 	var near = 0.1;
 	var far = 10000;  //  variable parameter by graph
 	function initCamera() {
@@ -5277,12 +5277,15 @@
 		camera.position.set(cameraX, cameraY, cameraZ);
 		camera.up.set(0,1,0);
 		camera.lookAt(new THREE.Vector3(sceneX, sceneY, sceneZ));
+		cameraHelper = new THREE.CameraHelper(camera);
+		scene.add(cameraHelper);
 	}
 	/* 渲染器 */
 	function initRender() {
 		renderer = new THREE.WebGLRenderer({antialias: true});
 		renderer.setSize(canvasdiv.offsetWidth, canvasdiv.offsetHeight);
 		renderer.setClearColor(0xffffff,1.0);
+		renderer.sortObjects = false; //渲染顺序按照add 顺序
 		document.getElementById('iframe_box').appendChild(renderer.domElement);
 
 		labelRenderer = new CSS2DRenderer();//文本二维渲染器
@@ -5317,12 +5320,30 @@
 
 	/* 图幅格网绘制 */
 	window.initContent= function() {
-		scene.add(framegroup);
+
 
 		for (let i = 0; i < allChildren.length; i++){
 			framegroup.remove(allChildren[i]);
 		}
-		console.log(mp.m_Frame,verSize);
+		// 外侧区域用white block 遮挡
+		//draw white plan
+		let left_block_geo =  new THREE.PlaneGeometry(5000,verSize);
+		let left_block_mat = new THREE.MeshBasicMaterial({color:0xffffff});
+		let left_block =  new THREE.Mesh(left_block_geo,left_block_mat);
+		//left_block.position.z = 100;
+		left_block.position.verticesNeedUpdate =  true;
+		left_block.position.x = -left_block.geometry.parameters.width/2;
+		left_block.position.y =verSize/2;
+		framegroup.add(left_block);
+		let right_block_geo =  new THREE.PlaneGeometry(5000,verSize);
+		let right_block_mat = new THREE.MeshBasicMaterial({color:0xffffff});
+		let right_block =  new THREE.Mesh(right_block_geo,right_block_mat);
+		//right_block.position.z = 100;
+		right_block.position.verticesNeedUpdate =  true;
+		right_block.position.x =horSize+right_block.geometry.parameters.width/2;
+		right_block.position.y = verSize/2;
+		framegroup.add(right_block);
+
 		//外轮廓
 		var gridBound = new THREE.PlaneGeometry(horSize +30,verSize + mp.m_Frame[14]  );  //30 parameter replace?
 		var material = new THREE.LineBasicMaterial({ color: 0x0000ff});
@@ -5445,6 +5466,8 @@
 
 			framegroup.add(x);
 		}
+
+
 		allChildren = [];
 		for (let i = 0; i < framegroup.children.length; i++) {
 			allChildren.push(framegroup.children[i]);
@@ -5477,6 +5500,7 @@
 				}
 			})
 		})
+		scene.add(framegroup);
 	}
 
 	var tempDif = 0;
@@ -5500,6 +5524,8 @@
 		if(r_linegroup.children.length!=0){r_linegroup.children.length = 0;}
 		if(l_linegroup.children.length!=0){l_linegroup.children.length = 0;}
 		if(DEM_pgroup.children.length!=0){DEM_pgroup.children.length = 0;}
+		
+		
 
 			console.log(m_linegroup.children.length,"after remove ");
 		// if(l_linegroup.children.length!=0){l_linegroup.clear();}
@@ -5541,7 +5567,7 @@
 
 		console.log(horSize,verSize,xdivision,ydivision,xMin,yMin,Gridsize,"frame");    //坐标系转换
 
-		window.initContent();
+
 		// draw object group;
 		// 中心断面 object
 		var m_material = new THREE.LineBasicMaterial( { color: 0x000000 } );
@@ -5601,6 +5627,9 @@
 		}
 		scene.add(r_linegroup);
 		scene.add(DEM_pgroup);
+
+		window.initContent();
+
 
 	}
 	function drawDEM(leftLineCor,rightLineCor,midLineCor,cornerCor){
@@ -6184,7 +6213,6 @@
 		/*    鼠标缩放移动事件     */
 		function onDocumentMouseWheel(event) {
 			let factor = 60;
-			console.log(factor)
 			//从鼠标位置转化为webgl屏幕坐标位置
 			let glScreenX = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
 			let glScreenY = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
