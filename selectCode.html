@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>选择地物类别</title>
+    <link rel="stylesheet" type="text/css" href="./lib/zTree/v3/css/zTreeStyle/zTreeStyle.css">
+    <script type="text/javascript" src="./lib/zTree/v3/js/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="./lib/zTree/v3/js/jquery.ztree.all-3.5.min.js"></script>
+
+    <style type="text/css">
+        /*.ztree li span.button.pIcon01_ico_open{margin-right:2px; background: url(../../../css/zTreeStyle/img/diy/1_open.png) no-repeat scroll 0 0 transparent; vertical-align:top; *vertical-align:middle}*/
+        /*.ztree li span.button.pIcon01_ico_close{margin-right:2px; background: url(../../../css/zTreeStyle/img/diy/1_close.png) no-repeat scroll 0 0 transparent; vertical-align:top; *vertical-align:middle}*/
+        /*.ztree li span.button.pIcon02_ico_open, .ztree li span.button.pIcon02_ico_close{margin-right:2px; background: url(../../../css/zTreeStyle/img/diy/2.png) no-repeat scroll 0 0 transparent; vertical-align:top; *vertical-align:middle}*/
+        .ztree li span.button.icon01_ico_docu{margin-right:2px; background: url(symbols/000.bmp) no-repeat scroll 0 0 transparent; vertical-align:top; *vertical-align:middle}
+        .ztree li span.button.icon02_ico_docu{margin-right:2px; background: url(symbols/001.bmp) no-repeat scroll 0 0 transparent; vertical-align:top; *vertical-align:middle}
+        .ztree li span.button.icon03_ico_docu{margin-right:2px; background: url(symbols/002.bmp) no-repeat scroll 0 0 transparent; vertical-align:top; *vertical-align:middle}
+        .ztree li span.button.icon04_ico_docu{margin-right:2px; background: url(symbols/003.bmp) no-repeat scroll 0 0 transparent; vertical-align:top; *vertical-align:middle}
+        .ztree li span.button.icon05_ico_docu{margin-right:2px; background: url(symbols/004.bmp) no-repeat scroll 0 0 transparent; vertical-align:top; *vertical-align:middle}
+        .ztree li span.button.icon06_ico_docu{margin-right:2px; background: url(symbols/005.bmp) no-repeat scroll 0 0 transparent; vertical-align:top; *vertical-align:middle}
+        .ztree li span.button.icon07_ico_docu{margin-right:2px; background: url(symbols/100.bmp) no-repeat scroll 0 0 transparent; vertical-align:top; *vertical-align:middle}
+        .ztree li span.button.icon08_ico_docu{margin-right:2px; background: url(symbols/121.bmp) no-repeat scroll 0 0 transparent; vertical-align:top; *vertical-align:middle}
+
+    </style>
+
+</head>
+<body>
+<div>
+    <ul id="treeDemo" class="ztree"></ul>
+</div>
+<script>
+    var settingss = {
+        data: {
+            simpleData: {
+                enable: true,  //true 、 false 分别表示 使用 、 不使用 简单数据模式
+                idKey: "id",  //节点数据中保存唯一标识的属性名称
+                pIdKey: "pId",    //节点数据中保存其父节点唯一标识的属性名称
+                rootPId: -1  //用于修正根节点父节点数据，即 pIdKey 指定的属性值
+            },
+            key: {
+                name: "name"  //zTree 节点数据保存节点名称的属性名称  默认值："name"
+            }
+        },
+        check:{
+            enable:false,  //true 、 false 分别表示 显示 、不显示 复选框或单选框
+            nocheckInherit:true  //当父节点设置 nocheck = true 时，设置子节点是否自动继承 nocheck = true
+        },
+        view:{
+            showIcon:showIconForTree   //父节点不显示图标
+        },
+        callback:{
+            //beforeClick: beforeClick,
+            onClick: onClick
+        }
+    };
+
+    //数据
+    var zNodes = [
+
+    // {id : 1, name : "断面",isparent : true},
+    // {id : 10,pId:1,name:"0000:中心断面",iconSkin:"icon01"},
+    // {id:11,pId:1,name:"0001:左边线",iconSkin:"icon02"},
+    // {id:12,pId:1,name:"0002:右边线",iconSkin:"icon03"},
+    // {id:13,pId:1,name:"0003:风偏点",iconSkin:"icon04"},
+    // {id:14,pId:1,name:"0004:横断面",iconSkin:"icon05"},
+    // {id:15,pId:1,name:"0005:中心断面树高",iconSkin:"icon02"},
+    // {id:16,pId:1,name:"0006:左边线树高",iconSkin:"icon02"},
+    // {id:17,pId:1,name:"0007:右边线树高",iconSkin:"icon02"},
+    // {id:18,pId:1,name:"0008:左边任意断面",iconSkin:"icon02"},
+    // {id:19,pId:1,name:"0009:右边任意断面",iconSkin:"icon02"},
+    // {id:110,pId:1,name:"0010:左边任意断面树高",iconSkin:"icon02"},
+    // {id:111,pId:1,name:"0011:右边任意断面树高",iconSkin:"icon02"},
+    {id : 2, name : "跨越",isparent : true},
+        {id:212,pId:2,name:"0100:220V",iconSkin:"icon07"},
+        {id:213,pId:2,name:"0101:380V",iconSkin:"icon07"},
+        {id:214,pId:2,name:"0102:10KV",iconSkin:"icon07"},
+        {id:215,pId:2,name:"0103:35KV",iconSkin:"icon07"},
+        {id:216,pId:2,name:"0104:110KV",iconSkin:"icon07"},
+        {id:217,pId:2,name:"0105:220KV",iconSkin:"icon07"},
+        {id:218,pId:2,name:"0106:330KV",iconSkin:"icon07"},
+        {id:219,pId:2,name:"0107:500KV(AC)",iconSkin:"icon07"},
+        {id:220,pId:2,name:"0108:500KV(DC)",iconSkin:"icon07"},
+        {id:221,pId:2,name:"0109:64KV",iconSkin:"icon07"},
+        {id:222,pId:2,name:"0110:750KV",iconSkin:"icon07"},
+        {id:223,pId:2,name:"0111:154KV",iconSkin:"icon07"},
+        {id:224,pId:2,name:"0119:地下电力线",iconSkin:"icon07"},
+        {id:225,pId:2,name:"0121:一级通讯线",iconSkin:"icon08"},
+        {id:226,pId:2,name:"0122:二级通讯线",iconSkin:"icon08"},
+        {id:227,pId:2,name:"0123:三级通讯线",iconSkin:"icon08"},
+        {id:228,pId:2,name:"0124:通讯线",iconSkin:"icon08"},
+        {id:229,pId:2,name:"0125:架空电缆",iconSkin:"icon08"},
+        {id:230,pId:2,name:"0126:渡槽",iconSkin:"icon08"},
+        {id:231,pId:2,name:"0127:架空索道",iconSkin:"icon08"},
+        {id:232,pId:2,name:"0128:架空光缆",iconSkin:"icon08"},
+        {id:233,pId:2,name:"0129:地下光缆",iconSkin:"icon08"},
+        {id:234,pId:2,name:"0130:架空管线",iconSkin:"icon08"},
+        {id:235,pId:2,name:"0131:地面管道",iconSkin:"icon08"},
+        {id:236,pId:2,name:"0132:地下管道",iconSkin:"icon08"},
+        {id:237,pId:2,name:"0139:地下通讯线",iconSkin:"icon08"}
+
+    ];
+
+    zTreeObj = $.fn.zTree.init($("#treeDemo"), settingss, zNodes); //初始化树
+
+    function showIconForTree(treeId, treeNode) {
+        return !treeNode.isParent;
+    };
+    function onClick(treeId,treeNode){
+        parent.selectAttr(treeNode);
+    }
+    //zTreeObj.expandAll(true);    //true 节点全部展开、false节点收缩
+</script>
+</body>
+</html>

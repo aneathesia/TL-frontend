@@ -97,6 +97,15 @@
 				</ul>
 			</dd>
 		</dl>
+		<dl id="menu-createObject">
+			<dt><i class="Hui-iconfont">&#xe645;</i> 创建<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+			<dd>
+				<ul>
+					<li><a href="#"><label id="create_Object">创建地物</label></a></li>
+					<li><a href="#"><label id="select_code">选择编码</label></a></li>
+				</ul>
+			</dd>
+		</dl>
 		<dl id="menu-manualrank">
 			<dt><i class="Hui-iconfont">&#xe647; </i><label id="hand"> 手工排位</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
@@ -276,6 +285,8 @@
 	var insulateMateArr = ['','','','瓷质绝缘子'];
 	var columndataLeft = [{key: 'id', text: 'NO'}, {key: 'name', text: '型号/名称/图号'}];//表头
 	var columndataRight = [{key: 'name', text: '参数名称'}, {key: 'value', text: '参数数值'}];//表头
+
+
 
 	let mp={
 		"m_Ver": "TLCAD_MAP_FILE",
@@ -767,6 +778,7 @@
 			title:'图纸参数',
 			area:['700px','360px'],
 			maxmin:true,
+			//shadeClose:true,
 			content:'./drawingpara.html',
 			success:function (layero,index) {
 				console.log(layero,index);
@@ -810,6 +822,7 @@
 		console.log(scene.children);
 	}
 
+
 	$("#framepara").click(function(){
 		layer.open({
 			type:2,
@@ -835,6 +848,28 @@
 		mp.m_prefixLength = mppara.m_prefixLength;
 		mp.m_Frame = mppara.m_Frame;
 		console.log(mp);
+	}
+
+	$("#select_code").click(function(){
+		layer.open({
+			type:2,
+			title:'选择地物类别',
+			area:['250px','400px'],
+			maxmin:true,
+			content:'./selectCode.html',
+			shade:0,
+
+			success:function (layero,index) {
+				console.log(layero,index);
+				var body = layer.getChildFrame('body',index);
+				console.log(body);
+		}
+	})
+	})
+
+	window.selectAttr = function(Attr){
+		// create ground object mouseEventListener
+		console.log(Attr);
 	}
 
 
@@ -5327,7 +5362,7 @@
 		}
 		// 外侧区域用white block 遮挡
 		//draw white plan
-		let left_block_geo =  new THREE.PlaneGeometry(5000,verSize);
+		let left_block_geo =  new THREE.PlaneGeometry(5000,5000);
 		let left_block_mat = new THREE.MeshBasicMaterial({color:0xffffff});
 		let left_block =  new THREE.Mesh(left_block_geo,left_block_mat);
 		//left_block.position.z = 100;
@@ -5335,7 +5370,7 @@
 		left_block.position.x = -left_block.geometry.parameters.width/2;
 		left_block.position.y =verSize/2;
 		framegroup.add(left_block);
-		let right_block_geo =  new THREE.PlaneGeometry(5000,verSize);
+		let right_block_geo =  new THREE.PlaneGeometry(5000,5000);
 		let right_block_mat = new THREE.MeshBasicMaterial({color:0xffffff});
 		let right_block =  new THREE.Mesh(right_block_geo,right_block_mat);
 		//right_block.position.z = 100;
@@ -5414,7 +5449,7 @@
 					var line = new THREE.Line(horizonGeo, new THREE.LineBasicMaterial({color: 0x455454}));
 					line.position.y = - (mp.m_Frame[14]-mp.m_Frame[9]); //设置line的位置
 
-					var gaocheng = createSprite("1956年黄海高程系","#ff0000",0,32,4.5,-20,Math.PI/2);
+					var gaocheng = createSprite(mp.m_HighSystem,"#ff0000",0,32,4.5,-55,Math.PI/2); //高程坐标系标签 位置自适应
 					framegroup.add(gaocheng);
 					var planLine = line.clone();//平面图下边界
 					planLine.position.y = -(mp.m_Frame[14]-mp.m_Frame[5]);
@@ -5462,9 +5497,49 @@
 			planVer.position.x = i*Gridsize;
 			//planVer.position.y = -(mp.m_Frame[14]-mp.m_Frame[]);
 			framegroup.add(planVer);
-			let x = createSprite(xMin+i*xdivision/100,"#ff0000",0,100,19+i*Gridsize,mp.m_Frame[4]-mp.m_Frame[14],0);
+			let x = createSprite((xMin+i*xdivision)/1000,"#ff0000",0,100,19+i*Gridsize,mp.m_Frame[4]-mp.m_Frame[14],0);
 
 			framegroup.add(x);
+		}
+		//
+		if(mp.m_SignFrame){
+			console.log("mp signFrame show");
+			var SignGeo = new THREE.Geometry();
+			SignGeo.vertices.push(new THREE.Vector3(0,0,0)); //添加顶点
+			SignGeo.vertices.push(new THREE.Vector3(70, 0, 0));
+			var SignFrame = new THREE.Line(SignGeo, new THREE.LineBasicMaterial({color: 0x324132}));
+			for(let i=0 ;i<5;i++){
+				let SignFrame_hor = SignFrame.clone();
+				SignFrame_hor.position.x = horSize-70;
+				SignFrame_hor.position.y = verSize-10*i;
+				framegroup.add(SignFrame_hor);
+			}
+			var SignGeo = new THREE.Geometry();
+			SignGeo.vertices.push(new THREE.Vector3(0,0,0)); //添加顶点
+			SignGeo.vertices.push(new THREE.Vector3(0, -40, 0));
+			var SignFrame = new THREE.Line(SignGeo, new THREE.LineBasicMaterial({color: 0x324132}));
+			for(let i=0 ;i<2;i++){
+				let SignFrame_ver = SignFrame.clone();
+				SignFrame_ver.position.x = horSize-70+i*20;
+				SignFrame_ver.position.y = verSize;
+				framegroup.add(SignFrame_ver);
+			}
+
+			//sprite
+			var note = createSprite(" 图号 ","#ff0000",10,60,horSize-30,verSize-10,0);
+			note.scale.set(80,40,1);
+			framegroup.add(note);
+			var note = createSprite(" 组长 ","#ff0000",10,60,horSize-30,verSize-20,0);
+			note.scale.set(80,40,1);
+			framegroup.add(note);
+			var note = createSprite(" 设计 ","#ff0000",10,60,horSize-30,verSize-30,0);
+			note.scale.set(80,40,1);
+			framegroup.add(note);
+			var note = createSprite(" 校核 ","#ff0000",10,60,horSize-30,verSize-40,0);
+			note.scale.set(80,40,1);
+			framegroup.add(note);
+
+
 		}
 
 
@@ -5554,7 +5629,7 @@
 			}
 		}
 
-		//起算标记
+		//起算标记  向下取整
 		yMin =  (parseInt(yMin/ydivision))*ydivision;
 		xMin =  (parseInt(xMin/xdivision))*xdivision;
 
