@@ -45,7 +45,8 @@
             nocheckInherit:true  //当父节点设置 nocheck = true 时，设置子节点是否自动继承 nocheck = true
         },
         view:{
-            showIcon:showIconForTree   //父节点不显示图标
+            showIcon:showIconForTree,   //父节点不显示图标
+            selectedMulti:false
         },
         callback:{
             //beforeClick: beforeClick,
@@ -70,32 +71,32 @@
     // {id:110,pId:1,name:"0010:左边任意断面树高",iconSkin:"icon02"},
     // {id:111,pId:1,name:"0011:右边任意断面树高",iconSkin:"icon02"},
     {id : 2, name : "跨越",isparent : true},
-        {id:212,pId:2,name:"0100:220V",iconSkin:"icon07"},
-        {id:213,pId:2,name:"0101:380V",iconSkin:"icon07"},
-        {id:214,pId:2,name:"0102:10KV",iconSkin:"icon07"},
-        {id:215,pId:2,name:"0103:35KV",iconSkin:"icon07"},
-        {id:216,pId:2,name:"0104:110KV",iconSkin:"icon07"},
-        {id:217,pId:2,name:"0105:220KV",iconSkin:"icon07"},
-        {id:218,pId:2,name:"0106:330KV",iconSkin:"icon07"},
-        {id:219,pId:2,name:"0107:500KV(AC)",iconSkin:"icon07"},
-        {id:220,pId:2,name:"0108:500KV(DC)",iconSkin:"icon07"},
-        {id:221,pId:2,name:"0109:64KV",iconSkin:"icon07"},
-        {id:222,pId:2,name:"0110:750KV",iconSkin:"icon07"},
-        {id:223,pId:2,name:"0111:154KV",iconSkin:"icon07"},
-        {id:224,pId:2,name:"0119:地下电力线",iconSkin:"icon07"},
-        {id:225,pId:2,name:"0121:一级通讯线",iconSkin:"icon08"},
-        {id:226,pId:2,name:"0122:二级通讯线",iconSkin:"icon08"},
-        {id:227,pId:2,name:"0123:三级通讯线",iconSkin:"icon08"},
-        {id:228,pId:2,name:"0124:通讯线",iconSkin:"icon08"},
-        {id:229,pId:2,name:"0125:架空电缆",iconSkin:"icon08"},
-        {id:230,pId:2,name:"0126:渡槽",iconSkin:"icon08"},
-        {id:231,pId:2,name:"0127:架空索道",iconSkin:"icon08"},
-        {id:232,pId:2,name:"0128:架空光缆",iconSkin:"icon08"},
-        {id:233,pId:2,name:"0129:地下光缆",iconSkin:"icon08"},
-        {id:234,pId:2,name:"0130:架空管线",iconSkin:"icon08"},
-        {id:235,pId:2,name:"0131:地面管道",iconSkin:"icon08"},
-        {id:236,pId:2,name:"0132:地下管道",iconSkin:"icon08"},
-        {id:237,pId:2,name:"0139:地下通讯线",iconSkin:"icon08"}
+        {id:212,pId:2,name:"0100:220V",iconSkin:"icon07",attr:"0100"},
+        {id:213,pId:2,name:"0101:380V",iconSkin:"icon07",attr:"0101"},
+        {id:214,pId:2,name:"0102:10KV",iconSkin:"icon07",attr:"0102"},
+        {id:215,pId:2,name:"0103:35KV",iconSkin:"icon07",attr:"0103"},
+        {id:216,pId:2,name:"0104:110KV",iconSkin:"icon07",attr:"0104"},
+        {id:217,pId:2,name:"0105:220KV",iconSkin:"icon07",attr:"0105"},
+        {id:218,pId:2,name:"0106:330KV",iconSkin:"icon07",attr:"0106"},
+        {id:219,pId:2,name:"0107:500KV(AC)",iconSkin:"icon07",attr:"0107"},
+        {id:220,pId:2,name:"0108:500KV(DC)",iconSkin:"icon07",attr:"0108"},
+        {id:221,pId:2,name:"0109:64KV",iconSkin:"icon07",attr:"0109"},
+        {id:222,pId:2,name:"0110:750KV",iconSkin:"icon07",attr:"0110"},
+        {id:223,pId:2,name:"0111:154KV",iconSkin:"icon07",attr:"0111"},
+        {id:224,pId:2,name:"0119:地下电力线",iconSkin:"icon07",attr:"0119"},
+        {id:225,pId:2,name:"0121:一级通讯线",iconSkin:"icon08",attr:"0121"},
+        {id:226,pId:2,name:"0122:二级通讯线",iconSkin:"icon08",attr:"0122"},
+        {id:227,pId:2,name:"0123:三级通讯线",iconSkin:"icon08",attr:"0123"},
+        {id:228,pId:2,name:"0124:通讯线",iconSkin:"icon08",attr:"0124"},
+        {id:229,pId:2,name:"0125:架空电缆",iconSkin:"icon08",attr:"0125"},
+        {id:230,pId:2,name:"0126:渡槽",iconSkin:"icon08",attr:"0126"},
+        {id:231,pId:2,name:"0127:架空索道",iconSkin:"icon08",attr:"0127"},
+        {id:232,pId:2,name:"0128:架空光缆",iconSkin:"icon08",attr:"0128"},
+        {id:233,pId:2,name:"0129:地下光缆",iconSkin:"icon08",attr:"0129"},
+        {id:234,pId:2,name:"0130:架空管线",iconSkin:"icon08",attr:"0130"},
+        {id:235,pId:2,name:"0131:地面管道",iconSkin:"icon08",attr:"0131"},
+        {id:236,pId:2,name:"0132:地下管道",iconSkin:"icon08",attr:"0132"},
+        {id:237,pId:2,name:"0139:地下通讯线",iconSkin:"icon08",attr:"0139"}
 
     ];
 
@@ -105,7 +106,7 @@
         return !treeNode.isParent;
     };
     function onClick(treeId,treeNode){
-        parent.selectAttr(treeNode);
+        parent.selectAttr(zTreeObj.getSelectedNodes()[0]);
     }
     //zTreeObj.expandAll(true);    //true 节点全部展开、false节点收缩
 </script>

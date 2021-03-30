@@ -863,15 +863,39 @@
 				console.log(layero,index);
 				var body = layer.getChildFrame('body',index);
 				console.log(body);
-		}
-	})
+		},
+			cancel: function(index, layero){
+				if(confirm('确定要关闭么')){ //只有当点击confirm框的确定时，该层才会关闭
+					document.removeEventListener('mousedown', window.createGroundObj);
+					document.removeEventListener('mousemove', window.trackGroundObj);
+					layer.close(index)
+				}
+				return false;
+			}
+		})
 	})
 
-	window.selectAttr = function(Attr){
+	window.selectAttr = function(groundobj){
 		// create ground object mouseEventListener
-		console.log(Attr);
+		console.log(groundobj.attr);
+		//document.removeEventListener('mousedown', towerDelete);
+		document.addEventListener('mousedown', window.createGroundObj, false);
+		document.addEventListener('mousemove', window.trackGroundObj, false);
 	}
 
+	window.createGroundObj = function(event){
+		mouse.x = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
+		mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
+		let pos = getIntersects(event);
+		console.log("createGroundObj",mouse.x,mouse.y,pos);
+	}
+
+	window.trackGroundObj = function(event){
+		mouse.x = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
+		mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
+		let pos = getIntersects(event);
+		console.log("trackGroundObj",pos);
+	}
 
 	// DEM断面提取layer
 	var secDEM=[];
@@ -6026,7 +6050,7 @@
 	var raycaster = new THREE.Raycaster();
 	var mouse = new THREE.Vector2();
 
-	function getIntersects(event) {
+	window.getIntersects= function(event) {
 		if(mainCanvas!=null) {
 			mouse.x = ((event.clientX - mainCanvas.getBoundingClientRect().left) / mainCanvas.offsetWidth) * 2 - 1;
 			mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top) / mainCanvas.offsetHeight) * 2 + 1;
@@ -6388,7 +6412,7 @@
 		console.log("mouse position");
 		console.log(coord_inter);
 		console.log(DEM_pgroup.children[0]);
-		console.log(DEM_pgroup.children[0].geometry.vertices[0].x);
+		//console.log(DEM_pgroup.children[0].geometry.vertices[0].x);
 		//m_pointsgroup.children[5].visible = true;
 		//judge position;
 		// selectedPoint = m_pointsgroup.children[5];
@@ -6396,7 +6420,7 @@
 		console.log("judge");
 		console.log(selectedPoint);
 		console.log(DEM_pgroup.children.length);
-		console.log(DEM_pgroup.children[0].geometry.vertices.length);
+		//console.log(DEM_pgroup.children[0].geometry.vertices.length);
 
 		if (intersects.length > 0) {
 			const res = intersects.filter(function (res) {
@@ -6482,13 +6506,14 @@
 					break;
 				}
 			}
-			//console.log(redpoint.userData);
 			window.document.getElementById("footermsg").textContent = "		累距：" + (coord.x/Gridsize*xdivision+xMin).toFixed(2) + "	 高程: " + (coord.y/Gridsize*ydivision + yMin).toFixed(2);
-			window.document.getElementById("footermsg").textContent = redpoint.userData.dem + "第" + redpoint.userData.j + "点，" +
+			//console.log("userData",redpoint);
+			if(redpoint!=undefined){window.document.getElementById("footermsg").textContent = redpoint.userData.dem + "第" + redpoint.userData.j + "点，" +
 					"坐标" + (redpoint.geometry.vertices[0].x/Gridsize*xdivision+xMin).toFixed(2) + "," + (redpoint.geometry.vertices[0].y/Gridsize*ydivision+yMin).toFixed(2)+
 					"		累距：" + (coord.x/Gridsize*xdivision+xMin).toFixed(2) + "	 高程: " + (coord.y/Gridsize*ydivision + yMin).toFixed(2) +
 					"			Δx:	" + ((coord.x - redpoint.geometry.vertices[0].x)/Gridsize*xdivision).toFixed(2) +
 					"	Δz:	" + ((coord.y - redpoint.geometry.vertices[0].y)/Gridsize*ydivision).toFixed(2);     // coordination convert
+			}
 		}
 	}
 
