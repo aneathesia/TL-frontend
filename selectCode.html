@@ -8,6 +8,8 @@
     <script type="text/javascript" src="./lib/zTree/v3/js/jquery.ztree.all-3.5.min.js"></script>
 
     <style type="text/css">
+
+        /*foreach 取出name的（2,4）*/
         /*.ztree li span.button.pIcon01_ico_open{margin-right:2px; background: url(../../../css/zTreeStyle/img/diy/1_open.png) no-repeat scroll 0 0 transparent; vertical-align:top; *vertical-align:middle}*/
         /*.ztree li span.button.pIcon01_ico_close{margin-right:2px; background: url(../../../css/zTreeStyle/img/diy/1_close.png) no-repeat scroll 0 0 transparent; vertical-align:top; *vertical-align:middle}*/
         /*.ztree li span.button.pIcon02_ico_open, .ztree li span.button.pIcon02_ico_close{margin-right:2px; background: url(../../../css/zTreeStyle/img/diy/2.png) no-repeat scroll 0 0 transparent; vertical-align:top; *vertical-align:middle}*/
@@ -25,7 +27,7 @@
 </head>
 <body>
 <div>
-    <ul id="treeDemo" class="ztree"></ul>
+    <ul id="GroundObjtree" class="ztree"></ul>
 </div>
 <script>
     var settingss = {
@@ -100,7 +102,7 @@
 
     ];
 
-    zTreeObj = $.fn.zTree.init($("#treeDemo"), settingss, zNodes); //初始化树
+    zTreeObj = $.fn.zTree.init($("#GroundObjtree"), settingss, zNodes); //初始化树
 
     function showIconForTree(treeId, treeNode) {
         return !treeNode.isParent;
@@ -109,6 +111,8 @@
         parent.selectAttr(zTreeObj.getSelectedNodes()[0]);
     }
     //zTreeObj.expandAll(true);    //true 节点全部展开、false节点收缩
+
+    //script 设置style
 </script>
 </body>
 </html>
