@@ -850,7 +850,35 @@
 		console.log(mp);
 	}
 
+	// var Cross_geo;
+	// function createCross(attr){
+	// 	Cross_geo = new THREE.BufferGeometry();
+	//
+	// 	Cross_geo.dynamic = true;
+	//
+	// 	Cross_geo.addAttribute('position', new THREE.BufferAttribute(new Float32Array(lines * 3), 3));
+	//
+	// 	Cross_geo.addAttribute('color', new THREE.BufferAttribute(new Float32Array(lines * 3), 3));
+	//
+	// 	var Cross_mat = new THREE.LineBasicMaterial({
+	// 		color:
+	// 	});
+	//
+	// 	positions = Cross_geo.attributes.position.array;
+	// 	colors = Cross_geo.attributes.color.array;
+	//
+	// 	updateGeomData();
+	//
+	// 	Cross_geo.computeBoundingSphere();
+	//
+	// 	var buffer_mesh = new THREE.Line(Cross_geo, material);
+	// 	scene.add(buffer_mesh);
+	// }
+
+
+
 	$("#select_code").click(function(){
+
 		layer.open({
 			type:2,
 			title:'选择地物类别',
@@ -865,37 +893,28 @@
 				console.log(body);
 		},
 			cancel: function(index, layero){
-				if(confirm('确定要关闭么')){ //只有当点击confirm框的确定时，该层才会关闭
+
 					document.removeEventListener('mousedown', window.createGroundObj);
 					document.removeEventListener('mousemove', window.trackGroundObj);
 					layer.close(index)
-				}
+
 				return false;
 			}
 		})
+
 	})
 
-	window.selectAttr = function(groundobj){
-		// create ground object mouseEventListener
-		console.log(groundobj.attr);
-		//document.removeEventListener('mousedown', towerDelete);
-		document.addEventListener('mousedown', window.createGroundObj, false);
-		document.addEventListener('mousemove', window.trackGroundObj, false);
-	}
+	// window.selectAttr = function(groundobj){
+	// 	// create ground object mouseEventListener
+	// 	console.log(groundobj.attr);
+	// 	//document.removeEventListener('mousedown', towerDelete);
+	// 	document.addEventListener('mousedown', window.createGroundObj, false);
+	// 	document.addEventListener('mousemove', window.trackGroundObj, false);
+	// 	//create a new GroundObj and add to scene
+	//
+	// }
 
-	window.createGroundObj = function(event){
-		mouse.x = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
-		mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
-		let pos = getIntersects(event);
-		console.log("createGroundObj",mouse.x,mouse.y,pos);
-	}
 
-	window.trackGroundObj = function(event){
-		mouse.x = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
-		mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
-		let pos = getIntersects(event);
-		console.log("trackGroundObj",pos);
-	}
 
 	// DEM断面提取layer
 	var secDEM=[];
@@ -5345,8 +5364,8 @@
 		renderer.setSize(canvasdiv.offsetWidth, canvasdiv.offsetHeight);
 		renderer.setClearColor(0xffffff,1.0);
 		renderer.sortObjects = false; //渲染顺序按照add 顺序
-		document.getElementById('iframe_box').appendChild(renderer.domElement);
 
+		document.getElementById('iframe_box').appendChild(renderer.domElement);
 		labelRenderer = new CSS2DRenderer();//文本二维渲染器
 		labelRenderer.setSize( canvasdiv.offsetWidth, canvasdiv.offsetHeight);
 		labelRenderer.domElement.style.position = 'absolute';
@@ -6093,7 +6112,64 @@
 	var intersects;
 	var tempintersects;
 	var putInd = 0;
-	//放置杆塔
+
+		// window.selectAttr = function(groundobj){
+		// 	// create ground object mouseEventListener
+		// 	console.log(groundobj.attr);
+		//
+		// 	var Ground_geo = new THREE.BufferGeometry();
+		// 	GroundVertice=new Float32Array( 20 * 3 ); pCount = 0;
+		// 	Ground_geo.addAttribute('position',new THREE.BufferAttribute(GroundVertice,3));
+		//
+		// 	var Ground_mat = new THREE.LineBasicMaterial({color:0x0000ff});
+		// 	var Ground_line = new THREE.Line(Ground_geo,Ground_mat);
+		// 	scene.add(Ground_line);
+		//
+		// 	console.log(scene.children,pCount);
+		// 	//document.removeEventListener('mousedown', towerDelete);
+		// }
+
+		window.createGroundObj = function(event){
+			if(event.button === 0){
+				console.log("left button");
+				mouse.x = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
+				mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
+				let pos = getIntersects(event);
+				GroundVertice.push(pos);
+				pCount++;
+				scene.children[scene.children.length-1].geometry.attributes.position.needsUpdate = true;
+				scene.children[scene.children.length-1].geometry.setFromPoints(GroundVertice);
+				scene.children[scene.children.length-1].geometry.setDrawRange(0, pCount);
+				//console.log(GroundVertice);
+				console.log("pCount",scene,pCount);
+				renderer.render(scene,camera);
+			}
+			if(event.button ===2){
+				console.log("right button");
+				//弹出框选择跨越
+
+
+				GroundVertice=[];
+				pCount=0;
+			}
+		}
+
+		window.trackGroundObj = function(event) {
+			mouse.x = ((event.clientX - mainCanvas.getBoundingClientRect().left) / mainCanvas.offsetWidth) * 2 - 1;
+			mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top) / mainCanvas.offsetHeight) * 2 + 1;
+			let pos = getIntersects(event);
+			if(pCount!=0){
+				GroundVertice[pCount]=pos ;
+			}
+			scene.children[scene.children.length-1].geometry.attributes.position.needsUpdate = true;
+			scene.children[scene.children.length-1].geometry.setFromPoints(GroundVertice);
+			scene.children[scene.children.length-1].geometry.setDrawRange(0, pCount);
+
+			renderer.render(scene,camera);
+		}
+
+
+		//放置杆塔
 	function onMouseDown(event) {
 		intersects = getIntersects(event);
 		console.log("intersects",intersects);
@@ -6479,6 +6555,8 @@
 		return obj;
 	}
 
+
+
 	/*禁止右键菜单*/
 	function blockContextmen(){
 		if(window.event){
@@ -6517,6 +6595,12 @@
 		}
 	}
 
+	var GroundVertice = [];
+	var pCount = 0;
+
+
+
+
 	/* 初始化 */
 	function init() {
 		initScene();
@@ -6529,6 +6613,8 @@
 		document.addEventListener('mousedown', onDocumentMouseDown, false);
 		document.addEventListener('mousedown', onDocumentSelected, false);
 		document.addEventListener('mousemove', onDocumentMsg, false);
+
+
 		/*鼠标放置杆塔*/
 		$("#putTower").click(function () {
 			document.removeEventListener('mousedown', towerDelete);
@@ -6554,8 +6640,32 @@
 			document.removeEventListener('mousemove', onDocumentMouseMove);
 			document.removeEventListener('keydown',onDocumentKeyDown);
 			initDragControls();
-		})
+		});
+
+
+		window.selectAttr = function(groundobj){
+			// create ground object mouseEventListener
+
+			var Cross_geo = new THREE.BufferGeometry().setFromPoints( GroundVertice );
+			var Cross_mat = new THREE.LineBasicMaterial( { color: 0x0000ff } );
+			var Cross_line = new THREE.Line(Cross_geo,Cross_mat);
+
+
+			//GroundVertice=[];pCount=0;
+
+
+			document.addEventListener('mousedown', window.createGroundObj, false);
+			document.addEventListener('mousemove', window.trackGroundObj, false);
+
+			console.log(groundobj.attr,GroundVertice,pCount);
+			scene.add(Cross_line);
+			console.log("select add",scene.children);
+			renderer.render( scene, camera );
+		}
+
 		window.addEventListener('resize', onWindowResize, false);
+
+
 		document.oncontextmenu=blockContextmen;//关闭右键默认菜单
 	}
 
