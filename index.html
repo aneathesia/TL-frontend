@@ -6147,10 +6147,27 @@
 			if(event.button ===2){
 				console.log("right button");
 				//弹出框选择跨越
+				layer.open({
+					type:2,
+					title:'选择地物类别',
+					area:['250px','400px'],
+					maxmin:true,
+					content:'./CrossTower.html',
+					//shade:0,
 
+					success:function (layero,index) {
+						console.log(layero,index);
+						var body = layer.getChildFrame('body',index);
+						console.log(body);
+					}
+				})
 
+				scene.children[scene.children.length-1].geometry.setDrawRange(0, pCount);
+				document.removeEventListener('mousemove',window.trackGroundObj);
+				document.removeEventListener('mousedown',window.createGroundObj);
 				GroundVertice=[];
 				pCount=0;
+
 			}
 		}
 
@@ -6163,7 +6180,7 @@
 			}
 			scene.children[scene.children.length-1].geometry.attributes.position.needsUpdate = true;
 			scene.children[scene.children.length-1].geometry.setFromPoints(GroundVertice);
-			scene.children[scene.children.length-1].geometry.setDrawRange(0, pCount);
+			scene.children[scene.children.length-1].geometry.setDrawRange(0, pCount+1);
 
 			renderer.render(scene,camera);
 		}
@@ -6646,19 +6663,25 @@
 		window.selectAttr = function(groundobj){
 			// create ground object mouseEventListener
 
+			//last Cross_line is empty delete
+
 			var Cross_geo = new THREE.BufferGeometry().setFromPoints( GroundVertice );
 			var Cross_mat = new THREE.LineBasicMaterial( { color: 0x0000ff } );
 			var Cross_line = new THREE.Line(Cross_geo,Cross_mat);
 
+			console.log(scene.children[scene.children.length-1].geometry);
 
+			Cross_line.name = groundobj.name;
 			//GroundVertice=[];pCount=0;
 
+			console.log(groundobj.attr,groundobj.name,GroundVertice,pCount);
+			scene.add(Cross_line);
 
 			document.addEventListener('mousedown', window.createGroundObj, false);
 			document.addEventListener('mousemove', window.trackGroundObj, false);
 
-			console.log(groundobj.attr,GroundVertice,pCount);
-			scene.add(Cross_line);
+			// create CrossObjGroup  store the information about the Cross_line; ?
+
 			console.log("select add",scene.children);
 			renderer.render( scene, camera );
 		}
