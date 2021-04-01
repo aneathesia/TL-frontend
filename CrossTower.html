@@ -11,15 +11,16 @@
 </head>
 <body>
 <div style="display: inline-block;text-align: center">
-    <label>跨越杆高 (m)</label>
+    <label>跨越杆高 (m)
     <input type="text" class="layui-layer-input" style="width: 20%;text-align: right" placeholder="0">
+    </label>
 </div>
 <div>
     <ul id="CrossTowertree" class="ztree"></ul>
 </div>
 <script>
     let index = parent.layer.getFrameIndex(window.name);
-    var settingss = {
+    let settingss = {
         data: {
             simpleData: {
                 enable: true,  //true 、 false 分别表示 使用 、 不使用 简单数据模式
@@ -42,7 +43,7 @@
             onDblClick : optionDoubleClick
         }
     };
-    var zNodes = [];
+    let zNodes = [];
     for(let i=0;i<100;i++){
         zNodes.push({id:2000+i,name:(2000+i).toString()+":电力(通讯)线杆型",iconSkin:(2000+i).toString()+".bmp",attr:(2000+i).toString(),icon:"symbols/"+(2000+i).toString()+".bmp"});
     }
@@ -50,7 +51,7 @@
     let towerhigh;
     zTreeObj = $.fn.zTree.init($("#CrossTowertree"), settingss, zNodes); //初始化树
 
-    function optionDoubleClick(treeId,treeNode){
+    function optionDoubleClick(){
        towerhigh=  $(".layui-layer-input").val();
        console.log(towerhigh) ;
        parent.layer.close(index);
