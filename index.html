@@ -101,7 +101,7 @@
 			<dt><i class="Hui-iconfont">&#xe645;</i> 创建<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
 				<ul>
-					<li><a href="#"><label id="create_Object">创建地物</label></a></li>
+<!--					<li><a href="#"><label id="create_Object">创建地物</label></a></li>-->
 					<li><a href="#"><label id="select_code">选择编码</label></a></li>
 				</ul>
 			</dd>
@@ -6113,79 +6113,6 @@
 	var tempintersects;
 	var putInd = 0;
 
-		// window.selectAttr = function(groundobj){
-		// 	// create ground object mouseEventListener
-		// 	console.log(groundobj.attr);
-		//
-		// 	var Ground_geo = new THREE.BufferGeometry();
-		// 	GroundVertice=new Float32Array( 20 * 3 ); pCount = 0;
-		// 	Ground_geo.addAttribute('position',new THREE.BufferAttribute(GroundVertice,3));
-		//
-		// 	var Ground_mat = new THREE.LineBasicMaterial({color:0x0000ff});
-		// 	var Ground_line = new THREE.Line(Ground_geo,Ground_mat);
-		// 	scene.add(Ground_line);
-		//
-		// 	console.log(scene.children,pCount);
-		// 	//document.removeEventListener('mousedown', towerDelete);
-		// }
-
-		window.createGroundObj = function(event){
-			if(event.button === 0){
-				console.log("left button");
-				mouse.x = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
-				mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
-				let pos = getIntersects(event);
-				GroundVertice.push(pos);
-				pCount++;
-				scene.children[scene.children.length-1].geometry.attributes.position.needsUpdate = true;
-				scene.children[scene.children.length-1].geometry.setFromPoints(GroundVertice);
-				scene.children[scene.children.length-1].geometry.setDrawRange(0, pCount);
-				//console.log(GroundVertice);
-				console.log("pCount",scene,pCount);
-				renderer.render(scene,camera);
-			}
-			if(event.button ===2){
-				console.log("right button");
-				//弹出框选择跨越
-				layer.open({
-					type:2,
-					title:'选择地物类别',
-					area:['250px','400px'],
-					maxmin:true,
-					content:'./CrossTower.html',
-					//shade:0,
-
-					success:function (layero,index) {
-						console.log(layero,index);
-						var body = layer.getChildFrame('body',index);
-						console.log(body);
-					}
-				})
-
-				scene.children[scene.children.length-1].geometry.setDrawRange(0, pCount);
-				document.removeEventListener('mousemove',window.trackGroundObj);
-				document.removeEventListener('mousedown',window.createGroundObj);
-				GroundVertice=[];
-				pCount=0;
-
-			}
-		}
-
-		window.trackGroundObj = function(event) {
-			mouse.x = ((event.clientX - mainCanvas.getBoundingClientRect().left) / mainCanvas.offsetWidth) * 2 - 1;
-			mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top) / mainCanvas.offsetHeight) * 2 + 1;
-			let pos = getIntersects(event);
-			if(pCount!=0){
-				GroundVertice[pCount]=pos ;
-			}
-			scene.children[scene.children.length-1].geometry.attributes.position.needsUpdate = true;
-			scene.children[scene.children.length-1].geometry.setFromPoints(GroundVertice);
-			scene.children[scene.children.length-1].geometry.setDrawRange(0, pCount+1);
-
-			renderer.render(scene,camera);
-		}
-
-
 		//放置杆塔
 	function onMouseDown(event) {
 		intersects = getIntersects(event);
@@ -6403,7 +6330,7 @@
 	}
 
 		/*    鼠标缩放移动事件     */
-		function onDocumentMouseWheel(event) {
+	function onDocumentMouseWheel(event) {
 			let factor = 60;
 			//从鼠标位置转化为webgl屏幕坐标位置
 			let glScreenX = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
@@ -6430,13 +6357,15 @@
 			renderer.render(scene, camera);
 			labelRenderer.render( scene, camera );
 		}
-		function onDocumentMouseDown(event) {
+
+	function onDocumentMouseDown(event) {
 			if (event.button != 1) return;
 			event.preventDefault();
 			document.addEventListener('mousemove', onDocumentMouseMove, false);
 			document.addEventListener('mouseup', onDocumentMouseUp, false);
 		}
-		function onDocumentMouseMove(event) {
+
+	function onDocumentMouseMove(event) {
 			var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
 			var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 			cameraX -= movementX * 0.5;
@@ -6451,6 +6380,7 @@
 			renderer.render(scene, camera);
 			labelRenderer.render( scene, camera );
 		}
+
 	function onDocumentMouseUp(event) {
 		document.removeEventListener('mousemove', onDocumentMouseMove);
 		document.removeEventListener('mouseup', onDocumentMouseUp);
@@ -6552,6 +6482,7 @@
 
 
 	}
+
 	function getIntersectsMapObj(event){
 
 		if(mainCanvas==null) return undefined;
@@ -6572,8 +6503,6 @@
 		return obj;
 	}
 
-
-
 	/*禁止右键菜单*/
 	function blockContextmen(){
 		if(window.event){
@@ -6588,6 +6517,7 @@
 		renderer.setSize(canvasdiv.offsetWidth, canvasdiv.offsetHeight);
 		labelRenderer.setSize(canvasdiv.offsetWidth, canvasdiv.offsetHeight );
 	}
+	/*bottom Status bar*/
 	function onDocumentMsg(event){
 		var coord = getIntersects(event);
 
@@ -6611,12 +6541,119 @@
 			}
 		}
 	}
-
+	/*function ablout Cross Object*/
 	var GroundVertice = [];
 	var pCount = 0;
+	window.createGroundObj = function(event){
+			if(event.button === 0){
+				console.log("left button");
+				mouse.x = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
+				mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
+				let pos = getIntersects(event);
+				GroundVertice.push(pos);
+				pCount++;
+				scene.children[scene.children.length-1].geometry.attributes.position.needsUpdate = true;
+				scene.children[scene.children.length-1].geometry.setFromPoints(GroundVertice);
+				scene.children[scene.children.length-1].geometry.setDrawRange(0, pCount);
+				scene.children[scene.children.length-1].geometry.computeBoundingSphere();
+				//console.log(GroundVertice);
+				console.log("pCount",scene,pCount);
+				renderer.render(scene,camera);
+			}
+			if(event.button ===2){
+				console.log("right button");
+
+				scene.children[scene.children.length-1].geometry.setDrawRange(0, pCount);
+				scene.children[scene.children.length-1].geometry.computeBoundingSphere();
+				document.removeEventListener('mousemove',window.trackGroundObj);
+				document.removeEventListener('mousedown',window.createGroundObj);
+				//弹出框选择跨越
+				if(pCount>1) {  //pCount无法产生实体
+					layer.open({
+						type:2,
+						title:'选择地物类别',
+						area:['250px','400px'],
+						maxmin:true,
+						content:'./CrossTower.html',
+						//shade:0,
+
+						success:function (layero,index) {
+							console.log(layero,index);
+							var body = layer.getChildFrame('body',index);
+							console.log(body);
+						}
+					})
+				}
+				//create the CrossSectional projection
+				//create Sectional label
+				createCrossLabel("2000");
+				GroundVertice=[];
+				pCount=0;
+				createCrossLabel("2000"); //crossTower 2000——2099
+			}
+		}
+
+	window.trackGroundObj = function(event) {
+			mouse.x = ((event.clientX - mainCanvas.getBoundingClientRect().left) / mainCanvas.offsetWidth) * 2 - 1;
+			mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top) / mainCanvas.offsetHeight) * 2 + 1;
+			let pos = getIntersects(event);
+			if(pCount!=0){
+				GroundVertice[pCount]=pos ;
+			}
+			scene.children[scene.children.length-1].geometry.attributes.position.needsUpdate = true;
+			scene.children[scene.children.length-1].geometry.setFromPoints(GroundVertice);
+			scene.children[scene.children.length-1].geometry.setDrawRange(0, pCount+1);
+
+			renderer.render(scene,camera);
+		}
+
+	function createCrossLabel(crossTower){
+		console.log("label categories",crossTower);
+		var ray = new THREE.Raycaster();
+		ray.set(new THREE.Vector3(-10,-90,0),new THREE.Vector3(1,0,0));
+		ray.params = {
+			Mesh: {},
+			Line: { threshold: 1 },
+			LOD: {},
+			Points: { threshold: 1 },
+			Sprite: {}
+		};
+
+		var target = ray.intersectObject(scene.children[scene.children.length-1]);
+
+		console.log("crossover",ray,target);
+		// caculateDem intersect points and generate obj add to scene
+		for(let i=0 ;i<target.length;i++){
+			var sectionRay = new THREE.Raycaster();
+			sectionRay.set(target[i].point,new THREE.Vector3(0,1,0));
+			console.log(sectionRay);
+			console.log(m_linegroup);
+			var m_linetarget = sectionRay.intersectObject(m_linegroup,true);
+			console.log("m_linegroup",ray,m_linetarget);
+			for(let j=0;j<m_linetarget.length;j++){
+				console.log("delta",m_linetarget[j].point.x- target[i].point.x);
+				if(Math.abs(m_linetarget[j].point.x- target[i].point.x)<0.01){
+				const material = new THREE.LineBasicMaterial( { color: 0x0000ff } );
+				const points = [];
+				points.push( target[i].point );
+				points.push( m_linetarget[j].point );
 
 
-
+				const geometry = new THREE.BufferGeometry().setFromPoints( points );
+				const line = new THREE.Line( geometry, material );
+				let high = m_linetarget[j].point.y/20*ydivision+yMin;
+				let sumD = ((target[i].point.x/20) - parseInt((target[i].point.x/20)))*xdivision;
+				var cross_notehigh = createSprite(high.toFixed(2),"#000000",10,20,target[i].point.x+5,mp.m_Frame[13]-mp.m_Frame[14],Math.PI/2);
+				var cross_notesumD = createSprite(sumD.toFixed(0),"#000000",20,20,target[i].point.x+5,mp.m_Frame[11]-mp.m_Frame[14]+10,Math.PI/2);
+				var cross_note = createSprite(target[i].object.name,"#000000",10,20,target[i].point.x+5,mp.m_Frame[12]-mp.m_Frame[14],Math.PI/2);
+				scene.add(cross_note);
+				scene.add(cross_notehigh);
+				scene.add(cross_notesumD);
+				scene.add(line);
+				}
+			}
+		}
+	}
 
 	/* 初始化 */
 	function init() {
@@ -6660,23 +6697,24 @@
 		});
 
 
-		window.selectAttr = function(groundobj){
-			// create ground object mouseEventListener
+		window.selectAttr = function(groundobj){  // create ground object and begin mouseEventListener
+			//if last Cross_line is empty delete
 
-			//last Cross_line is empty delete
+			var lastLine = scene.children[scene.children.length-1].geometry;
+			console.log(lastLine);
+			if(lastLine!=undefined){
+				if(lastLine.drawRange.count<2||lastLine.drawRange.count==Infinity){
+				scene.remove(scene.children[scene.children.length-1]);
+				}
+			}
 
 			var Cross_geo = new THREE.BufferGeometry().setFromPoints( GroundVertice );
 			var Cross_mat = new THREE.LineBasicMaterial( { color: 0x0000ff } );
 			var Cross_line = new THREE.Line(Cross_geo,Cross_mat);
-
-			console.log(scene.children[scene.children.length-1].geometry);
-
 			Cross_line.name = groundobj.name;
-			//GroundVertice=[];pCount=0;
-
-			console.log(groundobj.attr,groundobj.name,GroundVertice,pCount);
 			scene.add(Cross_line);
 
+			//add Listener
 			document.addEventListener('mousedown', window.createGroundObj, false);
 			document.addEventListener('mousemove', window.trackGroundObj, false);
 
