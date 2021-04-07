@@ -413,7 +413,160 @@
 		"m_selSize": 6,
 		"m_dynamicPlan": 0
 	}
-
+	let cross = [
+		{
+			"Attr": 105,
+			"AttrEx": 0,
+			"AttrName": "0105:220kV",
+			"Length": 588.0308619120119,
+			"Width": 0.0,
+			"High": 0.0,
+			"Area": 30.677280022673263,
+			"MinX": 539.8670177925643,
+			"MaxX": 621.0309639252286,
+			"MinY": 0.0,
+			"MaxY": -28.57177193526553,
+			"LineType": 1,
+			"position": 1,
+			"PointCount": 3,
+			"CrossPoint": [
+				{
+					"x": 539.8670177925643,
+					"y": -28.57177193526553,
+					"z": 2214.5260740853439
+				},
+				{
+					"x": 588.0308619120119,
+					"y": 0.0,
+					"z": 2205.756891119576
+				},
+				{
+					"x": 621.0309639252286,
+					"y": 19.57633170275564,
+					"z": 2205.670240892877
+				}
+			]
+		},
+		{
+			"Attr": 105,
+			"AttrEx": 0,
+			"AttrName": "0105:220kV",
+			"Length": 1191.0342682165197,
+			"Width": 0.0,
+			"High": 0.0,
+			"Area": 55.145544435472299,
+			"MinX": 1161.9547669785869,
+			"MaxX": 1210.4670861823225,
+			"MinY": 0.0,
+			"MaxY": -41.75518126472375,
+			"LineType": 1,
+			"position": 1,
+			"PointCount": 3,
+			"CrossPoint": [
+				{
+					"x": 1161.9547669785869,
+					"y": -41.75518126472375,
+					"z": 2298.378486284085
+				},
+				{
+					"x": 1191.0342682165197,
+					"y": 0.0,
+					"z": 2301.2253975833257
+				},
+				{
+					"x": 1210.4670861823225,
+					"y": 27.90353348935774,
+					"z": 2301.9842733533748
+				}
+			]
+		},
+		{
+			"Attr": 109,
+			"AttrEx": 0,
+			"AttrName": "0109:64kV",
+			"Length": 1470.989396652217,
+			"Width": 0.0,
+			"High": 0.0,
+			"Area": 60.94539590266492,
+			"MinX": 1451.1310383432045,
+			"MaxX": 1594.879162364312,
+			"MinY": 0.0,
+			"MaxY": -38.53627066537058,
+			"LineType": 1,
+			"position": 1,
+			"PointCount": 7,
+			"CrossPoint": [
+				{
+					"x": 1451.1310383432045,
+					"y": -35.745044956222859,
+					"z": 2296.6992059411816
+				},
+				{
+					"x": 1470.989396652217,
+					"y": 0.0,
+					"z": 2293.927199112615
+				},
+				{
+					"x": 1482.5323275711162,
+					"y": 20.77727565401844,
+					"z": 2291.744064470005
+				},
+				{
+					"x": 1514.064898857803,
+					"y": 0.0,
+					"z": 2288.9103798380399
+				},
+				{
+					"x": 1572.5493566911303,
+					"y": -38.53627066537058,
+					"z": 2297.515010704015
+				},
+				{
+					"x": 1585.0055249870077,
+					"y": 0.0,
+					"z": 2299.511630566908
+				},
+				{
+					"x": 1594.879162364312,
+					"y": 30.54656563603544,
+					"z": 2300.0066140300875
+				}
+			]
+		},
+		{
+			"Attr": 112,
+			"AttrEx": 0,
+			"AttrName": "0112:1000kV",
+			"Length": 1811.7971413421518,
+			"Width": 0.0,
+			"High": 0.0,
+			"Area": 41.05481377213597,
+			"MinX": 1785.8455212985016,
+			"MaxX": 1839.9255194132387,
+			"MinY": 0.0,
+			"MaxY": 24.49890993288207,
+			"LineType": 1,
+			"position": 1,
+			"PointCount": 3,
+			"CrossPoint": [
+				{
+					"x": 1785.8455212985016,
+					"y": -22.603023908985663,
+					"z": 2239.5760728907487
+				},
+				{
+					"x": 1811.7971413421518,
+					"y": 0.0,
+					"z": 2226.141239893518
+				},
+				{
+					"x": 1839.9255194132387,
+					"y": 24.49890993288207,
+					"z": 2216.108987843729
+				}
+			]
+		}
+	]
 // mptable init
 	{
 	var pile_tabledata=[];
@@ -819,6 +972,7 @@
 		xMin = mp.m_From;
 		console.log(horSize,verSize,xdivision,ydivision,mp.m_Grid,Gridsize,mp.m_CScale, mp.m_From,"update drawing");
 		drawDEM_whj(DEM);
+		MapCrossDraw(cross);
 		console.log(scene.children);
 	}
 
@@ -903,19 +1057,6 @@
 		})
 
 	})
-
-	// window.selectAttr = function(groundobj){
-	// 	// create ground object mouseEventListener
-	// 	console.log(groundobj.attr);
-	// 	//document.removeEventListener('mousedown', towerDelete);
-	// 	document.addEventListener('mousedown', window.createGroundObj, false);
-	// 	document.addEventListener('mousemove', window.trackGroundObj, false);
-	// 	//create a new GroundObj and add to scene
-	//
-	// }
-
-
-
 	// DEM断面提取layer
 	var secDEM=[];
 	console.log(secDEM);
@@ -955,6 +1096,7 @@
 
 			})
 		}
+		$("#drawingpara").click();
 	})
 
 	window.GetSecDem= function(transobj){
@@ -5863,10 +6005,10 @@
 		request.onload = function () {
 			if (request.status == 200){
 				var json = JSON.parse(request.responseText);
-				 DEM = json.DEM;
-
+				DEM = json.DEM;
+				mp = json.mp;
 				console.log(DEM);
-
+				console.log(mp);
 				// leftLineCor = DEM[0].LEFT ;
 				// rightLineCor = DEM[0].RIGHT;
 				// midLineCor =DEM[0].MID;
@@ -6458,7 +6600,6 @@
 		}
 		for(let i=0;i<DEM_pgroup.children.length;i++){
 			var num = scene.children.length;
-			console.log(num);
 			for(let j=0;j<DEM_pgroup.children[i].geometry.vertices.length;j++){
 				if(Math.abs(DEM_pgroup.children[i].geometry.vertices[j].x-coord_inter.x)<0.5&&Math.abs(DEM_pgroup.children[i].geometry.vertices[j].y-coord_inter.y)<0.5){
 					selectedPoint = DEM_pgroup.children[i];
@@ -6544,6 +6685,7 @@
 	/*function ablout Cross Object*/
 	var GroundVertice = [];
 	var pCount = 0;
+
 	window.createGroundObj = function(event){
 			if(event.button === 0){
 				console.log("left button");
@@ -6552,10 +6694,13 @@
 				let pos = getIntersects(event);
 				GroundVertice.push(pos);
 				pCount++;
-				scene.children[scene.children.length-1].geometry.attributes.position.needsUpdate = true;
-				scene.children[scene.children.length-1].geometry.setFromPoints(GroundVertice);
-				scene.children[scene.children.length-1].geometry.setDrawRange(0, pCount);
-				scene.children[scene.children.length-1].geometry.computeBoundingSphere();
+				console.log(scene.children[scene.children.length-1]);
+				scene.children[scene.children.length-1].children[0].geometry.attributes.position.needsUpdate = true;
+				scene.children[scene.children.length-1].children[0].geometry.setFromPoints(GroundVertice);
+				scene.children[scene.children.length-1].children[0].geometry.setDrawRange(0, pCount);
+				scene.children[scene.children.length-1].children[0].geometry.computeBoundingSphere();    //children Line ;
+
+
 				//console.log(GroundVertice);
 				console.log("pCount",scene,pCount);
 				renderer.render(scene,camera);
@@ -6563,8 +6708,8 @@
 			if(event.button ===2){
 				console.log("right button");
 
-				scene.children[scene.children.length-1].geometry.setDrawRange(0, pCount);
-				scene.children[scene.children.length-1].geometry.computeBoundingSphere();
+				scene.children[scene.children.length-1].children[0].geometry.setDrawRange(0, pCount);
+				scene.children[scene.children.length-1].children[0].geometry.computeBoundingSphere();
 				document.removeEventListener('mousemove',window.trackGroundObj);
 				document.removeEventListener('mousedown',window.createGroundObj);
 				//弹出框选择跨越
@@ -6589,7 +6734,7 @@
 				createCrossLabel("2000");
 				GroundVertice=[];
 				pCount=0;
-				createCrossLabel("2000"); //crossTower 2000——2099
+				//createCrossLabel("2000"); //crossTower 2000——2099
 			}
 		}
 
@@ -6600,14 +6745,31 @@
 			if(pCount!=0){
 				GroundVertice[pCount]=pos ;
 			}
-			scene.children[scene.children.length-1].geometry.attributes.position.needsUpdate = true;
-			scene.children[scene.children.length-1].geometry.setFromPoints(GroundVertice);
-			scene.children[scene.children.length-1].geometry.setDrawRange(0, pCount+1);
+			scene.children[scene.children.length-1].children[0].geometry.attributes.position.needsUpdate = true;
+			scene.children[scene.children.length-1].children[0].geometry.setFromPoints(GroundVertice);
+			scene.children[scene.children.length-1].children[0].geometry.setDrawRange(0, pCount+1);
 
 			renderer.render(scene,camera);
 		}
 
-	function createCrossLabel(crossTower){
+	 window.createGroundCross = function (crossPoint,crossAttrName){
+		var Cross_geo = new THREE.BufferGeometry().setFromPoints( crossPoint );
+		var Cross_geop = new THREE.BufferGeometry().setFromPoints( crossPoint );
+		var Cross_geosp = new THREE.BufferGeometry();
+		var Cross_mat = new THREE.LineBasicMaterial( { color: 0x0000ff } );
+		var Cross_matp = new THREE.PointsMaterial( { color: 0x888888 } );
+		var Cross_line = new THREE.Line(Cross_geo,Cross_mat);
+		var Cross_Point = new THREE.Points(Cross_geop,Cross_matp);
+		var Section_Point = new THREE.Points(Cross_geosp,Cross_matp);
+		Cross_line.name = crossAttrName;
+		let GroundGroup = new THREE.Group();
+		GroundGroup.add(Cross_line);
+		GroundGroup.add(Cross_Point)
+		GroundGroup.add(Section_Point);
+		scene.add(GroundGroup);
+	}
+
+	window.createCrossLabel = function (crossTower){
 		console.log("label categories",crossTower);
 		var ray = new THREE.Raycaster();
 		ray.set(new THREE.Vector3(-10,-90,0),new THREE.Vector3(1,0,0));
@@ -6615,11 +6777,11 @@
 			Mesh: {},
 			Line: { threshold: 1 },
 			LOD: {},
-			Points: { threshold: 1 },
+			Points: { threshold: 0.1 },
 			Sprite: {}
 		};
-
-		var target = ray.intersectObject(scene.children[scene.children.length-1]);
+		var renewp = [];  var secp=[];
+		var target = ray.intersectObject(scene.children[scene.children.length-1].children[0]);   // children[0] line   children[1] points  children[2] section p
 
 		console.log("crossover",ray,target);
 		// caculateDem intersect points and generate obj add to scene
@@ -6632,7 +6794,7 @@
 			console.log("m_linegroup",ray,m_linetarget);
 			for(let j=0;j<m_linetarget.length;j++){
 				console.log("delta",m_linetarget[j].point.x- target[i].point.x);
-				if(Math.abs(m_linetarget[j].point.x- target[i].point.x)<0.01){
+				if(Math.abs(m_linetarget[j].point.x- target[i].point.x)<0.001){
 				const material = new THREE.LineBasicMaterial( { color: 0x0000ff } );
 				const points = [];
 				points.push( target[i].point );
@@ -6646,13 +6808,53 @@
 				var cross_notehigh = createSprite(high.toFixed(2),"#000000",10,20,target[i].point.x+5,mp.m_Frame[13]-mp.m_Frame[14],Math.PI/2);
 				var cross_notesumD = createSprite(sumD.toFixed(0),"#000000",20,20,target[i].point.x+5,mp.m_Frame[11]-mp.m_Frame[14]+10,Math.PI/2);
 				var cross_note = createSprite(target[i].object.name,"#000000",10,20,target[i].point.x+5,mp.m_Frame[12]-mp.m_Frame[14],Math.PI/2);
-				scene.add(cross_note);
-				scene.add(cross_notehigh);
-				scene.add(cross_notesumD);
-				scene.add(line);
+				scene.children[scene.children.length-1].add(cross_note);
+				scene.children[scene.children.length-1].add(cross_notehigh);
+				scene.children[scene.children.length-1].add(cross_notesumD);
+				scene.children[scene.children.length-1].add(line);
 				}
 			}
 		}
+
+		//add intersect point and sectionPoint  (Update pointset)
+		renewp = GroundVertice;
+		renewp.pop();
+		for(let i = 0 ;i<target.length;i++){
+			renewp.push(target[i].point);
+		}
+
+		scene.children[scene.children.length-1].children[1].geometry.attributes.position.needsUpdate = true;
+		scene.children[scene.children.length-1].children[1].geometry.setFromPoints(renewp);
+		scene.children[scene.children.length-1].children[1].geometry.setDrawRange(0, renewp.length);
+		scene.children[scene.children.length-1].children[1].geometry.computeBoundingSphere();    //group point;
+
+		for(let i = 0 ;i<renewp.length;i++){
+			var sectionRay = new THREE.Raycaster();
+			sectionRay.set(renewp[i],new THREE.Vector3(0,1,0));
+			console.log(sectionRay);
+			console.log(m_linegroup);
+			var secp_target = sectionRay.intersectObject(m_linegroup,true);
+			console.log("secpTarget",ray,secp_target);
+			for(let j=0;j<secp_target.length;j++){
+				console.log("delta",secp_target[j].point.x- renewp[i].x);
+				if(Math.abs(secp_target[j].point.x- renewp[i].x)<0.0001) {
+					secp.push(secp_target[j].point);
+				}
+			}
+		}
+		console.log("secp",secp);
+		//scene.children[scene.children.length-1].children[2].geometry.attributes.position.needsUpdate = true;
+		scene.children[scene.children.length-1].children[2].geometry.setFromPoints(secp);
+		scene.children[scene.children.length-1].children[2].geometry.setDrawRange(0, secp.length);
+		scene.children[scene.children.length-1].children[2].geometry.computeBoundingSphere();    //section point;
+		//console.log(GroundVertice);
+		//console.log("pCount",scene,pCount);
+		renderer.render(scene,camera);
+
+	}
+
+	window.MapCrossDraw = function(cross){
+		console.log("crossset",cross);
 	}
 
 	/* 初始化 */
@@ -6698,21 +6900,20 @@
 
 
 		window.selectAttr = function(groundobj){  // create ground object and begin mouseEventListener
+
 			//if last Cross_line is empty delete
 
-			var lastLine = scene.children[scene.children.length-1].geometry;
-			console.log(lastLine);
+			var lastLine = scene.children[scene.children.length-1].children[0];
+			console.log("lastline",lastLine);
+			console.log(scene.children);
 			if(lastLine!=undefined){
-				if(lastLine.drawRange.count<2||lastLine.drawRange.count==Infinity){
-				scene.remove(scene.children[scene.children.length-1]);
+				if(lastLine.type==="Line"&&(lastLine.geometry.drawRange.count<2||lastLine.geometry.drawRange.count==Infinity)){
+					console.log("removeGroup");
+					scene.remove(scene.children[scene.children.length-1]);
 				}
 			}
 
-			var Cross_geo = new THREE.BufferGeometry().setFromPoints( GroundVertice );
-			var Cross_mat = new THREE.LineBasicMaterial( { color: 0x0000ff } );
-			var Cross_line = new THREE.Line(Cross_geo,Cross_mat);
-			Cross_line.name = groundobj.name;
-			scene.add(Cross_line);
+			createGroundCross(GroundVertice,groundobj.name);
 
 			//add Listener
 			document.addEventListener('mousedown', window.createGroundObj, false);
@@ -6723,6 +6924,7 @@
 			console.log("select add",scene.children);
 			renderer.render( scene, camera );
 		}
+
 
 		window.addEventListener('resize', onWindowResize, false);
 
