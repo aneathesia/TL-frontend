@@ -813,4 +813,3 @@ window.DisplayFawCurve4 = function(tower1,tower2, name){
 // m_start = 0;
 // m_end = towerlist.length - 1;
 // ComputeHugeHigh();
-var towerLineWid = 0.5;
