@@ -66,6 +66,7 @@
 <script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
 <script>
     let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+    //let mapjson;
     //parent.layer.iframeAuto(index);
     function iframetrans(){
 
@@ -73,34 +74,32 @@
             "end":$("#endOp").find("option:selected").text(),
             "demFile":document.getElementById("inputDEMfile").files[0].name,
             "pointFile":parent.document.getElementById('tb_pile_input').files[0].name,
-            "width":$("input[name=borderdist]").val(),
-            "step":$("input[name=sampledist]").val(),
-            "sectionType":$("#sectypeOp").find("option:selected").val(),
+            "width":$("input[name=borderdist]").val().toString(),
+            "step":$("input[name=sampledist]").val().toString(),
+            "sectionType":$("#sectypeOp").find("option:selected").val().toString(),
         };
         console.log("JSON"+JSON.stringify(transobj));
-        var formData = new FormData();
-        formData.append("SectionInfo",JSON.stringify(transobj));
-        formData.append("ProjectName", "March");
-        $.ajax({
-            url: "http://202.114.118.138:8181/SectionMapSave", //提交的路径
-            type: "post",       //提交方式
-            data: formData,    //提交的数据
-            // dataType:"json",
-            // async: false,
-            // cache: false,
-            contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-            processData: false,
-            success: function (data) {
-                alert("保存成功！");
-                console.log(data.data);
-            },
-            error: function (errorMsg) {
-                alert(errorMsg);
-            }
-        });
-        console.log(JSON.stringify(transobj));
-        parent.document.secDEM=JSON.stringify(transobj);
-        parent.GetSecDem(JSON.stringify(transobj));  //将子窗口的参数传递给父窗口
+        // var formData = new FormData();
+        // formData.append("SectionInfo",JSON.stringify(transobj));
+        // formData.append("ProjectName", "March");
+        // $.ajax({
+        //     url: "http://202.114.118.138:8181/SectionMapSave", //提交的路径
+        //     type: "post",       //提交方式
+        //     data: formData,    //提交的数据
+        //     // dataType:"json",
+        //     // async: false,
+        //     // cache: false,
+        //     contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+        //     processData: false,
+        //     success: function (data) {
+        //         mapjson = data;
+        //     },
+        //     error: function (errorMsg) {
+        //         alert(errorMsg);
+        //     }
+        // });
+
+        parent.GetSecDem(transobj);  //将子窗口的参数传递给父窗口
         parent.layer.close(index);
     }
 

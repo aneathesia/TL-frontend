@@ -48,12 +48,15 @@
         zNodes.push({id:2000+i,name:(2000+i).toString()+":电力(通讯)线杆型",iconSkin:(2000+i).toString()+".bmp",attr:(2000+i).toString(),icon:"symbols/"+(2000+i).toString()+".bmp"});
     }
 
-    let towerhigh;
+    let towerhigh,codeId;
     zTreeObj = $.fn.zTree.init($("#CrossTowertree"), settingss, zNodes); //初始化树
 
     function optionDoubleClick(){
-       towerhigh=  $(".layui-layer-input").val();
-       console.log(towerhigh) ;
+       // towerhigh= parseInt( $(".layui-layer-input").val())
+        if($(".layui-layer-input").val()==""){towerhigh = 0;}else towerhigh = parseInt( $(".layui-layer-input").val());
+       codeId =zTreeObj.getSelectedNodes()[0].id;
+       console.log(towerhigh,codeId) ;
+       parent.createCrossLabel(towerhigh,codeId);
        parent.layer.close(index);
     }
 
