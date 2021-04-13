@@ -52,7 +52,8 @@
     zTreeObj = $.fn.zTree.init($("#CrossTowertree"), settingss, zNodes); //初始化树
 
     function optionDoubleClick(){
-        if($(".layui-layer-input").val()==""){towerhigh = 0;}else towerhigh = parseInt( $(".layui-layer-input").val());
+        let input = $(".layui-layer-input").val();
+        if(input==""){towerhigh = 0;}else towerhigh = parseInt(input);
        codeId =zTreeObj.getSelectedNodes()[0].id;
        console.log(towerhigh,codeId) ;
        parent.createCrossLabel(towerhigh,codeId);
