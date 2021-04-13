@@ -79,26 +79,6 @@
             "sectionType":$("#sectypeOp").find("option:selected").val().toString(),
         };
         console.log("JSON"+JSON.stringify(transobj));
-        // var formData = new FormData();
-        // formData.append("SectionInfo",JSON.stringify(transobj));
-        // formData.append("ProjectName", "March");
-        // $.ajax({
-        //     url: "http://202.114.118.138:8181/SectionMapSave", //提交的路径
-        //     type: "post",       //提交方式
-        //     data: formData,    //提交的数据
-        //     // dataType:"json",
-        //     // async: false,
-        //     // cache: false,
-        //     contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-        //     processData: false,
-        //     success: function (data) {
-        //         mapjson = data;
-        //     },
-        //     error: function (errorMsg) {
-        //         alert(errorMsg);
-        //     }
-        // });
-
         parent.GetSecDem(transobj);  //将子窗口的参数传递给父窗口
         parent.layer.close(index);
     }
