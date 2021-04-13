@@ -52,7 +52,6 @@
     zTreeObj = $.fn.zTree.init($("#CrossTowertree"), settingss, zNodes); //初始化树
 
     function optionDoubleClick(){
-       // towerhigh= parseInt( $(".layui-layer-input").val())
         if($(".layui-layer-input").val()==""){towerhigh = 0;}else towerhigh = parseInt( $(".layui-layer-input").val());
        codeId =zTreeObj.getSelectedNodes()[0].id;
        console.log(towerhigh,codeId) ;
