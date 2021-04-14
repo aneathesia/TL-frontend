@@ -56,7 +56,7 @@
         if(input==""){towerhigh = 0;}else towerhigh = parseInt(input);
        codeId =zTreeObj.getSelectedNodes()[0].id;
        console.log(towerhigh,codeId) ;
-       parent.createCrossLabel(towerhigh,codeId);
+       parent.createCrossLabel(towerhigh,codeId,true);
        parent.layer.close(index);
     }
 
