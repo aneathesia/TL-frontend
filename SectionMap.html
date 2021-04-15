@@ -9,14 +9,16 @@
     <div class="layui-form-item">
         <label class="layui-form-label">DEM文件</label>
         <div class="layui-input-block">
-            <input type="file" id="inputDEMfile" required  lay-verify="required" placeholder="DEM文件输入" autocomplete="off" class="layui-input">
+            <select id ="demfilelist" style="width:100px">
+            </select>
         </div>
+
     </div>
 
         <div class="layui-form-item" style="display: inline-block">
             <label class="layui-form-label">起始桩位</label>
             <div class="layui-input-block">
-                <select name="Begin" lay-verify="required" id="beginOp">
+                <select name="Begin" lay-verify="required" id="beginOp" >
 
                 </select>
             </div>
@@ -68,11 +70,12 @@
     let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
     //let mapjson;
     //parent.layer.iframeAuto(index);
+
     function iframetrans(){
 
         var transobj={"start":$("#beginOp").find("option:selected").text(),
             "end":$("#endOp").find("option:selected").text(),
-            "demFile":document.getElementById("inputDEMfile").files[0].name,
+            "demFile":$("#demfilelist").find("option:selected").text(),
             "pointFile":parent.document.getElementById('tb_pile_input').files[0].name,
             "width":$("input[name=borderdist]").val().toString(),
             "step":$("input[name=sampledist]").val().toString(),
