@@ -8387,7 +8387,7 @@
 				} ));     //跨越杆高 towerHigh 虚线
 					line2.computeLineDistances();  //for DashedMaterial
 					line2.name =  codeId;
-				let high = m_linetarget[j].point.y/20*ydivision+yMin;
+				let high = m_linetarget[j].point.y/20*ydivision+yMin+towerhigh;
 				let sumD = ((target[i].point.x/20) - parseInt((target[i].point.x/20)))*xdivision;
 				var cross_notehigh = createSprite(high.toFixed(2),"#000000",10,20,target[i].point.x+5,mp.m_Frame[13]-mp.m_Frame[14],Math.PI/2);
 				var cross_notesumD = createSprite(sumD.toFixed(0),"#000000",20,20,target[i].point.x+5,mp.m_Frame[11]-mp.m_Frame[14]+10,Math.PI/2);
