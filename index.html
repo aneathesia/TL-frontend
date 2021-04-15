@@ -7987,20 +7987,6 @@
 
 		if(intersects==undefined) return ;
 		const coord_inter =getIntersects(event);
-
-		console.log("mouse position");
-		console.log(coord_inter);
-		console.log(DEM_pgroup.children[0]);
-		//console.log(DEM_pgroup.children[0].geometry.vertices[0].x);
-		//m_pointsgroup.children[5].visible = true;
-		//judge position;
-		// selectedPoint = m_pointsgroup.children[5];
-		// selectedPoint.visible =true;
-		console.log("judge");
-		console.log(selectedPoint);
-		console.log(DEM_pgroup.children.length);
-		//console.log(DEM_pgroup.children[0].geometry.vertices.length);
-
 		if (intersects.length > 0) {
 			const res = intersects.filter(function (res) {
 				return res && res.object;
@@ -8256,9 +8242,7 @@
 			console.log(sectionRay);
 			console.log(m_linegroup);
 			var m_linetarget = sectionRay.intersectObject(m_linegroup,true);
-			console.log("m_linegroup",ray,m_linetarget);
 			for(let j=0;j<m_linetarget.length;j++){
-				console.log("delta",m_linetarget[j].point.x- target[i].point.x);
 				if(Math.abs(m_linetarget[j].point.x- target[i].point.x)<0.001){
 				const material = new THREE.LineBasicMaterial( { color: 0x0000ff } );
 				const points = [];
@@ -8300,12 +8284,18 @@
 		//add intersect point and sectionPoint  (Update pointset)
 		console.log("labelPointprocess",GroundVertice);
 		//draw Range point Vector get
-		renewp=GroundVertice;
-		renewp.pop();
-		// for(let i = 0;i<scene.children[scene.children.length-1].children[0].drawRange;i++){
-		//
-		// 	temp = new THREE.Vector3()
-		// }
+		if(!added){    //draw or file open  mode:open GroundVertice empty and need to added line points
+			let lineArray =scene.children[scene.children.length-1].children[0].geometry.attributes.position.array;
+			scene.children[scene.children.length-1].children[0].geometry.setDrawRange(0, lineArray.length/3);
+			for(let i = 0;i<lineArray.length/3;i++){
+				let temp = new THREE.Vector3(lineArray[i*3],lineArray[i*3+1],lineArray[i*3+2]);
+				renewp.push(temp);
+			}
+		}
+		else {
+			renewp = GroundVertice;
+			renewp.pop();
+		}
 		for(let i = 0 ;i<target.length;i++){
 			renewp.push(target[i].point);
 		}
@@ -8320,12 +8310,8 @@
 		for(let i = 0 ;i<renewp.length;i++){
 			var sectionRay = new THREE.Raycaster();
 			sectionRay.set(renewp[i],new THREE.Vector3(0,1,0));
-			console.log(sectionRay);
-			console.log(m_linegroup);
 			var secp_target = sectionRay.intersectObject(m_linegroup,true);
-			console.log("secpTarget",ray,secp_target);
 			for(let j=0;j<secp_target.length;j++){
-				console.log("delta",secp_target[j].point.x- renewp[i].x);
 				if(Math.abs(secp_target[j].point.x- renewp[i].x)<0.0001) {
 					secp.push(new THREE.Vector3(secp_target[j].point.x,
 							secp_target[j].point.y+towerhigh/ydivision*Gridsize,
@@ -8333,7 +8319,6 @@
 				}
 			}
 		}
-		console.log("secp",secp);
 		//scene.children[scene.children.length-1].children[2].geometry.attributes.position.needsUpdate = true;
 		scene.children[scene.children.length-1].children[2].geometry.setFromPoints(secp);
 		scene.children[scene.children.length-1].children[2].geometry.setDrawRange(0, secp.length);
