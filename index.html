@@ -131,16 +131,25 @@
 				</ul>
 			</dd>
 		</dl>
+		<dl id="menu-transOutput">
+			<dt><i class="Hui-iconfont">&#xe646; </i><label id="Output"> 导出</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+			<dd>
+				<ul>
+					<li><a href="#"><label id="outputDXF">导出DXF</label></a></li>
+					<li><a href="#"><label id="outputORG">导出ORG</label></a></li>
+				</ul>
+			</dd>
+		</dl>
 		<div>
-			<label>打开本地json文件: <input type="file" style="display:inline-block" id="jsonfile" name="myjsonfile" />
+			<label>打开本地json文件: <input type="file" style="display:inline-block" id="jsonfile" name="myjsonfile" accept=".json"/>
 				<input type="button" style="display:inline-block" id="openjsonfile" onclick="window.upjsonfile()" value="打开" /></label>
-			<label>打开本地prj文件: <input type="file" style="display:inline-block" id="TLfile" name="myTLfile" />
+			<label>打开本地prj文件: <input type="file" style="display:inline-block" id="TLfile" name="myTLfile" accept="./PRJ"/>
 				<input type="button" style="display:inline-block" id="openTLfile" onclick="window.upprjfile()" value="打开" /></label>
-			<label>打开本地map文件: <input type="file" style="display:inline-block" id="TLmapfile" name="myTLmapfile" />
+			<label>打开本地map文件: <input type="file" style="display:inline-block" id="TLmapfile" name="myTLmapfile" accept=".MAP"/>
 				<input type="button" style="display:inline-block" id="openTLmapfile" onclick="window.upmapfile()" value="打开" /></label>
-			<label>打开本地pwf文件: <input type="file" style="display:inline-block" id="TLpwffile" name="myTLpwffile" />
+			<label>打开本地pwf文件: <input type="file" style="display:inline-block" id="TLpwffile" name="myTLpwffile" accept=".PWF"/>
 				<input type="button" style="display:inline-block" id="openTLpwffile" onclick="window.uppwffile()" value="打开" /></label>
-			<label>打开本地prk文件: <input type="file" style="display:inline-block" id="TLprkfile" name="myTLprkfile" />
+			<label>打开本地prk文件: <input type="file" style="display:inline-block" id="TLprkfile" name="myTLprkfile" accept=".PRK"/>
 				<input type="button" style="display:inline-block" id="openTLprkfile" onclick="window.upprkfile()" value="打开" /></label>
 		</div>
 	</div>
@@ -195,7 +204,7 @@
 	<div style="display: inline;">
 		<!--		<button class="input-file" id="opentxt">文件上传</button>-->
 
-			<button class="xbutton xround"  style="margin-left:5px;">		<input type="file" id ="tb_pile_input"> </button>
+			<button class="xbutton xround"  style="margin-left:5px;">		<input type="file" id ="tb_pile_input" accept=".txt"> </button>
 			<button class="xbutton xround" id="tb_pile_calc" style="text-align-last: right">计算</button>
 			<button class="xbutton xround" id="tb-pile-save" style="text-align-last: right">保存</button>
 			<button class="xbutton xround close_btn" id="closeTable"style="text-align-last: right">关闭</button>
@@ -310,6 +319,7 @@
 
 	//系统设置
 	var prjName;//新建工程名
+	var MapFileName;
 	var prjNameJSON = {};
 	var prk;//prk
 	var data = [];
@@ -988,6 +998,94 @@
 		})
 	})
 	//后台数据下载到本地
+	$("#outputDXF").click(function(){
+		var form = new FormData();
+		form.append("ProjectName",prjName);
+		form.append("MapFile",(MapFileName+".MAP").toString());
+		form.append("PwfFile",(prjName+".PWF").toString());
+		$.ajax({
+			url: "http://202.114.118.138:8181/MapOutput", //提交的路径
+			type: "post",       //提交方式
+			data: form,    //提交的数据
+			//dataType:"json",
+			contentType: false,
+			processData: false,
+			success: function () {
+				//download file
+				var url = 'http://202.114.118.138:8181/Pathdownload/Project='+prjName+'&filename=' + MapFileName+".DXF";
+				var xhr = new XMLHttpRequest();
+				xhr.open('GET', url, true);        // 也可以使用POST方式，根据接口
+				xhr.responseType = "blob";    // 返回类型blob
+				// 定义请求完成的处理函数，请求前也可以增加加载框/禁用下载按钮逻辑
+				xhr.onload = function () {
+					// 请求完成
+					if (this.status === 200) {
+						// 返回200
+						var blob = this.response;
+						var reader = new FileReader();
+						reader.readAsDataURL(blob);
+						reader.onload = function (e) {
+							// 转换完成，创建一个a标签用于下载
+							console.log(e.target);
+							var a = document.createElement('a');
+							a.download = (MapFileName+".DXF").toString();
+							a.href = e.target.result;
+							$("body").append(a);    // 修复firefox中无法触发click
+							a.click();
+							$(a).remove();
+						}
+					}
+				};
+				// 发送ajax请求
+				xhr.send()
+			}
+		})
+	})
+
+	$("#outputORG").click(function(){
+		var form = new FormData();
+		form.append("ProjectName",prjName);
+		form.append("MapFile",(MapFileName+".MAP").toString());
+		form.append("PwfFile",(prjName+".PWF").toString());
+		$.ajax({
+			url: "http://202.114.118.138:8181/MapOutput", //提交的路径
+			type: "post",       //提交方式
+			data: form,    //提交的数据
+			//dataType:"json",
+			contentType: false,
+			processData: false,
+			success: function () {
+				//download file
+				var url = 'http://202.114.118.138:8181/Pathdownload/Project='+prjName+'&filename=' + MapFileName+".ORG";
+				var xhr = new XMLHttpRequest();
+				xhr.open('GET', url, true);        // 也可以使用POST方式，根据接口
+				xhr.responseType = "blob";    // 返回类型blob
+				// 定义请求完成的处理函数，请求前也可以增加加载框/禁用下载按钮逻辑
+				xhr.onload = function () {
+					// 请求完成
+					if (this.status === 200) {
+						// 返回200
+						var blob = this.response;
+						var reader = new FileReader();
+						reader.readAsDataURL(blob);
+						reader.onload = function (e) {
+							// 转换完成，创建一个a标签用于下载
+							console.log(e.target);
+							var a = document.createElement('a');
+							a.download = (MapFileName+".ORG").toString();
+							a.href = e.target.result;
+							$("body").append(a);    // 修复firefox中无法触发click
+							a.click();
+							$(a).remove();
+						}
+					}
+				};
+				// 发送ajax请求
+				xhr.send()
+			}
+		})
+	})
+
 
 
 	$("#drawingpara").click(function(){
@@ -1126,19 +1224,38 @@
 					var body = layer.getChildFrame('body', index);
 					// body.find('input').val('Hi，我是从父页来的');
 					var inputList = body.find('input');     //取得子页面中input输入框
-					var dataLists = [name, 15, 5];
+					var dataLists = [15, 5];
 					for (var j = 0; j < inputList.length; j++) {			//把父页面的数据放到子页面的input框中
 						body.find(inputList[j]).val(dataLists[j]);
 					}
+
+
+
+
 					var optionList = body.find('select');
 					console.log(optionList);
 					console.log(pile_tabledata);
 					for (let i = 0; i < pile_tabledata.length; i++) {
 						var newOption0 = new Option(pile_tabledata[i].name, i.toString());
 						var newOption1 = new Option(pile_tabledata[i].name, i.toString());
-						optionList[0].options.add(newOption0);
-						optionList[1].options.add(newOption1);
+						optionList[1].options.add(newOption0);
+						optionList[2].options.add(newOption1);
 					}
+					console.log("filecata",fileCata,fileCata.length);
+
+					$.ajax({
+						url: "http://202.114.118.138:8181/directory/" + prjName, //提交的路径
+						type: "get",       //提交方式
+						dataType:"json",
+						success: function(data){
+							console.log(data);
+							for (let i = 0; i < data.length; i++) {
+								var fileOption = new Option(data[i].name, i.toString());
+								console.log(fileOption);
+								optionList[0].options.add(fileOption);
+							}
+						}
+					})
 
 				},
 				yes: function (index, layero) {
@@ -2111,6 +2228,7 @@
 						};
 						var demgeoCal = {
 							"ProjectName":prjName,
+							"MapFileName":(MapFileName+".MAP").toString(),
 							"JsonMap":JSON.stringify(Map)
 						}
 						console.log(Map);
@@ -5511,6 +5629,8 @@
 
 	/* 新建图幅 */
 	$("#creatMap").click(function () {
+		MapFileName = prompt("新建MAP名称");
+
 		for (let i = 0; i < scene.children.length; i++){
 			if (scene.children[i].name === "dem"||scene.children[i].name === "corner"){
 				dem.push(scene.children[i]);
@@ -6759,21 +6879,21 @@
 		}
 		//最低点三角
 		function DisplayFawLowest(x,y,x0,material) {
-			material = new THREE.LineBasicMaterial( { color: 0x000000 } );
-			let trianH = 0.5 * Math.tan(50 * (Math.PI/180));
-			console.log("三角形")
-			console.log(trianH);
-			let leftP = new THREE.Vector3(x/10+0.5-0.5,y - yMin + trianH,0);
-			let rightP = new THREE.Vector3(x/10+0.5+0.5,y - yMin + trianH,0);
-			let bottomP = new THREE.Vector3(x/10+0.5,y - yMin,0);
-			let triangleGeo = new THREE.Geometry();
-			triangleGeo.vertices.push(bottomP);
-			triangleGeo.vertices.push(leftP);
-			triangleGeo.vertices.push(rightP);
-			triangleGeo.vertices.push(bottomP);
-
-			let triangle =new THREE.Line(triangleGeo,material);
-			scene.add(triangle);
+			// material = new THREE.LineBasicMaterial( { color: 0x000000 } );
+			// let trianH = 0.5 * Math.tan(50 * (Math.PI/180));
+			// console.log("三角形")
+			// console.log(trianH);
+			// let leftP = new THREE.Vector3(x/10+0.5-0.5,y - yMin + trianH,0);
+			// let rightP = new THREE.Vector3(x/10+0.5+0.5,y - yMin + trianH,0);
+			// let bottomP = new THREE.Vector3(x/10+0.5,y - yMin,0);
+			// let triangleGeo = new THREE.Geometry();
+			// triangleGeo.vertices.push(bottomP);
+			// triangleGeo.vertices.push(leftP);
+			// triangleGeo.vertices.push(rightP);
+			// triangleGeo.vertices.push(bottomP);
+			//
+			// let triangle =new THREE.Line(triangleGeo,material);
+			// scene.add(triangle);
 		}
 		//弧垂
 		window.DisplayFawCurve = function(x1,y1,x2,y2,k,x0,bInsular,constt,length,material, name) {
