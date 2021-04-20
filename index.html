@@ -43,8 +43,8 @@
 					<input type="file" style="display:inline-block" id="file" name="myfile" class="uploadfile"/>
 					<input type="button" style="display:inline-block" id="upload" onclick="upfile()" value="上传" />
 					<input type="button" style="display:inline-block" id="cancel" onclick="cancelUploadFile()" value="取消" />
-					<input type="button" style="display:inline-block" id="filelist" onclick="updateFilelist()" value="获取文件列表" />
-					<select id="dembox">
+					<input type="button" style="display:inline-block" id="filelist" onclick="getFilelist()" value="获取文件列表" />
+					<select id="fileDirectory">
 						<option>请选择文件</option>
 					</select>
 					<button type="button" id="openBeFile" onclick="openBeFile()">打开</button>
@@ -309,13 +309,14 @@
 <script type="text/javascript" src="./js/three.js"></script>
 <script type="text/javascript" src="./js/three.module.js"></script>
 <script type="text/javascript" src="./js/gm.js"></script>
-<!--<script src="./js/DragControls1.js"></script>-->
-
+<!--<script type=“module” src="./js/DragControls.js"></script>-->
 
 <script type="module">
 	import { CSS2DRenderer, CSS2DObject } from './js/CSS2DRenderer.js';
+	//import {DragControls} from "./js/DragControls";
 	// import {Group} from './js/three.module.js';
 	// import {Points} from './js/three.module.js';
+
 
 	//系统设置
 	var prjName;//新建工程名
@@ -341,6 +342,7 @@
 	var insulateMateArr = ['','','','瓷质绝缘子'];
 	var columndataLeft = [{key: 'id', text: 'NO'}, {key: 'name', text: '型号/名称/图号'}];//表头
 	var columndataRight = [{key: 'name', text: '参数名称'}, {key: 'value', text: '参数数值'}];//表头
+
 
 
 
@@ -469,167 +471,188 @@
 		"m_selSize": 6,
 		"m_dynamicPlan": 0
 	}
-   let cross = [
-	   {
-		   "Attr": 106,
-		   "AttrEx": 0,
-		   "AttrName": "0106:330kV",
-		   "PointCount": 3,
-		   "CrossPoint": [
-			   {
-				   "x": 326.7830843032056,
-				   "y": -43.538361467840619,
-				   "z": 2251.5809887038369,
-				   "dc": 0,
-				   "towerHigh": 30.0
-			   },
-			   {
-				   "x": 373.6705504993417,
-				   "y": 0.0,
-				   "z": 2252.7625421914005,
-				   "dc": 2003,
-				   "towerHigh": 30.0
-			   },
-			   {
-				   "x": 395.14559032307178,
-				   "y": 19.94110840774937,
-				   "z": 2251.271142099644,
-				   "dc": 0,
-				   "towerHigh": 30.0
-			   }
-		   ]
-	   },
-	   {
-		   "Attr": 104,
-		   "AttrEx": 0,
-		   "AttrName": "0104:110kV",
-		   "PointCount": 7,
-		   "CrossPoint": [
-			   {
-				   "x": 666.1540963303985,
-				   "y": -45.979879539978728,
-				   "z": 2211.423671215728,
-				   "dc": 0,
-				   "towerHigh": 35.0
-			   },
-			   {
-				   "x": 726.8084055107959,
-				   "y": 0.0,
-				   "z": 2208.909887539935,
-				   "dc": 2004,
-				   "towerHigh": 35.0
-			   },
-			   {
-				   "x": 741.8411565666788,
-				   "y": 11.395795155266129,
-				   "z": 2211.4088150534864,
-				   "dc": 0,
-				   "towerHigh": 35.0
-			   },
-			   {
-				   "x": 757.8664935037718,
-				   "y": 0.0,
-				   "z": 2213.9647952422594,
-				   "dc": 2004,
-				   "towerHigh": 35.0
-			   },
-			   {
-				   "x": 796.7753131897855,
-				   "y": -27.66849399894312,
-				   "z": 2214.6823892027648,
-				   "dc": 0,
-				   "towerHigh": 35.0
-			   },
-			   {
-				   "x": 841.9896814319609,
-				   "y": 0.0,
-				   "z": 2229.95568158606,
-				   "dc": 2004,
-				   "towerHigh": 35.0
-			   },
-			   {
-				   "x": 878.5661686064112,
-				   "y": 22.382626479887479,
-				   "z": 2247.820910094993,
-				   "dc": 0,
-				   "towerHigh": 35.0
-			   }
-		   ]
-	   },
-	   {
-		   "Attr": 102,
-		   "AttrEx": 0,
-		   "AttrName": "0102:10kV",
-		   "PointCount": 3,
-		   "CrossPoint": [
-			   {
-				   "x": 1101.0212446189735,
-				   "y": -24.16446343244864,
-				   "z": 2253.0898373223105,
-				   "dc": 0,
-				   "towerHigh": 0.0
-			   },
-			   {
-				   "x": 1133.6759249330933,
-				   "y": 0.0,
-				   "z": 2259.5080938755129,
-				   "dc": 2005,
-				   "towerHigh": 0.0
-			   },
-			   {
-				   "x": 1171.667022169265,
-				   "y": 28.113411954767146,
-				   "z": 2264.5759627844074,
-				   "dc": 0,
-				   "towerHigh": 0.0
-			   }
-		   ]
-	   },
-	   {
-		   "Attr": 105,
-		   "AttrEx": 0,
-		   "AttrName": "0105:220kV",
-		   "PointCount": 5,
-		   "CrossPoint": [
-			   {
-				   "x": 1409.5204292065308,
-				   "y": 14.419200174982623,
-				   "z": 2298.369731917085,
-				   "dc": 0,
-				   "towerHigh": 0.0
-			   },
-			   {
-				   "x": 1485.5817101295643,
-				   "y": 0.0,
-				   "z": 2291.1948766544239,
-				   "dc": 2003,
-				   "towerHigh": 0.0
-			   },
-			   {
-				   "x": 1578.0029942102329,
-				   "y": -17.520622574534316,
-				   "z": 2298.413354451002,
-				   "dc": 0,
-				   "towerHigh": 0.0
-			   },
-			   {
-				   "x": 1590.7452651735305,
-				   "y": 0.0,
-				   "z": 2299.878245791477,
-				   "dc": 2003,
-				   "towerHigh": 0.0
-			   },
-			   {
-				   "x": 1616.330781509653,
-				   "y": 35.18008496216865,
-				   "z": 2291.815442119172,
-				   "dc": 0,
-				   "towerHigh": 0.0
-			   }
-		   ]
-	   }
-   ]
+	let cross=[];
+   // let cross = [
+	//    {
+	// 	   "Attr": 106,
+	// 	   "AttrEx": 0,
+	// 	   "AttrName": "0106:330kV",
+	// 	   "PointCount": 3,
+	// 	   "CrossPoint": [
+	// 		   {
+	// 			   "x": 326.7830843032056,
+	// 			   "y": -43.538361467840619,
+	// 			   "z": 2251.5809887038369,
+	// 			   "dc": 0,
+	// 			   "towerHigh": 30.0
+	// 		   },
+	// 		   {
+	// 			   "x": 373.6705504993417,
+	// 			   "y": 0.0,
+	// 			   "z": 2252.7625421914005,
+	// 			   "dc": 2003,
+	// 			   "towerHigh": 30.0
+	// 		   },
+	// 		   {
+	// 			   "x": 395.14559032307178,
+	// 			   "y": 19.94110840774937,
+	// 			   "z": 2251.271142099644,
+	// 			   "dc": 0,
+	// 			   "towerHigh": 30.0
+	// 		   }
+	// 	   ]
+	//    },
+	//    {
+	// 	   "Attr": 104,
+	// 	   "AttrEx": 0,
+	// 	   "AttrName": "0104:110kV",
+	// 	   "PointCount": 7,
+	// 	   "CrossPoint": [
+	// 		   {
+	// 			   "x": 666.1540963303985,
+	// 			   "y": -45.979879539978728,
+	// 			   "z": 2211.423671215728,
+	// 			   "dc": 0,
+	// 			   "towerHigh": 35.0
+	// 		   },
+	// 		   {
+	// 			   "x": 726.8084055107959,
+	// 			   "y": 0.0,
+	// 			   "z": 2208.909887539935,
+	// 			   "dc": 2004,
+	// 			   "towerHigh": 35.0
+	// 		   },
+	// 		   {
+	// 			   "x": 741.8411565666788,
+	// 			   "y": 11.395795155266129,
+	// 			   "z": 2211.4088150534864,
+	// 			   "dc": 0,
+	// 			   "towerHigh": 35.0
+	// 		   },
+	// 		   {
+	// 			   "x": 757.8664935037718,
+	// 			   "y": 0.0,
+	// 			   "z": 2213.9647952422594,
+	// 			   "dc": 2004,
+	// 			   "towerHigh": 35.0
+	// 		   },
+	// 		   {
+	// 			   "x": 796.7753131897855,
+	// 			   "y": -27.66849399894312,
+	// 			   "z": 2214.6823892027648,
+	// 			   "dc": 0,
+	// 			   "towerHigh": 35.0
+	// 		   },
+	// 		   {
+	// 			   "x": 841.9896814319609,
+	// 			   "y": 0.0,
+	// 			   "z": 2229.95568158606,
+	// 			   "dc": 2004,
+	// 			   "towerHigh": 35.0
+	// 		   },
+	// 		   {
+	// 			   "x": 878.5661686064112,
+	// 			   "y": 22.382626479887479,
+	// 			   "z": 2247.820910094993,
+	// 			   "dc": 0,
+	// 			   "towerHigh": 35.0
+	// 		   }
+	// 	   ]
+	//    },
+	//    {
+	// 	   "Attr": 102,
+	// 	   "AttrEx": 0,
+	// 	   "AttrName": "0102:10kV",
+	// 	   "PointCount": 3,
+	// 	   "CrossPoint": [
+	// 		   {
+	// 			   "x": 1101.0212446189735,
+	// 			   "y": -24.16446343244864,
+	// 			   "z": 2253.0898373223105,
+	// 			   "dc": 0,
+	// 			   "towerHigh": 0.0
+	// 		   },
+	// 		   {
+	// 			   "x": 1133.6759249330933,
+	// 			   "y": 0.0,
+	// 			   "z": 2259.5080938755129,
+	// 			   "dc": 2005,
+	// 			   "towerHigh": 0.0
+	// 		   },
+	// 		   {
+	// 			   "x": 1171.667022169265,
+	// 			   "y": 28.113411954767146,
+	// 			   "z": 2264.5759627844074,
+	// 			   "dc": 0,
+	// 			   "towerHigh": 0.0
+	// 		   }
+	// 	   ]
+	//    },
+	//    {
+	// 	   "Attr": 105,
+	// 	   "AttrEx": 0,
+	// 	   "AttrName": "0105:220kV",
+	// 	   "PointCount": 5,
+	// 	   "CrossPoint": [
+	// 		   {
+	// 			   "x": 1409.5204292065308,
+	// 			   "y": 14.419200174982623,
+	// 			   "z": 2298.369731917085,
+	// 			   "dc": 0,
+	// 			   "towerHigh": 0.0
+	// 		   },
+	// 		   {
+	// 			   "x": 1485.5817101295643,
+	// 			   "y": 0.0,
+	// 			   "z": 2291.1948766544239,
+	// 			   "dc": 2003,
+	// 			   "towerHigh": 0.0
+	// 		   },
+	// 		   {
+	// 			   "x": 1578.0029942102329,
+	// 			   "y": -17.520622574534316,
+	// 			   "z": 2298.413354451002,
+	// 			   "dc": 0,
+	// 			   "towerHigh": 0.0
+	// 		   },
+	// 		   {
+	// 			   "x": 1590.7452651735305,
+	// 			   "y": 0.0,
+	// 			   "z": 2299.878245791477,
+	// 			   "dc": 2003,
+	// 			   "towerHigh": 0.0
+	// 		   },
+	// 		   {
+	// 			   "x": 1616.330781509653,
+	// 			   "y": 35.18008496216865,
+	// 			   "z": 2291.815442119172,
+	// 			   "dc": 0,
+	// 			   "towerHigh": 0.0
+	// 		   }
+	// 	   ]
+	//    }
+   // ]
 // mptable init
+	window.getFilelist = function (){
+		var optionList = $('body').find('select');
+		console.log(optionList);
+		$.ajax({
+			url: "http://202.114.118.138:8181/directory/" + prjName, //提交的路径
+			type: "get",       //提交方式
+			dataType:"json",
+			success: function(data){
+				console.log(data);
+				for (let i = 0; i < data.length; i++) {
+						var fileOption = new Option(data[i].name, i.toString());
+						console.log(fileOption);
+					    optionList[0].options.add(fileOption);
+				}
+			}
+		})
+		console.log(optionList);
+
+	}
+
 	{
 	var pile_tabledata=[];
 	var pile_tableId=document.getElementById("mpile_table");
@@ -1086,8 +1109,6 @@
 		})
 	})
 
-
-
 	$("#drawingpara").click(function(){
 
 		let drawintial = [];
@@ -1250,12 +1271,18 @@
 						success: function(data){
 							console.log(data);
 							for (let i = 0; i < data.length; i++) {
-								var fileOption = new Option(data[i].name, i.toString());
-								console.log(fileOption);
-								optionList[0].options.add(fileOption);
+								var filename = data[i].name;
+								var suffix = filename.substring(filename.lastIndexOf('.')+1);
+								if(suffix=="EGX"||suffix=="tif"){
+									var fileOption = new Option(data[i].name, i.toString());
+									console.log(fileOption);
+									optionList[0].options.add(fileOption);
+								}
 							}
 						}
 					})
+
+					console.log("SectionMapOption",optionList[0]);
 
 				},
 				yes: function (index, layero) {
@@ -1285,10 +1312,10 @@
 				console.log("SectionMapSave",data);
 				DEM= data.DEM;
 				mp = data.mp;
-				//cross = data.cross;   Section Map have no cross
+				cross = data.cross;
 			},
 			error: function (errorMsg) {
-				alert(errorMsg);
+			//	alert(errorMsg);
 			}
 		});
 		console.log("DEM,mp,cross updata",DEM,mp,cross);
@@ -1357,7 +1384,7 @@
 				dataType:"json",
 				//填充prk设计参数表格
 				success: function (data) {
-					console.log(data);
+					console.log("createproject",data);
 
 					let json = prk;
 					console.log(json);
@@ -1366,6 +1393,8 @@
 					var laoStr = JSON.stringify(lao);
 					var jsonStr = JSON.stringify(json);
 					savedJson.Lao = lao;
+					mp = data.Map.mp;
+
 
 					$('#guicheng').click(function () {
 						$('.edit').attr('disabled',true);
@@ -2236,19 +2265,20 @@
 							url: "http://202.114.118.138:8181/MapSaveObj", //提交的路径
 							type: "post",       //提交方式
 							data: demgeoCal,    //提交的数据
-							dataType:"json",
+							//dataType:"json",
 							success: function (data) {
 								console.log(data);
 								alert("保存成功！");
 							},
 							error: function (errorMsg) {
-								alert(errorMsg);
+								//alert(errorMsg);
+								console.log(errorMsg);
 							}
 						});
 					})
 				},
 				error: function (errorMsg) {
-					alert(errorMsg);
+					//alert(errorMsg);
 				}
 			});
 		}
@@ -3740,7 +3770,7 @@
 				console.log(fileCata);
 				document.getElementById("dembox").options.length=0;
 				for (let i = 0; i < fileCata.length; i++) {
-					document.getElementById("dembox").options.add(new Option(fileCata[i],i));
+					document.getElementById("dembox").options.add(new Option(fileCata[i],i.toString()));
 				}
 
 				window.openBeFile = function(){
@@ -5648,7 +5678,8 @@
 		for (let i = 0; i < allChildren.length; i++) {
 			framegroup.remove(allChildren[i]);
 		}
-		yMin = 100; ydivision= 10; xdivision =100; verSize = 200;horSize =300; Gridsize =10;    //先设大小   再按distance/length 比例尺绘制
+		console.log("createMapFrame",mp);
+		yMin = 100; ydivision= 10; xdivision =100; verSize = 220;horSize =300; Gridsize =10;    //先设大小   再按distance/length 比例尺绘制
 		window.initContent();
 		mainCanvas = document.querySelector("#iframe_box canvas");
 		console.log(mainCanvas);
@@ -5680,7 +5711,7 @@
 		window.initContent();
 	}
 
-	var scene, camera, renderer, controls, labelRenderer; let cameraHelper;
+	var scene, camera, renderer, controls, labelRenderer;
 	var cameraX = 0 , cameraY = 0 , cameraZ=250;
 	var sceneX = 0 , sceneY = 0, sceneZ = 0;
 	var canvasdiv = document.getElementById('iframe_box');
@@ -5698,8 +5729,6 @@
 		camera.position.set(cameraX, cameraY, cameraZ);
 		camera.up.set(0,1,0);
 		camera.lookAt(new THREE.Vector3(sceneX, sceneY, sceneZ));
-		cameraHelper = new THREE.CameraHelper(camera);
-		scene.add(cameraHelper);
 	}
 	/* 渲染器 */
 	function initRender() {
@@ -5819,36 +5848,38 @@
 		horizonGeo.vertices.push(new THREE.Vector3(-30, 0, 0)); //添加顶点
 		horizonGeo.vertices.push(new THREE.Vector3(horSize, 0, 0));
 
-		for (var i = 0, len = verSize /Gridsize ; i <= len; i++) {
-				gridHor = new THREE.Line(horGeometry, new THREE.LineBasicMaterial({color: 0x455454}));//用geometry和material创建line
-				gridHor.position.y = i * Gridsize ; //设置line的位置
-				gridHor.name = "gridHor";
-				framegroup.add(gridHor);
-		}
-			for(let j = 0; j<9;j++){
-				var plangrid =  gridHor.clone();
-				plangrid.name = "plangrid"+j.toString();
-				plangrid.position.y=-(mp.m_Frame[14]-mp.m_Frame[j]);
-				framegroup.add(plangrid);
+		if(mp.m_ShowMainGrid){
+			for (var i = 0, len = verSize /Gridsize ; i <= len; i++) {
+					gridHor = new THREE.Line(horGeometry, new THREE.LineBasicMaterial({color: 0x455454}));//用geometry和material创建line
+					gridHor.position.y = i * Gridsize ; //设置line的位置
+					gridHor.name = "gridHor";
+					framegroup.add(gridHor);
 			}
+		}
+		for(let j = 0; j<9;j++){
+			var plangrid =  gridHor.clone();
+			plangrid.name = "plangrid"+j.toString();
+			plangrid.position.y=-(mp.m_Frame[14]-mp.m_Frame[j]);
+			framegroup.add(plangrid);
+		}
 
-					var line = new THREE.Line(horizonGeo, new THREE.LineBasicMaterial({color: 0x455454}));
-					line.position.y = - (mp.m_Frame[14]-mp.m_Frame[9]); //设置line的位置
+		var line = new THREE.Line(horizonGeo, new THREE.LineBasicMaterial({color: 0x455454}));
+		line.position.y = - (mp.m_Frame[14]-mp.m_Frame[9]); //设置line的位置
 
-					var gaocheng = createSprite(mp.m_HighSystem,"#ff0000",0,32,4.5,-55,Math.PI/2); //高程坐标系标签 位置自适应
-					framegroup.add(gaocheng);
-					var planLine = line.clone();//平面图下边界
-					planLine.position.y = -(mp.m_Frame[14]-mp.m_Frame[5]);
-					var planeText = createSprite("平面图","#ff0000",0,100,1.5,(line.position.y+planLine.position.y)/2,0);  //100 mframe[]
-					framegroup.add(planeText);
-					var textArr = ["            桩间距离","               里程","               档距","            杆塔位置","   耐张段长/代表档距"];
-					for (let j = 4; j >=0 ; j--) {
-						var disLine = line.clone();//桩间距离下边界
-						disLine.position.y = -(mp.m_Frame[14]-mp.m_Frame[j]);
-						framegroup.add(disLine);
-						var note = createSprite(textArr[4-j],"#ff0000",0,60,-10,-(mp.m_Frame[14]-mp.m_Frame[j]),0);
-						framegroup.add(note);
-					}
+		var gaocheng = createSprite(mp.m_HighSystem,"#ff0000",0,32,4.5,-55,Math.PI/2); //高程坐标系标签 位置自适应
+		framegroup.add(gaocheng);
+		var planLine = line.clone();//平面图下边界
+		planLine.position.y = -(mp.m_Frame[14]-mp.m_Frame[5]);
+		var planeText = createSprite("平面图","#ff0000",0,100,1.5,(line.position.y+planLine.position.y)/2,0);  //100 mframe[]
+		framegroup.add(planeText);
+		var textArr = ["            桩间距离","               里程","               档距","            杆塔位置","   耐张段长/代表档距"];
+		for (let j = 4; j >=0 ; j--) {
+			var disLine = line.clone();//桩间距离下边界
+			disLine.position.y = -(mp.m_Frame[14]-mp.m_Frame[j]);
+			framegroup.add(disLine);
+			var note = createSprite(textArr[4-j],"#ff0000",0,60,-10,-(mp.m_Frame[14]-mp.m_Frame[j]),0);
+			framegroup.add(note);
+		}
 		framegroup.add(planLine);
 		framegroup.add(line);
 
@@ -5873,10 +5904,12 @@
 				framegroup.add(boundary);
 			}
 			else {
-				gridVer.position.x = i * Gridsize ;
-				gridVer.rotation.z = Math.PI / 2; //绕y轴旋转90度
-				gridVer.name="gridVer";
-				framegroup.add(gridVer);
+				if(mp.m_ShowMainGrid){
+					gridVer.position.x = i * Gridsize ;
+					gridVer.rotation.z = Math.PI / 2; //绕y轴旋转90度
+					gridVer.name="gridVer";
+					framegroup.add(gridVer);
+				}
 			}
 			var planVer = new THREE.Line(planGeo, new THREE.LineBasicMaterial({color: 0x324132}));
 			planVer.name = "gridVer";
@@ -6187,58 +6220,29 @@
 	}
 	/* 转角投影线绘制函数 */
 	function drawGeo(cornerCor){
+		for(let i = 0 ;i<scene.children.length;i++){
+			console.log(scene.children[i].name);
+			if(scene.children[i].name == "ProjectLine"){scene.remove(scene.children[i]);console.log(scene.children[i]);}
+		}
 		var cornerMaterial = new THREE.LineBasicMaterial({color:0xff0000});
+		let GeoGroup = new THREE.Group();
+		GeoGroup.name ="ProjectLine"
 		for (let i = 0 ; i <cornerCor.length ; i++){
 			var cornerGeo = new THREE.Geometry();
-			cornerGeo.vertices.push(new THREE.Vector3(cornerCor[i].x/10,cornerCor[i].z-yMin,0));
-			cornerGeo.vertices.push(new THREE.Vector3(cornerCor[i].x/10,-40,0));
-			var cornerLine = new THREE.Line(cornerGeo,cornerMaterial);cornerLine.name = "corner";
+			cornerGeo.vertices.push(new THREE.Vector3(cornerCor[i].dist/xdivision*Gridsize,(cornerCor[i].z-yMin)/ydivision*Gridsize,0));
+			cornerGeo.vertices.push(new THREE.Vector3(cornerCor[i].dist/xdivision*Gridsize,mp.m_Frame[9]-mp.m_Frame[14],0));
+			var cornerLine = new THREE.Line(cornerGeo,cornerMaterial);cornerLine.name = "cornerLine-"+i.toString();
 			// console.log(cornerLine);
-			scene.add(cornerLine);
+			GeoGroup.add(cornerLine);
 		}
+		scene.add(GeoGroup);
 	}
-	//DEM绘制
-	// $("#inputDem").click(function () {
-	//
-	// 	for (let i = 0; i < allChildren.length; i++){
-	// 		framegroup.remove(allChildren[i]);
-	// 	}
-	//
-	// 	var request = new XMLHttpRequest();
-	// 	request.open("get","JsonMap.Json");
-	// 	request.send(null);
-	// 	request.onload = function () {
-	// 		if (request.status == 200){
-	// 			var json = JSON.parse(request.responseText);
-	// 			DEM = json.DEM;
-	// 			mp = json.mp;
-	// 			console.log(DEM);
-	// 			console.log(mp);
-	// 			// leftLineCor = DEM[0].LEFT ;
-	// 			// rightLineCor = DEM[0].RIGHT;
-	// 			// midLineCor =DEM[0].MID;
-	// 			// cornerCor ;
-	// 			// console.log(leftLineCor,rightLineCor,midLineCor);
-	// 			//drawDEM(leftLineCor,rightLineCor,midLineCor,cornerCor);
-	// 			drawDEM_whj(DEM);
-	//
-	// 			MapCrossDraw(cross);
-	//
-	// 			// $('#inputCorner').click(function () {
-	// 			// 	/* 转角投影线绘制 */
-	// 			// 	drawGeo(cornerCor);
-	// 			// })
-	// 			console.log(framegroup.children);
-	// 			allChildren = [];
-	// 			for (let i = 0; i < framegroup.children.length; i++) {
-	// 				allChildren.push(framegroup.children[i]);
-	// 			}
-	// 			//
-	// 			// savedJson.DEM = json.DEM;
-	// 			// savedJson.GEO = json.GEO;
-	// 		}
-	// 	}
-	// });
+
+	$('#inputCorner').click(function () {
+		/* 转角投影线绘制 */
+		console.log(pile_tabledata,scene);
+		drawGeo(pile_tabledata);
+	})
 
 		/* 悬链线相关函数 */ 
 		window.ComputeLoad = function() {
@@ -7710,7 +7714,8 @@
 					index++;
 				}
 			}
-			var dragControls = new THREE.DragControls(objects, camera, document,centerDem);// 初始化拖拽控件
+
+			var dragControls = new DragControls(objects, camera, document,centerDem);// 初始化拖拽控件
 			dragControls.enabled = true;
 			dragControls.addEventListener('hoveron', function (event) {}); // 鼠标略过
 			dragControls.addEventListener('dragstart', function (event) {
