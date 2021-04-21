@@ -1175,6 +1175,8 @@
 		console.log(horSize,verSize,xdivision,ydivision,mp.m_Grid,Gridsize,mp.m_CScale, mp.m_From,"update drawing");
 		drawDEM_whj(DEM);
 		MapCrossDraw(cross,false);  //cross added
+		window.initContent();
+		//drawGeo(pile_tabledata);
 		console.log(scene.children);
 	}
 
@@ -1202,7 +1204,7 @@
 	window.updatemp=function(mppara) {
 		mp.m_prefixLength = mppara.m_prefixLength;
 		mp.m_Frame = mppara.m_Frame;
-		console.log(mp);
+		MapCrossDraw(cross,false);
 	}
 
 	$("#select_code").click(function(){
@@ -5664,6 +5666,7 @@
 	/* 新建图幅 */
 	$("#creatMap").click(function () {
 		MapFileName = prompt("新建MAP名称");
+		console.log(MapFileName);
 
 		for (let i = 0; i < scene.children.length; i++){
 			if (scene.children[i].name === "dem"||scene.children[i].name === "corner"){
@@ -5687,6 +5690,7 @@
 		window.initContent();
 		mainCanvas = document.querySelector("#iframe_box canvas");
 		console.log(mainCanvas);
+
 	})
 
 	/* 默认关闭图纸参数和排杆设置框 */
@@ -6130,9 +6134,6 @@
 		scene.add(r_linegroup);
 		scene.add(DEM_pgroup);
 
-		window.initContent();
-
-
 	}
 	function drawDEM(leftLineCor,rightLineCor,midLineCor,cornerCor){
 
@@ -6223,20 +6224,20 @@
 		scene.add( centerDem );scene.add(leftDem);scene.add(rightDem);
 	}
 	/* 转角投影线绘制函数 */
-	function drawGeo(cornerCor){
+	window.drawGeo= function (cornerCor){
+		console.log(cornerCor,xMax);
 		for(let i = 0 ;i<scene.children.length;i++){
-			console.log(scene.children[i].name);
-			if(scene.children[i].name == "ProjectLine"){scene.remove(scene.children[i]);console.log(scene.children[i]);}
+			if(scene.children[i].name == "ProjectLine"){scene.remove(scene.children[i]);}
 		}
 		var cornerMaterial = new THREE.LineBasicMaterial({color:0xff0000});
 		let GeoGroup = new THREE.Group();
 		GeoGroup.name ="ProjectLine"
 		for (let i = 0 ; i <cornerCor.length ; i++){
-			if(cornerCor[i].dist>=xMin&&cornerCor[i].dist<=xMax){
+			if(cornerCor[i].dist>=xMin&&cornerCor[i].dist<=xMax+1){
 				var cornerGeo = new THREE.Geometry();
 				console.log("yMin",yMin);
-				cornerGeo.vertices.push(new THREE.Vector3(cornerCor[i].dist/xdivision*Gridsize,(cornerCor[i].z-yMin)/ydivision*Gridsize,0));
-				cornerGeo.vertices.push(new THREE.Vector3(cornerCor[i].dist/xdivision*Gridsize,mp.m_Frame[9]-mp.m_Frame[14],0));
+				cornerGeo.vertices.push(new THREE.Vector3((cornerCor[i].dist-xMin)/xdivision*Gridsize,(cornerCor[i].z-yMin)/ydivision*Gridsize,0));
+				cornerGeo.vertices.push(new THREE.Vector3((cornerCor[i].dist-xMin)/xdivision*Gridsize,mp.m_Frame[9]-mp.m_Frame[14],0));
 				var cornerLine = new THREE.Line(cornerGeo,cornerMaterial);cornerLine.name = "cornerLine-"+i.toString();
 				// console.log(cornerLine);
 				GeoGroup.add(cornerLine);
@@ -7310,36 +7311,39 @@
 				var tempLine1 = turf.lineString([[pos.x,pos.y],[pos.x,0]]);
 				var interPoint = turf.lineIntersect(tempLine1, tempLine2);
 				pos = new THREE.Vector3(points.geometry.vertices[0].x, interPoint.features[0].geometry.coordinates[1], 0);
-				createTower(pos,putInd);
-				let disToPile = []
-				for (let i = 0; i < pile_tabledata.length; i++) {
-					disToPile.push({
-						"name": pile_tabledata[i].name,
-						"dis": Math.abs(pile_tabledata[i].dist - pos.x /Gridsize*xdivision),
-						"value": i
-					})
-				}
-				disToPile.sort(compare("dis"));
-				$("#pilelist").val(disToPile[0].value);
-				let gap;
-				for (let i = 0; i < pile_tabledata.length; i++) {
-					if (pile_tabledata[i].name == disToPile[0].name) {
-						gap = pos.x /Gridsize*xdivision - pile_tabledata[i].dist;
+				console.log("addtower",putInd,pos.x/Gridsize*xdivision,towerlist)
+				if(putInd==0||pos.x/Gridsize*xdivision>towerlist[putInd-1].Distance){  //防止向前
+					createTower(pos,putInd);
+					let disToPile = []
+					for (let i = 0; i < pile_tabledata.length; i++) {
+						disToPile.push({
+							"name": pile_tabledata[i].name,
+							"dis": Math.abs(pile_tabledata[i].dist - pos.x /Gridsize*xdivision),
+							"value": i
+						})
 					}
+					disToPile.sort(compare("dis"));
+					$("#pilelist").val(disToPile[0].value);
+					let gap;
+					for (let i = 0; i < pile_tabledata.length; i++) {
+						if (pile_tabledata[i].name == disToPile[0].name) {
+							gap = pos.x /Gridsize*xdivision - pile_tabledata[i].dist;
+						}
+					}
+					let gaptoPile = document.getElementById("gap");
+					console.log("gap pile", gap)
+					gaptoPile.value = gap.toFixed(2);
+					towerlist[towerlist.length-1].PosOffset = disToPile[0].value.toString()+"+"+gap.toFixed(2).toString();
+					//whj 3.7 refresh GridManager 获取的只有参数  需要发起ajax请求帮助计算填充表格
+					console.log("set tower");
+					console.log(towerlist);
+					towerlist_tabledata=towerlist;
+					GridManager.refreshGrid(towerlist_tableId);
+
+					var inputId = document.getElementById("towId");
+					inputId.value = "G" + putInd;
+
 				}
-				let gaptoPile = document.getElementById("gap");
-				console.log("gap pile", gap)
-				gaptoPile.value = gap.toFixed(2);
-				towerlist[towerlist.length-1].PosOffset = disToPile[0].value.toString()+"+"+gap.toFixed(2).toString();
-				//whj 3.7 refresh GridManager 获取的只有参数  需要发起ajax请求帮助计算填充表格
-				console.log("set tower");
-				console.log(towerlist);
-				towerlist_tabledata=towerlist;
-				GridManager.refreshGrid(towerlist_tableId);
-
-				var inputId = document.getElementById("towId");
-				inputId.value = "G" + putInd;
-
 			}
 		}
 		if (event.button === 2){
@@ -7816,7 +7820,7 @@
 		}
 	//升高杆塔
 	function riseTower(event){
-			// document.body.style.cursor = "url(./css/rise.ico) 9 9, default";
+			document.body.style.cursor = "url(./css/rise.ico) 9 9, default";
 			if (event.button === 0) {
 				var intersectsTower = getIntersectsObject(event);
 				console.log(intersectsTower[0]);
@@ -7881,7 +7885,7 @@
 		}
 	//降低杆塔
 	function fallTower(event){
-			// document.body.style.cursor = "url(./css/fall.ico) 9 9, default";
+			document.body.style.cursor = "url(./css/fall.ico) 9 9, default";
 			if (event.button === 0) {
 				var intersectsTower = getIntersectsObject(event);
 				console.log(intersectsTower[0]);
@@ -8158,7 +8162,6 @@
 		for(let i=0;i<scene.children.length;i++){
 			var num = scene.children.length;
 			if(scene.children[i].name == "crossObject"){
-				 //whj
 				var redcross = scene.children[i];
 				var target1 =  redcross.children[1].geometry.attributes.position.array;
 				var target2 =  redcross.children[2].geometry.attributes.position.array;
@@ -8514,7 +8517,7 @@
 			let crossAttrName;
 			for(let j=0;j<cross[i].PointCount;j++){
 				var temp = new THREE.Vector3();
-				temp.x= cross[i].CrossPoint[j].x/xdivision*Gridsize;
+				temp.x= (cross[i].CrossPoint[j].x-xMin)/xdivision*Gridsize;
 				temp.y= cross[i].CrossPoint[j].y/xdivision*Gridsize+mp.m_Frame[7]-mp.m_Frame[14];
 				temp.z= 0
 				crossPoint.push(temp);
@@ -8555,6 +8558,7 @@
 		document.addEventListener('mousedown', onDocumentSelected, false);
 		document.addEventListener('mousemove', onDocumentMsg, false);
 
+		drawGeo(pile_tabledata);
 
 		/*鼠标放置杆塔*/
 		$("#putTower").click(function () {
