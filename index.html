@@ -27,6 +27,20 @@
     <script type="text/javascript" src="http://lib.h-ui.net/DD_belatedPNG_0.0.8a-min.js" ></script>
     <script>DD_belatedPNG.fix('*');</script>
     <![endif]-->
+
+	<script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
+	<script src="https://cdn.bootcss.com/FileSaver.js/2014-11-29/FileSaver.js"></script>
+	<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript" src="lib/layer/1.9.3/layer.js"></script>
+	<script type="text/javascript" src="./js/H-ui.js"></script>
+	<script type="text/javascript" src="./js/H-ui.admin.js"></script>
+	<script type="text/javascript" src="./js/movediv.js"></script>
+	<script type="text/javascript" src="./js/three.js"></script>
+	<script type="text/javascript" src="./js/three.module.js"></script>
+	<script type="text/javascript" src="./js/gm.js"></script>
+	<script src="./js/DragControls1.js"></script>
+
+
 	<title>架空输电线路勘测设计一体化系统</title>
 </head>
 <body class="mainbody">
@@ -44,14 +58,16 @@
 					<input type="button" style="display:inline-block" id="upload" onclick="upfile()" value="上传" />
 					<input type="button" style="display:inline-block" id="cancel" onclick="cancelUploadFile()" value="取消" />
 					<input type="button" style="display:inline-block" id="filelist" onclick="getFilelist()" value="获取文件列表" />
-					<select id="fileDirectory">
+					<select id="fileDirectory" >
 						<option>请选择文件</option>
 					</select>
 					<button type="button" id="openBeFile" onclick="openBeFile()">打开</button>
 					<button type="button" id="downloadBtn" onclick="download()">下载到本地</button>
 				</a>
 			</li>
+
 		</ul>
+
 	</nav>
 	<a aria-hidden="false" class="Hui-nav-toggle" href="#"></a> </header>
 <aside class="Hui-aside">
@@ -297,18 +313,6 @@
 </section>
 
 
-
-
-<script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
-<script src="https://cdn.bootcss.com/FileSaver.js/2014-11-29/FileSaver.js"></script>
-<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
-<script type="text/javascript" src="lib/layer/1.9.3/layer.js"></script>
-<script type="text/javascript" src="./js/H-ui.js"></script>
-<script type="text/javascript" src="./js/H-ui.admin.js"></script>
-<script type="text/javascript" src="./js/movediv.js"></script>
-<script type="text/javascript" src="./js/three.js"></script>
-<script type="text/javascript" src="./js/three.module.js"></script>
-<script type="text/javascript" src="./js/gm.js"></script>
 <!--<script type=“module” src="./js/DragControls.js"></script>-->
 
 <script type="module">
@@ -6228,12 +6232,15 @@
 		let GeoGroup = new THREE.Group();
 		GeoGroup.name ="ProjectLine"
 		for (let i = 0 ; i <cornerCor.length ; i++){
-			var cornerGeo = new THREE.Geometry();
-			cornerGeo.vertices.push(new THREE.Vector3(cornerCor[i].dist/xdivision*Gridsize,(cornerCor[i].z-yMin)/ydivision*Gridsize,0));
-			cornerGeo.vertices.push(new THREE.Vector3(cornerCor[i].dist/xdivision*Gridsize,mp.m_Frame[9]-mp.m_Frame[14],0));
-			var cornerLine = new THREE.Line(cornerGeo,cornerMaterial);cornerLine.name = "cornerLine-"+i.toString();
-			// console.log(cornerLine);
-			GeoGroup.add(cornerLine);
+			if(cornerCor[i].dist>=xMin&&cornerCor[i].dist<=xMax){
+				var cornerGeo = new THREE.Geometry();
+				console.log("yMin",yMin);
+				cornerGeo.vertices.push(new THREE.Vector3(cornerCor[i].dist/xdivision*Gridsize,(cornerCor[i].z-yMin)/ydivision*Gridsize,0));
+				cornerGeo.vertices.push(new THREE.Vector3(cornerCor[i].dist/xdivision*Gridsize,mp.m_Frame[9]-mp.m_Frame[14],0));
+				var cornerLine = new THREE.Line(cornerGeo,cornerMaterial);cornerLine.name = "cornerLine-"+i.toString();
+				// console.log(cornerLine);
+				GeoGroup.add(cornerLine);
+			}
 		}
 		scene.add(GeoGroup);
 	}
@@ -7715,7 +7722,7 @@
 				}
 			}
 
-			var dragControls = new DragControls(objects, camera, document,centerDem);// 初始化拖拽控件
+			var dragControls = new THREE.DragControls(objects, camera, document,centerDem);// 初始化拖拽控件
 			dragControls.enabled = true;
 			dragControls.addEventListener('hoveron', function (event) {}); // 鼠标略过
 			dragControls.addEventListener('dragstart', function (event) {
@@ -8493,8 +8500,14 @@
 	}
 
 	window.MapCrossDraw = function(cross,added){
-		console.log("crossset",cross);
+		console.log("CrossObject");
+		//delete original
+		for(let i = 0 ;i<scene.children.length;i++){
+			console.log("length,name",scene.children.length,scene.children[i].name);
+			if(scene.children[i].name == "crossObject"){scene.remove(scene.children[i]);i=i-1;console.log(scene.children[i]);}
+		}
 
+		console.log("afterdeleteCrossObject",scene);
 		for(let i=0;i<cross.length;i++){
 			console.log("cross drawing length",cross.length);
 			let crossPoint = [];
@@ -8642,7 +8655,7 @@
 			var lastLine = scene.children[scene.children.length-1].children[0];
 			console.log("lastline",lastLine);
 			console.log(scene.children);
-			if(lastLine!=undefined){
+			if(lastLine!=undefined&&scene.children[scene.children.length-1].name=="crossObject"){
 				if(lastLine.type==="Line"&&(lastLine.geometry.drawRange.count<2||lastLine.geometry.drawRange.count==Infinity)){
 					console.log("removeGroup");
 					scene.remove(scene.children[scene.children.length-1]);
