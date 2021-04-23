@@ -7594,10 +7594,59 @@
 			}
 
 			console.log("before end",m_end)
+
+			console.log(scene.children)
+			scene.children.sort(compare('position'))
+			for (let i = 0; i < scene.children.length; i++) {
+				if (scene.children[i].name == "fixTower") {
+					currentTow.push({
+						"posX":scene.children[i].position.x,
+						"object":scene.children[i]
+					});
+				}
+			}
+			console.log(currentTow)
+			currentTow.sort(compare('posX'))
+			for (let j = 0; j < currentTow.length; j++) {
+				for (let i = 0; i < scene.children.length; i++) {
+					if (scene.children[i].uuid == currentTow[j].object.uuid){
+						scene.children[i].geometry.name = "G" + j;
+					}
+				}
+			}
+
+			let disToPile = []
+			for (let i = 0; i < pile_tabledata.length; i++) {
+				disToPile.push({"name": pile_tabledata[i].name,
+					"dis":Math.abs(pile_tabledata[i].dist - pos.x/Gridsize*xdivision),
+					"value":i
+				})
+			}
+			disToPile.sort(compare("dis"));
+			$("#pilelist").val(disToPile[0].value);
+			let gap;
+			for (let i = 0; i < pile_tabledata.length; i++) {
+				if (pile_tabledata[i].name == disToPile[0].name){
+					gap = pos.x/Gridsize*xdivision - pile_tabledata[i].dist;
+				}
+			}
+			let gaptoPile = document.getElementById("gap");
+			console.log("gap pile", gap)
+			gaptoPile.value = gap.toFixed(2);
+			var inputId = document.getElementById("towId");
+			inputId.value = "G" + towerlist.length;
+			var inputDis = document.getElementById("dis");
+			var inputHei = document.getElementById("hei");
+			let disNum = pos.x/Gridsize*xdivision + xMin;
+			let heiNum = pos.y/Gridsize*ydivision + yMin;
+			inputDis.value = disNum.toFixed(2);
+			inputHei.value = heiNum.toFixed(2);
+
 			towerlist.push({
 				"Name" : "G" + towerlist.length,
 				"Distance" : pos.x /Gridsize*xdivision +xMin,
 				"High" : pos.y/Gridsize*ydivision + yMin,
+				"PosOffset" : disToPile[0].value+"+"+gap.toString(),
 				"TowerType" : "ZMVA41",
 				"Base": 0,
 				"TowerHigh" : towerHei,
@@ -7654,52 +7703,6 @@
 				DisplayFawCurve4(towerlist[i],towerlist[i+1], "fixwire");
 			}
 
-			console.log(scene.children)
-			scene.children.sort(compare('position'))
-			for (let i = 0; i < scene.children.length; i++) {
-				if (scene.children[i].name == "fixTower") {
-					currentTow.push({
-						"posX":scene.children[i].position.x,
-						"object":scene.children[i]
-					});
-				}
-			}
-			console.log(currentTow)
-			currentTow.sort(compare('posX'))
-			for (let j = 0; j < currentTow.length; j++) {
-				for (let i = 0; i < scene.children.length; i++) {
-					if (scene.children[i].uuid == currentTow[j].object.uuid){
-						scene.children[i].geometry.name = "G" + j;
-					}
-				}
-			}
-
-			let disToPile = []
-			for (let i = 0; i < pile_tabledata.length; i++) {
-				disToPile.push({"name": pile_tabledata[i].name,
-					"dis":Math.abs(pile_tabledata[i].dist - pos.x/Gridsize*xdivision),
-					"value":i
-				})
-			}
-			disToPile.sort(compare("dis"));
-			$("#pilelist").val(disToPile[0].value);
-			let gap;
-			for (let i = 0; i < pile_tabledata.length; i++) {
-				if (pile_tabledata[i].name == disToPile[0].name){
-					gap = pos.x/Gridsize*xdivision - pile_tabledata[i].dist;
-				}
-			}
-			let gaptoPile = document.getElementById("gap");
-			console.log("gap pile", gap)
-			gaptoPile.value = gap.toFixed(2);
-			var inputId = document.getElementById("towId");
-			inputId.value = "G" + towerlist.length;
-			var inputDis = document.getElementById("dis");
-			var inputHei = document.getElementById("hei");
-			let disNum = pos.x/Gridsize*xdivision + xMin;
-			let heiNum = pos.y/Gridsize*ydivision + yMin;
-			inputDis.value = disNum.toFixed(2);
-			inputHei.value = heiNum.toFixed(2);
 
 			console.log(towerlist);
 			towerlist_tabledata=towerlist;
