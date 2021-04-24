@@ -173,7 +173,7 @@
 <!--排杆编辑-->
 <div class="tower_settings" id="towerset" style="display: none">
 	<h1 id="tower_settings_title">前进方向排杆</h1>
-	<form method="post" action="TL_BL.html" id="towInfor">
+	<form  id="towInfor">
 		<p>基本耐张段长 <input style="width: 25%;" disabled="disabled" type="text" id="naizhang" value="0" placeholder=""></p>
 		<p>前侧代表档距 <input style="width: 25%;" disabled="disabled" type="text" id="dangju" value="0" placeholder=""></p>
 		<p>导线 最大K值 <input style="width: 25%;" disabled="disabled" type="text" id="maxK" value="7.333" placeholder=""></p>
@@ -8579,7 +8579,20 @@
 			for (let i = 0; i < pile_tabledata.length; i++) {
 				$("#pilelist").append("<option value='"+i+"'>"+pile_tabledata[i].name+"</option>");
 			}
-
+			layer.open({
+				type:2,
+				title:'前进方向排杆',
+				area:['250px','300px'],
+				maxmin:true,
+				shadeClose:true,
+				shade:0,
+				content:'./TowerPlace.html',
+				success:function (layero,index) {
+					console.log(layero,index);
+					var body = layer.getChildFrame('body',index);
+					console.log(body);
+				}
+			})
 			document.removeEventListener('mousedown', towerDelete);
 			document.removeEventListener('mousedown', riseTower);
 			document.removeEventListener('mousedown', fallTower);
@@ -8603,7 +8616,20 @@
 			document.getElementById("towerset").style.display = "block";
 			let title = document.getElementById("tower_settings_title");
 			title.innerHTML = "插入杆塔"
-
+			layer.open({
+				type:2,
+				title:'插入塔杆',
+				area:['250px','300px'],
+				maxmin:true,
+				shadeClose:true,
+				shade:0,
+				content:'./TowerPlace.html',
+				success:function (layero,index) {
+					console.log(layero,index);
+					var body = layer.getChildFrame('body',index);
+					console.log(body);
+				}
+			})
 			document.removeEventListener('mousedown', onMouseDown);
 			document.removeEventListener('mousedown', riseTower);
 			document.removeEventListener('mousedown', towerDelete);
@@ -8649,10 +8675,22 @@
 		/*修改杆塔*/
 		$("#editTower").click(function () {
 			document.getElementById("towerset").style.display = "block";
-			document.getElementById("towerset").draggable = true ;
 			let title = document.getElementById("tower_settings_title");
-			title.innerHTML = "修改杆塔"
-
+			title.innerHTML = "修改杆塔信息"
+			layer.open({
+				type:2,
+				title:'修改塔杆信息',
+				area:['250px','300px'],
+				maxmin:true,
+				shadeClose:true,
+				shade:0,
+				content:'./TowerPlace.html',
+				success:function (layero,index) {
+					console.log(layero,index);
+					var body = layer.getChildFrame('body',index);
+					console.log(body);
+				}
+			})
 			document.removeEventListener('mousedown', onMouseDown);
 			document.removeEventListener('mousedown', riseTower);
 			document.removeEventListener('mousedown', towerDelete);
