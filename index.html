@@ -54,7 +54,7 @@
 				<a href="javascript:;" class="dropDown_A">
 					<input type="button" style="display:inline-block" id="newprj" value="新建工程" />
 					<i class="Hui-iconfont">   &#xe642;</i>
-					<input type="file" style="display:inline-block" id="file" name="myfile" class="uploadfile"/>
+					<input type="file" style="display:inline-block;" id="file" name="myfile" class="uploadfile"/>
 					<input type="button" style="display:inline-block" id="upload" onclick="upfile()" value="上传" />
 					<input type="button" style="display:inline-block" id="cancel" onclick="cancelUploadFile()" value="取消" />
 					<input type="button" style="display:inline-block" id="filelist" onclick="getFilelist()" value="获取文件列表" />
@@ -77,8 +77,8 @@
 			<dt><i class="Hui-iconfont">&#xe646;</i> 工程<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
 				<ul>
-					<li><a href="#"><label id="creatMap">新建</label></a></li>
-					<li><a href="#"><label id="Openfile">打开</label></a></li>
+					<li><a href="#"><label id="creatProject">新建工程</label></a></li>
+					<li><a href="#"><label id="creatMap">新建图幅</label></a></li>
 					<li><a href="#"><label id="fileManage">文件</label></a></li>
 				</ul>
 			</dd>
@@ -319,10 +319,6 @@
 
 <script type="module">
 	import { CSS2DRenderer, CSS2DObject } from './js/CSS2DRenderer.js';
-	//import {DragControls} from "./js/DragControls";
-	// import {Group} from './js/three.module.js';
-	// import {Points} from './js/three.module.js';
-
 
 	//系统设置
 	var prjName;//新建工程名
@@ -330,7 +326,12 @@
 	var prjNameJSON = {};
 	var prk;//prk
 	var data = [];
-	var towerHei = 30;//塔高
+	var towerHei = 45;//塔高
+	var towerHeiDif = 0;//最高塔高-最低塔高
+	var towerHeiInDif = 0;//塔高间隔
+	var towerHeiArray = [];//塔高数组
+	var towerStartHei = 0;
+	var towerEndHei = 0;
 	var towerlist = [];//塔组
 	var m_start,m_end;  //4.8
 	var wirelist = [];//导线组
@@ -640,7 +641,7 @@
    // ]
 // mptable init
 	window.getFilelist = function (){
-		var optionList = $('body').find('select');
+		var optionList = $("#fileDirectory");
 		console.log(optionList);
 		$.ajax({
 			url: "http://202.114.118.138:8181/directory/" + prjName, //提交的路径
@@ -735,6 +736,33 @@
 	}
 
 
+	window.TowerDraw = function(towerlist_tabledata){
+		let deletelist = [];
+		for (let i = 0; i < scene.children.length; i++){
+			if (scene.children[i].name === "fixTower"||scene.children[i].name === "fixwire1" ||scene.children[i].name === "fixwire2"||scene.children[i].name === "fixwire3"||scene.children[i].name === "fixwire4"){
+				deletelist.push(scene.children[i]);
+			}
+		}
+		for (let i = 0; i < deletelist.length; i++) {scene.remove(deletelist[i]);}
+		console.log(m_end)
+		m_end = towerlist_tabledata.length - 1;
+		if(m_end > 1){
+			for (let i = 0; i < towerlist_tabledata.length; i++) {
+				let towMesh = tower1(towerlist_tabledata[i].TowerHigh);
+				towMesh.position.x = (towerlist_tabledata[i].Distance-xMin)/xdivision*Gridsize;
+				towMesh.position.y = (towerlist_tabledata[i].High - yMin)/ydivision*Gridsize;
+				towMesh.position.z = 0;
+				towMesh.name = "fixTower";
+				towMesh.geometry.name = towerlist_tabledata[i].Name;
+				scene.add(towMesh);
+			}
+
+			console.log(m_start)
+			for (let i = m_start; i < m_end; i++) {
+				DisplayFawCurve4(towerlist_tabledata[i],towerlist_tabledata[i+1], "fixwire");
+			}
+		}
+	}
 // towerlist table init
 	{
 		var towerlist_tabledata=[];
@@ -787,33 +815,13 @@
 								console.log("tabledelete",towerlist);
 								console.log(towerlist_tabledata);
 
-								let deletelist = [];
-								for (let i = 0; i < scene.children.length; i++){
-									if (scene.children[i].name === "fixTower"||scene.children[i].name === "fixwire1" ||scene.children[i].name === "fixwire2"||scene.children[i].name === "fixwire3"||scene.children[i].name === "fixwire4"){
-										deletelist.push(scene.children[i]);
-									}
-								}
-								for (let i = 0; i < deletelist.length; i++) {scene.remove(deletelist[i]);}
-								console.log(m_end)
-								m_end = towerlist.length - 1;
-								for (let i = 0; i < towerlist_tabledata.length; i++) {
-									let towMesh = tower1(towerHei);
-									towMesh.position.x = (towerlist_tabledata[i].Distance-xMin)/xdivision*Gridsize;
-									towMesh.position.y = (towerlist_tabledata[i].High - yMin)/ydivision*Gridsize;
-									towMesh.position.z = 0;
-									towMesh.name = "fixTower";
-									towMesh.geometry.name = towerlist_tabledata[i].Name;
-									scene.add(towMesh);
-								}
-
-								for (let i = m_start; i < m_end; i++) {
-									DisplayFawCurve4(towerlist_tabledata[i],towerlist_tabledata[i+1], "fixwire");
-								}
-								let towerlist1 = towerlist_tabledata;
-								console.log(towerlist1);
+								TowerDraw(towerlist_tabledata);
+								towerlist = towerlist_tabledata;
+								console.log(towerlist);
 
 								console.log("tabledata changed");
 								console.log(towerlist_tabledata);
+								GridManager.setAjaxData(towerlist_tableId,{"data":towerlist_tabledata});
 								GridManager.refreshGrid(towerlist_tableId);
 								del_tower=GridManager.setCheckedData(towerlist_tableId,[]);
 							}
@@ -914,6 +922,8 @@
 	$("#towerlisttable").hide();
 	$("#liTowerlisttable").click(function () {
 		$("#towerlisttable").show();
+		towerlist_tabledata=towerlist;
+		GridManager.refreshGrid(towerlist_tableId);
 	})
 	$("#towerlistcloseTable").click(function () {
 		$("#towerlisttable").hide();
@@ -1022,6 +1032,7 @@
 			success: function (res) {
 				console.log("calc pwf finsh");
 				console.log(res);
+				towerlist_tabledata = res.TOWERLIST;
 				GridManager.setAjaxData(towerlist_tableId,{"data":res.TOWERLIST});
 			}
 		})
@@ -1041,32 +1052,7 @@
 			processData: false,
 			success: function () {
 				//download file
-				var url = 'http://202.114.118.138:8181/Pathdownload/Project='+prjName+'&filename=' + MapFileName+".DXF";
-				var xhr = new XMLHttpRequest();
-				xhr.open('GET', url, true);        // 也可以使用POST方式，根据接口
-				xhr.responseType = "blob";    // 返回类型blob
-				// 定义请求完成的处理函数，请求前也可以增加加载框/禁用下载按钮逻辑
-				xhr.onload = function () {
-					// 请求完成
-					if (this.status === 200) {
-						// 返回200
-						var blob = this.response;
-						var reader = new FileReader();
-						reader.readAsDataURL(blob);
-						reader.onload = function (e) {
-							// 转换完成，创建一个a标签用于下载
-							console.log(e.target);
-							var a = document.createElement('a');
-							a.download = (MapFileName+".DXF").toString();
-							a.href = e.target.result;
-							$("body").append(a);    // 修复firefox中无法触发click
-							a.click();
-							$(a).remove();
-						}
-					}
-				};
-				// 发送ajax请求
-				xhr.send()
+				download(prjName,MapFileName+".DXF");
 			}
 		})
 	})
@@ -1085,32 +1071,7 @@
 			processData: false,
 			success: function () {
 				//download file
-				var url = 'http://202.114.118.138:8181/Pathdownload/Project='+prjName+'&filename=' + MapFileName+".ORG";
-				var xhr = new XMLHttpRequest();
-				xhr.open('GET', url, true);        // 也可以使用POST方式，根据接口
-				xhr.responseType = "blob";    // 返回类型blob
-				// 定义请求完成的处理函数，请求前也可以增加加载框/禁用下载按钮逻辑
-				xhr.onload = function () {
-					// 请求完成
-					if (this.status === 200) {
-						// 返回200
-						var blob = this.response;
-						var reader = new FileReader();
-						reader.readAsDataURL(blob);
-						reader.onload = function (e) {
-							// 转换完成，创建一个a标签用于下载
-							console.log(e.target);
-							var a = document.createElement('a');
-							a.download = (MapFileName+".ORG").toString();
-							a.href = e.target.result;
-							$("body").append(a);    // 修复firefox中无法触发click
-							a.click();
-							$(a).remove();
-						}
-					}
-				};
-				// 发送ajax请求
-				xhr.send()
+				download(prjName,MapFileName+".ORG");
 			}
 		})
 	})
@@ -1176,7 +1137,8 @@
 		drawDEM_whj(DEM);
 		MapCrossDraw(cross,false);  //cross added
 		window.initContent();
-		//drawGeo(pile_tabledata);
+		TowerDraw(towerlist_tabledata);
+		drawGeo(pile_tabledata);
 		console.log(scene.children);
 	}
 
@@ -1327,10 +1289,9 @@
 		$("#drawingpara").click();
 	}
 
-	window.download = function() {
-		var text = $('#dembox option:selected').text();
-		console.log(text);
-		var url = 'http://202.114.118.138:8181/Pathdownload/Project='+prjName+'&filename=' + text;
+	window.download = function(ProjectName,FileName) {
+		console.log("download Name",ProjectName,FileName);
+		var url = 'http://202.114.118.138:8181/Pathdownload/Project='+ProjectName+'&filename=' + FileName;
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', url, true);        // 也可以使用POST方式，根据接口
 		xhr.responseType = "blob";    // 返回类型blob
@@ -1346,7 +1307,7 @@
 					// 转换完成，创建一个a标签用于下载
 					console.log(e.target);
 					var a = document.createElement('a');
-					a.download = text;
+					a.download = FileName;
 					a.href = e.target.result;
 					$("body").append(a);    // 修复firefox中无法触发click
 					a.click();
@@ -1359,7 +1320,8 @@
 	}
 	//新建工程
 	{
-	$('#newprj').click(function(){
+	/* 新建工程 */
+	$('#creatProject').click(function(){
 		for (let i = 0; i < allChildren.length; i++){
 			group.remove(allChildren[i]);
 		}
@@ -2287,6 +2249,67 @@
 			});
 		}
 	})
+	/* 新建图幅 */
+	$("#creatMap").click(function () {
+		MapFileName = prompt("新建MAP名称");
+		console.log(MapFileName);
+
+		for (let i = 0; i < scene.children.length; i++){
+			if (scene.children[i].name === "dem"||scene.children[i].name === "corner"){
+				dem.push(scene.children[i]);
+			}
+			if (scene.children[i].name === "fixTower"||scene.children[i].name === "wire"){
+				towerList.push(scene.children[i]);   //capital
+			}
+		}
+		for (let i = 0; i < dem.length; i++) {
+			scene.remove(dem[i]);
+		}
+		for (let i = 0; i < towerList.length; i++) {
+			scene.remove(towerList[i]);
+		}
+		for (let i = 0; i < allChildren.length; i++) {
+			framegroup.remove(allChildren[i]);
+		}
+		console.log("createMapFrame",mp);
+		yMin = 100; ydivision= 10; xdivision =100; verSize = 220;horSize =300; Gridsize =10;    //先设大小   再按distance/length 比例尺绘制
+		window.initContent();
+		mainCanvas = document.querySelector("#iframe_box canvas");
+		console.log(mainCanvas);
+
+	})
+	/* 文件 */
+	$("#fileManage").click(function () {
+		layer.open({
+			type:2,
+			title:'工程文件',
+			maxmin:true,
+			content:'./ProjectManage.html',
+			shade:0,
+			success:function (layero,index) {
+				console.log(layero,index);
+				var body = layer.getChildFrame('body',index);
+				console.log(body);
+				let optionList;
+				optionList =  body.find("select");
+				$.ajax({
+					url: "http://202.114.118.138:8181/directory/%20", //提交的路径
+					type: "get",       //提交方式
+					dataType:"json",
+					success: function(data){
+						console.log(data);
+						for (let i = 0; i < data.length; i++) {
+								var fileOption = new Option(data[i].name, i.toString());
+								console.log(fileOption);
+								optionList[0].options.add(fileOption);
+						}
+					}
+				})
+
+			}
+		})
+	})
+
 	prk = {
 		"CONDUCTOR": [{
 			"name": "LGJX-400/35",
@@ -3731,6 +3754,14 @@
 				}]
 		}
 	};//prk初始化
+	towerStartHei = prk.TOWER[0].StartHigh;
+	towerEndHei = prk.TOWER[0].EndHigh;
+	towerHeiDif = towerEndHei - towerStartHei;
+	towerHeiInDif = prk.TOWER[0].Dhigh;
+	towerHeiArray.length = towerHeiDif / towerHeiInDif + 1;
+	for (let i = 0; i < towerHeiArray.length; i++) {
+		towerHeiArray[i] = towerStartHei + i * towerHeiInDif;
+	}
 	savedJson.prk = prk;
 	var prkStr = JSON.stringify(prk);
 	//上传文件至后台
@@ -5661,36 +5692,6 @@
 	var leftCoordinate = new Array();
 	var rightCoordinate = new Array();
 
-	/* 新建图幅 */
-	$("#creatMap").click(function () {
-		MapFileName = prompt("新建MAP名称");
-		console.log(MapFileName);
-
-		for (let i = 0; i < scene.children.length; i++){
-			if (scene.children[i].name === "dem"||scene.children[i].name === "corner"){
-				dem.push(scene.children[i]);
-			}
-			if (scene.children[i].name === "fixTower"||scene.children[i].name === "wire"){
-				towerList.push(scene.children[i]);   //capital
-			}
-		}
-		for (let i = 0; i < dem.length; i++) {
-			scene.remove(dem[i]);
-		}
-		for (let i = 0; i < towerList.length; i++) {
-			scene.remove(towerList[i]);
-		}
-		for (let i = 0; i < allChildren.length; i++) {
-			framegroup.remove(allChildren[i]);
-		}
-		console.log("createMapFrame",mp);
-		yMin = 100; ydivision= 10; xdivision =100; verSize = 220;horSize =300; Gridsize =10;    //先设大小   再按distance/length 比例尺绘制
-		window.initContent();
-		mainCanvas = document.querySelector("#iframe_box canvas");
-		console.log(mainCanvas);
-
-	})
-
 	/* 默认关闭图纸参数和排杆设置框 */
 	$(".frame_settings").hide();
 	$(".tower_settings").hide();
@@ -7007,28 +7008,28 @@
 			yy = (l1*y2+l2*y1)/l-f;
 
 			// if (dspLwst)
-			DisplayFawLowest(xx,  yy-constt, lx1, material);
+			//DisplayFawLowest(xx,  yy-constt, lx1, material);
 			DisplayFawCurve( x1, y1, x2, y2, k, lx1, bInsular, constt,length,material, name);
 
 			//显示超出范围的弧垂
-			if((xx<x1 || xx>x2) && dspLwst)
-			{
-				if(xx<x1)
-				{
-					x2 = x1;
-					y2 = y1;
-					x1 = xx;
-					y1 = yy;
-				}
-				else
-				{
-					x1 = x2;
-					y1 = y2;
-					x2 = yy;
-					y2 = yy;
-				}
-				DisplayFawCurve(x1, y1, x2, y2, k, lx1, bInsular, constt,length, name);
-			}
+			// if((xx<x1 || xx>x2) && dspLwst)
+			// {
+			// 	if(xx<x1)
+			// 	{
+			// 		x2 = x1;
+			// 		y2 = y1;
+			// 		x1 = xx;
+			// 		y1 = yy;
+			// 	}
+			// 	else
+			// 	{
+			// 		x1 = x2;
+			// 		y1 = y2;
+			// 		x2 = yy;
+			// 		y2 = yy;
+			// 	}
+			// 	DisplayFawCurve(x1, y1, x2, y2, k, lx1, bInsular, constt,length,material, name);
+			// }
 		}
 		window.DisplayFawCurve3 = function(tower1, tower2, kPower, kGround, name){
 			let constt=0;
@@ -7064,12 +7065,7 @@
 			// 	DisplayFawCurve3(tower1, tower2, tower1.kMaxT,  tower1.kGround);
 		}
 
-		// m_start = 0;
-		// m_end = towerlist.length - 1;
-		// ComputeHugeHigh();
 		var towerLineWid = 0.5;
-
-
 
 	/* 创建杆塔函数 */
 	window.tower1 = function(towerHei) {
@@ -7084,6 +7080,7 @@
 			tower.lineTo(0.25,towerLineWid);tower.lineTo(0,towerLineWid);
 			tower.lineTo(0,0);
 			let towerGroup = new THREE.ShapeGeometry(tower);
+			towerGroup.translate(-0.25,0,0);
 			towerGroup.scale(scale,scale,scale);
 			let towMaterial = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.DoubleSide } );
 			var towMesh = new THREE.Mesh( towerGroup, towMaterial ) ;
@@ -7274,7 +7271,6 @@
 		intersects = getIntersects(event);
 		console.log("intersects",intersects);
 		tempintersects = intersects;
-
 		if (event.button == 0 ){
 			if (!window_mouse){
 				document.addEventListener("mousemove",onMouseMove,false);
@@ -7321,14 +7317,14 @@
 						})
 					}
 					disToPile.sort(compare("dis"));
-					$("#pilelist").val(disToPile[0].value);
+					layer.getChildFrame('body',tpIndex).find("#pilelist").val(disToPile[0].value);
 					let gap;
 					for (let i = 0; i < pile_tabledata.length; i++) {
 						if (pile_tabledata[i].name == disToPile[0].name) {
 							gap = pos.x /Gridsize*xdivision - pile_tabledata[i].dist;
 						}
 					}
-					let gaptoPile = document.getElementById("gap");
+					let gaptoPile = layer.getChildFrame('body',tpIndex).find("#gap")[0];
 					console.log("gap pile", gap)
 					gaptoPile.value = gap.toFixed(2);
 					towerlist[towerlist.length-1].PosOffset = disToPile[0].value.toString()+"+"+gap.toFixed(2).toString();
@@ -7342,29 +7338,19 @@
 					var inputId2 =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
 					//inputId.value = "G" + putInd;
 					inputId2.value = "G" + putInd;
-
+					for (let i = m_end-1; i < m_end; i++) {
+						DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
+					}
 
 				}
 			}
 		}
 		if (event.button == 2){
-			for (let i = m_start; i < m_end; i++) {
-				DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
-				console.log(towerlist[i]);
-			}
+			clearTempTow();
 			putInd = 0;
 			window_mouse = false;
 			document.removeEventListener("mousemove",onMouseMove);
 			document.removeEventListener("mousedown",onMouseDown);
-			if (scene.getObjectByName("move_wire1")||scene.getObjectByName('tower')||scene.getObjectByName("move_wire2")||scene.getObjectByName('move_wire3')||scene.getObjectByName('move_wire4')){
-				scene.remove(scene.getObjectByName('move_wire1'));
-				scene.remove(scene.getObjectByName('tower'));
-				scene.remove(scene.getObjectByName('move_wire2'));
-				scene.remove(scene.getObjectByName('move_wire3'));
-				scene.remove(scene.getObjectByName('move_wire4'));
-				// pointArray.shift();
-				pointArray = [];
-			}
 			console.log("afterset",towerlist);
 		}
 	}
@@ -7389,6 +7375,8 @@
 			var tempLine1 = turf.lineString([[pos.x,pos.y],[pos.x,0]]);
 			var interPoint = turf.lineIntersect(tempLine1, tempLine2);
 			pos = new THREE.Vector3(intersects.x, interPoint.features[0].geometry.coordinates[1], 0);
+			let coorDif = intersects.y - interPoint.features[0].geometry.coordinates[1];
+			towerHei = limit(towerHeiArray,coorDif);
 			createTowerTemp(pos);
 			let disToPile = []
 			for (let i = 0; i < pile_tabledata.length; i++) {
@@ -7423,6 +7411,12 @@
 			//inputHei.value = heiNum.toFixed(2);
 			inputHei2.value = heiNum.toFixed(2);
 
+			var towerHigh = layer.getChildFrame('body',tpIndex).find("#towerheight")[0];
+			for (let i = 0; i < towerHigh.length; i++) {
+				if (towerHigh[i].value === towerHei.toString()){
+					towerHigh[i].selected = true;
+				}
+			}			
 			//var inputId = document.getElementById("towId");
 			var inputId2 =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
 			//inputId.value = "G" + towerlist.length;
@@ -7492,6 +7486,9 @@
 			// document.body.style.cursor = "url(./css/cancel.ico) 9 9, default";
 			if (event.button === 0){
 				var intersectsTower = getIntersectsObject(event);
+				$(".Hui-aside").mouseover(function () {
+					document.removeEventListener('mousedown', towerDelete);
+				})
 				console.log("picked", intersectsTower[0]);
 				// intersectsTower[0].object.material = new THREE.LineBasicMaterial({color: 0x00ffff});
 				var msg = "删除杆塔";
@@ -7560,6 +7557,9 @@
 			let currentTow = [];
 			let deleteWire = [];
 			intersects = getIntersects(event);
+			$(".Hui-aside").mouseover(function () {
+				document.removeEventListener('mousedown', towerInsert);
+			})
 			tempintersects = intersects;
 
 			var tempLine2Cor = [];
@@ -7748,118 +7748,159 @@
 			GridManager.refreshGrid(towerlist_tableId);
 		}
 		if (event.button === 2){
+			clearTempTow();
 			scene.remove(scene.getObjectByName('tower'));
 			document.removeEventListener("mousedown",towerInsert);
 			document.removeEventListener("mousemove",onMouseMove);
 		}
 	}
 	//移动杆塔
-	function initDragControls() {
-			var index = 0;var inx = 0;
-			// 过滤不是 Mesh 的物体,例如辅助网格
-			var objects = [];
-			let allTow = [];
-			let wireTemp = [];
+	var liftMouseDown, rightMouseDown;
+	var selectObj, lastPosition;
+	var lastIntersection, nowIntersection;
+	function getRay(event) {
+		event.preventDefault();
+		var mouse = new THREE.Vector2();
+		var rayCaster = new THREE.Raycaster();
+		mouse.x =  ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
+		mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
+		rayCaster.setFromCamera(mouse, camera);
+		return rayCaster;
+	}
+	function getIntersectionCoor(event) {
+		var plane = new THREE.Plane();
+		//通过相机位置生成法向量，该法向量和一个点可以建立一个平面
+		plane.setFromNormalAndCoplanarPoint(camera.getWorldDirection(plane.normal), new THREE.Vector3(0, 0, 0));
+		var rayCaster = getRay(event);
+		var worldPoint = new THREE.Vector3();
+		//获得射线和平面相交的世界坐标
+		rayCaster.ray.intersectPlane(plane, worldPoint);
+		return worldPoint;
+	}
+	function onDragMouseDown(event) {
+		var dragIntersects = getIntersectsObject(event);
+		let wireTemp = [];
+		//左键点击并且点击的是物体时
+		if (event.button === 0 && dragIntersects[0]) {
+			selectObj = dragIntersects[0].object;//储存当前点击的对象
+			liftMouseDown = true;
+			lastPosition = selectObj.position;//储存当前物体坐标位置
+			lastIntersection = getIntersectionCoor(event);//获取点击时的交点
+			document.addEventListener('mousemove', onDragMouseMove);
 			for (let i = 0; i < scene.children.length; i++) {
-				if (scene.children[i].isMesh) {
-					scene.children[i].children = index;
-					objects.push(scene.children[i]);
-					index++;
+				if (scene.children[i].name === "fixwire1"||scene.children[i].name === "fixwire2"||scene.children[i].name === "fixwire3"||scene.children[i].name === "fixwire4") {
+					wireTemp.push(scene.children[i]);
 				}
 			}
-
-			var dragControls = new THREE.DragControls(objects, camera, document,centerDem);// 初始化拖拽控件
-			dragControls.enabled = true;
-			dragControls.addEventListener('hoveron', function (event) {}); // 鼠标略过
-			dragControls.addEventListener('dragstart', function (event) {
-			});// 开始拖拽
-			//拖拽
-			dragControls.addEventListener('drag',function (event) {
-				clearTempTow();
-				intersects = event.object;
-				// console.log("drag_event",event)
-				// console.log("drag_object",event.object)
-				scene.remove(event.object);
-				intersects.geometry.dispose()
-
-				var tempPoints = intersects.position;
-				console.log("drag_pos",tempPoints)
-				// createTower(tempPoints,index);
-				var tempLine2Cor = [];
-				for (let i = 0; i < centerDem.geometry.vertices.length; i++) {
-					tempLine2Cor.push([centerDem.geometry.vertices[i].x,centerDem.geometry.vertices[i].y]);
-				}
-				var tempLine2 = turf.lineString(tempLine2Cor);
-				var points = new THREE.Vector3(tempPoints.x,tempPoints.y + 500,0);
-				var tempLine1 = turf.lineString([[points.x,points.y],[points.x,0]]);
-				var interPoint = turf.lineIntersect(tempLine1, tempLine2);
-				points = new THREE.Vector3(tempPoints.x, interPoint.features[0].geometry.coordinates[1], 0);
-
-				var towMesh = tower1(towerHei);
-				towMesh.position.x = points.x;
-				towMesh.position.y = points.y;
-				towMesh.position.z = 0;
-				towMesh.name = "tower";
-				scene.add(towMesh);
-
-				for (let i = 0; i < scene.children.length; i++) {
-					if (scene.children[i].name === "fixwire1"||scene.children[i].name === "fixwire2"||scene.children[i].name === "fixwire3"||scene.children[i].name === "fixwire4") {
-						wireTemp.push(scene.children[i]);
-					}
-				}
-				for(let i = 0; i < wireTemp.length; i++){
-					scene.remove(wireTemp[i]);
-				}
-			});
-			// 拖拽结束
-			dragControls.addEventListener('dragend', function (event) {
-				intersects = event.object;
-				let geoName = intersects.geometry.name
-				console.log("dragend",intersects)
-				scene.remove(event.object);
-				intersects.geometry.dispose();
-
-				var tempPoints = intersects.position;
-				console.log(towerlist);
-				var tempLine2Cor = [];
-				for (let i = 0; i < centerDem.geometry.vertices.length; i++) {
-					tempLine2Cor.push([centerDem.geometry.vertices[i].x,centerDem.geometry.vertices[i].y]);
-				}
-				var tempLine2 = turf.lineString(tempLine2Cor);
-				var points = new THREE.Vector3(tempPoints.x,tempPoints.y + 500,0);
-				var tempLine1 = turf.lineString([[points.x,points.y],[points.x,0]]);
-				var interPoint = turf.lineIntersect(tempLine1, tempLine2);
-				points = new THREE.Vector3(tempPoints.x, interPoint.features[0].geometry.coordinates[1], 0);
-
-				var towMesh = tower1(towerHei);
-				towMesh.position.x = points.x;
-				towMesh.position.y = points.y;
-				towMesh.position.z = 0;
-				towMesh.name = "fixTower";
-				towMesh.geometry.name = geoName
-				scene.add(towMesh);
-
-				for (let i = 0; i < towerlist.length; i++) {
-					if (towerlist[i].Name == geoName){
-						towerlist[i].Distance = towMesh.position.x * 10;
-						towerlist[i].High = towMesh.position.y + yMin;
-					}
-				}
-				m_end = towerlist.length - 1;
-				ComputeHugeHigh();
-
-				for (let i = m_start; i < m_end; i++) {
-					DisplayFawCurve4(towerlist[i],towerlist[i+1], "fixwire");
-				}
-
-				towerlist_tabledata=towerlist;
-				console.log(towerlist_tabledata);
-				GridManager.setAjaxData(towerlist_tableId,{"data":towerlist_tabledata});
-				GridManager.refreshGrid(towerlist_tableId);
-				console.log(dragControls.dispose)
-				dragControls.dispose// dragControls.enabled = false;
-			});
+			for(let i = 0; i < wireTemp.length; i++){
+				scene.remove(wireTemp[i]);
+			}
 		}
+		if(event.button === 2){
+			document.body.style.cursor = "default";
+			document.removeEventListener("mousedown",onDragMouseDown);
+		}
+	}
+	function onDragMouseMove(event) {
+		//左键点击状态下移动，网格跟随鼠标移动
+		if (liftMouseDown) {
+			nowIntersection = getIntersectionCoor(event);//获得移动后当前的交点
+			var offset = new THREE.Vector3();
+			var tempLine2Cor = [];
+			for (let i = 0; i < m_linegroup.children.length; i++) {
+				for(let j=0;j<m_linegroup.children[i].geometry.vertices.length;j++){
+					tempLine2Cor.push([m_linegroup.children[i].geometry.vertices[j].x,m_linegroup.children[i].geometry.vertices[j].y]);
+				}
+			}
+			var tempLine2 = turf.lineString(tempLine2Cor);
+			var points = new THREE.Vector3(nowIntersection.x, nowIntersection.y + 500, 0);
+			var tempLine1 = turf.lineString([[points.x, points.y], [points.x, 0]]);
+			var interPoint = turf.lineIntersect(tempLine1, tempLine2);
+			points = new THREE.Vector3(nowIntersection.x, interPoint.features[0].geometry.coordinates[1], 0);
+			//现在的交点减去之前的交点能够得到一个位移向量，再加上之前的物体坐标，就等于现在的物体坐标
+			selectObj.position.copy(offset.subVectors(nowIntersection, lastIntersection).add(lastPosition));
+			selectObj.position.y = points.y;
+			lastIntersection = nowIntersection;
+			lastPosition = offset;
+		}
+	}
+	function onMouseUp(event) {
+		liftMouseDown = false;
+		rightMouseDown = false;
+		let dragTower = [];
+		towerlist = [];
+		console.log(scene.children);
+		for (let i = 0; i < scene.children.length; i++) {
+			if (scene.children[i].name === "fixTower"){
+				dragTower.push(scene.children[i]);
+			}
+		}
+		console.log(dragTower)
+		for (let i = 0; i < dragTower.length; i++) {
+			towerlist.push({
+				"Name" : "G" + i,
+				"Distance" : dragTower[i].position.x /Gridsize*xdivision +xMin,
+				"High" : dragTower[i].position.y/Gridsize*ydivision + yMin,
+				"TowerType" : "ZMVA41",
+				"Base": 0,
+				"TowerHigh" : dragTower[i].geometry.vertices[7].y / (1 / ydivision * Gridsize),
+				"Status" : 0,
+				"InsulatorLength": 4.5,
+				"ConnectLength": 0.0,
+				"InsulateP": "",
+				"InsulatePA": "X01",
+				"InsulatePANum": -1,
+				"InsulatePB": "X01",
+				"InsulatePBNum": -1,
+				"InsulatePC": "",
+				"InsulatePCNum": 0,
+				"hugeHigh":0,
+				"hugeGround" : 0,		// 地线悬挂点高程
+				"Lk": 0,
+				"L": 0,
+				"cosa":1,
+				"bInsular":false,
+				"constant": 0,
+				"u": 1,
+				"kPline": 0,			//导线大号侧k值系数
+				"kGround": 0,		//地线大号侧K值系数
+				"kWind": 0,			//大风条件前视档k值系数
+				"kMaxT": 0,			//70度高温k值系数
+				"constMaxT": 0,
+				"Lh": 0,				// 水平档距
+				"Lh1": 0,			// 小号侧垂直档距
+				"Lh2": 0,			// 大号侧垂直档距
+				"Lv" : 0,				// 垂直档距
+				"Lv1" : 0,			// 小号侧水平档距
+				"Lv2" : 0,			// 大号侧水平档距
+				"lvMinTemp": 0,//最低气温垂直档距
+				"lvMaxTemp": 0,//最高气温垂直档距
+				"lvMaxIce": 0,//最大覆冰垂直档距
+				"lvMaxWind": 0,//最大风垂直档距
+				"displayKType": 0,	//k值类型，0为最大弧垂 1为最高线温
+				"displayGround":0,		//显示地线
+				"displayPower" : 1,		//显示导线
+				"displaySafe" :  1,	//显示导线对地
+				"displayCross" : 1,		//显示导线跨越
+				"LandDist" : 8.5,		// 对地安全距离
+				"ElecDist" : 6.0	// 电力线安全距离
+			})
+		}
+		console.log(towerlist)
+		towerlist.sort(compare('Distance'));
+		m_end = towerlist.length - 1;
+		ComputeHugeHigh();
+
+		for (let i = m_start; i < m_end; i++) {
+			DisplayFawCurve4(towerlist[i],towerlist[i+1], "fixwire");
+		}
+		towerlist_tabledata = towerlist;
+		console.log(towerlist_tabledata);
+		GridManager.setAjaxData(towerlist_tableId, {"data": towerlist_tabledata});
+		GridManager.refreshGrid(towerlist_tableId);
+		document.removeEventListener('mousemove', onDragMouseMove);
+	}
+
 	//升高杆塔
 	function riseTower(event){
 		document.body.style.cursor = "url(./css/rise.ico) 9 9, default";
@@ -8010,19 +8051,24 @@
 		console.log("editTowerMsg",intersectsTower[0]);
 		let name = intersectsTower[0].object.geometry.name;
 		console.log("edit_name", name);
-		let idInput = document.getElementById("towId");
+		let idInput =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
 		idInput.value = name;
-		let disInput = document.getElementById("dis");
+		let disInput= layer.getChildFrame('body',tpIndex).find("#dis")[0];
 		disInput.value = (intersectsTower[0].object.position.x/Gridsize*xdivision+xMin).toFixed(2);
-		let highInput = document.getElementById("hei");
+		let highInput = layer.getChildFrame('body',tpIndex).find("#hei")[0];
 		highInput.value = (intersectsTower[0].object.position.y/Gridsize*ydivision + yMin).toFixed(2);
 
-		let TowerHighInput = document.getElementById("towerheight")
+		let TowerHighInput = layer.getChildFrame('body',tpIndex).find("#towerheight")[0];
+			for (let i = 0; i < TowerHighInput.length; i++) {
+				if (TowerHighInput[i].value === towerHei.toString()){
+					TowerHighInput[i].selected = true;
+				}
+			}
 		TowerHighInput.value = Number(intersectsTower[0].object.renderOrder);
 		let oldTowerHigh = intersectsTower[0].object.renderOrder;
 
-		let pileInput = document.getElementById("pilelist");
-		let gapInput = document.getElementById("gap");
+		let pileInput =layer.getChildFrame('body',tpIndex).find("#pilelist")
+		let gapInput = layer.getChildFrame('body',tpIndex).find("#gap")[0];
 		let disToPile = []
 		for (let i = 0; i < pile_tabledata.length; i++) {
 			disToPile.push({
@@ -8610,7 +8656,15 @@
 						body.find("#pilelist").append("<option value='"+i+"'>"+pile_tabledata[i].name+"</option>");
 					}
 					// tower high option bind don't need to set fixed
+					for (let i = 0; i < prk.TOWER.length; i++) {
+						body.find("#TowerType").append("<option value='"+i+"'>"+prk.TOWER[i].Name+"</option>");
+					}
 
+					var towerHigh = body.find("#towerheight option:selected")[0].value;
+					console.log(towerHigh)
+
+					towerHei = parseInt(towerHigh); // 234;
+					console.log(towerHei);
 				}
 			})
 		}
@@ -8625,6 +8679,17 @@
 			let a = Math.log(x + Math.sqrt(x * x +1));
 			return a;
 		}
+	//求最近值
+	function limit(arr, num){
+		var newArr = [];
+		arr.map(function(x){
+			// 对数组各个数值求差值
+			newArr.push(Math.abs(x - num));
+		});
+		// 求最小值的索引
+		var index = newArr.indexOf(Math.min.apply(null, newArr));
+		return arr[index];
+	}	
 	/* 初始化 */
 	function init() {
 		initScene();
@@ -8651,11 +8716,14 @@
 			// 	$("#pilelist").append("<option value='"+i+"'>"+pile_tabledata[i].name+"</option>");
 			// }
 			bindTowerPlace('前进方向排杆');
+			document.body.style.cursor = "default";
 			document.removeEventListener('mousedown', towerDelete);
 			document.removeEventListener('mousedown', riseTower);
 			document.removeEventListener('mousedown', fallTower);
 			document.removeEventListener('mousedown', towerInsert);
 			document.removeEventListener('mousedown', editTower);
+			document.removeEventListener('mousedown', onDragMouseDown);
+			document.removeEventListener('mouseup', onMouseUp);
 			document.addEventListener('mousedown', onMouseDown, false);
 			document.addEventListener('mousemove', onMouseMove, false);
 		})
@@ -8666,6 +8734,8 @@
 			document.removeEventListener('mousedown', fallTower);
 			document.removeEventListener('mousedown', towerInsert);
 			document.removeEventListener('mousedown', editTower);
+			document.removeEventListener('mousedown', onDragMouseDown);
+			document.removeEventListener('mouseup', onMouseUp);
 			document.body.style.cursor = "url(./css/cancel.ico) 9 9, default";
 			document.addEventListener("mousedown",towerDelete,false);
 		})
@@ -8675,17 +8745,20 @@
 			// let title = document.getElementById("tower_settings_title");
 			// title.innerHTML = "插入杆塔"
 			bindTowerPlace('插入杆塔');
+			document.body.style.cursor = "default";
 			document.removeEventListener('mousedown', onMouseDown);
 			document.removeEventListener('mousedown', riseTower);
 			document.removeEventListener('mousedown', towerDelete);
 			document.removeEventListener('mousedown', fallTower);
 			document.removeEventListener('mousedown', editTower);
+			document.removeEventListener('mousedown', onDragMouseDown);
+			document.removeEventListener('mouseup', onMouseUp);			
 			document.addEventListener("mousedown",towerInsert,false);
 			document.addEventListener('mousemove', onMouseMove, false);
 		})
 		/* 鼠标移动杆塔 */
 		$("#moveTower").click(function () {
-			document.body.style.cursor = "pointer";
+			document.body.style.cursor = "crosshair";
 			document.removeEventListener('mousedown', towerDelete);
 			document.removeEventListener('mousedown', onMouseDown);
 			document.removeEventListener('mouseup', onDocumentMouseUp);
@@ -8695,7 +8768,8 @@
 			document.removeEventListener('mousedown', towerInsert);
 			document.removeEventListener('mousedown', editTower);
 			document.removeEventListener('mousemove', onDocumentMouseMove);
-			//initDragControls();
+			document.addEventListener("mousedown",onDragMouseDown,false);
+			document.addEventListener('mouseup', onMouseUp,false);
 		})
 		/*鼠标升高杆塔*/
 		$("#riseTower").click(function(){
@@ -8704,6 +8778,8 @@
 			document.removeEventListener('mousedown', fallTower);
 			document.removeEventListener('mousedown', towerInsert);
 			document.removeEventListener('mousedown', editTower);
+			document.removeEventListener('mousedown', onDragMouseDown);
+			document.removeEventListener('mouseup', onMouseUp);
 			document.body.style.cursor = "url(./css/rise.ico) 9 9, default";
 			document.addEventListener("mousedown",riseTower,false);
 		})
@@ -8714,6 +8790,8 @@
 			document.removeEventListener('mousedown', riseTower);
 			document.removeEventListener('mousedown', towerInsert);
 			document.removeEventListener('mousedown', editTower);
+			document.removeEventListener('mousedown', onDragMouseDown);
+			document.removeEventListener('mouseup', onMouseUp);
 			document.body.style.cursor = "url(./css/fall.ico) 9 9, default";
 			document.addEventListener("mousedown",fallTower,false);
 		})
@@ -8723,11 +8801,14 @@
 			// let title = document.getElementById("tower_settings_title");
 			// title.innerHTML = "修改杆塔信息"
 			bindTowerPlace('修改杆塔信息');
+			document.body.style.cursor = "default";
 			document.removeEventListener('mousedown', onMouseDown);
 			document.removeEventListener('mousedown', riseTower);
 			document.removeEventListener('mousedown', towerDelete);
 			document.removeEventListener('mousedown', fallTower);
 			document.removeEventListener('mousedown', towerInsert);
+			document.removeEventListener('mousedown', onDragMouseDown);
+			document.removeEventListener('mouseup', onMouseUp);
 			document.addEventListener("mousedown",editTower,false);
 		})
 

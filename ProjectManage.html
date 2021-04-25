@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>工程</title>
+</head>
+<body>
+<div class="layui-form-item" style="float: left;margin-left: 10px">
+    <label class="layui-form-label">选择工程</label>
+    <div class="layui-input-block">
+        <select id ="Projectset" style="width:100px" size="5" onchange="showfile()">
+        </select>
+    </div>
+
+</div>
+<div class="layui-form-item"  style="float: left;margin-left: 10px">
+    <label class="layui-form-label">文件</label>
+    <div class="layui-input-block">
+        <select id ="fileset" style="width: 120px" size="5">
+        </select>
+    </div>
+</div>
+
+<div class="layui-layer-btn" style="float: right;margin-top: 2%" >
+
+    <button class="layui-layer-btn " style="width: 50px;" id="filesetUpload">上传</button>
+    <button class="layui-layer-btn" style="width: 50px;" id="OpenTLfile">打开</button>
+    <button class="layui-layer-btn" style="width: 50px;" id="downloadTLfile">下载</button>
+</div>
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+<script>
+    function showfile(){
+        console.log("onchange option");
+        var ProjectName = $("#Projectset").find("option:selected").text();
+        console.log(ProjectName);
+        $("#fileset").empty();  //清空
+        $.ajax({
+            url: "http://202.114.118.138:8181/directory/"+ProjectName, //提交的路径
+            type: "get",       //提交方式
+            dataType:"json",
+            success: function(data){
+                for (let i = 0; i < data.length; i++) {
+                    var fileOption = new Option(data[i].name, i.toString());
+                    $("#fileset").append(fileOption);
+                }
+            }
+        })
+
+        console.log(ProjectName,$("#fileset").find("option:selected").text());
+    }
+    $("#downloadTLfile").click(function (){
+        console.log($("#Projectset").find("option:selected").text(),$("#fileset").find("option:selected").text());
+        $("#fileset").find("option:selected").text()
+        parent.download($("#Projectset").find("option:selected").text(),$("#fileset").find("option:selected").text());
+    })
+
+
+</script>
+</body>
+</html>
