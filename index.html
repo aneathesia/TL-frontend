@@ -74,10 +74,12 @@
 	<input runat="server" id="divScrollValue" type="hidden" value="" />
 	<div class="menu_dropdown bk_2">
 		<dl id="menu-newmap">
-			<dt><i class="Hui-iconfont">&#xe646;</i> 新建图幅<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+			<dt><i class="Hui-iconfont">&#xe646;</i> 工程<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
 				<ul>
-					<li><a href="#"><label id="creatMap">新建图幅</label></a></li>
+					<li><a href="#"><label id="creatMap">新建</label></a></li>
+					<li><a href="#"><label id="Openfile">打开</label></a></li>
+					<li><a href="#"><label id="fileManage">文件</label></a></li>
 				</ul>
 			</dd>
 		</dl>
@@ -156,7 +158,7 @@
 				</ul>
 			</dd>
 		</dl>
-		<div>
+		<div style="display: none">
 			<label>打开本地json文件: <input type="file" style="display:inline-block" id="jsonfile" name="myjsonfile" accept=".json"/>
 				<input type="button" style="display:inline-block" id="openjsonfile" onclick="window.upjsonfile()" value="打开" /></label>
 			<label>打开本地prj文件: <input type="file" style="display:inline-block" id="TLfile" name="myTLfile" accept="./PRJ"/>
@@ -171,44 +173,44 @@
 	</div>
 </aside>
 <!--排杆编辑-->
-<div class="tower_settings" id="towerset" style="display: none">
-	<h1 id="tower_settings_title">前进方向排杆</h1>
-	<form  id="towInfor">
-		<p>基本耐张段长 <input style="width: 25%;" disabled="disabled" type="text" id="naizhang" value="0" placeholder=""></p>
-		<p>前侧代表档距 <input style="width: 25%;" disabled="disabled" type="text" id="dangju" value="0" placeholder=""></p>
-		<p>导线 最大K值 <input style="width: 25%;" disabled="disabled" type="text" id="maxK" value="7.333" placeholder=""></p>
-		<p>地线 最小K值 <input style="width: 25%;" disabled="disabled" type="text" id="minK" value="7.550" placeholder=""></p>
-		<p>编号 <input style="width: 25%;" type="text" id="towId" name="towId" value="G0" placeholder=""></p>
-		<p><input name="towType" type="radio" value="" checked="checked">直线塔 <input name="towType" type="radio" value="">转角塔 <input name="towType" type="radio" value="">门架</p>
-		<p>塔型
-			<select style="width: 40%;">
-				<option value ="ZMVA41">ZMVA41</option>
-			</select>
-			高
-			<select id="towerheight">
-				<option value ="45">45</option>
-				<option value ="42">42</option>
-				<option value ="39">39</option>
-				<option value ="36">36</option>
-				<option value ="33">33</option>
-				<option value ="30">30</option>
-				<option value ="27">27</option>
-				<option value ="24">24</option>
-			</select>
-		</p>
-		<p>累距 <input style="width: 32%;" type="text" id="dis" name="dis" value="0.00" placeholder=""> 基降 <input style="width: 22%;" type="text" id="flow" name="flow" value="0.0" placeholder=""></p>
-		<p>桩位
-			<select  id="pilelist" style="width: 35%;">
-			</select>
-			差距 <input style="width: 22%;" type="text" id="gap" name="gap" value="0" placeholder="">
-		</p>
-		<p>高程 <input style="width: 35%;" type="text" id="hei" name="hei" value="0.00" placeholder="">
-		<p class="confirm">
-			<input type="button" id="saveBtn" name="saveBtn" value="保存">
-			<input type="button" id="closeBtn" name="closeBtn" value="关闭">
-		</p>
-	</form>
-</div>
+<!--<div class="tower_settings" id="towerset" style="display: none">-->
+<!--	<h1 id="tower_settings_title">前进方向排杆</h1>-->
+<!--	<form  id="towInfor">-->
+<!--		<p>基本耐张段长 <input style="width: 25%;" disabled="disabled" type="text" id="naizhang" value="0" placeholder=""></p>-->
+<!--		<p>前侧代表档距 <input style="width: 25%;" disabled="disabled" type="text" id="dangju" value="0" placeholder=""></p>-->
+<!--		<p>导线 最大K值 <input style="width: 25%;" disabled="disabled" type="text" id="maxK" value="7.333" placeholder=""></p>-->
+<!--		<p>地线 最小K值 <input style="width: 25%;" disabled="disabled" type="text" id="minK" value="7.550" placeholder=""></p>-->
+<!--		<p>编号 <input style="width: 25%;" type="text" id="towId" name="towId" value="G0" placeholder=""></p>-->
+<!--		<p><input name="towType" type="radio" value="" checked="checked">直线塔 <input name="towType" type="radio" value="">转角塔 <input name="towType" type="radio" value="">门架</p>-->
+<!--		<p>塔型-->
+<!--			<select style="width: 40%;">-->
+<!--				<option value ="ZMVA41">ZMVA41</option>-->
+<!--			</select>-->
+<!--			高-->
+<!--			<select id="towerheight">-->
+<!--				<option value ="45">45</option>-->
+<!--				<option value ="42">42</option>-->
+<!--				<option value ="39">39</option>-->
+<!--				<option value ="36">36</option>-->
+<!--				<option value ="33">33</option>-->
+<!--				<option value ="30">30</option>-->
+<!--				<option value ="27">27</option>-->
+<!--				<option value ="24">24</option>-->
+<!--			</select>-->
+<!--		</p>-->
+<!--		<p>累距 <input style="width: 32%;" type="text" id="dis" name="dis" value="0.00" placeholder=""> 基降 <input style="width: 22%;" type="text" id="flow" name="flow" value="0.0" placeholder=""></p>-->
+<!--		<p>桩位-->
+<!--			<select  id="pilelist" style="width: 35%;">-->
+<!--			</select>-->
+<!--			差距 <input style="width: 22%;" type="text" id="gap" name="gap" value="0" placeholder="">-->
+<!--		</p>-->
+<!--		<p>高程 <input style="width: 35%;" type="text" id="hei" name="hei" value="0.00" placeholder="">-->
+<!--		<p class="confirm">-->
+<!--			<input type="button" id="saveBtn" name="saveBtn" value="保存">-->
+<!--			<input type="button" id="closeBtn" name="closeBtn" value="关闭">-->
+<!--		</p>-->
+<!--	</form>-->
+<!--</div>-->
 
 <div class ="designParam" id="piletable" style="height: 400px;">
 	<div>
@@ -347,7 +349,7 @@
 	var columndataLeft = [{key: 'id', text: 'NO'}, {key: 'name', text: '型号/名称/图号'}];//表头
 	var columndataRight = [{key: 'name', text: '参数名称'}, {key: 'value', text: '参数数值'}];//表头
 
-
+	let tpIndex;
 
 
 	let mp={
@@ -1136,9 +1138,7 @@
 			//shadeClose:true,
 			content:'./drawingpara.html',
 			success:function (layero,index) {
-				console.log(layero,index);
 				var body = layer.getChildFrame('body',index);
-				console.log(body);
 				let i=0;
 				body.find('input').each(function () {
 					if($(this).attr("type")=="checkbox"){
@@ -1216,7 +1216,6 @@
 			maxmin:true,
 			content:'./selectCode.html',
 			shade:0,
-
 			success:function (layero,index) {
 				console.log(layero,index);
 				var body = layer.getChildFrame('body',index);
@@ -1392,7 +1391,7 @@
 				success: function (data) {
 					console.log("createproject",data);
 
-					let json = prk;
+					let json = data.prk;
 					console.log(json);
 					let lao = data.Lao;
 					console.log(lao);
@@ -2252,7 +2251,6 @@
 							}
 						});
 					})
-
 
 					$('#saveMap').click(function () {
 
@@ -7340,8 +7338,11 @@
 					towerlist_tabledata=towerlist;
 					GridManager.refreshGrid(towerlist_tableId);
 
-					var inputId = document.getElementById("towId");
-					inputId.value = "G" + putInd;
+					//var inputId = document.getElementById("towId");
+					var inputId2 =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
+					//inputId.value = "G" + putInd;
+					inputId2.value = "G" + putInd;
+
 
 				}
 			}
@@ -7367,6 +7368,7 @@
 			console.log("afterset",towerlist);
 		}
 	}
+
 	function onMouseMove(event) {
 		intersects = getIntersects(event);
 		tempintersects = intersects;
@@ -7396,22 +7398,35 @@
 				})
 			}
 			disToPile.sort(compare("dis"));
-			$("#pilelist").val(disToPile[0].value);
+			//$("#pilelist").val(disToPile[0].value);
+			layer.getChildFrame('body',tpIndex).find("#pilelist").val(disToPile[0].value);
+
 			let gap;
 			for (let i = 0; i < pile_tabledata.length; i++) {
 				if (pile_tabledata[i].name == disToPile[0].name){
 					gap = pos.x/Gridsize*xdivision - pile_tabledata[i].dist;
 				}
 			}
-			let gaptoPile = document.getElementById("gap");
-			gaptoPile.value = gap.toFixed(2);
+			//let gaptoPile = document.getElementById("gap");
+			//gaptoPile.value = gap.toFixed(2);
+			let gaptoPile2 = layer.getChildFrame('body',tpIndex).find("#gap")[0];
+			gaptoPile2.value = gap.toFixed(2);
+			//var inputDis = document.getElementById("dis");
+			//var inputHei = document.getElementById("hei");
+			var inputHei2 = layer.getChildFrame('body',tpIndex).find("#hei")[0];
+			var inputDis2 = layer.getChildFrame('body',tpIndex).find("#dis")[0];
 
-			var inputDis = document.getElementById("dis");
-			var inputHei = document.getElementById("hei");
 			let disNum = pos.x/Gridsize*xdivision + xMin;
 			let heiNum = pos.y/Gridsize*ydivision + yMin;
-			inputDis.value = disNum.toFixed(2);
-			inputHei.value = heiNum.toFixed(2);
+			//inputDis.value = disNum.toFixed(2);
+			inputDis2.value = disNum.toFixed(2);
+			//inputHei.value = heiNum.toFixed(2);
+			inputHei2.value = heiNum.toFixed(2);
+
+			//var inputId = document.getElementById("towId");
+			var inputId2 =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
+			//inputId.value = "G" + towerlist.length;
+			inputId2.value = "G" + towerlist.length;
 		}
 	}
 	//清除动态排杆中的临时数据
@@ -7623,24 +7638,46 @@
 				})
 			}
 			disToPile.sort(compare("dis"));
-			$("#pilelist").val(disToPile[0].value);
+			//$("#pilelist").val(disToPile[0].value);
+			layer.getChildFrame('body',tpIndex).find("#pilelist").val(disToPile[0].value);
 			let gap;
 			for (let i = 0; i < pile_tabledata.length; i++) {
 				if (pile_tabledata[i].name == disToPile[0].name){
 					gap = pos.x/Gridsize*xdivision - pile_tabledata[i].dist;
 				}
 			}
-			let gaptoPile = document.getElementById("gap");
-			console.log("gap pile", gap)
-			gaptoPile.value = gap.toFixed(2);
-			var inputId = document.getElementById("towId");
-			inputId.value = "G" + towerlist.length;
-			var inputDis = document.getElementById("dis");
-			var inputHei = document.getElementById("hei");
+			// let gaptoPile = document.getElementById("gap");
+			// console.log("gap pile", gap)
+			// gaptoPile.value = gap.toFixed(2);
+			// var inputId = document.getElementById("towId");
+			// inputId.value = "G" + towerlist.length;
+			// var inputDis = document.getElementById("dis");
+			// var inputHei = document.getElementById("hei");
+			// let disNum = pos.x/Gridsize*xdivision + xMin;
+			// let heiNum = pos.y/Gridsize*ydivision + yMin;
+			// inputDis.value = disNum.toFixed(2);
+			// inputHei.value = heiNum.toFixed(2);
+
+			//let gaptoPile = document.getElementById("gap");
+			//gaptoPile.value = gap.toFixed(2);
+			let gaptoPile2 = layer.getChildFrame('body',tpIndex).find("#gap")[0];
+			gaptoPile2.value = gap.toFixed(2);
+			//var inputDis = document.getElementById("dis");
+			//var inputHei = document.getElementById("hei");
+			var inputHei2 = layer.getChildFrame('body',tpIndex).find("#hei")[0];
+			var inputDis2 = layer.getChildFrame('body',tpIndex).find("#dis")[0];
+
 			let disNum = pos.x/Gridsize*xdivision + xMin;
 			let heiNum = pos.y/Gridsize*ydivision + yMin;
-			inputDis.value = disNum.toFixed(2);
-			inputHei.value = heiNum.toFixed(2);
+			//inputDis.value = disNum.toFixed(2);
+			inputDis2.value = disNum.toFixed(2);
+			//inputHei.value = heiNum.toFixed(2);
+			inputHei2.value = heiNum.toFixed(2);
+
+			//var inputId = document.getElementById("towId");
+			var inputId2 =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
+			//inputId.value = "G" + towerlist.length;
+			inputId2.value = "G" + towerlist.length;
 
 			towerlist.push({
 				"Name" : "G" + towerlist.length,
@@ -7968,6 +8005,7 @@
 			document.removeEventListener('mousedown', editTower);
 		})
 		$("#towerset").mouseout(function () {
+			document.addEventListener('mousedown', editTower);
 		})
 		console.log("editTowerMsg",intersectsTower[0]);
 		let name = intersectsTower[0].object.geometry.name;
@@ -8545,6 +8583,39 @@
 		}
 
 	}
+
+	window.bindTowerPlace = function(title){
+		console.log("title.",title);
+		if(title != $(".layui-layer-title").text()){
+			layer.close(tpIndex);
+			layer.open({
+				type:2,
+				title: title,
+				area:['250px','300px'],
+				offset: ['200px', '200px'],
+				maxmin:true,
+				shadeClose:false,
+				shade:0,
+				content:'./TowerPlace.html',
+				//id: title,
+				success:function (layero,index) {
+					var body = layer.getChildFrame('body',index);
+					//mark the page
+					tpIndex = index;
+					//bind towId
+					body.find("#towId")[0].value = "G"+towerlist.length;
+					console.log("insert tlength ",body.find("#towId")[0].value,towerlist.length);
+					//bind select option setting
+					for (let i = 0; i < pile_tabledata.length; i++) {
+						body.find("#pilelist").append("<option value='"+i+"'>"+pile_tabledata[i].name+"</option>");
+					}
+					// tower high option bind don't need to set fixed
+
+				}
+			})
+		}
+
+	}
 	//sinh arcsh函数
 	function sinh(x) {
 			let a = (Math.exp(x) - Math.exp(-x))/2;
@@ -8571,28 +8642,15 @@
 
 		/*鼠标放置杆塔*/
 		$("#putTower").click(function () {
-			document.getElementById("towerset").style.display = "block";
-			let title = document.getElementById("tower_settings_title");
-			title.innerHTML = "前进方向排杆"
-			let Select = document.getElementById("pilelist");
-			Select.options.length = 0;
-			for (let i = 0; i < pile_tabledata.length; i++) {
-				$("#pilelist").append("<option value='"+i+"'>"+pile_tabledata[i].name+"</option>");
-			}
-			layer.open({
-				type:2,
-				title:'前进方向排杆',
-				area:['250px','300px'],
-				maxmin:true,
-				shadeClose:true,
-				shade:0,
-				content:'./TowerPlace.html',
-				success:function (layero,index) {
-					console.log(layero,index);
-					var body = layer.getChildFrame('body',index);
-					console.log(body);
-				}
-			})
+			// document.getElementById("towerset").style.display = "block";
+			// let title = document.getElementById("tower_settings_title");
+			// title.innerHTML = "前进方向排杆"
+			// let Select = document.getElementById("pilelist");
+			// Select.options.length = 0;
+			// for (let i = 0; i < pile_tabledata.length; i++) {
+			// 	$("#pilelist").append("<option value='"+i+"'>"+pile_tabledata[i].name+"</option>");
+			// }
+			bindTowerPlace('前进方向排杆');
 			document.removeEventListener('mousedown', towerDelete);
 			document.removeEventListener('mousedown', riseTower);
 			document.removeEventListener('mousedown', fallTower);
@@ -8613,23 +8671,10 @@
 		})
 		/*鼠标插入杆塔*/
 		$("#insertTower").click(function () {
-			document.getElementById("towerset").style.display = "block";
-			let title = document.getElementById("tower_settings_title");
-			title.innerHTML = "插入杆塔"
-			layer.open({
-				type:2,
-				title:'插入塔杆',
-				area:['250px','300px'],
-				maxmin:true,
-				shadeClose:true,
-				shade:0,
-				content:'./TowerPlace.html',
-				success:function (layero,index) {
-					console.log(layero,index);
-					var body = layer.getChildFrame('body',index);
-					console.log(body);
-				}
-			})
+			// document.getElementById("towerset").style.display = "block";
+			// let title = document.getElementById("tower_settings_title");
+			// title.innerHTML = "插入杆塔"
+			bindTowerPlace('插入杆塔');
 			document.removeEventListener('mousedown', onMouseDown);
 			document.removeEventListener('mousedown', riseTower);
 			document.removeEventListener('mousedown', towerDelete);
@@ -8674,23 +8719,10 @@
 		})
 		/*修改杆塔*/
 		$("#editTower").click(function () {
-			document.getElementById("towerset").style.display = "block";
-			let title = document.getElementById("tower_settings_title");
-			title.innerHTML = "修改杆塔信息"
-			layer.open({
-				type:2,
-				title:'修改塔杆信息',
-				area:['250px','300px'],
-				maxmin:true,
-				shadeClose:true,
-				shade:0,
-				content:'./TowerPlace.html',
-				success:function (layero,index) {
-					console.log(layero,index);
-					var body = layer.getChildFrame('body',index);
-					console.log(body);
-				}
-			})
+			// document.getElementById("towerset").style.display = "block";
+			// let title = document.getElementById("tower_settings_title");
+			// title.innerHTML = "修改杆塔信息"
+			bindTowerPlace('修改杆塔信息');
 			document.removeEventListener('mousedown', onMouseDown);
 			document.removeEventListener('mousedown', riseTower);
 			document.removeEventListener('mousedown', towerDelete);
