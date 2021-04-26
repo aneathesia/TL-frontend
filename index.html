@@ -847,8 +847,8 @@
 							key: 'l2',
 							text: '前侧档距'
 						},{
-							key: 'PosOffset',  //Position and offset 组合
-							text: '杆塔位置'
+							key: 'PosOffset',
+							text: '杆塔位置',
 						},{
 							key: 'TowerType',
 							text: '杆型'
@@ -1033,7 +1033,13 @@
 				console.log("calc pwf finsh");
 				console.log(res);
 				towerlist_tabledata = res.TOWERLIST;
+				console.log("res.TOWERLIST",res.TOWERLIST);
+				for(let i=0;i<res.TOWERLIST.length;i++){
+					if(res.TOWERLIST[i].offset>0)res.TOWERLIST[i].PosOffset = res.TOWERLIST[i].Position+"+"+res.TOWERLIST[i].offset.toString();
+					else res.TOWERLIST[i].PosOffset = res.TOWERLIST[i].Position+res.TOWERLIST[i].offset.toString();
+				}
 				GridManager.setAjaxData(towerlist_tableId,{"data":res.TOWERLIST});
+
 			}
 		})
 	})
@@ -7326,6 +7332,8 @@
 					}
 					disToPile.sort(compare("dis"));
 					layer.getChildFrame('body',tpIndex).find("#pilelist").val(disToPile[0].value);
+
+					var pileName= layer.getChildFrame('body',tpIndex).find("#pilelist").find("option[value="+ disToPile[0].value +"]").text();
 					let gap;
 					for (let i = 0; i < pile_tabledata.length; i++) {
 						if (pile_tabledata[i].name == disToPile[0].name) {
@@ -7335,8 +7343,8 @@
 					let gaptoPile = layer.getChildFrame('body',tpIndex).find("#gap")[0];
 					console.log("gap pile", gap)
 					gaptoPile.value = gap.toFixed(2);
-					towerlist[towerlist.length-1].Position = disToPile[0].value.toString();
-					towerlist[towerlist.length-1].offset = Number(gap.toFixed(2));
+					towerlist[towerlist.length-1].Position = pileName;
+					towerlist[towerlist.length-1].offset = Number(gap.toFixed(0));
 					//whj 3.7 refresh GridManager 获取的只有参数  需要发起ajax请求帮助计算填充表格
 					console.log("set tower");
 					console.log(towerlist);
@@ -7455,7 +7463,6 @@
 		console.log(towerlist);
 		var towerpwf = {"TOWERLIST":towerlist};
 		savedJson.pwf = towerpwf;
-		console.log(towerpwf);
 		var pwfStr = JSON.stringify(towerpwf);
 		console.log(pwfStr)
 		var formData = new FormData();
@@ -7696,8 +7703,8 @@
 				"Name" : "G" + towerlist.length,
 				"Distance" : pos.x /Gridsize*xdivision +xMin,
 				"High" : pos.y/Gridsize*ydivision + yMin,
-				"Position" : disToPile[0].value.toString(),
-				"offset" : Number(gap.toFixed(2)),
+				"Position" : layer.getChildFrame('body',tpIndex).find("#pilelist").find("option[value="+ disToPile[0].value +"]").text(),
+				"offset" : Number(gap.toFixed(0)),
 				"TowerType" : "ZMVA41",
 				"Base": 0,
 				"TowerHigh" : towerHei,
