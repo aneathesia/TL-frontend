@@ -5,7 +5,7 @@
     <title>工程</title>
 </head>
 <body>
-<div class="layui-form-item" style="float: left;margin-left: 10px">
+<div class="layui-form-item" style="float: left;margin: 5px">
     <label class="layui-form-label">选择工程</label>
     <div class="layui-input-block">
         <select id ="Projectset" style="width:100px" size="5" onchange="showfile()">
@@ -13,16 +13,15 @@
     </div>
 
 </div>
-<div class="layui-form-item"  style="float: left;margin-left: 10px">
+<div class="layui-form-item"  style="float: left;margin: 5px">
     <label class="layui-form-label">文件</label>
     <div class="layui-input-block">
         <select id ="fileset" style="width: 120px" size="5">
         </select>
     </div>
 </div>
-
-<div class="layui-layer-btn" style="float: right;margin-top: 2%" >
-
+<input type="file" style="float: left;margin: 5px" id="file">
+<div class="layui-layer-btn" style="float: bottom;float:right;margin-bottom: 2%" >
     <button class="layui-layer-btn " style="width: 50px;" id="filesetUpload">上传</button>
     <button class="layui-layer-btn" style="width: 50px;" id="OpenTLfile">打开</button>
     <button class="layui-layer-btn" style="width: 50px;" id="downloadTLfile">下载</button>
@@ -30,9 +29,7 @@
 <script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
 <script>
     function showfile(){
-        console.log("onchange option");
         var ProjectName = $("#Projectset").find("option:selected").text();
-        console.log(ProjectName);
         $("#fileset").empty();  //清空
         $.ajax({
             url: "http://202.114.118.138:8181/directory/"+ProjectName, //提交的路径
@@ -45,15 +42,41 @@
                 }
             }
         })
-
-        console.log(ProjectName,$("#fileset").find("option:selected").text());
     }
     $("#downloadTLfile").click(function (){
         console.log($("#Projectset").find("option:selected").text(),$("#fileset").find("option:selected").text());
         $("#fileset").find("option:selected").text()
         parent.download($("#Projectset").find("option:selected").text(),$("#fileset").find("option:selected").text());
     })
+    $("#filesetUpload").click(function (){
+        var xhr,ot,oloaded;
+        var fileObj = document.getElementById("file").files[0]; // js 获取文件对象
+        var ProjectName = $("#Projectset").find("option:selected").text();
+        console.log("uploadPath",ProjectName);
+        if(ProjectName===""){alert("选择工程"); return false}
+        else{
+            var url =  "http://202.114.118.138:8181/fileUpload"; // 接收上传文件的后台地址
+            var form = new FormData(); // FormData 对象
+            form.append("file", fileObj); // 文件对象
+            form.append("ProjectName", ProjectName);//控制路径
 
+            xhr = new XMLHttpRequest();  // XMLHttpRequest 对象
+            xhr.open("post", url, true); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
+            xhr.onload = uploadcomplete; //请求完成
+            xhr.onerror =  uploadfailed; //请求失败
+
+            //xhr.upload.onprogress =progressFunction;//【上传进度调用方法实现】
+            xhr.upload.onloadstart = function(){//上传开始执行方法
+                ot = new Date().getTime();   //设置上传开始时间
+                oloaded = 0;//设置上传开始时，以上传的文件大小为0
+            };
+            xhr.send(form); //开始上传，发送form数据
+        }
+
+
+    })
+    function uploadcomplete(evt) { showfile();alert("成功上传！");}//上传成功响应
+    function uploadfailed(evt) {alert("上传失败！");}//上传失败响应
 
 </script>
 </body>
