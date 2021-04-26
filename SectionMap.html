@@ -72,7 +72,12 @@
     //parent.layer.iframeAuto(index);
 
     function iframetrans(){
-
+        console.log("valuebegin",$("#beginOp").find("option:selected").val());
+        console.log("valueEnd",$("#endOp").find("option:selected").val());
+        if($("#beginOp").find("option:selected").val()>=$("#endOp").find("option:selected").val()){
+            alert("重新选择起始点");
+            return
+        }
         var transobj={"start":$("#beginOp").find("option:selected").text(),
             "end":$("#endOp").find("option:selected").text(),
             "demFile":$("#demfilelist").find("option:selected").text(),
