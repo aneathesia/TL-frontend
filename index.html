@@ -145,7 +145,6 @@
 				<ul>
 					<li><a href="#"><label id="saveMap">保存Map</label></a></li>
 					<li><a href="#"><label id="savePrj">保存工程</label></a></li>
-					<li><a href="#"><label id="saveJson">保存json</label></a></li>
 				</ul>
 			</dd>
 		</dl>
@@ -235,7 +234,7 @@
 	</div>
 	<table id="towerlist_table"></table>
 	<div style="text-align-last:right">
-		<button class="xbutton xround" id="tb-towerlist-calc" style="text-align-last: right">计算</button>
+		<button class="xbutton xround" id="tb-towerlist-calc" style="text-align-last: right" onclick="towerlistCalc()">计算</button>
 		<button class="xbutton xround close_btn" id="towerlistcloseTable"style="text-align-last: right">关闭</button>
 	</div>
 </div>
@@ -746,8 +745,8 @@
 		for (let i = 0; i < deletelist.length; i++) {scene.remove(deletelist[i]);}
 		console.log(m_end)
 		m_end = towerlist_tabledata.length - 1;
-		if(m_end > 1){
-			for (let i = 0; i < towerlist_tabledata.length; i++) {
+
+		for (let i = 0; i < towerlist_tabledata.length; i++) {
 				let towMesh = tower1(towerlist_tabledata[i].TowerHigh);
 				towMesh.position.x = (towerlist_tabledata[i].Distance-xMin)/xdivision*Gridsize;
 				towMesh.position.y = (towerlist_tabledata[i].High - yMin)/ydivision*Gridsize;
@@ -756,8 +755,7 @@
 				towMesh.geometry.name = towerlist_tabledata[i].Name;
 				scene.add(towMesh);
 			}
-
-			console.log(m_start)
+		if(m_end > 0){
 			for (let i = m_start; i < m_end; i++) {
 				DisplayFawCurve4(towerlist_tabledata[i],towerlist_tabledata[i+1], "fixwire");
 			}
@@ -789,7 +787,7 @@
 									console.log(fid-"0"+i);
 									towerlist_tabledata[i].Name=head.toString()+(fid-"0"+i).toString();
 								}
-								$("#tb-towerlist-calc").click();
+								towerlistCalc();
 								GridManager.setAjaxData(towerlist_tableId,{"data":towerlist_tabledata});
 								GridManager.refreshGrid(towerlist_tableId);
 								console.log("reset name");
@@ -821,6 +819,10 @@
 
 								console.log("tabledata changed");
 								console.log(towerlist_tabledata);
+								for(let i=0;i<towerlist_tabledata.length;i++){
+									if(towerlist_tabledata[i].offset>0)towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position+"+"+towerlist_tabledata[i].offset.toString();
+									else towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position+towerlist_tabledata[i].offset.toString();
+								}
 								GridManager.setAjaxData(towerlist_tableId,{"data":towerlist_tabledata});
 								GridManager.refreshGrid(towerlist_tableId);
 								del_tower=GridManager.setCheckedData(towerlist_tableId,[]);
@@ -922,8 +924,11 @@
 	$("#towerlisttable").hide();
 	$("#liTowerlisttable").click(function () {
 		$("#towerlisttable").show();
-		towerlist_tabledata=towerlist;
+
+		//towerlist_tabledata=towerlist;
+		towerlistCalc();
 		GridManager.refreshGrid(towerlist_tableId);
+
 	})
 	$("#towerlistcloseTable").click(function () {
 		$("#towerlisttable").hide();
@@ -1013,8 +1018,7 @@
 			}
 		})
 	})
-
-	$("#tb-towerlist-calc").click(function (){
+	window.towerlistCalc = function(){
 		var form = new FormData();
 		form.append("ProjectName",prjName);
 		console.log("begindata");
@@ -1042,7 +1046,8 @@
 
 			}
 		})
-	})
+	}
+
 	//后台数据下载到本地
 	$("#outputDXF").click(function(){
 		var form = new FormData();
@@ -2278,10 +2283,14 @@
 			framegroup.remove(allChildren[i]);
 		}
 		console.log("createMapFrame",mp);
-		yMin = 100; ydivision= 10; xdivision =100; verSize = 220;horSize =300; Gridsize =10;    //先设大小   再按distance/length 比例尺绘制
+		//yMin = 100; ydivision= 10; xdivision =100; verSize = 220;horSize =300; Gridsize =10;    //先设大小   再按distance/length 比例尺绘制
+		ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =mp.m_Grid;
+		horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
+		xMin = mp.m_From;
 		window.initContent();
 		mainCanvas = document.querySelector("#iframe_box canvas");
 		console.log(mainCanvas);
+		// save map file  ?
 
 	})
 	/* 文件 */
@@ -7751,8 +7760,8 @@
 			});
 			console.log("then",towerlist)
 			m_end = towerlist.length - 1;
-			ComputeHugeHigh();
 			towerlist.sort(compare('Distance'));
+			ComputeHugeHigh();
 			for (let i = 0; i < towerlist.length; i++) {
 				towerlist[i].Name = "G" + i;
 			}
@@ -7808,6 +7817,7 @@
 			lastPosition = selectObj.position;//储存当前物体坐标位置
 			lastIntersection = getIntersectionCoor(event);//获取点击时的交点
 			document.addEventListener('mousemove', onDragMouseMove);
+			document.addEventListener('mouseup', onMouseUp);
 			for (let i = 0; i < scene.children.length; i++) {
 				if (scene.children[i].name === "fixwire1"||scene.children[i].name === "fixwire2"||scene.children[i].name === "fixwire3"||scene.children[i].name === "fixwire4") {
 					wireTemp.push(scene.children[i]);
@@ -7851,99 +7861,110 @@
 		let dragTower = [];
 		towerlist = [];
 		console.log(scene.children);
-		for (let i = 0; i < scene.children.length; i++) {
-			if (scene.children[i].name === "fixTower"){
-				dragTower.push(scene.children[i]);
-			}
-		}
 
-		let currentTow = [];
-		for (let i = 0; i < dragTower.length; i++) {
-			if (dragTower[i].name === "fixTower") {
-				currentTow.push({
-					"posX":dragTower[i].position.x,
-					"object":dragTower[i]
-				});
-			}
-		}
-		console.log(currentTow)
-		currentTow.sort(compare('posX'))
-		for (let j = 0; j < currentTow.length; j++) {
+		if(selectObj.name==="fixTower"){
 			for (let i = 0; i < scene.children.length; i++) {
-				if (scene.children[i].uuid === currentTow[j].object.uuid){
-					scene.children[i].geometry.name = "G" + j;
+				if (scene.children[i].name === "fixTower"){
+					dragTower.push(scene.children[i]);
 				}
 			}
-		}
-		console.log(dragTower)
-		for (let i = 0; i < dragTower.length; i++) {
-			towerlist.push({
-				"Name" : "G" + i,
-				"Distance" : dragTower[i].position.x /Gridsize*xdivision +xMin,
-				"High" : dragTower[i].position.y/Gridsize*ydivision + yMin,
-				"TowerType" : "ZMVA41",
-				"Base": 0,
-				"TowerHigh" : dragTower[i].geometry.vertices[7].y / (1 / ydivision * Gridsize),
-				"Status" : 0,
-				"InsulatorLength": 4.5,
-				"ConnectLength": 0.0,
-				"InsulateP": "",
-				"InsulatePA": "X01",
-				"InsulatePANum": -1,
-				"InsulatePB": "X01",
-				"InsulatePBNum": -1,
-				"InsulatePC": "",
-				"InsulatePCNum": 0,
-				"hugeHigh":0,
-				"hugeGround" : 0,		// 地线悬挂点高程
-				"Lk": 0,
-				"L": 0,
-				"cosa":1,
-				"bInsular":false,
-				"constant": 0,
-				"u": 1,
-				"kPline": 0,			//导线大号侧k值系数
-				"kGround": 0,		//地线大号侧K值系数
-				"kWind": 0,			//大风条件前视档k值系数
-				"kMaxT": 0,			//70度高温k值系数
-				"constMaxT": 0,
-				"Lh": 0,				// 水平档距
-				"Lh1": 0,			// 小号侧垂直档距
-				"Lh2": 0,			// 大号侧垂直档距
-				"Lv" : 0,				// 垂直档距
-				"Lv1" : 0,			// 小号侧水平档距
-				"Lv2" : 0,			// 大号侧水平档距
-				"lvMinTemp": 0,//最低气温垂直档距
-				"lvMaxTemp": 0,//最高气温垂直档距
-				"lvMaxIce": 0,//最大覆冰垂直档距
-				"lvMaxWind": 0,//最大风垂直档距
-				"displayKType": 0,	//k值类型，0为最大弧垂 1为最高线温
-				"displayGround":0,		//显示地线
-				"displayPower" : 1,		//显示导线
-				"displaySafe" :  1,	//显示导线对地
-				"displayCross" : 1,		//显示导线跨越
-				"LandDist" : 8.5,		// 对地安全距离
-				"ElecDist" : 6.0	// 电力线安全距离
-			})
-		}
-		console.log(towerlist)
-		towerlist.sort(compare('Distance'));
-		m_end = towerlist.length - 1;
-		ComputeHugeHigh();
-		towerlist.sort(compare('Distance'));
-		for (let i = 0; i < towerlist.length; i++) {
-			towerlist[i].Name = "G" + i;
-		}
 
-		for (let i = m_start; i < m_end; i++) {
-			DisplayFawCurve4(towerlist[i],towerlist[i+1], "fixwire");
-		}
-		towerlist_tabledata = towerlist;
-		console.log(towerlist_tabledata);
-		GridManager.setAjaxData(towerlist_tableId, {"data": towerlist_tabledata});
-		GridManager.refreshGrid(towerlist_tableId);
+			let currentTow = [];
+			for (let i = 0; i < dragTower.length; i++) {
+				if (dragTower[i].name === "fixTower") {
+					currentTow.push({
+						"posX":dragTower[i].position.x,
+						"object":dragTower[i]
+					});
+				}
+			}
+			console.log(currentTow)
+			currentTow.sort(compare('posX'))
+			for (let j = 0; j < currentTow.length; j++) {
+				for (let i = 0; i < scene.children.length; i++) {
+					if (scene.children[i].uuid === currentTow[j].object.uuid){
+						scene.children[i].geometry.name = "G" + j;
+					}
+				}
+			}
+			console.log("dragtower",dragTower);
+			for (let i = 0; i < dragTower.length; i++) {
+				towerlist.push({
+					"Name" : "G" + i,
+					"Distance" : dragTower[i].position.x /Gridsize*xdivision +xMin,
+					"High" : dragTower[i].position.y/Gridsize*ydivision + yMin,
+					"TowerType" : "ZMVA41",
+					"Base": 0,
+					"TowerHigh" : dragTower[i].geometry.vertices[7].y / (1 / ydivision * Gridsize),
+					"Status" : 0,
+					"InsulatorLength": 4.5,
+					"ConnectLength": 0.0,
+					"InsulateP": "",
+					"InsulatePA": "X01",
+					"InsulatePANum": -1,
+					"InsulatePB": "X01",
+					"InsulatePBNum": -1,
+					"InsulatePC": "",
+					"InsulatePCNum": 0,
+					"hugeHigh":0,
+					"hugeGround" : 0,		// 地线悬挂点高程
+					"Lk": 0,
+					"L": 0,
+					"cosa":1,
+					"bInsular":false,
+					"constant": 0,
+					"u": 1,
+					"kPline": 0,			//导线大号侧k值系数
+					"kGround": 0,		//地线大号侧K值系数
+					"kWind": 0,			//大风条件前视档k值系数
+					"kMaxT": 0,			//70度高温k值系数
+					"constMaxT": 0,
+					"Lh": 0,				// 水平档距
+					"Lh1": 0,			// 小号侧垂直档距
+					"Lh2": 0,			// 大号侧垂直档距
+					"Lv" : 0,				// 垂直档距
+					"Lv1" : 0,			// 小号侧水平档距
+					"Lv2" : 0,			// 大号侧水平档距
+					"lvMinTemp": 0,//最低气温垂直档距
+					"lvMaxTemp": 0,//最高气温垂直档距
+					"lvMaxIce": 0,//最大覆冰垂直档距
+					"lvMaxWind": 0,//最大风垂直档距
+					"displayKType": 0,	//k值类型，0为最大弧垂 1为最高线温
+					"displayGround":0,		//显示地线
+					"displayPower" : 1,		//显示导线
+					"displaySafe" :  1,	//显示导线对地
+					"displayCross" : 1,		//显示导线跨越
+					"LandDist" : 8.5,		// 对地安全距离
+					"ElecDist" : 6.0	// 电力线安全距离
+				})
+			}
+			console.log(towerlist)
+			towerlist.sort(compare('Distance'));
+			m_end = towerlist.length - 1;
+			ComputeHugeHigh();
+			towerlist.sort(compare('Distance'));
+			for (let i = 0; i < towerlist.length; i++) {
+				towerlist[i].Name = "G" + i;
+			}
 
-		document.removeEventListener('mousemove', onDragMouseMove);
+			for (let i = m_start; i < m_end; i++) {
+				DisplayFawCurve4(towerlist[i],towerlist[i+1], "fixwire");
+			}
+			towerlist_tabledata = towerlist;
+			console.log(towerlist_tabledata);
+			GridManager.setAjaxData(towerlist_tableId, {"data": towerlist_tabledata});
+			GridManager.refreshGrid(towerlist_tableId);
+
+			document.removeEventListener('mousemove', onDragMouseMove);
+
+		}
+		// else{
+		// 	document.removeEventListener('mousemove',onDragMouseMove);
+		// 	document.removeEventListener('mouseup',onMouseUp);
+		// }
+		document.removeEventListener('mousemove',onDragMouseMove);
+		document.removeEventListener('mouseup',onMouseUp);
+		//selectObj={};
 
 	}
 
