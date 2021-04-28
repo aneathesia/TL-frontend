@@ -81,7 +81,7 @@
         var transobj={"start":$("#beginOp").find("option:selected").text(),
             "end":$("#endOp").find("option:selected").text(),
             "demFile":$("#demfilelist").find("option:selected").text(),
-            "pointFile":parent.document.getElementById('tb_pile_input').files[0].name,
+            "pointFile":"table.txt",  //中转文件 PRJ没有txt输入时计算步骤会产生此文件生成sectionMap可用
             "width":$("input[name=borderdist]").val().toString(),
             "step":$("input[name=sampledist]").val().toString(),
             "sectionType":$("#sectypeOp").find("option:selected").val().toString(),
