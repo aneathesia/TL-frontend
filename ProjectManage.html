@@ -28,6 +28,7 @@
 </div>
 <script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
 <script>
+    let filedata;
     function showfile(){
         var ProjectName = $("#Projectset").find("option:selected").text();
         $("#fileset").empty();  //清空
@@ -77,6 +78,39 @@
     })
     function uploadcomplete(evt) { showfile();alert("成功上传！");}//上传成功响应
     function uploadfailed(evt) {alert("上传失败！");}//上传失败响应
+
+    $("#OpenTLfile").click(function (){
+        var ProjectName = $("#Projectset").find("option:selected").text();
+        var FileName = $("#fileset").find("option:selected").text();
+        var suffix = FileName.substring(FileName.lastIndexOf('.')+1);
+        var MapName = FileName.substring(0,FileName.lastIndexOf('.'));
+
+        let form = new FormData();
+        form.append("FileName", FileName);
+        form.append("ProjectName", ProjectName);
+        $.ajax({
+            url: "http://202.114.118.138:8181/ReadfileToJson", //提交的路径
+            type: "post",       //提交方式
+            data: form,    //提交的数据
+            contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+            processData: false,
+            success: function(data){
+                console.log("openfile return data",data);
+                //打开工程文件
+                if(suffix == "PRJ"){
+
+                    parent.OpenPRJ(data,ProjectName);
+                }
+                //打开map
+                if(suffix == "MAP"){
+                    parent.OpenMap(data,ProjectName,MapName);
+                }
+            },
+            error: function (errorMsg) {
+                alert(errorMsg);
+            }
+        })
+    })
 
 </script>
 </body>
