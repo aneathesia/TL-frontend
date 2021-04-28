@@ -171,45 +171,6 @@
 		</div>
 	</div>
 </aside>
-<!--排杆编辑-->
-<!--<div class="tower_settings" id="towerset" style="display: none">-->
-<!--	<h1 id="tower_settings_title">前进方向排杆</h1>-->
-<!--	<form  id="towInfor">-->
-<!--		<p>基本耐张段长 <input style="width: 25%;" disabled="disabled" type="text" id="naizhang" value="0" placeholder=""></p>-->
-<!--		<p>前侧代表档距 <input style="width: 25%;" disabled="disabled" type="text" id="dangju" value="0" placeholder=""></p>-->
-<!--		<p>导线 最大K值 <input style="width: 25%;" disabled="disabled" type="text" id="maxK" value="7.333" placeholder=""></p>-->
-<!--		<p>地线 最小K值 <input style="width: 25%;" disabled="disabled" type="text" id="minK" value="7.550" placeholder=""></p>-->
-<!--		<p>编号 <input style="width: 25%;" type="text" id="towId" name="towId" value="G0" placeholder=""></p>-->
-<!--		<p><input name="towType" type="radio" value="" checked="checked">直线塔 <input name="towType" type="radio" value="">转角塔 <input name="towType" type="radio" value="">门架</p>-->
-<!--		<p>塔型-->
-<!--			<select style="width: 40%;">-->
-<!--				<option value ="ZMVA41">ZMVA41</option>-->
-<!--			</select>-->
-<!--			高-->
-<!--			<select id="towerheight">-->
-<!--				<option value ="45">45</option>-->
-<!--				<option value ="42">42</option>-->
-<!--				<option value ="39">39</option>-->
-<!--				<option value ="36">36</option>-->
-<!--				<option value ="33">33</option>-->
-<!--				<option value ="30">30</option>-->
-<!--				<option value ="27">27</option>-->
-<!--				<option value ="24">24</option>-->
-<!--			</select>-->
-<!--		</p>-->
-<!--		<p>累距 <input style="width: 32%;" type="text" id="dis" name="dis" value="0.00" placeholder=""> 基降 <input style="width: 22%;" type="text" id="flow" name="flow" value="0.0" placeholder=""></p>-->
-<!--		<p>桩位-->
-<!--			<select  id="pilelist" style="width: 35%;">-->
-<!--			</select>-->
-<!--			差距 <input style="width: 22%;" type="text" id="gap" name="gap" value="0" placeholder="">-->
-<!--		</p>-->
-<!--		<p>高程 <input style="width: 35%;" type="text" id="hei" name="hei" value="0.00" placeholder="">-->
-<!--		<p class="confirm">-->
-<!--			<input type="button" id="saveBtn" name="saveBtn" value="保存">-->
-<!--			<input type="button" id="closeBtn" name="closeBtn" value="关闭">-->
-<!--		</p>-->
-<!--	</form>-->
-<!--</div>-->
 
 <div class ="designParam" id="piletable" style="height: 400px;">
 	<div>
@@ -234,29 +195,10 @@
 	</div>
 	<table id="towerlist_table"></table>
 	<div style="text-align-last:right">
-		<button class="xbutton xround" id="tb-towerlist-calc" style="text-align-last: right" onclick="towerlistCalc()">计算</button>
+		<button class="xbutton xround" id="tb-towerlist-calc" style="text-align-last: right" onclick="towerlistCalc()">重算</button>
 		<button class="xbutton xround close_btn" id="towerlistcloseTable"style="text-align-last: right">关闭</button>
 	</div>
 </div>
-
-
-<!--<div id="modal-demo" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
-<!--	<div class="modal-dialog">-->
-<!--		<div class="modal-content radius">-->
-<!--			<div class="modal-header">-->
-<!--				<h3 class="modal-title">对话框标题</h3>-->
-<!--				<a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void(0);">×</a>-->
-<!--			</div>-->
-<!--			<div class="modal-body">-->
-<!--				<p>对话框内容…</p>-->
-<!--			</div>-->
-<!--			<div class="modal-footer">-->
-<!--				<button class="btn btn-primary">确定</bu	tton>-->
-<!--				<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>-->
-<!--			</div>-->
-<!--		</div>-->
-<!--	</div>-->
-<!--</div>-->
 
 <div class="designParam" id="Paramtable">
 	<div class = "designParamtitle">
@@ -323,7 +265,8 @@
 	var prjName;//新建工程名
 	var MapFileName;
 	var prjNameJSON = {};
-	var prk;//prk
+	let prk = {};//prk
+	let lao = {};
 	var data = [];
 	var towerHei = 45;//塔高
 	var towerHeiDif = 0;//最高塔高-最低塔高
@@ -351,314 +294,30 @@
 
 	let tpIndex;
 
-
-	let mp={
-		"m_Ver": "TLCAD_MAP_FILE",
-		"m_VerIdent": 2008,
-		"m_Volumns": "NSCCJ-",
-		"m_MapName": "XXX输电线路工程",
-		"m_MapSubName": "",
-		"m_ObjectAttr": 0,
-		"m_ObjectName": "0:中心断面",
-		"m_ObjectAttrEx": 2001,
-		"m_HighSystem": "1956年黄海高程系",
-		"m_dScale": 2.828255100361637,
-		"m_DScale": 5000.0,
-		"m_HScale": 500.0,
-		"m_CScale": 1000.0,
-		"m_MapLength": 4225,
-		"m_MapWidth": 3509,
-		"m_prefixLength": 45,
-		"m_suffixlength": 0,
-		"m_mk": [
-			{
-				"From": 0.0,
-				"High": 1080.0,
-				"Bs": 0.0,
-				"As": 0.0
-			},
-			{
-				"From": 0.0,
-				"High": 0.0,
-				"Bs": 0.0,
-				"As": 0.0
-			},
-			{
-				"From": 0.0,
-				"High": 0.0,
-				"Bs": 0.0,
-				"As": 0.0
-			},
-			{
-				"From": 0.0,
-				"High": 0.0,
-				"Bs": 0.0,
-				"As": 0.0
-			},
-			{
-				"From": 0.0,
-				"High": 0.0,
-				"Bs": 0.0,
-				"As": 0.0
-			},
-			{
-				"From": 0.0,
-				"High": 0.0,
-				"Bs": 0.0,
-				"As": 0.0
-			},
-			{
-				"From": 0.0,
-				"High": 0.0,
-				"Bs": 0.0,
-				"As": 0.0
-			}
-		],
-		"m_markCount": 1,
-		"m_From": 0.0,
-		"m_To": 20900.0,
-		"m_Frame": [
-			40,
-			45,
-			50,
-			55,
-			60,
-			65,
-			70,
-			80,
-			90,
-			95,
-			100,
-			110,
-			130,
-			155,
-			170
-		],
-		"m_Table": 0,
-		"m_TablePosition": 0,
-		"m_TableType": 0,
-		"m_TabHigh": 0,
-		"m_StandardFrame": 0,
-		"m_CircleFrame": 0,
-		"m_SignFrame": 0,
-		"m_ShowProfile": 1,
-		"m_ShowSurveyPoint": 1,
-		"m_ShowPointName": 1,
-		"m_ShowPointY": 0,
-		"m_showAllPoint": 0,
-		"m_ShowPowerLine": 1,
-		"m_showNoTower": 0,
-		"m_ShowSafeLine": 0,
-		"m_ShowCrossLine": 0,
-		"m_ShowGPile": 0,
-		"m_ShowZPile": 0,
-		"m_ShowJPile": 1,
-		"m_ShowTower": 1,
-		"m_ShowMainGrid": 1,
-		"m_ShowSubGrid": 0,
-		"m_pGrid": 2,
-		"m_hGrid": 2,
-		"m_Grid": 20,
-		"m_HZ": "仿宋_GB2312",
-		"m_StartPile": "J1",
-		"m_StartDistance": 0.0,
-		"m_StartHigh": 100.0,
-		"m_Count": 100,
-		"m_Current": 1,
-		"m_CurrentDesign": 0,
-		"m_TurnAngle": 2,
-		"m_TurnAngle2": 2,
-		"m_DisplayFromX": 0.0,
-		"m_DisplayFromZ": 2157.0,
-		"m_DisplayToX": 1530.0,
-		"m_DisplayToZ": 2297.0,
-		"m_sideWidth": 15.0,
-		"m_planUp": 0.0,
-		"m_selSize": 6,
-		"m_dynamicPlan": 0
-	}
+	let mp={};
+	let blankmp = {};
 	let cross=[];
-   // let cross = [
-	//    {
-	// 	   "Attr": 106,
-	// 	   "AttrEx": 0,
-	// 	   "AttrName": "0106:330kV",
-	// 	   "PointCount": 3,
-	// 	   "CrossPoint": [
-	// 		   {
-	// 			   "x": 326.7830843032056,
-	// 			   "y": -43.538361467840619,
-	// 			   "z": 2251.5809887038369,
-	// 			   "dc": 0,
-	// 			   "towerHigh": 30.0
-	// 		   },
-	// 		   {
-	// 			   "x": 373.6705504993417,
-	// 			   "y": 0.0,
-	// 			   "z": 2252.7625421914005,
-	// 			   "dc": 2003,
-	// 			   "towerHigh": 30.0
-	// 		   },
-	// 		   {
-	// 			   "x": 395.14559032307178,
-	// 			   "y": 19.94110840774937,
-	// 			   "z": 2251.271142099644,
-	// 			   "dc": 0,
-	// 			   "towerHigh": 30.0
-	// 		   }
-	// 	   ]
-	//    },
-	//    {
-	// 	   "Attr": 104,
-	// 	   "AttrEx": 0,
-	// 	   "AttrName": "0104:110kV",
-	// 	   "PointCount": 7,
-	// 	   "CrossPoint": [
-	// 		   {
-	// 			   "x": 666.1540963303985,
-	// 			   "y": -45.979879539978728,
-	// 			   "z": 2211.423671215728,
-	// 			   "dc": 0,
-	// 			   "towerHigh": 35.0
-	// 		   },
-	// 		   {
-	// 			   "x": 726.8084055107959,
-	// 			   "y": 0.0,
-	// 			   "z": 2208.909887539935,
-	// 			   "dc": 2004,
-	// 			   "towerHigh": 35.0
-	// 		   },
-	// 		   {
-	// 			   "x": 741.8411565666788,
-	// 			   "y": 11.395795155266129,
-	// 			   "z": 2211.4088150534864,
-	// 			   "dc": 0,
-	// 			   "towerHigh": 35.0
-	// 		   },
-	// 		   {
-	// 			   "x": 757.8664935037718,
-	// 			   "y": 0.0,
-	// 			   "z": 2213.9647952422594,
-	// 			   "dc": 2004,
-	// 			   "towerHigh": 35.0
-	// 		   },
-	// 		   {
-	// 			   "x": 796.7753131897855,
-	// 			   "y": -27.66849399894312,
-	// 			   "z": 2214.6823892027648,
-	// 			   "dc": 0,
-	// 			   "towerHigh": 35.0
-	// 		   },
-	// 		   {
-	// 			   "x": 841.9896814319609,
-	// 			   "y": 0.0,
-	// 			   "z": 2229.95568158606,
-	// 			   "dc": 2004,
-	// 			   "towerHigh": 35.0
-	// 		   },
-	// 		   {
-	// 			   "x": 878.5661686064112,
-	// 			   "y": 22.382626479887479,
-	// 			   "z": 2247.820910094993,
-	// 			   "dc": 0,
-	// 			   "towerHigh": 35.0
-	// 		   }
-	// 	   ]
-	//    },
-	//    {
-	// 	   "Attr": 102,
-	// 	   "AttrEx": 0,
-	// 	   "AttrName": "0102:10kV",
-	// 	   "PointCount": 3,
-	// 	   "CrossPoint": [
-	// 		   {
-	// 			   "x": 1101.0212446189735,
-	// 			   "y": -24.16446343244864,
-	// 			   "z": 2253.0898373223105,
-	// 			   "dc": 0,
-	// 			   "towerHigh": 0.0
-	// 		   },
-	// 		   {
-	// 			   "x": 1133.6759249330933,
-	// 			   "y": 0.0,
-	// 			   "z": 2259.5080938755129,
-	// 			   "dc": 2005,
-	// 			   "towerHigh": 0.0
-	// 		   },
-	// 		   {
-	// 			   "x": 1171.667022169265,
-	// 			   "y": 28.113411954767146,
-	// 			   "z": 2264.5759627844074,
-	// 			   "dc": 0,
-	// 			   "towerHigh": 0.0
-	// 		   }
-	// 	   ]
-	//    },
-	//    {
-	// 	   "Attr": 105,
-	// 	   "AttrEx": 0,
-	// 	   "AttrName": "0105:220kV",
-	// 	   "PointCount": 5,
-	// 	   "CrossPoint": [
-	// 		   {
-	// 			   "x": 1409.5204292065308,
-	// 			   "y": 14.419200174982623,
-	// 			   "z": 2298.369731917085,
-	// 			   "dc": 0,
-	// 			   "towerHigh": 0.0
-	// 		   },
-	// 		   {
-	// 			   "x": 1485.5817101295643,
-	// 			   "y": 0.0,
-	// 			   "z": 2291.1948766544239,
-	// 			   "dc": 2003,
-	// 			   "towerHigh": 0.0
-	// 		   },
-	// 		   {
-	// 			   "x": 1578.0029942102329,
-	// 			   "y": -17.520622574534316,
-	// 			   "z": 2298.413354451002,
-	// 			   "dc": 0,
-	// 			   "towerHigh": 0.0
-	// 		   },
-	// 		   {
-	// 			   "x": 1590.7452651735305,
-	// 			   "y": 0.0,
-	// 			   "z": 2299.878245791477,
-	// 			   "dc": 2003,
-	// 			   "towerHigh": 0.0
-	// 		   },
-	// 		   {
-	// 			   "x": 1616.330781509653,
-	// 			   "y": 35.18008496216865,
-	// 			   "z": 2291.815442119172,
-	// 			   "dc": 0,
-	// 			   "towerHigh": 0.0
-	// 		   }
-	// 	   ]
-	//    }
-   // ]
-// mptable init
-	window.getFilelist = function (){
-		var optionList = $("#fileDirectory");
-		console.log(optionList);
-		$.ajax({
-			url: "http://202.114.118.138:8181/directory/" + prjName, //提交的路径
-			type: "get",       //提交方式
-			dataType:"json",
-			success: function(data){
-				console.log(data);
-				for (let i = 0; i < data.length; i++) {
-						var fileOption = new Option(data[i].name, i.toString());
-						console.log(fileOption);
-					    optionList[0].options.add(fileOption);
-				}
-			}
-		})
-		console.log(optionList);
+	// window.getFilelist = function (){
+	// 	var optionList = $("#fileDirectory");
+	// 	console.log(optionList);
+	// 	$.ajax({
+	// 		url: "http://202.114.118.138:8181/directory/" + prjName, //提交的路径
+	// 		type: "get",       //提交方式
+	// 		dataType:"json",
+	// 		success: function(data){
+	// 			console.log(data);
+	// 			for (let i = 0; i < data.length; i++) {
+	// 					var fileOption = new Option(data[i].name, i.toString());
+	// 					console.log(fileOption);
+	// 				    optionList[0].options.add(fileOption);
+	// 			}
+	// 		}
+	// 	})
+	// 	console.log(optionList);
+	//
+	// }
 
-	}
-
+	//pilelist table init
 	{
 	var pile_tabledata=[];
 	var pile_tableId=document.getElementById("mpile_table");
@@ -732,34 +391,6 @@
 			function(){}
 	);
 	console.log(GridManager.get(pile_tableId));
-	}
-
-
-	window.TowerDraw = function(towerlist_tabledata){
-		let deletelist = [];
-		for (let i = 0; i < scene.children.length; i++){
-			if (scene.children[i].name === "fixTower"||scene.children[i].name === "fixwire1" ||scene.children[i].name === "fixwire2"||scene.children[i].name === "fixwire3"||scene.children[i].name === "fixwire4"){
-				deletelist.push(scene.children[i]);
-			}
-		}
-		for (let i = 0; i < deletelist.length; i++) {scene.remove(deletelist[i]);}
-		console.log(m_end)
-		m_end = towerlist_tabledata.length - 1;
-
-		for (let i = 0; i < towerlist_tabledata.length; i++) {
-				let towMesh = tower1(towerlist_tabledata[i].TowerHigh);
-				towMesh.position.x = (towerlist_tabledata[i].Distance-xMin)/xdivision*Gridsize;
-				towMesh.position.y = (towerlist_tabledata[i].High - yMin)/ydivision*Gridsize;
-				towMesh.position.z = 0;
-				towMesh.name = "fixTower";
-				towMesh.geometry.name = towerlist_tabledata[i].Name;
-				scene.add(towMesh);
-			}
-		if(m_end > 0){
-			for (let i = m_start; i < m_end; i++) {
-				DisplayFawCurve4(towerlist_tabledata[i],towerlist_tabledata[i+1], "fixwire");
-			}
-		}
 	}
 // towerlist table init
 	{
@@ -933,6 +564,34 @@
 	$("#towerlistcloseTable").click(function () {
 		$("#towerlisttable").hide();
 	})
+
+	window.TowerDraw = function(towerlist_tabledata){
+		let deletelist = [];
+		for (let i = 0; i < scene.children.length; i++){
+			if (scene.children[i].name === "fixTower"||scene.children[i].name === "fixwire1" ||scene.children[i].name === "fixwire2"||scene.children[i].name === "fixwire3"||scene.children[i].name === "fixwire4"){
+				deletelist.push(scene.children[i]);
+			}
+		}
+		for (let i = 0; i < deletelist.length; i++) {scene.remove(deletelist[i]);}
+		console.log(m_end)
+		m_end = towerlist_tabledata.length - 1;
+
+		for (let i = 0; i < towerlist_tabledata.length; i++) {
+			let towMesh = tower1(towerlist_tabledata[i].TowerHigh);
+			towMesh.position.x = (towerlist_tabledata[i].Distance-xMin)/xdivision*Gridsize;
+			towMesh.position.y = (towerlist_tabledata[i].High - yMin)/ydivision*Gridsize;
+			towMesh.position.z = 0;
+			towMesh.name = "fixTower";
+			towMesh.geometry.name = towerlist_tabledata[i].Name;
+			scene.add(towMesh);
+		}
+		if(m_end > 0){
+			for (let i = m_start; i < m_end; i++) {
+				DisplayFawCurve4(towerlist_tabledata[i],towerlist_tabledata[i+1], "fixwire");
+			}
+		}
+	}
+
 	//prk设计参数框显示/隐藏
 	$("#Paramtable").draggable({handle:"#h2title"});
 	$("#Paramtable").hide();
@@ -993,7 +652,8 @@
 						pile_tabledata[i].x=pile_tabledata[i].y;
 						pile_tabledata[i].y=temp;
 					}   //系统坐标大地坐标相反对换
-					pile_tabledata[0].secdist=0;
+
+					if(pile_tabledata>0){pile_tabledata[0].secdist=0;}
 					for(let i=1;i<pile_tabledata.length;i++){
 						pile_tabledata[i].secdist=pile_tabledata[i].dist-pile_tabledata[i-1].dist;
 					}
@@ -1018,14 +678,44 @@
 			}
 		})
 	})
+
 	window.towerlistCalc = function(){
 		var form = new FormData();
 		form.append("ProjectName",prjName);
 		console.log("begindata");
-		console.log(towerlist_tabledata);
+		console.log("towerlistTabledata",towerlist_tabledata);
+		console.log("towerlist",towerlist);
+
+		//position and offset setting "J0"+"±123"
+		for(let j=0;j<towerlist_tabledata.length;j++){
+			let disToPile = []
+			for (let i = 0; i < pile_tabledata.length; i++) {
+				disToPile.push({
+					"name": pile_tabledata[i].name,
+					"dis": Math.abs(pile_tabledata[i].dist - towerlist_tabledata[j].Distance),
+					"value": i
+				})
+			}
+			function compare(property){
+				return function(a,b){
+					var value1 = a[property];
+					var value2 = b[property];
+					return value1 - value2;
+				}
+			}
+			disToPile.sort(compare("dis"));
+			for (let i = 0; i < pile_tabledata.length; i++) {
+				if (pile_tabledata[i].name == disToPile[0].name) {
+					towerlist_tabledata[j].Position = pile_tabledata[i].name
+					towerlist_tabledata[j].offset = Number((towerlist_tabledata[j].Distance- pile_tabledata[i].dist).toFixed(0));
+					break;
+				}
+			}
+		}
 
 		form.append("table",JSON.stringify(towerlist_tabledata));
 		//console.log(pile_table.m_jPile);   //txt append jsondata
+
 		$.ajax({
 			url: "http://202.114.118.138:8181/tbtowerlistCalc", //提交的路径
 			type: "post",       //提交方式
@@ -1147,9 +837,9 @@
 		console.log(horSize,verSize,xdivision,ydivision,mp.m_Grid,Gridsize,mp.m_CScale, mp.m_From,"update drawing");
 		drawDEM_whj(DEM);
 		MapCrossDraw(cross,false);  //cross added
-		window.initContent();
 		TowerDraw(towerlist_tabledata);
 		drawGeo(pile_tabledata);
+		window.initContent();
 		console.log(scene.children);
 	}
 
@@ -1210,8 +900,7 @@
 	console.log(secDEM);
 	$("#inputDem").click(function (){
 		//转角文件exist
-		if(parent.document.getElementById('tb_pile_input').files[0]==null){alert("选择转角文件");}
-		else {
+		//if(parent.document.getElementById('tb_pile_input').files[0]==null||pile_tabledata.length==0){alert("选择转角文件");}
 			layer.open({
 				type: 2,
 				title: 'DEM断面提取',
@@ -1269,7 +958,7 @@
 				}
 
 			})
-		}
+
 
 	})
 
@@ -1297,7 +986,15 @@
 			}
 		});
 		console.log("DEM,mp,cross updata",DEM,mp,cross);
-		$("#drawingpara").click();
+		//$("#drawingpara").click();
+		ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =mp.m_Grid;
+		horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
+		xMin = mp.m_From;
+		drawDEM_whj(DEM);
+		MapCrossDraw(cross,false);  //cross added
+		TowerDraw(towerlist_tabledata);
+		window.initContent();
+		drawGeo(pile_tabledata);
 	}
 
 	window.download = function(ProjectName,FileName) {
@@ -1333,23 +1030,26 @@
 	{
 	/* 新建工程 */
 	$('#creatProject').click(function(){
-		for (let i = 0; i < allChildren.length; i++){
-			group.remove(allChildren[i]);
-		}
-		for (let i = 0; i < scene.children.length; i++){
-			if (scene.children[i].name === "dem"||scene.children[i].name === "corner"){
-				dem.push(scene.children[i]);
-			}
-			if (scene.children[i].name === "fixTower"||scene.children[i].name === "wire"){
-				towerList.push(scene.children[i]);
-			}
-		}
-		for (let i = 0; i < dem.length; i++) {
-			scene.remove(dem[i]);
-		}
-		for (let i = 0; i < towerList.length; i++) {
-			scene.remove(towerList[i]);
-		}
+		// for (let i = 0; i < allChildren.length; i++){
+		// 	group.remove(allChildren[i]);
+		// }
+		// for (let i = 0; i < scene.children.length; i++){
+		// 	if (scene.children[i].name === "dem"||scene.children[i].name === "corner"){
+		// 		dem.push(scene.children[i]);
+		// 	}
+		// 	if (scene.children[i].name === "fixTower"||scene.children[i].name === "wire"){
+		// 		towerList.push(scene.children[i]);
+		// 	}
+		// }
+		// for (let i = 0; i < dem.length; i++) {
+		// 	scene.remove(dem[i]);
+		// }
+		// for (let i = 0; i < towerList.length; i++) {
+		// 	scene.remove(towerList[i]);
+		// }
+
+		//初始化数据参数
+		//xxxx
 		prjName = prompt("请输入新建工程名称","");
 		if(prjName){
 			document.getElementById('span_id').innerHTML = prjName;
@@ -1365,894 +1065,19 @@
 					console.log("createproject",data);
 
 					let json = data.prk;
-					console.log(json);
-					let lao = data.Lao;
-					console.log(lao);
-					var laoStr = JSON.stringify(lao);
-					var jsonStr = JSON.stringify(json);
+					lao = data.Lao;
 					savedJson.Lao = lao;
+					blankmp = data.Map.mp;
 					mp = data.Map.mp;
-
-
-					$('#guicheng').click(function () {
-						$('.edit').attr('disabled',true);
-						$('#database').attr('disabled',true);
-						$('#h2title').html($('#guicheng').html());
-						document.querySelector('#outlineTable').GM({
-							gridManagerName: 'outline',
-							supportAutoOrder: false,
-							supportDrag: false,
-							checkboxConfig: {
-								useRowCheck: true,
-								useRadio: true
-							},
-							ajaxData: {"data":[{id:1, name: '系统设置'}, {id: 2, name: '交叉跨越'}]},
-							columnData: columndataLeft,
-							checkedAfter: function (checkedList) {
-								if(checkedList[0].id === 1){
-									data = [];
-									console.log(json.PRIMARY);
-									data = [
-										{
-											'name': '电压等级',
-											'value':voltageArr[json.PRIMARY.voltage]
-										},
-										{
-											'name':'设计回路',
-											'value':circuitArr[json.PRIMARY.circuit - 1]
-										},
-										{
-											'name':'导线平均高度m',
-											'value':json.PRIMARY.windH
-										},
-										{
-											'name':'地面粗糙度系数a',
-											'value':json.PRIMARY.alfa
-										},
-										{
-											'name':'地线覆盖较冰导线增加mm',
-											'value':json.PRIMARY.dIce
-										},
-										{
-											'name':'导线过牵引长度m',
-											'value':json.PRIMARY.pLTract
-										},
-										{
-											'name':'孤立档最大档距m',
-											'value':json.PRIMARY.InsularMaxL
-										}
-									]
-									document.querySelector('#detailsTable').GM({
-										gridManagerName: 'details',
-										supportAutoOrder: false,
-										supportDrag: false,
-										supportCheckbox: false,
-										ajaxData: {"data":data},
-										columnData: columndataRight
-									});
-								}
-								else if (checkedList[0].id === 2){
-									$('#database').attr('disabled',false);
-									data = [];
-									console.log(json.PRIMARY.m_standard);
-									for (let i = 0; i < json.PRIMARY.m_standard.length; i++) {
-										data.push({'name':json.PRIMARY.m_standard[i].info,'value':json.PRIMARY.m_standard[i].dist})
-									}
-									document.querySelector('#detailsTable').GM({
-										gridManagerName: 'details',
-										supportAutoOrder: false,
-										supportDrag: false,
-										supportCheckbox: false,
-										ajaxData: {"data":data},
-										columnData: columndataRight
-									});
-								}
-							}
-						});
-					})
-
-					$('#daodixian').click(function () {
-						$('.edit').attr('disabled',false);
-						$('#database').attr('disabled',false);
-						$('#h2title').html($('#daodixian').html());
-						document.querySelector('#outlineTable').GM({
-							gridManagerName: 'outline',
-							supportAutoOrder: false,
-							supportDrag: false,
-							checkboxConfig: {
-								useRowCheck: true,
-								useRadio: true
-							},
-							ajaxData: {"data":[{id:1, name: ''}]},
-							columnData: columndataLeft,
-							checkedAfter: function (checkedList) {
-								if(checkedList[0].id === 1){
-									data = [];
-									console.log(json.CONDUCTOR[0]);
-									data = [
-										{
-											'name': '导地线类型',
-											'value':conductorArr[json.CONDUCTOR[0].type]
-										},
-										{
-											'name':'导地线截面积(mm^2)',
-											'value':json.CONDUCTOR[0].A
-										},
-										{
-											'name':'导地线直径(mm)',
-											'value':json.CONDUCTOR[0].d
-										},
-										{
-											'name':'计算拉断力(N)',
-											'value':json.CONDUCTOR[0].Tp
-										},
-										{
-											'name':'单位长度质量(kg/mm)',
-											'value':json.CONDUCTOR[0].p1
-										},
-										{
-											'name':'弹性系数(N/mm^2)',
-											'value':json.CONDUCTOR[0].E
-										},
-										{
-											'name':'膨胀系数x1E-6/℃',
-											'value':json.CONDUCTOR[0].a
-										},
-										{
-											'name':'导线分裂数',
-											'value':json.CONDUCTOR[0].num
-										}
-									]
-									document.querySelector('#detailsTable').GM({
-										gridManagerName: 'details',
-										supportAutoOrder: false,
-										supportDrag: false,
-										supportCheckbox: false,
-										ajaxData: {"data":data},
-										columnData: columndataRight
-									});
-								}
-							}
-						});
-					})
-
-					$('#qixiang').click(function () {
-						$('.edit').attr('disabled',false);
-						$('#database').attr('disabled',false);
-						$('#h2title').html($('#qixiang').html());
-						data = [];
-						for (let i = 0; i < json.WEATHER.length; i++) {
-							data.push({
-								'id':i+1,
-								'name':json.WEATHER[i].name
-							})
-						}
-						document.querySelector('#outlineTable').GM({
-							gridManagerName: 'outline',
-							supportAutoOrder: false,
-							supportDrag: false,
-							checkboxConfig: {
-								useRowCheck: true,
-								useRadio: true
-							},
-							ajaxData: {"data":data},
-							columnData: columndataLeft,
-							checkedAfter: function (checkedList) {
-								if (checkedList[0].id === 1) {
-									data = [];
-									for (let j = 0; j < json.WEATHER[0].TWI.length; j++) {
-										data.push({
-											'name': json.WEATHER[0].TWI[j].name,
-											't': json.WEATHER[0].TWI[j].t,
-											'v': json.WEATHER[0].TWI[j].v,
-											'b': json.WEATHER[0].TWI[j].b
-										})
-									}
-									document.querySelector('#detailsTable').GM({
-										gridManagerName: 'details',
-										supportAutoOrder: false,
-										supportDrag: false,
-										supportCheckbox: false,
-										ajaxData: {"data": data},
-										columnData: [{key: 'name', text: '气象条件'}, {key: 't', text: '温度℃'}, {
-											key: 'v',
-											text: '风速m/s'
-										}, {key: 'b', text: '覆冰(导)mm'}]
-									});
-								}
-								else if (checkedList[0].id === 2) {
-									data = [];
-									for (let j = 0; j < json.WEATHER[1].TWI.length; j++) {
-										data.push({
-											'name':json.WEATHER[1].TWI[j].name,
-											't':json.WEATHER[1].TWI[j].t,
-											'v':json.WEATHER[1].TWI[j].v,
-											'b':json.WEATHER[1].TWI[j].b
-										})
-									}
-									document.querySelector('#detailsTable').GM({
-										gridManagerName: 'details',
-										supportAutoOrder: false,
-										supportDrag: false,
-										supportCheckbox: false,
-										ajaxData: {"data":data},
-										columnData: [{key: 'name', text: '气象条件'}, {key: 't', text: '温度℃'},{key: 'v', text: '风速m/s'}, {key: 'b', text: '覆冰(导)mm'}]
-									});
-								}
-							}
-						});
-					})
-
-					$('#fenduan').click(function () {
-						$('.edit').attr('disabled',false);
-						$('#database').attr('disabled',true);
-						$('#h2title').html($('#fenduan').html());
-						document.querySelector('#outlineTable').GM({
-							gridManagerName: 'outline',
-							supportAutoOrder: false,
-							supportDrag: false,
-							checkboxConfig: {
-								useRowCheck: true,
-								useRadio: true
-							},
-							ajaxData: {"data":[{id:1, name: json.SECTION[0].name}]},
-							columnData: columndataLeft,
-							checkedAfter: function (checkedList) {
-								if(checkedList[0].id === 1){
-									data = [];
-									console.log(json.SECTION[0]);
-									data = [
-										{
-											'name': '起始桩号',
-											'value':json.SECTION[0].starJ
-										},
-										{
-											'name':'起始累距',
-											'value':json.SECTION[0].from
-										},
-										{
-											'name':'终点桩号',
-											'value':json.SECTION[0].endJ
-										},
-										{
-											'name':'终点累距',
-											'value':json.SECTION[0].to
-										},
-										{
-											'name':'气象区名称',
-											'value':json.SECTION[0].wertherName
-										},
-										{
-											'name':'导线型号',
-											'value':json.SECTION[0].powerLine
-										},
-										{
-											'name':'导线新线系数',
-											'value':json.SECTION[0].pLineK
-										},
-										{
-											'name':'导线安全系数',
-											'value':json.SECTION[0].pLineF
-										},
-										{
-											'name':'导线年平运行张力上限',
-											'value':json.SECTION[0].pLineC
-										},
-										{
-											'name':'地线型号',
-											'value':json.SECTION[0].groundLine
-										},
-										{
-											'name':'地线新线系数',
-											'value':json.SECTION[0].gLineK
-										},
-										{
-											'name':'地线安全系数',
-											'value':json.SECTION[0].gLineF
-										},
-										{
-											'name':'地线年平运行张力上限',
-											'value':json.SECTION[0].gLineC
-										},
-										{
-											'name':'设计回路',
-											'value':circuitArr[json.SECTION[0].circuit - 1]
-										}
-									]
-									document.querySelector('#detailsTable').GM({
-										gridManagerName: 'details',
-										supportAutoOrder: false,
-										supportDrag: false,
-										supportCheckbox: false,
-										ajaxData: {"data":data},
-										columnData: columndataRight
-									});
-								}
-							}
-						});
-					})
-
-					$('#gantashiyong').click(function () {
-						$('.edit').attr('disabled',false);
-						$('#database').attr('disabled',false);
-						$('#h2title').html($('#gantashiyong').html());
-						data = [];
-						for (let i = 0; i < json.TOWER.length; i++) {
-							data.push({
-								'id':i+1,
-								'name':json.TOWER[i].Name,
-								'NO':json.TOWER[i].No
-							})
-						}
-						document.querySelector('#outlineTable').GM({
-							gridManagerName: 'outline',
-							supportAutoOrder: false,
-							supportDrag: false,
-							checkboxConfig: {
-								useRowCheck: true,
-								useRadio: true
-							},
-							ajaxData: {"data":data},
-							columnData: columndataLeft,
-							checkedAfter: function (checkedList) {
-								for (let j = 0; j < json.TOWER.length; j++) {
-									if ( j === checkedList[0].NO){
-										data = [];
-										data = [
-											{
-												'name': '杆塔类型',
-												'value': towerArr[json.TOWER[j].type]
-											},
-											{
-												'name': '最大档距(m)',
-												'value': json.TOWER[j].MaxL
-											},
-											{
-												'name': '水平档距(m)',
-												'value': json.TOWER[j].LH
-											},
-											{
-												'name': '垂直档距(m)',
-												'value': json.TOWER[j].LV
-											},
-											{
-												'name': '起始呼高(m)',
-												'value': json.TOWER[j].StartHigh
-											},
-											{
-												'name':'级差增量(m)',
-												'value':json.TOWER[j].Dhigh
-											},
-											{
-												'name': '终止呼高(m)',
-												'value': json.TOWER[j].EndHigh
-											},
-											{
-												'name': '最小转角度数(°)',
-												'value': json.TOWER[j].MinAngle
-											},
-											{
-												'name': '最大转角度数(°)',
-												'value': json.TOWER[j].MaxAngle
-											},
-											{
-												'name': '角度折算水平档距(m/°)',
-												'value': json.TOWER[j].Angle2LH
-											},
-											{
-												'name': '摇摆角kv值',
-												'value': json.TOWER[j].KV
-											},
-											{
-												'name':'大风工况摇摆角(°)',
-												'value':json.TOWER[j].sway.WindA
-											},
-											{
-												'name':'内过电压摇摆角(°)',
-												'value':json.TOWER[j].sway.OperationA
-											},
-											{
-												'name':'外过电压摇摆角(°)',
-												'value':json.TOWER[j].sway.AtomosphereA
-											},
-											{
-												'name':'带电作业摇摆角(°)',
-												'value':json.TOWER[j].sway.ElecA
-											},
-											{
-												'name': '最大横担长度(m)',
-												'value': json.TOWER[j].Dist
-											},
-											{
-												'name': '地线支架高度(m)',
-												'value': json.TOWER[j].upToTop
-											},
-											{
-												'name': '上中导线高差(m)',
-												'value': json.TOWER[j].upToMid
-											},
-											{
-												'name': '中下导线高差(m)',
-												'value': json.TOWER[j].minToDown
-											},
-											{
-												'name': '其他附加属性',
-												'value': toweraddTypeArr[json.TOWER[j].typeEx - 1]
-											},
-											{
-												'name': '最低塔正面根开(m)',
-												'value': json.TOWER[j].baseLw
-											},
-											{
-												'name': '最低塔侧面根开(m)',
-												'value': json.TOWER[j].baseLl
-											},
-											{
-												'name': '最高塔正面根开(m)',
-												'value': json.TOWER[j].baseHw
-											},
-											{
-												'name': '最高塔侧面根开(m)',
-												'value': json.TOWER[j].baseHl
-											},
-											{
-												'name': '杆塔分组号',
-												'value': json.TOWER[j].Group
-											}];
-										document.querySelector('#detailsTable').GM({
-											gridManagerName: 'details',
-											supportAutoOrder: false,
-											supportDrag: false,
-											supportCheckbox: false,
-											ajaxData: {"data": data},
-											columnData: columndataRight
-										});
-									}
-								}
-							}
-						});
-					})
-
-					$('#gantatacai').click(function () {
-						$('.edit').attr('disabled',true);
-						$('#database').attr('disabled',false);
-						$('#h2title').html($('#gantatacai').html());
-						data = [];
-						for (let i = 0; i < json.TOWER.length; i++) {
-							data.push({
-								'id':i+1,
-								'name':json.TOWER[i].Name,
-								'NO':json.TOWER[i].No
-							})
-						}
-						document.querySelector('#outlineTable').GM({
-							gridManagerName: 'outline',
-							supportAutoOrder: false,
-							supportDrag: false,
-							checkboxConfig: {
-								useRowCheck: true,
-								useRadio: true
-							},
-							ajaxData: {"data":data},
-							columnData: columndataLeft,
-							checkedAfter: function (checkedList) {
-								for (let j = 0; j < json.TOWER.length; j++) {
-									if ( j === checkedList[0].NO){
-										data = [];
-										for (let k = 0; k < json.TOWER[j].price.length; k++){
-											data.push({
-												'name':json.TOWER[j].Name + '-' + json.TOWER[j].price[k].High,
-												'Weight':json.TOWER[j].price[k].Weight,
-												'BaseWight':json.TOWER[j].price[k].BaseWight,
-												'BaseM':json.TOWER[j].price[k].BaseM,
-												'JJ':json.TOWER[j].price[k].JJ
-											})
-											document.querySelector('#detailsTable').GM({
-												gridManagerName: 'details',
-												supportAutoOrder: false,
-												supportDrag: false,
-												supportCheckbox: false,
-												ajaxData: {"data": data},
-												columnData: [{key: 'name', text: '杆塔名称'}, {key: 'Weight', text: '塔材(kg)'},{key: 'BaseWight', text: '基础钢材(kg)'}, {key: 'BaseM', text: '混凝土(吨)'}, {key: 'JJ', text: '串折算'}]
-											});
-										}
-
-									}
-								}
-							}
-						});
-					})
-
-					$('#jueyuancan').click(function () {
-						$('.edit').attr('disabled',false);
-						$('#database').attr('disabled',false);
-						$('#h2title').html($('#jueyuancan').html());
-						data = [];
-						for (let i = 0; i < json.INSULATE.length; i++) {
-							data.push({
-								'id':i+1,
-								'name':json.INSULATE[i].name
-							})
-						}
-						document.querySelector('#outlineTable').GM({
-							gridManagerName: 'outline',
-							supportAutoOrder: false,
-							supportDrag: false,
-							checkboxConfig: {
-								useRowCheck: true,
-								useRadio: true
-							},
-							ajaxData: {"data":data},
-							columnData: columndataLeft,
-							checkedAfter: function (checkedList) {
-								// console.log(checkedList);
-								for (let j = 0; j < json.INSULATE.length; j++) {
-									if ( j === (checkedList[0].id - 1)){
-										data = [];
-										data = [
-											{
-												'name': '绝缘子串类型',
-												'value': insulateArr[json.INSULATE[j].type]
-											},
-											{
-												'name': '单联双联',
-												'value': sindouArr[json.INSULATE[j].Join - 1]
-											},
-											{
-												'name': '每联片数',
-												'value': json.INSULATE[j].Num
-											},
-											{
-												'name': '无冰串重(kg)',
-												'value': json.INSULATE[j].Weight
-											},
-											{
-												'name': '单片覆冰(kg)',
-												'value': json.INSULATE[j].IceWeight
-											},
-											{
-												'name':'等效串长(m)',
-												'value':json.INSULATE[j].Length
-											},
-											{
-												'name': '单片受风面积(m^2)',
-												'value': json.INSULATE[j].area
-											},
-											{
-												'name': '金具受风折算系数',
-												'value': json.INSULATE[j].k
-											},
-											{
-												'name': '绝缘子常年荷载安全系数',
-												'value': json.INSULATE[j].avergeK
-											},
-											{
-												'name': '绝缘子最大荷载安全系数',
-												'value': json.INSULATE[j].maxK
-											},
-											{
-												'name': '绝缘子断线工况安全系数',
-												'value': json.INSULATE[j].lineBrokeK
-											},
-											{
-												'name':'绝缘子破坏荷载(kN)',
-												'value':json.INSULATE[j].Strength
-											},
-											{
-												'name':'金具最大荷载安全系数',
-												'value':json.INSULATE[j].jjmaxK
-											},
-											{
-												'name':'金具断线工况安全系数',
-												'value':json.INSULATE[j].jjlineBrokeK
-											},
-											{
-												'name':'金具破坏荷载(kN)',
-												'value':json.INSULATE[j].jjStrength
-											},
-											{
-												'name': 'V型串夹角(°)',
-												'value': json.INSULATE[j].angleV
-											},
-											{
-												'name': '污秽区使用条件',
-												'value': dirtyareaArr[json.INSULATE[j].dirtyTpye]
-											},
-											{
-												'name': '绝缘子材料',
-												'value': insulateMateArr[json.INSULATE[j].material]
-											}];
-										document.querySelector('#detailsTable').GM({
-											gridManagerName: 'details',
-											supportAutoOrder: false,
-											supportDrag: false,
-											supportCheckbox: false,
-											ajaxData: {"data": data},
-											columnData: columndataRight
-										});
-									}
-								}
-							}
-						});
-					})
-
-					$('#jueyuancai').click(function () {
-						$('.edit').attr('disabled',true);
-						$('#database').attr('disabled',false);
-						$('#h2title').html($('#jueyuancai').html());
-						data = [];
-						for (let i = 0; i < json.INSULATE.length; i++) {
-							data.push({
-								'id':i+1,
-								'name':json.INSULATE[i].name
-							})
-						}
-						document.querySelector('#outlineTable').GM({
-							gridManagerName: 'outline',
-							supportAutoOrder: false,
-							supportDrag: false,
-							checkboxConfig: {
-								useRowCheck: true,
-								useRadio: true
-							},
-							ajaxData: {"data":data},
-							columnData: columndataLeft,
-							checkedAfter: function (checkedList) {
-								for (let j = 0; j < json.INSULATE.length; j++) {
-									if ( j === (checkedList[0].id - 1)){
-										data = [];
-										for (let k = 0; k < json.INSULATE[j].metrial.length; k++){
-											data.push({
-												'name':json.INSULATE[j].metrial[k].Name,
-												'Type':json.INSULATE[j].metrial[k].Type,
-												'Count':json.INSULATE[j].metrial[k].Count,
-												'Weight':json.INSULATE[j].metrial[k].Weight,
-												'about':json.INSULATE[j].metrial[k].about,
-												'unit':json.INSULATE[j].metrial[k].unit
-											})
-											document.querySelector('#detailsTable').GM({
-												gridManagerName: 'details',
-												supportAutoOrder: false,
-												supportDrag: false,
-												supportCheckbox: false,
-												ajaxData: {"data": data},
-												columnData: [{key: 'name', text: '材料名称'}, {key: 'Type', text: '材料型号'},{key: 'unit', text: '单位'},  {key: 'Weight', text: '单重'},{key: 'Count', text: '数量'}, {key: 'about', text: '备注'}]
-											});
-										}
-
-									}
-								}
-							}
-						});
-					})
-
-					$('#jiedican').click(function () {
-						$('.edit').attr('disabled',false);
-						$('#database').attr('disabled',false);
-						$('#h2title').html($('#jiedican').html());
-						data = [];
-						for (let i = 0; i < json.GCONNECT.length; i++) {
-							data.push({
-								'id':i+1,
-								'name':json.GCONNECT[i].Type
-							})
-						}
-						document.querySelector('#outlineTable').GM({
-							gridManagerName: 'outline',
-							supportAutoOrder: false,
-							supportDrag: false,
-							checkboxConfig: {
-								useRowCheck: true,
-								useRadio: true
-							},
-							ajaxData: {"data":data},
-							columnData: columndataLeft,
-							checkedAfter: function (checkedList) {
-								// console.log(checkedList);
-								for (let j = 0; j < json.GCONNECT.length; j++) {
-									if ( j === (checkedList[0].id - 1)){
-										data = [];
-										data = [
-											{
-												'name': '适用塔型',
-												'value': toweraddTypeArr[json.GCONNECT[j].TowerType - 1]
-											},
-											{
-												'name': '最小大地电阻率',
-												'value': json.GCONNECT[j].minResistance
-											},
-											{
-												'name': '最大大地电阻率',
-												'value': json.GCONNECT[j].maxResistance
-											}];
-										document.querySelector('#detailsTable').GM({
-											gridManagerName: 'details',
-											supportAutoOrder: false,
-											supportDrag: false,
-											supportCheckbox: false,
-											ajaxData: {"data": data},
-											columnData: columndataRight
-										});
-									}
-								}
-							}
-						});
-					})
-
-					$('#jiedicai').click(function () {
-						$('.edit').attr('disabled',true);
-						$('#database').attr('disabled',false);
-						$('#h2title').html($('#jiedicai').html());
-						data = [];
-						for (let i = 0; i < json.GCONNECT.length; i++) {
-							data.push({
-								'id':i+1,
-								'name':json.GCONNECT[i].Type
-							})
-						}
-						document.querySelector('#outlineTable').GM({
-							gridManagerName: 'outline',
-							supportAutoOrder: false,
-							supportDrag: false,
-							checkboxConfig: {
-								useRowCheck: true,
-								useRadio: true
-							},
-							ajaxData: {"data":data},
-							columnData: columndataLeft,
-							checkedAfter: function (checkedList) {
-								for (let j = 0; j < json.GCONNECT.length; j++) {
-									if ( j === (checkedList[0].id - 1)){
-										data = [];
-										for (let k = 0; k < json.GCONNECT[j].metrial.length; k++){
-											data.push({
-												'name':json.GCONNECT[j].metrial[k].Name,
-												'Type':json.GCONNECT[j].metrial[k].Type,
-												'Count':json.GCONNECT[j].metrial[k].Count,
-												'Weight':json.GCONNECT[j].metrial[k].Weight,
-												'about':json.GCONNECT[j].metrial[k].about,
-												'unit':json.GCONNECT[j].metrial[k].unit
-											})
-											document.querySelector('#detailsTable').GM({
-												gridManagerName: 'details',
-												supportAutoOrder: false,
-												supportDrag: false,
-												supportCheckbox: false,
-												ajaxData: {"data": data},
-												columnData: [{key: 'name', text: '材料名称'}, {key: 'Type', text: '材料型号'},{key: 'unit', text: '单位'},  {key: 'Weight', text: '单重'},{key: 'Count', text: '数量'}, {key: 'about', text: '备注'}]
-											});
-										}
-
-									}
-								}
-							}
-						});
-					})
-
-					$('#fangzhenchui').click(function () {
-						$('#database').attr('disabled',true);
-						$('.edit').attr('disabled',false);
-						$('#h2title').html($('#fangzhenchui').html());
-						data = [];
-						for (let i = 0; i < json.HAMMER.length; i++) {
-							data.push({
-								'id':i+1,
-								'name':json.HAMMER[i].Name
-							})
-						}
-						document.querySelector('#outlineTable').GM({
-							gridManagerName: 'outline',
-							supportAutoOrder: false,
-							supportDrag: false,
-							checkboxConfig: {
-								useRowCheck: true,
-								useRadio: true
-							},
-							ajaxData: {"data":data},
-							columnData: columndataLeft,
-							checkedAfter: function (checkedList) {
-								// console.log(checkedList);
-								for (let j = 0; j < json.HAMMER.length; j++) {
-									if ( j === (checkedList[0].id - 1)){
-										data = [{'name':'适用导地线','value': json.HAMMER[j].lineName}];
-										for (let i = 0; i < json.HAMMER[j].fRNum.length; i++) {
-											data.push({
-												'name':'第'+(i+1)+'组规则',
-												'value':json.HAMMER[j].fRNum[i],
-												'upLimit':json.HAMMER[j].upLimit[i]
-											})
-										}
-										document.querySelector('#detailsTable').GM({
-											gridManagerName: 'details',
-											supportAutoOrder: false,
-											supportDrag: false,
-											supportCheckbox: false,
-											ajaxData: {"data": data},
-											columnData:  [{key: 'name', text: '参数名称'}, {key: 'value', text: '型号/数量'},{key: 'upLimit', text: '适用档距上限'}]
-										});
-									}
-								}
-							}
-						});
-					})
-
-					$('#save').click(function () {
-						var formData = new FormData();
-						formData.append("prk",prkStr);
-						formData.append("ProjectName", prjName);
-
-						$.ajax({
-							url: "http://202.114.118.138:8181/prksave", //提交的路径
-							type: "post",       //提交方式
-							data: formData,    //提交的数据
-							// dataType:"json",
-							// async: false,
-							// cache: false,
-							contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-							processData: false,
-							success: function (data) {
-								alert("保存成功！");
-								console.log(data.data);
-							},
-							error: function (errorMsg) {
-								alert(errorMsg);
-							}
-						});
-					})
-
-					var prjformData = new FormData();
-
-					prjformData.append("prk",prkStr);
-					prjformData.append("lao",laoStr);
-					prjformData.append("PointFile","J1-J18.txt");
-					prjformData.append("DemFile","DEM.EGX");
-					prjformData.append("ProjectName", prjName);
-					$('#savePrj').click(function () {
-						$.ajax({
-							url: "http://202.114.118.138:8181/projectsave", //提交的路径
-							type: "post",       //提交方式
-							data: prjformData,    //提交的数据
-							// dataType:"json",
-							contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-							processData: false,
-							success: function (data) {
-								console.log(data);
-								alert("保存成功！");
-							},
-							error: function (errorMsg) {
-								alert(errorMsg);
-							}
-						});
-					})
-
-					$('#saveMap').click(function () {
-
-						let Map = {
-							"mp":mp,
-							"DEM":DEM,
-							"cross":cross
-						};
-						var demgeoCal = {
-							"ProjectName":prjName,
-							"MapFileName":(MapFileName+".MAP").toString(),
-							"JsonMap":JSON.stringify(Map)
-						}
-						console.log(Map);
-						$.ajax({
-							url: "http://202.114.118.138:8181/MapSaveObj", //提交的路径
-							type: "post",       //提交方式
-							data: demgeoCal,    //提交的数据
-							//dataType:"json",
-							success: function (data) {
-								console.log(data);
-								alert("保存成功！");
-							},
-							error: function (errorMsg) {
-								//alert(errorMsg);
-								console.log(errorMsg);
-							}
-						});
-					})
+					prk = data.prk;
+					towerStartHei = prk.TOWER[0].StartHigh;
+					towerEndHei = prk.TOWER[0].EndHigh;
+					towerHeiDif = towerEndHei - towerStartHei;
+					towerHeiInDif = prk.TOWER[0].Dhigh;
+					towerHeiArray.length = towerHeiDif / towerHeiInDif + 1;
+					for (let i = 0; i < towerHeiArray.length; i++) {
+						towerHeiArray[i] = towerStartHei + i * towerHeiInDif;
+					}
 				},
 				error: function (errorMsg) {
 					//alert(errorMsg);
@@ -2260,36 +1085,913 @@
 			});
 		}
 	})
+
+	$('#guicheng').click(function () {
+			$('.edit').attr('disabled',true);
+			$('#database').attr('disabled',true);
+			$('#h2title').html($('#guicheng').html());
+			document.querySelector('#outlineTable').GM({
+				gridManagerName: 'outline',
+				supportAutoOrder: false,
+				supportDrag: false,
+				checkboxConfig: {
+					useRowCheck: true,
+					useRadio: true
+				},
+				ajaxData: {"data":[{id:1, name: '系统设置'}, {id: 2, name: '交叉跨越'}]},
+				columnData: columndataLeft,
+				checkedAfter: function (checkedList) {
+					if(checkedList[0].id === 1){
+						data = [];
+						console.log(prk.PRIMARY);
+						data = [
+							{
+								'name': '电压等级',
+								'value':voltageArr[prk.PRIMARY.voltage]
+							},
+							{
+								'name':'设计回路',
+								'value':circuitArr[prk.PRIMARY.circuit - 1]
+							},
+							{
+								'name':'导线平均高度m',
+								'value':prk.PRIMARY.windH
+							},
+							{
+								'name':'地面粗糙度系数a',
+								'value':prk.PRIMARY.alfa
+							},
+							{
+								'name':'地线覆盖较冰导线增加mm',
+								'value':prk.PRIMARY.dIce
+							},
+							{
+								'name':'导线过牵引长度m',
+								'value':prk.PRIMARY.pLTract
+							},
+							{
+								'name':'孤立档最大档距m',
+								'value':prk.PRIMARY.InsularMaxL
+							}
+						]
+						document.querySelector('#detailsTable').GM({
+							gridManagerName: 'details',
+							supportAutoOrder: false,
+							supportDrag: false,
+							supportCheckbox: false,
+							ajaxData: {"data":data},
+							columnData: columndataRight
+						});
+					}
+					else if (checkedList[0].id === 2){
+						$('#database').attr('disabled',false);
+						data = [];
+						console.log(prk.PRIMARY.m_standard);
+						for (let i = 0; i < prk.PRIMARY.m_standard.length; i++) {
+							data.push({'name':prk.PRIMARY.m_standard[i].info,'value':prk.PRIMARY.m_standard[i].dist})
+						}
+						document.querySelector('#detailsTable').GM({
+							gridManagerName: 'details',
+							supportAutoOrder: false,
+							supportDrag: false,
+							supportCheckbox: false,
+							ajaxData: {"data":data},
+							columnData: columndataRight
+						});
+					}
+				}
+			});
+		})
+	$('#daodixian').click(function () {
+			$('.edit').attr('disabled',false);
+			$('#database').attr('disabled',false);
+			$('#h2title').html($('#daodixian').html());
+			document.querySelector('#outlineTable').GM({
+				gridManagerName: 'outline',
+				supportAutoOrder: false,
+				supportDrag: false,
+				checkboxConfig: {
+					useRowCheck: true,
+					useRadio: true
+				},
+				ajaxData: {"data":[{id:1, name: ''}]},
+				columnData: columndataLeft,
+				checkedAfter: function (checkedList) {
+					if(checkedList[0].id === 1){
+						data = [];
+						console.log(prk.CONDUCTOR[0]);
+						data = [
+							{
+								'name': '导地线类型',
+								'value':conductorArr[prk.CONDUCTOR[0].type]
+							},
+							{
+								'name':'导地线截面积(mm^2)',
+								'value':prk.CONDUCTOR[0].A
+							},
+							{
+								'name':'导地线直径(mm)',
+								'value':prk.CONDUCTOR[0].d
+							},
+							{
+								'name':'计算拉断力(N)',
+								'value':prk.CONDUCTOR[0].Tp
+							},
+							{
+								'name':'单位长度质量(kg/mm)',
+								'value':prk.CONDUCTOR[0].p1
+							},
+							{
+								'name':'弹性系数(N/mm^2)',
+								'value':prk.CONDUCTOR[0].E
+							},
+							{
+								'name':'膨胀系数x1E-6/℃',
+								'value':prk.CONDUCTOR[0].a
+							},
+							{
+								'name':'导线分裂数',
+								'value':prk.CONDUCTOR[0].num
+							}
+						]
+						document.querySelector('#detailsTable').GM({
+							gridManagerName: 'details',
+							supportAutoOrder: false,
+							supportDrag: false,
+							supportCheckbox: false,
+							ajaxData: {"data":data},
+							columnData: columndataRight
+						});
+					}
+				}
+			});
+		})
+	$('#qixiang').click(function () {
+			$('.edit').attr('disabled',false);
+			$('#database').attr('disabled',false);
+			$('#h2title').html($('#qixiang').html());
+			data = [];
+			for (let i = 0; i < prk.WEATHER.length; i++) {
+				data.push({
+					'id':i+1,
+					'name':prk.WEATHER[i].name
+				})
+			}
+			document.querySelector('#outlineTable').GM({
+				gridManagerName: 'outline',
+				supportAutoOrder: false,
+				supportDrag: false,
+				checkboxConfig: {
+					useRowCheck: true,
+					useRadio: true
+				},
+				ajaxData: {"data":data},
+				columnData: columndataLeft,
+				checkedAfter: function (checkedList) {
+					if (checkedList[0].id === 1) {
+						data = [];
+						for (let j = 0; j < prk.WEATHER[0].TWI.length; j++) {
+							data.push({
+								'name': prk.WEATHER[0].TWI[j].name,
+								't': prk.WEATHER[0].TWI[j].t,
+								'v': prk.WEATHER[0].TWI[j].v,
+								'b': prk.WEATHER[0].TWI[j].b
+							})
+						}
+						document.querySelector('#detailsTable').GM({
+							gridManagerName: 'details',
+							supportAutoOrder: false,
+							supportDrag: false,
+							supportCheckbox: false,
+							ajaxData: {"data": data},
+							columnData: [{key: 'name', text: '气象条件'}, {key: 't', text: '温度℃'}, {
+								key: 'v',
+								text: '风速m/s'
+							}, {key: 'b', text: '覆冰(导)mm'}]
+						});
+					}
+					else if (checkedList[0].id === 2) {
+						data = [];
+						for (let j = 0; j < prk.WEATHER[1].TWI.length; j++) {
+							data.push({
+								'name':prk.WEATHER[1].TWI[j].name,
+								't':prk.WEATHER[1].TWI[j].t,
+								'v':prk.WEATHER[1].TWI[j].v,
+								'b':prk.WEATHER[1].TWI[j].b
+							})
+						}
+						document.querySelector('#detailsTable').GM({
+							gridManagerName: 'details',
+							supportAutoOrder: false,
+							supportDrag: false,
+							supportCheckbox: false,
+							ajaxData: {"data":data},
+							columnData: [{key: 'name', text: '气象条件'}, {key: 't', text: '温度℃'},{key: 'v', text: '风速m/s'}, {key: 'b', text: '覆冰(导)mm'}]
+						});
+					}
+				}
+			});
+		})
+	$('#fenduan').click(function () {
+			$('.edit').attr('disabled',false);
+			$('#database').attr('disabled',true);
+			$('#h2title').html($('#fenduan').html());
+			document.querySelector('#outlineTable').GM({
+				gridManagerName: 'outline',
+				supportAutoOrder: false,
+				supportDrag: false,
+				checkboxConfig: {
+					useRowCheck: true,
+					useRadio: true
+				},
+				ajaxData: {"data":[{id:1, name: prk.SECTION[0].name}]},
+				columnData: columndataLeft,
+				checkedAfter: function (checkedList) {
+					if(checkedList[0].id === 1){
+						data = [];
+						console.log(prk.SECTION[0]);
+						data = [
+							{
+								'name': '起始桩号',
+								'value':prk.SECTION[0].starJ
+							},
+							{
+								'name':'起始累距',
+								'value':prk.SECTION[0].from
+							},
+							{
+								'name':'终点桩号',
+								'value':prk.SECTION[0].endJ
+							},
+							{
+								'name':'终点累距',
+								'value':prk.SECTION[0].to
+							},
+							{
+								'name':'气象区名称',
+								'value':prk.SECTION[0].wertherName
+							},
+							{
+								'name':'导线型号',
+								'value':prk.SECTION[0].powerLine
+							},
+							{
+								'name':'导线新线系数',
+								'value':prk.SECTION[0].pLineK
+							},
+							{
+								'name':'导线安全系数',
+								'value':prk.SECTION[0].pLineF
+							},
+							{
+								'name':'导线年平运行张力上限',
+								'value':prk.SECTION[0].pLineC
+							},
+							{
+								'name':'地线型号',
+								'value':prk.SECTION[0].groundLine
+							},
+							{
+								'name':'地线新线系数',
+								'value':prk.SECTION[0].gLineK
+							},
+							{
+								'name':'地线安全系数',
+								'value':prk.SECTION[0].gLineF
+							},
+							{
+								'name':'地线年平运行张力上限',
+								'value':prk.SECTION[0].gLineC
+							},
+							{
+								'name':'设计回路',
+								'value':circuitArr[prk.SECTION[0].circuit - 1]
+							}
+						]
+						document.querySelector('#detailsTable').GM({
+							gridManagerName: 'details',
+							supportAutoOrder: false,
+							supportDrag: false,
+							supportCheckbox: false,
+							ajaxData: {"data":data},
+							columnData: columndataRight
+						});
+					}
+				}
+			});
+		})
+	$('#gantashiyong').click(function () {
+			$('.edit').attr('disabled',false);
+			$('#database').attr('disabled',false);
+			$('#h2title').html($('#gantashiyong').html());
+			data = [];
+			for (let i = 0; i < prk.TOWER.length; i++) {
+				data.push({
+					'id':i+1,
+					'name':prk.TOWER[i].Name,
+					'NO':prk.TOWER[i].No
+				})
+			}
+			document.querySelector('#outlineTable').GM({
+				gridManagerName: 'outline',
+				supportAutoOrder: false,
+				supportDrag: false,
+				checkboxConfig: {
+					useRowCheck: true,
+					useRadio: true
+				},
+				ajaxData: {"data":data},
+				columnData: columndataLeft,
+				checkedAfter: function (checkedList) {
+					for (let j = 0; j < prk.TOWER.length; j++) {
+						if ( j === checkedList[0].NO){
+							data = [];
+							data = [
+								{
+									'name': '杆塔类型',
+									'value': towerArr[prk.TOWER[j].type]
+								},
+								{
+									'name': '最大档距(m)',
+									'value': prk.TOWER[j].MaxL
+								},
+								{
+									'name': '水平档距(m)',
+									'value': prk.TOWER[j].LH
+								},
+								{
+									'name': '垂直档距(m)',
+									'value': prk.TOWER[j].LV
+								},
+								{
+									'name': '起始呼高(m)',
+									'value': prk.TOWER[j].StartHigh
+								},
+								{
+									'name':'级差增量(m)',
+									'value':prk.TOWER[j].Dhigh
+								},
+								{
+									'name': '终止呼高(m)',
+									'value': prk.TOWER[j].EndHigh
+								},
+								{
+									'name': '最小转角度数(°)',
+									'value': prk.TOWER[j].MinAngle
+								},
+								{
+									'name': '最大转角度数(°)',
+									'value': prk.TOWER[j].MaxAngle
+								},
+								{
+									'name': '角度折算水平档距(m/°)',
+									'value': prk.TOWER[j].Angle2LH
+								},
+								{
+									'name': '摇摆角kv值',
+									'value': prk.TOWER[j].KV
+								},
+								{
+									'name':'大风工况摇摆角(°)',
+									'value':prk.TOWER[j].sway.WindA
+								},
+								{
+									'name':'内过电压摇摆角(°)',
+									'value':prk.TOWER[j].sway.OperationA
+								},
+								{
+									'name':'外过电压摇摆角(°)',
+									'value':prk.TOWER[j].sway.AtomosphereA
+								},
+								{
+									'name':'带电作业摇摆角(°)',
+									'value':prk.TOWER[j].sway.ElecA
+								},
+								{
+									'name': '最大横担长度(m)',
+									'value': prk.TOWER[j].Dist
+								},
+								{
+									'name': '地线支架高度(m)',
+									'value': prk.TOWER[j].upToTop
+								},
+								{
+									'name': '上中导线高差(m)',
+									'value': prk.TOWER[j].upToMid
+								},
+								{
+									'name': '中下导线高差(m)',
+									'value': prk.TOWER[j].minToDown
+								},
+								{
+									'name': '其他附加属性',
+									'value': toweraddTypeArr[prk.TOWER[j].typeEx - 1]
+								},
+								{
+									'name': '最低塔正面根开(m)',
+									'value': prk.TOWER[j].baseLw
+								},
+								{
+									'name': '最低塔侧面根开(m)',
+									'value': prk.TOWER[j].baseLl
+								},
+								{
+									'name': '最高塔正面根开(m)',
+									'value': prk.TOWER[j].baseHw
+								},
+								{
+									'name': '最高塔侧面根开(m)',
+									'value': prk.TOWER[j].baseHl
+								},
+								{
+									'name': '杆塔分组号',
+									'value': prk.TOWER[j].Group
+								}];
+							document.querySelector('#detailsTable').GM({
+								gridManagerName: 'details',
+								supportAutoOrder: false,
+								supportDrag: false,
+								supportCheckbox: false,
+								ajaxData: {"data": data},
+								columnData: columndataRight
+							});
+						}
+					}
+				}
+			});
+		})
+	$('#gantatacai').click(function () {
+			$('.edit').attr('disabled',true);
+			$('#database').attr('disabled',false);
+			$('#h2title').html($('#gantatacai').html());
+			data = [];
+			for (let i = 0; i < prk.TOWER.length; i++) {
+				data.push({
+					'id':i+1,
+					'name':prk.TOWER[i].Name,
+					'NO':prk.TOWER[i].No
+				})
+			}
+			document.querySelector('#outlineTable').GM({
+				gridManagerName: 'outline',
+				supportAutoOrder: false,
+				supportDrag: false,
+				checkboxConfig: {
+					useRowCheck: true,
+					useRadio: true
+				},
+				ajaxData: {"data":data},
+				columnData: columndataLeft,
+				checkedAfter: function (checkedList) {
+					for (let j = 0; j < prk.TOWER.length; j++) {
+						if ( j === checkedList[0].NO){
+							data = [];
+							for (let k = 0; k < prk.TOWER[j].price.length; k++){
+								data.push({
+									'name':prk.TOWER[j].Name + '-' + prk.TOWER[j].price[k].High,
+									'Weight':prk.TOWER[j].price[k].Weight,
+									'BaseWight':prk.TOWER[j].price[k].BaseWight,
+									'BaseM':prk.TOWER[j].price[k].BaseM,
+									'JJ':prk.TOWER[j].price[k].JJ
+								})
+								document.querySelector('#detailsTable').GM({
+									gridManagerName: 'details',
+									supportAutoOrder: false,
+									supportDrag: false,
+									supportCheckbox: false,
+									ajaxData: {"data": data},
+									columnData: [{key: 'name', text: '杆塔名称'}, {key: 'Weight', text: '塔材(kg)'},{key: 'BaseWight', text: '基础钢材(kg)'}, {key: 'BaseM', text: '混凝土(吨)'}, {key: 'JJ', text: '串折算'}]
+								});
+							}
+
+						}
+					}
+				}
+			});
+		})
+	$('#jueyuancan').click(function () {
+			$('.edit').attr('disabled',false);
+			$('#database').attr('disabled',false);
+			$('#h2title').html($('#jueyuancan').html());
+			data = [];
+			for (let i = 0; i < prk.INSULATE.length; i++) {
+				data.push({
+					'id':i+1,
+					'name':prk.INSULATE[i].name
+				})
+			}
+			document.querySelector('#outlineTable').GM({
+				gridManagerName: 'outline',
+				supportAutoOrder: false,
+				supportDrag: false,
+				checkboxConfig: {
+					useRowCheck: true,
+					useRadio: true
+				},
+				ajaxData: {"data":data},
+				columnData: columndataLeft,
+				checkedAfter: function (checkedList) {
+					// console.log(checkedList);
+					for (let j = 0; j < prk.INSULATE.length; j++) {
+						if ( j === (checkedList[0].id - 1)){
+							data = [];
+							data = [
+								{
+									'name': '绝缘子串类型',
+									'value': insulateArr[prk.INSULATE[j].type]
+								},
+								{
+									'name': '单联双联',
+									'value': sindouArr[prk.INSULATE[j].Join - 1]
+								},
+								{
+									'name': '每联片数',
+									'value': prk.INSULATE[j].Num
+								},
+								{
+									'name': '无冰串重(kg)',
+									'value': prk.INSULATE[j].Weight
+								},
+								{
+									'name': '单片覆冰(kg)',
+									'value': prk.INSULATE[j].IceWeight
+								},
+								{
+									'name':'等效串长(m)',
+									'value':prk.INSULATE[j].Length
+								},
+								{
+									'name': '单片受风面积(m^2)',
+									'value': prk.INSULATE[j].area
+								},
+								{
+									'name': '金具受风折算系数',
+									'value': prk.INSULATE[j].k
+								},
+								{
+									'name': '绝缘子常年荷载安全系数',
+									'value': prk.INSULATE[j].avergeK
+								},
+								{
+									'name': '绝缘子最大荷载安全系数',
+									'value': prk.INSULATE[j].maxK
+								},
+								{
+									'name': '绝缘子断线工况安全系数',
+									'value': prk.INSULATE[j].lineBrokeK
+								},
+								{
+									'name':'绝缘子破坏荷载(kN)',
+									'value':prk.INSULATE[j].Strength
+								},
+								{
+									'name':'金具最大荷载安全系数',
+									'value':prk.INSULATE[j].jjmaxK
+								},
+								{
+									'name':'金具断线工况安全系数',
+									'value':prk.INSULATE[j].jjlineBrokeK
+								},
+								{
+									'name':'金具破坏荷载(kN)',
+									'value':prk.INSULATE[j].jjStrength
+								},
+								{
+									'name': 'V型串夹角(°)',
+									'value': prk.INSULATE[j].angleV
+								},
+								{
+									'name': '污秽区使用条件',
+									'value': dirtyareaArr[prk.INSULATE[j].dirtyTpye]
+								},
+								{
+									'name': '绝缘子材料',
+									'value': insulateMateArr[prk.INSULATE[j].material]
+								}];
+							document.querySelector('#detailsTable').GM({
+								gridManagerName: 'details',
+								supportAutoOrder: false,
+								supportDrag: false,
+								supportCheckbox: false,
+								ajaxData: {"data": data},
+								columnData: columndataRight
+							});
+						}
+					}
+				}
+			});
+		})
+	$('#jueyuancai').click(function () {
+			$('.edit').attr('disabled',true);
+			$('#database').attr('disabled',false);
+			$('#h2title').html($('#jueyuancai').html());
+			data = [];
+			for (let i = 0; i < prk.INSULATE.length; i++) {
+				data.push({
+					'id':i+1,
+					'name':prk.INSULATE[i].name
+				})
+			}
+			document.querySelector('#outlineTable').GM({
+				gridManagerName: 'outline',
+				supportAutoOrder: false,
+				supportDrag: false,
+				checkboxConfig: {
+					useRowCheck: true,
+					useRadio: true
+				},
+				ajaxData: {"data":data},
+				columnData: columndataLeft,
+				checkedAfter: function (checkedList) {
+					for (let j = 0; j < prk.INSULATE.length; j++) {
+						if ( j === (checkedList[0].id - 1)){
+							data = [];
+							for (let k = 0; k < prk.INSULATE[j].metrial.length; k++){
+								data.push({
+									'name':prk.INSULATE[j].metrial[k].Name,
+									'Type':prk.INSULATE[j].metrial[k].Type,
+									'Count':prk.INSULATE[j].metrial[k].Count,
+									'Weight':prk.INSULATE[j].metrial[k].Weight,
+									'about':prk.INSULATE[j].metrial[k].about,
+									'unit':prk.INSULATE[j].metrial[k].unit
+								})
+								document.querySelector('#detailsTable').GM({
+									gridManagerName: 'details',
+									supportAutoOrder: false,
+									supportDrag: false,
+									supportCheckbox: false,
+									ajaxData: {"data": data},
+									columnData: [{key: 'name', text: '材料名称'}, {key: 'Type', text: '材料型号'},{key: 'unit', text: '单位'},  {key: 'Weight', text: '单重'},{key: 'Count', text: '数量'}, {key: 'about', text: '备注'}]
+								});
+							}
+
+						}
+					}
+				}
+			});
+		})
+	$('#jiedican').click(function () {
+			$('.edit').attr('disabled',false);
+			$('#database').attr('disabled',false);
+			$('#h2title').html($('#jiedican').html());
+			data = [];
+			for (let i = 0; i < prk.GCONNECT.length; i++) {
+				data.push({
+					'id':i+1,
+					'name':prk.GCONNECT[i].Type
+				})
+			}
+			document.querySelector('#outlineTable').GM({
+				gridManagerName: 'outline',
+				supportAutoOrder: false,
+				supportDrag: false,
+				checkboxConfig: {
+					useRowCheck: true,
+					useRadio: true
+				},
+				ajaxData: {"data":data},
+				columnData: columndataLeft,
+				checkedAfter: function (checkedList) {
+					// console.log(checkedList);
+					for (let j = 0; j < prk.GCONNECT.length; j++) {
+						if ( j === (checkedList[0].id - 1)){
+							data = [];
+							data = [
+								{
+									'name': '适用塔型',
+									'value': toweraddTypeArr[prk.GCONNECT[j].TowerType - 1]
+								},
+								{
+									'name': '最小大地电阻率',
+									'value': prk.GCONNECT[j].minResistance
+								},
+								{
+									'name': '最大大地电阻率',
+									'value': prk.GCONNECT[j].maxResistance
+								}];
+							document.querySelector('#detailsTable').GM({
+								gridManagerName: 'details',
+								supportAutoOrder: false,
+								supportDrag: false,
+								supportCheckbox: false,
+								ajaxData: {"data": data},
+								columnData: columndataRight
+							});
+						}
+					}
+				}
+			});
+		})
+	$('#jiedicai').click(function () {
+			$('.edit').attr('disabled',true);
+			$('#database').attr('disabled',false);
+			$('#h2title').html($('#jiedicai').html());
+			data = [];
+			for (let i = 0; i < prk.GCONNECT.length; i++) {
+				data.push({
+					'id':i+1,
+					'name':prk.GCONNECT[i].Type
+				})
+			}
+			document.querySelector('#outlineTable').GM({
+				gridManagerName: 'outline',
+				supportAutoOrder: false,
+				supportDrag: false,
+				checkboxConfig: {
+					useRowCheck: true,
+					useRadio: true
+				},
+				ajaxData: {"data":data},
+				columnData: columndataLeft,
+				checkedAfter: function (checkedList) {
+					for (let j = 0; j < prk.GCONNECT.length; j++) {
+						if ( j === (checkedList[0].id - 1)){
+							data = [];
+							for (let k = 0; k < prk.GCONNECT[j].metrial.length; k++){
+								data.push({
+									'name':prk.GCONNECT[j].metrial[k].Name,
+									'Type':prk.GCONNECT[j].metrial[k].Type,
+									'Count':prk.GCONNECT[j].metrial[k].Count,
+									'Weight':prk.GCONNECT[j].metrial[k].Weight,
+									'about':prk.GCONNECT[j].metrial[k].about,
+									'unit':prk.GCONNECT[j].metrial[k].unit
+								})
+								document.querySelector('#detailsTable').GM({
+									gridManagerName: 'details',
+									supportAutoOrder: false,
+									supportDrag: false,
+									supportCheckbox: false,
+									ajaxData: {"data": data},
+									columnData: [{key: 'name', text: '材料名称'}, {key: 'Type', text: '材料型号'},{key: 'unit', text: '单位'},  {key: 'Weight', text: '单重'},{key: 'Count', text: '数量'}, {key: 'about', text: '备注'}]
+								});
+							}
+
+						}
+					}
+				}
+			});
+		})
+	$('#fangzhenchui').click(function () {
+			$('#database').attr('disabled',true);
+			$('.edit').attr('disabled',false);
+			$('#h2title').html($('#fangzhenchui').html());
+			data = [];
+			for (let i = 0; i < prk.HAMMER.length; i++) {
+				data.push({
+					'id':i+1,
+					'name':prk.HAMMER[i].Name
+				})
+			}
+			document.querySelector('#outlineTable').GM({
+				gridManagerName: 'outline',
+				supportAutoOrder: false,
+				supportDrag: false,
+				checkboxConfig: {
+					useRowCheck: true,
+					useRadio: true
+				},
+				ajaxData: {"data":data},
+				columnData: columndataLeft,
+				checkedAfter: function (checkedList) {
+					// console.log(checkedList);
+					for (let j = 0; j < prk.HAMMER.length; j++) {
+						if ( j === (checkedList[0].id - 1)){
+							data = [{'name':'适用导地线','value': prk.HAMMER[j].lineName}];
+							for (let i = 0; i < prk.HAMMER[j].fRNum.length; i++) {
+								data.push({
+									'name':'第'+(i+1)+'组规则',
+									'value':prk.HAMMER[j].fRNum[i],
+									'upLimit':prk.HAMMER[j].upLimit[i]
+								})
+							}
+							document.querySelector('#detailsTable').GM({
+								gridManagerName: 'details',
+								supportAutoOrder: false,
+								supportDrag: false,
+								supportCheckbox: false,
+								ajaxData: {"data": data},
+								columnData:  [{key: 'name', text: '参数名称'}, {key: 'value', text: '型号/数量'},{key: 'upLimit', text: '适用档距上限'}]
+							});
+						}
+					}
+				}
+			});
+		})
+		
+		
+	$('#save').click(function () {  
+			var prkinfo = new FormData();
+			prkinfo.append("prk",JSON.stringify(prk));
+			prkinfo.append("ProjectName",prjName);
+			console.log("prkInfo",prkinfo);
+			$.ajax({
+				url: "http://202.114.118.138:8181/prksave", //提交的路径
+				type: "post",       //提交方式
+				data: prkinfo,    //提交的数据
+				// dataType:"json",
+				// async: false,
+				// cache: false,
+				contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+				processData: false,
+				success: function (data) {
+					alert("保存成功！");
+					console.log(data);
+				},
+				error: function (errorMsg) {
+					alert(errorMsg);
+				}
+			});
+		})
+
+	$('#savePrj').click(function () {
+			$("#saveTower").click();
+			$("#saveMap").click();
+			var prjformData = new FormData();
+			prjformData.append("prk",JSON.stringify(prk));
+			prjformData.append("lao",JSON.stringify(lao));
+			prjformData.append("PointFile",fileObj.name);
+			prjformData.append("DemFile","");
+			prjformData.append("ProjectName", prjName);
+			$.ajax({
+				url: "http://202.114.118.138:8181/projectsave", //提交的路径
+				type: "post",       //提交方式
+				data: prjformData,    //提交的数据
+				// dataType:"json",
+				contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+				processData: false,
+				success: function (data) {
+					console.log(data);
+					alert("保存成功！");
+				},
+				error: function (errorMsg) {
+					alert(errorMsg);
+				}
+			});
+		})
+
+	$('#saveMap').click(function () {
+
+			let Map = {
+				"mp":mp,
+				"DEM":DEM,
+				"cross":cross
+			};
+			var demgeoCal = {
+				"ProjectName":prjName,
+				"MapFileName":(MapFileName+".MAP").toString(),
+				"JsonMap":JSON.stringify(Map)
+			}
+			console.log(Map);
+			$.ajax({
+				url: "http://202.114.118.138:8181/MapSaveObj", //提交的路径
+				type: "post",       //提交方式
+				data: demgeoCal,    //提交的数据
+				//dataType:"json",
+				success: function (data) {
+					console.log(data);
+				},
+				error: function (errorMsg) {
+					//alert(errorMsg);
+					console.log(errorMsg);
+				}
+			});
+		})
 	/* 新建图幅 */
 	$("#creatMap").click(function () {
 		MapFileName = prompt("新建MAP名称");
 		console.log(MapFileName);
+		document.getElementById('span_id').innerHTML = prjName+"("+MapFileName+")";
+		// for (let i = 0; i < scene.children.length; i++){
+		// 	if (scene.children[i].name === "dem"||scene.children[i].name === "corner"){
+		// 		dem.push(scene.children[i]);
+		// 	}
+		// 	if (scene.children[i].name === "fixTower"||scene.children[i].name === "wire"){
+		// 		towerList.push(scene.children[i]);   //capital
+		// 	}
+		// }
+		// for (let i = 0; i < dem.length; i++) {
+		// 	scene.remove(dem[i]);
+		// }
+		// for (let i = 0; i < towerList.length; i++) {
+		// 	scene.remove(towerList[i]);
+		// }
+		// for (let i = 0; i < allChildren.length; i++) {
+		// 	framegroup.remove(allChildren[i]);
+		// }
 
-		for (let i = 0; i < scene.children.length; i++){
-			if (scene.children[i].name === "dem"||scene.children[i].name === "corner"){
-				dem.push(scene.children[i]);
-			}
-			if (scene.children[i].name === "fixTower"||scene.children[i].name === "wire"){
-				towerList.push(scene.children[i]);   //capital
-			}
-		}
-		for (let i = 0; i < dem.length; i++) {
-			scene.remove(dem[i]);
-		}
-		for (let i = 0; i < towerList.length; i++) {
-			scene.remove(towerList[i]);
-		}
-		for (let i = 0; i < allChildren.length; i++) {
-			framegroup.remove(allChildren[i]);
-		}
-		console.log("createMapFrame",mp);
+		//input empty map
+		scene.children.length = 0;
+		console.log(scene);
+		mp = blankmp;
+		console.log("createMapFrameblank",mp);
 		//yMin = 100; ydivision= 10; xdivision =100; verSize = 220;horSize =300; Gridsize =10;    //先设大小   再按distance/length 比例尺绘制
 		ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =mp.m_Grid;
 		horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
 		xMin = mp.m_From;
-		window.initContent();
+
 		mainCanvas = document.querySelector("#iframe_box canvas");
 		console.log(mainCanvas);
+		initContent();
 		// save map file  ?
 
 	})
@@ -2326,3334 +2028,88 @@
 		})
 	})
 
-	prk = {
-		"CONDUCTOR": [{
-			"name": "LGJX-400/35",
-			"type": 0,
-			"A": 425.24,
-			"d": 26.82,
-			"Tp": 103900,
-			"p1": 1.349,
-			"E": 65000,
-			"a": 0.0000205,
-			"num": 1
-		},
-			{
-				"name": "LGJX-50/30",
-				"type": 1,
-				"A": 80.32,
-				"d": 11.6,
-				"Tp": 42620,
-				"p1": 0.372,
-				"E": 105000,
-				"a": 0.0000153,
-				"num": 1
-			}],
-		"WEATHER": [{
-			"name": "Ⅱ",
-			"num": 12,
-			"h": 15.0,
-			"hs": 15.0,
-			"alfa": 0.16,
-			"B": 0.0,
-			"TWI": [{
-				"name": "平均气温",
-				"t": 15.0,
-				"v": 0.0,
-				"b": 0.0
-			},
-				{
-					"name": "最高气温",
-					"t": 40.0,
-					"v": 0.0,
-					"b": 0.0
-				},
-				{
-					"name": "最低气温",
-					"t": -10.0,
-					"v": 0.0,
-					"b": 0.0
-				},
-				{
-					"name": "最大风速",
-					"t": 10.0,
-					"v": 27.0,
-					"b": 0.0
-				},
-				{
-					"name": "最大覆冰",
-					"t": -5.0,
-					"v": 10.0,
-					"b": 5.0
-				},
-				{
-					"name": "安装情况",
-					"t": 0.0,
-					"v": 10.0,
-					"b": 0.0
-				},
-				{
-					"name": "操作情况",
-					"t": 15.0,
-					"v": 15.0,
-					"b": 0.0
-				},
-				{
-					"name": "大气有风",
-					"t": 15.0,
-					"v": 10.0,
-					"b": 0.0
-				},
-				{
-					"name": "大气无风",
-					"t": 15.0,
-					"v": 0.0,
-					"b": 0.0
-				},
-				{
-					"name": "最高线温",
-					"t": 70.0,
-					"v": 0.0,
-					"b": 0.0
-				},
-				{
-					"name": "检修工况",
-					"t": 0.0,
-					"v": 0.0,
-					"b": 0.0
-				},
-				{
-					"name": "事故工况",
-					"t": 0.0,
-					"v": 0.0,
-					"b": 0.0
-				}]
-		},
-			{
-				"name": "XZ-西-15mm",
-				"num": 12,
-				"h": 15.0,
-				"hs": 15.0,
-				"alfa": 0.16,
-				"B": 0.0,
-				"TWI": [{
-					"name": "平均气温",
-					"t": 15.0,
-					"v": 0.0,
-					"b": 0.0,
-					"P1": 0.0,
-					"P2": 0.0,
-					"P3": 0.0,
-					"P4": 0.0,
-					"P5": 0.0,
-					"P6": 0.0,
-					"P7": 0.0,
-					"Fmx": 0.0,
-					"angle": 0.0
-				},
-					{
-						"name": "最高气温",
-						"t": 40.0,
-						"v": 0.0,
-						"b": 0.0,
-						"P1": 0.0,
-						"P2": 0.0,
-						"P3": 0.0,
-						"P4": 0.0,
-						"P5": 0.0,
-						"P6": 0.0,
-						"P7": 0.0,
-						"Fmx": 0.0,
-						"angle": 0.0
-					},
-					{
-						"name": "最低气温",
-						"t": -15.0,
-						"v": 0.0,
-						"b": 0.0,
-						"P1": 0.0,
-						"P2": 0.0,
-						"P3": 0.0,
-						"P4": 0.0,
-						"P5": 0.0,
-						"P6": 0.0,
-						"P7": 0.0,
-						"Fmx": 0.0,
-						"angle": 0.0
-					},
-					{
-						"name": "基本风速",
-						"t": -5.0,
-						"v": 27.0,
-						"b": 0.0,
-						"P1": 0.0,
-						"P2": 0.0,
-						"P3": 0.0,
-						"P4": 0.0,
-						"P5": 0.0,
-						"P6": 0.0,
-						"P7": 0.0,
-						"Fmx": 0.0,
-						"angle": 0.0
-					},
-					{
-						"name": "最大覆冰",
-						"t": -5.0,
-						"v": 10.0,
-						"b": 15.0,
-						"P1": 0.0,
-						"P2": 0.0,
-						"P3": 0.0,
-						"P4": 0.0,
-						"P5": 0.0,
-						"P6": 0.0,
-						"P7": 0.0,
-						"Fmx": 0.0,
-						"angle": 0.0
-					},
-					{
-						"name": "安装情况",
-						"t": -10.0,
-						"v": 10.0,
-						"b": 0.0,
-						"P1": 0.0,
-						"P2": 0.0,
-						"P3": 0.0,
-						"P4": 0.0,
-						"P5": 0.0,
-						"P6": 0.0,
-						"P7": 0.0,
-						"Fmx": 0.0,
-						"angle": 0.0
-					},
-					{
-						"name": "操作情况",
-						"t": 15.0,
-						"v": 15.0,
-						"b": 0.0,
-						"P1": 0.0,
-						"P2": 0.0,
-						"P3": 0.0,
-						"P4": 0.0,
-						"P5": 0.0,
-						"P6": 0.0,
-						"P7": 0.0,
-						"Fmx": 0.0,
-						"angle": 0.0
-					},
-					{
-						"name": "大气有风",
-						"t": 15.0,
-						"v": 10.0,
-						"b": 0.0,
-						"P1": 0.0,
-						"P2": 0.0,
-						"P3": 0.0,
-						"P4": 0.0,
-						"P5": 0.0,
-						"P6": 0.0,
-						"P7": 0.0,
-						"Fmx": 0.0,
-						"angle": 0.0
-					},
-					{
-						"name": "大气无风",
-						"t": 15.0,
-						"v": 0.0,
-						"b": 0.0,
-						"P1": 0.0,
-						"P2": 0.0,
-						"P3": 0.0,
-						"P4": 0.0,
-						"P5": 0.0,
-						"P6": 0.0,
-						"P7": 0.0,
-						"Fmx": 0.0,
-						"angle": 0.0
-					},
-					{
-						"name": "最高线温",
-						"t": 70.0,
-						"v": 0.0,
-						"b": 0.0,
-						"P1": 0.0,
-						"P2": 0.0,
-						"P3": 0.0,
-						"P4": 0.0,
-						"P5": 0.0,
-						"P6": 0.0,
-						"P7": 0.0,
-						"Fmx": 0.0,
-						"angle": 0.0
-					},
-					{
-						"name": "检修工况",
-						"t": 0.0,
-						"v": 0.0,
-						"b": 0.0,
-						"P1": 0.0,
-						"P2": 0.0,
-						"P3": 0.0,
-						"P4": 0.0,
-						"P5": 0.0,
-						"P6": 0.0,
-						"P7": 0.0,
-						"Fmx": 0.0,
-						"angle": 0.0
-					},
-					{
-						"name": "事故工况",
-						"t": 0.0,
-						"v": 0.0,
-						"b": 0.0,
-						"P1": 0.0,
-						"P2": 0.0,
-						"P3": 0.0,
-						"P4": 0.0,
-						"P5": 0.0,
-						"P6": 0.0,
-						"P7": 0.0,
-						"Fmx": 0.0,
-						"angle": 0.0
-					}]
-			}],
-		"SECTION": [{
-			"name": "1",
-			"starJ": "J2",
-			"from": 0.0,
-			"endJ": "J37(GL)",
-			"to": 57641.0,
-			"powerLine": "LGJX-400/35",
-			"groundLine": "LGJX-50/30",
-			"wertherName": "Ⅱ",
-			"pLineK": 0.95,
-			"pLineF": 2.500,
-			"pLineC": 0.250,
-			"gLineK": 1.000,
-			"gLineF": 3.000,
-			"gLineC": 0.250,
-			"circuit": 1
-		}],
-		"TOWER": [{
-			"No": 0,
-			"Name": "ZMVA41",
-			"MaxL": 700,
-			"LH": 450,
-			"LV": 700,
-			"StartHigh": 24.0,
-			"Dhigh": 3.0,
-			"EndHigh": 45.0,
-			"MinAngle": 0.0,
-			"MaxAngle": 3.0,
-			"Angle2LH": 0.0,
-			"KV": 0.850,
-			"Count": 8,
-			"sway": {
-				"TowerName": "ZMVA41",
-				"Insulate": "",
-				"HugePoint": 0,
-				"WindA": 10.0,
-				"OperationA": 20.0,
-				"AtomosphereA": 20.0,
-				"ElecA": 0.0,
-				"WindB": 0.0,
-				"OperationB": 0.0,
-				"AtomosphereB": 0.0,
-				"ElecB": 0.0
-			},
-			"Dist": 0.0,
-			"upToTop": 0.0,
-			"upToMid": 0.0,
-			"minToDown": 0.0,
-			"typeEx": 1,
-			"baseLw": 0.0,
-			"baseLl": 0.0,
-			"baseHw": 0.0,
-			"baseHl": 0.0,
-			"type": 0,
-			"Group": "1",
-			"price": [{
-				"High": 24.0,
-				"Weight": 21569.0,
-				"BaseWight": 0.0,
-				"BaseM": 0.0,
-				"JJ": 0.0
-			},
-				{
-					"High": 27.0,
-					"Weight": 22964.0,
-					"BaseWight": 0.0,
-					"BaseM": 0.0,
-					"JJ": 0.0
-				},
-				{
-					"High": 0.0,
-					"Weight": 24358.0,
-					"BaseWight": 0.0,
-					"BaseM": 0.0,
-					"JJ": 0.0
-				},
-				{
-					"High": 0.0,
-					"Weight": 25753.0,
-					"BaseWight": 0.0,
-					"BaseM": 0.0,
-					"JJ": 0.0
-				},
-				{
-					"High": 0.0,
-					"Weight": 27147.0,
-					"BaseWight": 0.0,
-					"BaseM": 0.0,
-					"JJ": 0.0
-				},
-				{
-					"High": 0.0,
-					"Weight": 28542.0,
-					"BaseWight": 0.0,
-					"BaseM": 0.0,
-					"JJ": 0.0
-				},
-				{
-					"High": 0.0,
-					"Weight": 29936.0,
-					"BaseWight": 0.0,
-					"BaseM": 0.0,
-					"JJ": 0.0
-				},
-				{
-					"High": 0.0,
-					"Weight": 31331.0,
-					"BaseWight": 0.0,
-					"BaseM": 0.0,
-					"JJ": 0.0
-				}
-			]
-		},
-			{
-				"No": 1,
-				"Name": "ZMVA42",
-				"MaxL": 900,
-				"LH": 550,
-				"LV": 850,
-				"StartHigh": 27.0,
-				"Dhigh": 3.0,
-				"EndHigh": 45.0,
-				"MinAngle": 0.0,
-				"MaxAngle": 3.0,
-				"Angle2LH": 0.0,
-				"KV": 0.850,
-				"Count": 7,
-				"sway": {
-					"TowerName": "ZMVA42",
-					"Insulate": "",
-					"HugePoint": 0,
-					"WindA": 0.0,
-					"OperationA": 0.0,
-					"AtomosphereA": 0.0,
-					"ElecA": 0.0,
-					"WindB": 0.0,
-					"OperationB": 0.0,
-					"AtomosphereB": 0.0,
-					"ElecB": 0.0
-				},
-				"Dist": 0.0,
-				"upToTop": 0.0,
-				"upToMid": 0.0,
-				"minToDown": 0.0,
-				"typeEx": 1,
-				"baseLw": 0.0,
-				"baseLl": 0.0,
-				"baseHw": 0.0,
-				"baseHl": 0.0,
-				"type": 0,
-				"Group": "1",
-				"price": [
-					{
-						"High": 0.0,
-						"Weight": 22319.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 24257.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 26195.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 28133.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 30071.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 32009.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 33947.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					}
-				]
-			},
-			{
-				"No": 2,
-				"Name": "ZMVA43",
-				"MaxL": 1200,
-				"LH": 750,
-				"LV": 1100,
-				"StartHigh": 27.0,
-				"Dhigh": 3.0,
-				"EndHigh": 57.0,
-				"MinAngle": 0.0,
-				"MaxAngle": 3.0,
-				"Angle2LH": 0.0,
-				"KV": 0.750,
-				"Count": 11,
-				"sway": {
-					"TowerName": "ZMVA43",
-					"Insulate": "",
-					"HugePoint": 0,
-					"WindA": 0.0,
-					"OperationA": 0.0,
-					"AtomosphereA": 0.0,
-					"ElecA": 0.0,
-					"WindB": 0.0,
-					"OperationB": 0.0,
-					"AtomosphereB": 0.0,
-					"ElecB": 0.0
-				},
-				"Dist": 0.0,
-				"upToTop": 0.0,
-				"upToMid": 0.0,
-				"minToDown": 0.0,
-				"typeEx": 1,
-				"baseLw": 0.0,
-				"baseLl": 0.0,
-				"baseHw": 0.0,
-				"baseHl": 0.0,
-				"type": 0,
-				"Group": "1",
-				"price": [
-					{
-						"High": 0.0,
-						"Weight": 26836.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 28439.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 30042.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 31645.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 33248.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 34852.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 36455.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 38058.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 39661.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 41264.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 42867.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					}
-				]
-			},
-			{
-				"No": 3,
-				"Name": "ZMVA44",
-				"MaxL": 1600,
-				"LH": 950,
-				"LV": 1500,
-				"StartHigh": 30.0,
-				"Dhigh": 3.0,
-				"EndHigh": 54.0,
-				"MinAngle": 0.0,
-				"MaxAngle": 3.0,
-				"Angle2LH": 0.0,
-				"KV": 0.700,
-				"Count": 9,
-				"sway": {
-					"TowerName": "ZMVA44",
-					"Insulate": "",
-					"HugePoint": 0,
-					"WindA": 0.0,
-					"OperationA": 0.0,
-					"AtomosphereA": 0.0,
-					"ElecA": 0.0,
-					"WindB": 0.0,
-					"OperationB": 0.0,
-					"AtomosphereB": 0.0,
-					"ElecB": 0.0
-				},
-				"Dist": 0.0,
-				"upToTop": 0.0,
-				"upToMid": 0.0,
-				"minToDown": 0.0,
-				"typeEx": 1,
-				"baseLw": 0.0,
-				"baseLl": 0.0,
-				"baseHw": 0.0,
-				"baseHl": 0.0,
-				"type": 0,
-				"Group": "1",
-				"price": [
-					{
-						"High": 0.0,
-						"Weight": 29018.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 30754.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 32490.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 34226.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 35962.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 37699.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 39435.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 41171.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 42907.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					}
-				]
-			},
-			{
-				"No": 4,
-				"Name": "ZMJA41",
-				"MaxL": 1000,
-				"LH": 450,
-				"LV": 1000,
-				"StartHigh": 27.0,
-				"Dhigh": 3.0,
-				"EndHigh": 48.0,
-				"MinAngle": 0.0,
-				"MaxAngle": 14.0,
-				"Angle2LH": 0.0,
-				"KV": 0.650,
-				"Count": 8,
-				"sway": {
-					"TowerName": "ZMJA41",
-					"Insulate": "",
-					"HugePoint": 0,
-					"WindA": 0.0,
-					"OperationA": 0.0,
-					"AtomosphereA": 0.0,
-					"ElecA": 0.0,
-					"WindB": 0.0,
-					"OperationB": 0.0,
-					"AtomosphereB": 0.0,
-					"ElecB": 0.0
-				},
-				"Dist": 0.0,
-				"upToTop": 0.0,
-				"upToMid": 0.0,
-				"minToDown": 0.0,
-				"typeEx": 1,
-				"baseLw": 0.0,
-				"baseLl": 0.0,
-				"baseHw": 0.0,
-				"baseHl": 0.0,
-				"type": 0,
-				"Group": "1",
-				"price": [
-					{
-						"High": 0.0,
-						"Weight": 32281.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 34950.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 37618.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 40287.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 42955.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 45624.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 48292.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 50961.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					}
-				]
-			},
-			{
-				"No": 7,
-				"Name": "JC1",
-				"MaxL": 1200,
-				"LH": 450,
-				"LV": 800,
-				"StartHigh": 21.0,
-				"Dhigh": 3.0,
-				"EndHigh": 30.0,
-				"MinAngle": 0.0,
-				"MaxAngle": 20.0,
-				"Angle2LH": 30.0,
-				"KV": 0.000,
-				"Count": 4,
-				"sway": {
-					"TowerName": "JC1",
-					"Insulate": "",
-					"HugePoint": 0,
-					"WindA": 0.0,
-					"OperationA": 0.0,
-					"AtomosphereA": 0.0,
-					"ElecA": 0.0,
-					"WindB": 0.0,
-					"OperationB": 0.0,
-					"AtomosphereB": 0.0,
-					"ElecB": 0.0
-				},
-				"Dist": 0.0,
-				"upToTop": 0.0,
-				"upToMid": 0.0,
-				"minToDown": 0.0,
-				"typeEx": 1,
-				"baseLw": 4.0,
-				"baseLl": 4.0,
-				"baseHw": 8.0,
-				"baseHl": 8.0,
-				"type": 1,
-				"Group": "1",
-				"price": [
-					{
-						"High": 0.0,
-						"Weight": 45086.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 48045.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 51004.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 53963.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					}
-				]
-			},
-			{
-				"No": 8,
-				"Name": "JC2",
-				"MaxL": 1200,
-				"LH": 450,
-				"LV": 1200,
-				"StartHigh": 21.0,
-				"Dhigh": 3.0,
-				"EndHigh": 30.0,
-				"MinAngle": 20.0,
-				"MaxAngle": 40.0,
-				"Angle2LH": 30.0,
-				"KV": 0.000,
-				"Count": 4,
-				"sway": {
-					"TowerName": "JC2",
-					"Insulate": "",
-					"HugePoint": 0,
-					"WindA": 0.0,
-					"OperationA": 0.0,
-					"AtomosphereA": 0.0,
-					"ElecA": 0.0,
-					"WindB": 0.0,
-					"OperationB": 0.0,
-					"AtomosphereB": 0.0,
-					"ElecB": 0.0
-				},
-				"Dist": 0.0,
-				"upToTop": 0.0,
-				"upToMid": 0.0,
-				"minToDown": 0.0,
-				"typeEx": 1,
-				"baseLw": 4.0,
-				"baseLl": 4.0,
-				"baseHw": 4.0,
-				"baseHl": 4.0,
-				"type": 1,
-				"Group": "1",
-				"price": [
-					{
-						"High": 0.0,
-						"Weight": 45880.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 49136.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 52392.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 55648.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					}
-				]
-			},
-			{
-				"No": 10,
-				"Name": "JC3",
-				"MaxL": 1200,
-				"LH": 450,
-				"LV": 800,
-				"StartHigh": 21.0,
-				"Dhigh": 3.0,
-				"EndHigh": 30.0,
-				"MinAngle": 40.0,
-				"MaxAngle": 60.0,
-				"Angle2LH": 30.0,
-				"KV": 0.000,
-				"Count": 4,
-				"sway": {
-					"TowerName": "JC3",
-					"Insulate": "",
-					"HugePoint": 0,
-					"WindA": 0.0,
-					"OperationA": 0.0,
-					"AtomosphereA": 0.0,
-					"ElecA": 0.0,
-					"WindB": 0.0,
-					"OperationB": 0.0,
-					"AtomosphereB": 0.0,
-					"ElecB": 0.0
-				},
-				"Dist": 0.0,
-				"upToTop": 0.0,
-				"upToMid": 0.0,
-				"minToDown": 0.0,
-				"typeEx": 1,
-				"baseLw": 4.0,
-				"baseLl": 4.0,
-				"baseHw": 4.0,
-				"baseHl": 4.0,
-				"type": 1,
-				"Group": "1",
-				"price": [
-					{
-						"High": 0.0,
-						"Weight": 47425.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 51067.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 54709.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 58351.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					}
-				]
-			},
-			{
-				"No": 11,
-				"Name": "DJC1",
-				"MaxL": 800,
-				"LH": 450,
-				"LV": 600,
-				"StartHigh": 21.0,
-				"Dhigh": 3.0,
-				"EndHigh": 30.0,
-				"MinAngle": 60.0,
-				"MaxAngle": 90.0,
-				"Angle2LH": 30.0,
-				"KV": 0.000,
-				"Count": 4,
-				"sway": {
-					"TowerName": "DJC1",
-					"Insulate": "",
-					"HugePoint": 0,
-					"WindA": 0.0,
-					"OperationA": 0.0,
-					"AtomosphereA": 0.0,
-					"ElecA": 0.0,
-					"WindB": 0.0,
-					"OperationB": 0.0,
-					"AtomosphereB": 0.0,
-					"ElecB": 0.0
-				},
-				"Dist": 0.0,
-				"upToTop": 0.0,
-				"upToMid": 0.0,
-				"minToDown": 0.0,
-				"typeEx": 1,
-				"baseLw": 4.0,
-				"baseLl": 4.0,
-				"baseHw": 4.0,
-				"baseHl": 4.0,
-				"type": 2,
-				"Group": "1",
-				"price": [
-					{
-						"High": 0.0,
-						"Weight": 47425.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 51067.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 54709.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					},
-					{
-						"High": 0.0,
-						"Weight": 58351.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					}
-				]
-			},
-			{
-				"No": 12,
-				"Name": "MJ",
-				"MaxL": 0,
-				"LH": 0,
-				"LV": 0,
-				"StartHigh": 18.0,
-				"Dhigh": 3.0,
-				"EndHigh": 18.0,
-				"MinAngle": 0.0,
-				"MaxAngle": 0.0,
-				"Angle2LH": 0.0,
-				"KV": 0.000,
-				"Count": 1,
-				"sway": {
-					"TowerName": "MJ",
-					"Insulate": "",
-					"HugePoint": 0,
-					"WindA": 0.0,
-					"OperationA": 0.0,
-					"AtomosphereA": 0.0,
-					"ElecA": 0.0,
-					"WindB": 0.0,
-					"OperationB": 0.0,
-					"AtomosphereB": 0.0,
-					"ElecB": 0.0
-				},
-				"Dist": 0.0,
-				"upToTop": 0.0,
-				"upToMid": 0.0,
-				"minToDown": 0.0,
-				"typeEx": 1,
-				"baseLw": 2.0,
-				"baseLl": 2.0,
-				"baseHw": 2.0,
-				"baseHl": 2.0,
-				"type": 3,
-				"Group": "1",
-				"price": [
-					{
-						"High": 0.0,
-						"Weight": 0.0,
-						"BaseWight": 0.0,
-						"BaseM": 0.0,
-						"JJ": 0.0
-					}
-				]
-			}],
-		"INSULATE": [{
-			"name": "N01",
-			"type": 1,
-			"Join": 1,
-			"Num": 18,
-			"Weight": 100.0,
-			"IceWeight": 120.0,
-			"Length": 4.5,
-			"area": 0.03,
-			"k": 1.1,
-			"avergeK": 4.0,
-			"maxK": 2.7,
-			"lineBrokeK": 2.0,
-			"Strength": 100.0,
-			"jjmaxK": 2.0,
-			"jjlineBrokeK": 2.0,
-			"jjStrength": 2.0,
-			"angleV": 90.0,
-			"dirtyTpye": 0,
-			"material": 3,
-			"metrial": [{
-				"Name": "U型挂环",
-				"Type": "U-1880",
-				"Count": 1,
-				"Weight": 0.83,
-				"about": "",
-				"unit": "付"
-			},
-				{
-					"Name": "合成绝缘子",
-					"Type": "FXBW-35/100G",
-					"Count": 1,
-					"Weight": 3.5,
-					"about": "",
-					"unit": "个"
-				},
-				{
-					"Name": "并沟线夹",
-					"Type": "JB-2",
-					"Count": 1,
-					"Weight": 0.65,
-					"about": "",
-					"unit": "个"
-				},
-				{
-					"Name": "耐张线夹",
-					"Type": "NLD-4",
-					"Count": 1,
-					"Weight": 7.1,
-					"about": "",
-					"unit": "个"
-				}],
-			"metrialNum": 4
-		},
-			{
-				"name": "X01",
-				"type": 0,
-				"Join": 1,
-				"Num": 1,
-				"Weight": 0.0,
-				"IceWeight": 3.0,
-				"Length": 4.5,
-				"area": 0.03,
-				"k": 1.1,
-				"avergeK": 4.0,
-				"maxK": 2.7,
-				"lineBrokeK": 1.8,
-				"Strength": 0.0,
-				"jjmaxK": 2.5,
-				"jjlineBrokeK": 1.5,
-				"jjStrength": 0.0,
-				"angleV": 0.0,
-				"dirtyTpye": 0,
-				"material": 3,
-				"metrial": [{
-					"Name": "",
-					"Type": "",
-					"Count": "",
-					"Weight": "",
-					"about": "",
-					"unit": ""
-				}],
-				"metrialNum": 0
-			},
-			{
-				"name": "T01",
-				"type": 2,
-				"Join": 1,
-				"Num": 1,
-				"Weight": 0.0,
-				"IceWeight": 3.0,
-				"Length": 5.5,
-				"area": 0.03,
-				"k": 1.1,
-				"avergeK": 4.0,
-				"maxK": 2.7,
-				"lineBrokeK": 1.8,
-				"Strength": 0.0,
-				"jjmaxK": 2.5,
-				"jjlineBrokeK": 1.5,
-				"jjStrength": 0.0,
-				"angleV": 0.0,
-				"dirtyTpye": 0,
-				"material": 3,
-				"metrial": [{
-					"Name": "",
-					"Type": "",
-					"Count": "",
-					"Weight": "",
-					"about": "",
-					"unit": ""
-				}],
-				"metrialNum": 0
-			},
-			{
-				"name": "DX01",
-				"type": 3,
-				"Join": 1,
-				"Num": 1,
-				"Weight": 0.0,
-				"IceWeight": 3.0,
-				"Length": 5.5,
-				"area": 0.03,
-				"k": 1.1,
-				"avergeK": 4.0,
-				"maxK": 2.7,
-				"lineBrokeK": 1.8,
-				"Strength": 0.0,
-				"jjmaxK": 2.5,
-				"jjlineBrokeK": 1.5,
-				"jjStrength": 0.0,
-				"angleV": 0.0,
-				"dirtyTpye": 0,
-				"material": 3,
-				"metrial": [{
-					"Name": "",
-					"Type": "",
-					"Count": "",
-					"Weight": "",
-					"about": "",
-					"unit": ""
-				}],
-				"metrialNum": 0
-			},
-			{
-				"name": "DN01",
-				"type": 4,
-				"Join": 1,
-				"Num": 1,
-				"Weight": 0.0,
-				"IceWeight": 3.0,
-				"Length": 5.5,
-				"area": 0.03,
-				"k": 1.1,
-				"avergeK": 4.0,
-				"maxK": 2.7,
-				"lineBrokeK": 1.8,
-				"Strength": 0.0,
-				"jjmaxK": 2.5,
-				"jjlineBrokeK": 1.5,
-				"jjStrength": 0.0,
-				"angleV": 0.0,
-				"dirtyTpye": 0,
-				"material": 3,
-				"metrial": [{
-					"Name": "",
-					"Type": "",
-					"Count": "",
-					"Weight": "",
-					"about": "",
-					"unit": ""
-				}],
-				"metrialNum": 0
-			}],
-		"GCONNECT": [{
-			"Type": "甲",
-			"minResistance": 0.0,
-			"maxResistance": 100.0,
-			"TowerType": 1,
-			"metrialNum": 1,
-			"metrial": [{
-				"Name": "耐张线夹",
-				"Type": "NY-55G",
-				"Count": 1,
-				"Weight": 0.70,
-				"about": "",
-				"unit": ""
-			}]
-		},
-			{
-				"Type": "乙",
-				"minResistance": 0.0,
-				"maxResistance": 0.0,
-				"TowerType": 1,
-				"metrialNum": 0,
-				"metrial": [{
-					"Name": "",
-					"Type": "",
-					"Count": "",
-					"Weight": "",
-					"about": "",
-					"unit": ""
-				}]
-			}],
-		"HAMMER": [{
-			"Name": "FZ4",
-			"lineName": "LGJX-400/35",
-			"fRNum": [1, 2, 3, 4, 5, 6, 7],
-			"upLimit": [100.0, 200.0, 300.0, 400.0, 500.0, 600.0, 1000.0]
-		},
-			{
-				"Name": "FZ7",
-				"lineName": "LGJX-50/30",
-				"fRNum": [1, 2, 3, 4, 5, 6, 7],
-				"upLimit": [100.0, 200.0, 300.0, 400.0, 500.0, 600.0, 1000.0]
-			}],
-		"PRIMARY": {
-			"voltage": 3,
-			"circuit": 1,
-			"windH": 10.0,
-			"alfa": 0.16,
-			"dIce": 5.0,
-			"pLTract": 0.2,
-			"InsularMaxL": 0.0,
-			"m_standard": [
-				{
-					"info": "01对居民地",
-					"dist": 14.0
-				},
-				{
-					"info": "02对非居民地",
-					"dist": 11.0
-				},
-				{
-					"info": "03对交通困难区",
-					"dist": 8.5
-				},
-				{
-					"info": "04风偏对地净空距离",
-					"dist": 6.5
-				},
-				{
-					"info": "05房屋垂直",
-					"dist": 9.0
-				},
-				{
-					"info": "06房屋净空",
-					"dist": 8.5
-				},
-				{
-					"info": "07树木垂直",
-					"dist": 7.0
-				},
-				{
-					"info": "08树木净空",
-					"dist": 7.0
-				},
-				{
-					"info": "09跨电力线",
-					"dist": 6.0
-				},
-				{
-					"info": "10跨电杆顶点",
-					"dist": 8.5
-				},
-				{
-					"info": "11跨通讯线",
-					"dist": 8.5
-				},
-				{
-					"info": "12跨索道",
-					"dist": 6.5
-				},
-				{
-					"info": "13特殊管道",
-					"dist": 7.5
-				},
-				{
-					"info": "14等级路面",
-					"dist": 14.0
-				},
-				{
-					"info": "15窄轨铁路",
-					"dist": 13.0
-				},
-				{
-					"info": "16标准轨距铁路",
-					"dist": 14.0
-				},
-				{
-					"info": "17电气轨铁路",
-					"dist": 16.0
-				},
-				{
-					"info": "18通河洪水",
-					"dist": 9.5
-				},
-				{
-					"info": "19通河桅顶",
-					"dist": 6.0
-				},
-				{
-					"info": "20百年一遇洪水位",
-					"dist": 6.5
-				}]
-		}
-	};//prk初始化
-	towerStartHei = prk.TOWER[0].StartHigh;
-	towerEndHei = prk.TOWER[0].EndHigh;
-	towerHeiDif = towerEndHei - towerStartHei;
-	towerHeiInDif = prk.TOWER[0].Dhigh;
-	towerHeiArray.length = towerHeiDif / towerHeiInDif + 1;
-	for (let i = 0; i < towerHeiArray.length; i++) {
-		towerHeiArray[i] = towerStartHei + i * towerHeiInDif;
-	}
-	savedJson.prk = prk;
-	var prkStr = JSON.stringify(prk);
-	//上传文件至后台
-	var xhr,ot,oloaded;var fileCata = [];//文件目录
-	window.upfile = function() {
-		var fileObj = document.getElementById("file").files[0]; // js 获取文件对象
-		console.log(fileObj);
-		var url =  "http://202.114.118.138:8181/fileUpload"; // 接收上传文件的后台地址
-		var form = new FormData(); // FormData 对象
-		form.append("file", fileObj); // 文件对象
-		form.append("ProjectName", prjName);//控制路径
 
-		xhr = new XMLHttpRequest();  // XMLHttpRequest 对象
-		xhr.open("post", url, true); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
-		xhr.onload = uploadcomplete; //请求完成
-		xhr.onerror =  uploadfailed; //请求失败
-
-		// xhr.upload.onprogress = progressFunction;//【上传进度调用方法实现】
-		xhr.upload.onloadstart = function(){//上传开始执行方法
-			ot = new Date().getTime();   //设置上传开始时间
-			oloaded = 0;//设置上传开始时，以上传的文件大小为0
-		};
-		xhr.send(form); //开始上传，发送form数据
-	}
-		function uploadcomplete(evt) {alert("成功上传！");}//上传成功响应
-		function uploadfailed(evt) {alert("上传失败！");}//上传失败响应
-	//取消文件上传
-	window.cancelUploadFile = function (){xhr.abort();}
-	//打开后台文件
-	window.updateFilelist = function(){
-		towerlist = [];
+	window.OpenPRJ = function (filedata,ProjectName){   //readfileToJson SIMPLE may cover original
+		prjName  = ProjectName;
+		document.getElementById('span_id').innerHTML = prjName;
+		pile_tabledata = filedata.m_jPile;
+		GridManager.setAjaxData(pile_tableId,{"data":pile_tabledata});
+		$("#liPiletable").click();
+		$("#tb_pile_calc").click();
 		$.ajax({
-			url: "http://202.114.118.138:8181/directory/" + prjName, //提交的路径
-			type: "get",       //提交方式
+			url: "http://202.114.118.138:8181/CreateProject", //提交的路径
+			type: "post",       //提交方式
+			data: prjName,    //提交的数据
 			dataType:"json",
-			success: function(data){
-				console.log(data);
-				for (let i = 0; i < data.length; i++) {
-					fileCata.push(data[i].name);
+			//填充prk设计参数表格
+			success: function (data) {
+				console.log("createproject",data);
+
+				let json = data.prk;
+				lao = data.Lao;
+				savedJson.Lao = lao;
+				blankmp = data.Map.mp;
+				mp = data.Map.mp;
+				prk = data.prk;
+				towerStartHei = prk.TOWER[0].StartHigh;
+				towerEndHei = prk.TOWER[0].EndHigh;
+				towerHeiDif = towerEndHei - towerStartHei;
+				towerHeiInDif = prk.TOWER[0].Dhigh;
+				towerHeiArray.length = towerHeiDif / towerHeiInDif + 1;
+				for (let i = 0; i < towerHeiArray.length; i++) {
+					towerHeiArray[i] = towerStartHei + i * towerHeiInDif;
 				}
-				console.log(fileCata);
-				document.getElementById("dembox").options.length=0;
-				for (let i = 0; i < fileCata.length; i++) {
-					document.getElementById("dembox").options.add(new Option(fileCata[i],i.toString()));
-				}
-
-				window.openBeFile = function(){
-					let text = $('#dembox option:selected').text();
-
-					let form = new FormData();
-					form.append("FileName", text); // 文件对象
-					form.append("ProjectName", prjName);//控制路径
-
-					$.ajax({
-						url: "http://202.114.118.138:8181/ReadfileToJson", //提交的路径
-						type: "post",       //提交方式
-						data: form,    //提交的数据
-						contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-						processData: false,
-						success: function(data){
-							console.log(data);
-							alert("已打开");
-							let key = Object.keys(data);
-							console.log(key);
-							if(key[0] === "GEO"){
-								reclear();
-								cornerCor = data.GEO;
-							}//转角
-							if(key[0] === "LEFT"){
-								reclear();
-								leftLineCor = data.LEFT;rightLineCor = data.RIGHT;midLineCor = data.MID;
-								drawDEM(leftLineCor,rightLineCor,midLineCor,cornerCor);
-								drawGeo(cornerCor);
-							}//DEM
-							if(key[0] === "TOWERLIST"){
-								for (let i = 0; i < scene.children.length; i++){
-									if (scene.children[i].name === "fixTower"||scene.children[i].name === "wire"){
-										towerList.push(scene.children[i]);
-									}
-								}
-								for (let i = 0; i < towerList.length; i++) {scene.remove(towerList[i]);}
-
-								let towerlist1 = {};
-								towerlist1 = data.TOWERLIST;
-								console.log(towerlist1);
-								let pos = [];
-								for (let i = 0; i < towerlist1.length; i++) {
-									pos.push(new THREE.Vector3(towerlist1[i].Distance/10,towerlist1[i].High - yMin,0));
-									createTower(pos[i]);
-								}
-							}
-							if(key[0] === "GCONNECT"){
-								let json = data;
-								$('#guicheng').click(function () {
-									$('.edit').attr('disabled',true);
-									$('#database').attr('disabled',true);
-									$('#h2title').html($('#guicheng').html());
-									document.querySelector('#outlineTable').GM({
-										gridManagerName: 'outline',
-										supportAutoOrder: false,
-										supportDrag: false,
-										checkboxConfig: {
-											useRowCheck: true,
-											useRadio: true
-										},
-										ajaxData: {"data":[{id:1, name: '系统设置'}, {id: 2, name: '交叉跨越'}]},
-										columnData: columndataLeft,
-										checkedAfter: function (checkedList) {
-											if(checkedList[0].id === 1){
-												data = [];
-												console.log(json.PRIMARY);
-												data = [
-													{
-														'name': '电压等级',
-														'value':voltageArr[json.PRIMARY.voltage]
-													},
-													{
-														'name':'设计回路',
-														'value':circuitArr[json.PRIMARY.circuit - 1]
-													},
-													{
-														'name':'导线平均高度m',
-														'value':json.PRIMARY.windH
-													},
-													{
-														'name':'地面粗糙度系数a',
-														'value':json.PRIMARY.alfa
-													},
-													{
-														'name':'地线覆盖较冰导线增加mm',
-														'value':json.PRIMARY.dIce
-													},
-													{
-														'name':'导线过牵引长度m',
-														'value':json.PRIMARY.pLTract
-													},
-													{
-														'name':'孤立档最大档距m',
-														'value':json.PRIMARY.InsularMaxL
-													}
-												]
-												document.querySelector('#detailsTable').GM({
-													gridManagerName: 'details',
-													supportAutoOrder: false,
-													supportDrag: false,
-													supportCheckbox: false,
-													ajaxData: {"data":data},
-													columnData: columndataRight
-												});
-											}
-											else if (checkedList[0].id === 2){
-												$('#database').attr('disabled',false);
-												data = [];
-												console.log(json.PRIMARY.m_standard);
-												for (let i = 0; i < json.PRIMARY.m_standard.length; i++) {
-													data.push({'name':json.PRIMARY.m_standard[i].info,'value':json.PRIMARY.m_standard[i].dist})
-												}
-												document.querySelector('#detailsTable').GM({
-													gridManagerName: 'details',
-													supportAutoOrder: false,
-													supportDrag: false,
-													supportCheckbox: false,
-													ajaxData: {"data":data},
-													columnData: columndataRight
-												});
-											}
-										}
-									});
-								})
-
-								$('#daodixian').click(function () {
-									$('.edit').attr('disabled',false);
-									$('#database').attr('disabled',false);
-									$('#h2title').html($('#daodixian').html());
-									document.querySelector('#outlineTable').GM({
-										gridManagerName: 'outline',
-										supportAutoOrder: false,
-										supportDrag: false,
-										checkboxConfig: {
-											useRowCheck: true,
-											useRadio: true
-										},
-										ajaxData: {"data":[{id:1, name: ''}]},
-										columnData: columndataLeft,
-										checkedAfter: function (checkedList) {
-											if(checkedList[0].id === 1){
-												data = [];
-												console.log(json.CONDUCTOR[0]);
-												data = [
-													{
-														'name': '导地线类型',
-														'value':conductorArr[json.CONDUCTOR[0].type]
-													},
-													{
-														'name':'导地线截面积(mm^2)',
-														'value':json.CONDUCTOR[0].A
-													},
-													{
-														'name':'导地线直径(mm)',
-														'value':json.CONDUCTOR[0].d
-													},
-													{
-														'name':'计算拉断力(N)',
-														'value':json.CONDUCTOR[0].Tp
-													},
-													{
-														'name':'单位长度质量(kg/mm)',
-														'value':json.CONDUCTOR[0].p1
-													},
-													{
-														'name':'弹性系数(N/mm^2)',
-														'value':json.CONDUCTOR[0].E
-													},
-													{
-														'name':'膨胀系数x1E-6/℃',
-														'value':json.CONDUCTOR[0].a
-													},
-													{
-														'name':'导线分裂数',
-														'value':json.CONDUCTOR[0].num
-													}
-												]
-												document.querySelector('#detailsTable').GM({
-													gridManagerName: 'details',
-													supportAutoOrder: false,
-													supportDrag: false,
-													supportCheckbox: false,
-													ajaxData: {"data":data},
-													columnData: columndataRight
-												});
-											}
-										}
-									});
-								})
-
-								$('#qixiang').click(function () {
-									$('.edit').attr('disabled',false);
-									$('#database').attr('disabled',false);
-									$('#h2title').html($('#qixiang').html());
-									data = [];
-									for (let i = 0; i < json.WEATHER.length; i++) {
-										data.push({
-											'id':i+1,
-											'name':json.WEATHER[i].name
-										})
-									}
-									document.querySelector('#outlineTable').GM({
-										gridManagerName: 'outline',
-										supportAutoOrder: false,
-										supportDrag: false,
-										checkboxConfig: {
-											useRowCheck: true,
-											useRadio: true
-										},
-										ajaxData: {"data":data},
-										columnData: columndataLeft,
-										checkedAfter: function (checkedList) {
-											if (checkedList[0].id === 1) {
-												data = [];
-												for (let j = 0; j < json.WEATHER[0].TWI.length; j++) {
-													data.push({
-														'name': json.WEATHER[0].TWI[j].name,
-														't': json.WEATHER[0].TWI[j].t,
-														'v': json.WEATHER[0].TWI[j].v,
-														'b': json.WEATHER[0].TWI[j].b
-													})
-												}
-												document.querySelector('#detailsTable').GM({
-													gridManagerName: 'details',
-													supportAutoOrder: false,
-													supportDrag: false,
-													supportCheckbox: false,
-													ajaxData: {"data": data},
-													columnData: [{key: 'name', text: '气象条件'}, {key: 't', text: '温度℃'}, {
-														key: 'v',
-														text: '风速m/s'
-													}, {key: 'b', text: '覆冰(导)mm'}]
-												});
-											}
-											else if (checkedList[0].id === 2) {
-												data = [];
-												for (let j = 0; j < json.WEATHER[1].TWI.length; j++) {
-													data.push({
-														'name':json.WEATHER[1].TWI[j].name,
-														't':json.WEATHER[1].TWI[j].t,
-														'v':json.WEATHER[1].TWI[j].v,
-														'b':json.WEATHER[1].TWI[j].b
-													})
-												}
-												document.querySelector('#detailsTable').GM({
-													gridManagerName: 'details',
-													supportAutoOrder: false,
-													supportDrag: false,
-													supportCheckbox: false,
-													ajaxData: {"data":data},
-													columnData: [{key: 'name', text: '气象条件'}, {key: 't', text: '温度℃'},{key: 'v', text: '风速m/s'}, {key: 'b', text: '覆冰(导)mm'}]
-												});
-											}
-										}
-									});
-								})
-
-								$('#fenduan').click(function () {
-									$('.edit').attr('disabled',false);
-									$('#database').attr('disabled',true);
-									$('#h2title').html($('#fenduan').html());
-									document.querySelector('#outlineTable').GM({
-										gridManagerName: 'outline',
-										supportAutoOrder: false,
-										supportDrag: false,
-										checkboxConfig: {
-											useRowCheck: true,
-											useRadio: true
-										},
-										ajaxData: {"data":[{id:1, name: json.SECTION[0].name}]},
-										columnData: columndataLeft,
-										checkedAfter: function (checkedList) {
-											if(checkedList[0].id === 1){
-												data = [];
-												console.log(json.SECTION[0]);
-												data = [
-													{
-														'name': '起始桩号',
-														'value':json.SECTION[0].starJ
-													},
-													{
-														'name':'起始累距',
-														'value':json.SECTION[0].from
-													},
-													{
-														'name':'终点桩号',
-														'value':json.SECTION[0].endJ
-													},
-													{
-														'name':'终点累距',
-														'value':json.SECTION[0].to
-													},
-													{
-														'name':'气象区名称',
-														'value':json.SECTION[0].wertherName
-													},
-													{
-														'name':'导线型号',
-														'value':json.SECTION[0].powerLine
-													},
-													{
-														'name':'导线新线系数',
-														'value':json.SECTION[0].pLineK
-													},
-													{
-														'name':'导线安全系数',
-														'value':json.SECTION[0].pLineF
-													},
-													{
-														'name':'导线年平运行张力上限',
-														'value':json.SECTION[0].pLineC
-													},
-													{
-														'name':'地线型号',
-														'value':json.SECTION[0].groundLine
-													},
-													{
-														'name':'地线新线系数',
-														'value':json.SECTION[0].gLineK
-													},
-													{
-														'name':'地线安全系数',
-														'value':json.SECTION[0].gLineF
-													},
-													{
-														'name':'地线年平运行张力上限',
-														'value':json.SECTION[0].gLineC
-													},
-													{
-														'name':'设计回路',
-														'value':circuitArr[json.SECTION[0].circuit - 1]
-													}
-												]
-												document.querySelector('#detailsTable').GM({
-													gridManagerName: 'details',
-													supportAutoOrder: false,
-													supportDrag: false,
-													supportCheckbox: false,
-													ajaxData: {"data":data},
-													columnData: columndataRight
-												});
-											}
-										}
-									});
-								})
-
-								$('#gantashiyong').click(function () {
-									$('.edit').attr('disabled',false);
-									$('#database').attr('disabled',false);
-									$('#h2title').html($('#gantashiyong').html());
-									data = [];
-									for (let i = 0; i < json.TOWER.length; i++) {
-										data.push({
-											'id':i+1,
-											'name':json.TOWER[i].Name,
-											'NO':json.TOWER[i].No
-										})
-									}
-									document.querySelector('#outlineTable').GM({
-										gridManagerName: 'outline',
-										supportAutoOrder: false,
-										supportDrag: false,
-										checkboxConfig: {
-											useRowCheck: true,
-											useRadio: true
-										},
-										ajaxData: {"data":data},
-										columnData: columndataLeft,
-										checkedAfter: function (checkedList) {
-											for (let j = 0; j < json.TOWER.length; j++) {
-												if ( j === checkedList[0].NO){
-													data = [];
-													data = [
-														{
-															'name': '杆塔类型',
-															'value': towerArr[json.TOWER[j].type]
-														},
-														{
-															'name': '最大档距(m)',
-															'value': json.TOWER[j].MaxL
-														},
-														{
-															'name': '水平档距(m)',
-															'value': json.TOWER[j].LH
-														},
-														{
-															'name': '垂直档距(m)',
-															'value': json.TOWER[j].LV
-														},
-														{
-															'name': '起始呼高(m)',
-															'value': json.TOWER[j].StartHigh
-														},
-														{
-															'name':'级差增量(m)',
-															'value':json.TOWER[j].Dhigh
-														},
-														{
-															'name': '终止呼高(m)',
-															'value': json.TOWER[j].EndHigh
-														},
-														{
-															'name': '最小转角度数(°)',
-															'value': json.TOWER[j].MinAngle
-														},
-														{
-															'name': '最大转角度数(°)',
-															'value': json.TOWER[j].MaxAngle
-														},
-														{
-															'name': '角度折算水平档距(m/°)',
-															'value': json.TOWER[j].Angle2LH
-														},
-														{
-															'name': '摇摆角kv值',
-															'value': json.TOWER[j].KV
-														},
-														{
-															'name':'大风工况摇摆角(°)',
-															'value':json.TOWER[j].sway.WindA
-														},
-														{
-															'name':'内过电压摇摆角(°)',
-															'value':json.TOWER[j].sway.OperationA
-														},
-														{
-															'name':'外过电压摇摆角(°)',
-															'value':json.TOWER[j].sway.AtomosphereA
-														},
-														{
-															'name':'带电作业摇摆角(°)',
-															'value':json.TOWER[j].sway.ElecA
-														},
-														{
-															'name': '最大横担长度(m)',
-															'value': json.TOWER[j].Dist
-														},
-														{
-															'name': '地线支架高度(m)',
-															'value': json.TOWER[j].upToTop
-														},
-														{
-															'name': '上中导线高差(m)',
-															'value': json.TOWER[j].upToMid
-														},
-														{
-															'name': '中下导线高差(m)',
-															'value': json.TOWER[j].minToDown
-														},
-														{
-															'name': '其他附加属性',
-															'value': toweraddTypeArr[json.TOWER[j].typeEx - 1]
-														},
-														{
-															'name': '最低塔正面根开(m)',
-															'value': json.TOWER[j].baseLw
-														},
-														{
-															'name': '最低塔侧面根开(m)',
-															'value': json.TOWER[j].baseLl
-														},
-														{
-															'name': '最高塔正面根开(m)',
-															'value': json.TOWER[j].baseHw
-														},
-														{
-															'name': '最高塔侧面根开(m)',
-															'value': json.TOWER[j].baseHl
-														},
-														{
-															'name': '杆塔分组号',
-															'value': json.TOWER[j].Group
-														}];
-													document.querySelector('#detailsTable').GM({
-														gridManagerName: 'details',
-														supportAutoOrder: false,
-														supportDrag: false,
-														supportCheckbox: false,
-														ajaxData: {"data": data},
-														columnData: columndataRight
-													});
-												}
-											}
-										}
-									});
-								})
-
-								$('#gantatacai').click(function () {
-									$('.edit').attr('disabled',true);
-									$('#database').attr('disabled',false);
-									$('#h2title').html($('#gantatacai').html());
-									data = [];
-									for (let i = 0; i < json.TOWER.length; i++) {
-										data.push({
-											'id':i+1,
-											'name':json.TOWER[i].Name,
-											'NO':json.TOWER[i].No
-										})
-									}
-									document.querySelector('#outlineTable').GM({
-										gridManagerName: 'outline',
-										supportAutoOrder: false,
-										supportDrag: false,
-										checkboxConfig: {
-											useRowCheck: true,
-											useRadio: true
-										},
-										ajaxData: {"data":data},
-										columnData: columndataLeft,
-										checkedAfter: function (checkedList) {
-											for (let j = 0; j < json.TOWER.length; j++) {
-												if ( j === checkedList[0].NO){
-													data = [];
-													for (let k = 0; k < json.TOWER[j].price.length; k++){
-														data.push({
-															'name':json.TOWER[j].Name + '-' + json.TOWER[j].price[k].High,
-															'Weight':json.TOWER[j].price[k].Weight,
-															'BaseWight':json.TOWER[j].price[k].BaseWight,
-															'BaseM':json.TOWER[j].price[k].BaseM,
-															'JJ':json.TOWER[j].price[k].JJ
-														})
-														document.querySelector('#detailsTable').GM({
-															gridManagerName: 'details',
-															supportAutoOrder: false,
-															supportDrag: false,
-															supportCheckbox: false,
-															ajaxData: {"data": data},
-															columnData: [{key: 'name', text: '杆塔名称'}, {key: 'Weight', text: '塔材(kg)'},{key: 'BaseWight', text: '基础钢材(kg)'}, {key: 'BaseM', text: '混凝土(吨)'}, {key: 'JJ', text: '串折算'}]
-														});
-													}
-
-												}
-											}
-										}
-									});
-								})
-
-								$('#jueyuancan').click(function () {
-									$('.edit').attr('disabled',false);
-									$('#database').attr('disabled',false);
-									$('#h2title').html($('#jueyuancan').html());
-									data = [];
-									for (let i = 0; i < json.INSULATE.length; i++) {
-										data.push({
-											'id':i+1,
-											'name':json.INSULATE[i].name
-										})
-									}
-									document.querySelector('#outlineTable').GM({
-										gridManagerName: 'outline',
-										supportAutoOrder: false,
-										supportDrag: false,
-										checkboxConfig: {
-											useRowCheck: true,
-											useRadio: true
-										},
-										ajaxData: {"data":data},
-										columnData: columndataLeft,
-										checkedAfter: function (checkedList) {
-											// console.log(checkedList);
-											for (let j = 0; j < json.INSULATE.length; j++) {
-												if ( j === (checkedList[0].id - 1)){
-													data = [];
-													data = [
-														{
-															'name': '绝缘子串类型',
-															'value': insulateArr[json.INSULATE[j].type]
-														},
-														{
-															'name': '单联双联',
-															'value': sindouArr[json.INSULATE[j].Join - 1]
-														},
-														{
-															'name': '每联片数',
-															'value': json.INSULATE[j].Num
-														},
-														{
-															'name': '无冰串重(kg)',
-															'value': json.INSULATE[j].Weight
-														},
-														{
-															'name': '单片覆冰(kg)',
-															'value': json.INSULATE[j].IceWeight
-														},
-														{
-															'name':'等效串长(m)',
-															'value':json.INSULATE[j].Length
-														},
-														{
-															'name': '单片受风面积(m^2)',
-															'value': json.INSULATE[j].area
-														},
-														{
-															'name': '金具受风折算系数',
-															'value': json.INSULATE[j].k
-														},
-														{
-															'name': '绝缘子常年荷载安全系数',
-															'value': json.INSULATE[j].avergeK
-														},
-														{
-															'name': '绝缘子最大荷载安全系数',
-															'value': json.INSULATE[j].maxK
-														},
-														{
-															'name': '绝缘子断线工况安全系数',
-															'value': json.INSULATE[j].lineBrokeK
-														},
-														{
-															'name':'绝缘子破坏荷载(kN)',
-															'value':json.INSULATE[j].Strength
-														},
-														{
-															'name':'金具最大荷载安全系数',
-															'value':json.INSULATE[j].jjmaxK
-														},
-														{
-															'name':'金具断线工况安全系数',
-															'value':json.INSULATE[j].jjlineBrokeK
-														},
-														{
-															'name':'金具破坏荷载(kN)',
-															'value':json.INSULATE[j].jjStrength
-														},
-														{
-															'name': 'V型串夹角(°)',
-															'value': json.INSULATE[j].angleV
-														},
-														{
-															'name': '污秽区使用条件',
-															'value': dirtyareaArr[json.INSULATE[j].dirtyTpye]
-														},
-														{
-															'name': '绝缘子材料',
-															'value': insulateMateArr[json.INSULATE[j].material]
-														}];
-													document.querySelector('#detailsTable').GM({
-														gridManagerName: 'details',
-														supportAutoOrder: false,
-														supportDrag: false,
-														supportCheckbox: false,
-														ajaxData: {"data": data},
-														columnData: columndataRight
-													});
-												}
-											}
-										}
-									});
-								})
-
-								$('#jueyuancai').click(function () {
-									$('.edit').attr('disabled',true);
-									$('#database').attr('disabled',false);
-									$('#h2title').html($('#jueyuancai').html());
-									data = [];
-									for (let i = 0; i < json.INSULATE.length; i++) {
-										data.push({
-											'id':i+1,
-											'name':json.INSULATE[i].name
-										})
-									}
-									document.querySelector('#outlineTable').GM({
-										gridManagerName: 'outline',
-										supportAutoOrder: false,
-										supportDrag: false,
-										checkboxConfig: {
-											useRowCheck: true,
-											useRadio: true
-										},
-										ajaxData: {"data":data},
-										columnData: columndataLeft,
-										checkedAfter: function (checkedList) {
-											for (let j = 0; j < json.INSULATE.length; j++) {
-												if ( j === (checkedList[0].id - 1)){
-													data = [];
-													for (let k = 0; k < json.INSULATE[j].metrial.length; k++){
-														data.push({
-															'name':json.INSULATE[j].metrial[k].Name,
-															'Type':json.INSULATE[j].metrial[k].Type,
-															'Count':json.INSULATE[j].metrial[k].Count,
-															'Weight':json.INSULATE[j].metrial[k].Weight,
-															'about':json.INSULATE[j].metrial[k].about,
-															'unit':json.INSULATE[j].metrial[k].unit
-														})
-														document.querySelector('#detailsTable').GM({
-															gridManagerName: 'details',
-															supportAutoOrder: false,
-															supportDrag: false,
-															supportCheckbox: false,
-															ajaxData: {"data": data},
-															columnData: [{key: 'name', text: '材料名称'}, {key: 'Type', text: '材料型号'},{key: 'unit', text: '单位'},  {key: 'Weight', text: '单重'},{key: 'Count', text: '数量'}, {key: 'about', text: '备注'}]
-														});
-													}
-
-												}
-											}
-										}
-									});
-								})
-
-								$('#jiedican').click(function () {
-									$('.edit').attr('disabled',false);
-									$('#database').attr('disabled',false);
-									$('#h2title').html($('#jiedican').html());
-									data = [];
-									for (let i = 0; i < json.GCONNECT.length; i++) {
-										data.push({
-											'id':i+1,
-											'name':json.GCONNECT[i].Type
-										})
-									}
-									document.querySelector('#outlineTable').GM({
-										gridManagerName: 'outline',
-										supportAutoOrder: false,
-										supportDrag: false,
-										checkboxConfig: {
-											useRowCheck: true,
-											useRadio: true
-										},
-										ajaxData: {"data":data},
-										columnData: columndataLeft,
-										checkedAfter: function (checkedList) {
-											// console.log(checkedList);
-											for (let j = 0; j < json.GCONNECT.length; j++) {
-												if ( j === (checkedList[0].id - 1)){
-													data = [];
-													data = [
-														{
-															'name': '适用塔型',
-															'value': toweraddTypeArr[json.GCONNECT[j].TowerType - 1]
-														},
-														{
-															'name': '最小大地电阻率',
-															'value': json.GCONNECT[j].minResistance
-														},
-														{
-															'name': '最大大地电阻率',
-															'value': json.GCONNECT[j].maxResistance
-														}];
-													document.querySelector('#detailsTable').GM({
-														gridManagerName: 'details',
-														supportAutoOrder: false,
-														supportDrag: false,
-														supportCheckbox: false,
-														ajaxData: {"data": data},
-														columnData: columndataRight
-													});
-												}
-											}
-										}
-									});
-								})
-
-								$('#jiedicai').click(function () {
-									$('.edit').attr('disabled',true);
-									$('#database').attr('disabled',false);
-									$('#h2title').html($('#jiedicai').html());
-									data = [];
-									for (let i = 0; i < json.GCONNECT.length; i++) {
-										data.push({
-											'id':i+1,
-											'name':json.GCONNECT[i].Type
-										})
-									}
-									document.querySelector('#outlineTable').GM({
-										gridManagerName: 'outline',
-										supportAutoOrder: false,
-										supportDrag: false,
-										checkboxConfig: {
-											useRowCheck: true,
-											useRadio: true
-										},
-										ajaxData: {"data":data},
-										columnData: columndataLeft,
-										checkedAfter: function (checkedList) {
-											for (let j = 0; j < json.GCONNECT.length; j++) {
-												if ( j === (checkedList[0].id - 1)){
-													data = [];
-													for (let k = 0; k < json.GCONNECT[j].metrial.length; k++){
-														data.push({
-															'name':json.GCONNECT[j].metrial[k].Name,
-															'Type':json.GCONNECT[j].metrial[k].Type,
-															'Count':json.GCONNECT[j].metrial[k].Count,
-															'Weight':json.GCONNECT[j].metrial[k].Weight,
-															'about':json.GCONNECT[j].metrial[k].about,
-															'unit':json.GCONNECT[j].metrial[k].unit
-														})
-														document.querySelector('#detailsTable').GM({
-															gridManagerName: 'details',
-															supportAutoOrder: false,
-															supportDrag: false,
-															supportCheckbox: false,
-															ajaxData: {"data": data},
-															columnData: [{key: 'name', text: '材料名称'}, {key: 'Type', text: '材料型号'},{key: 'unit', text: '单位'},  {key: 'Weight', text: '单重'},{key: 'Count', text: '数量'}, {key: 'about', text: '备注'}]
-														});
-													}
-
-												}
-											}
-										}
-									});
-								})
-
-								$('#fangzhenchui').click(function () {
-									$('#database').attr('disabled',true);
-									$('.edit').attr('disabled',false);
-									$('#h2title').html($('#fangzhenchui').html());
-									data = [];
-									for (let i = 0; i < json.HAMMER.length; i++) {
-										data.push({
-											'id':i+1,
-											'name':json.HAMMER[i].Name
-										})
-									}
-									document.querySelector('#outlineTable').GM({
-										gridManagerName: 'outline',
-										supportAutoOrder: false,
-										supportDrag: false,
-										checkboxConfig: {
-											useRowCheck: true,
-											useRadio: true
-										},
-										ajaxData: {"data":data},
-										columnData: columndataLeft,
-										checkedAfter: function (checkedList) {
-											// console.log(checkedList);
-											for (let j = 0; j < json.HAMMER.length; j++) {
-												if ( j === (checkedList[0].id - 1)){
-													data = [{'name':'适用导地线','value': json.HAMMER[j].lineName}];
-													for (let i = 0; i < json.HAMMER[j].fRNum.length; i++) {
-														data.push({
-															'name':'第'+(i+1)+'组规则',
-															'value':json.HAMMER[j].fRNum[i],
-															'upLimit':json.HAMMER[j].upLimit[i]
-														})
-													}
-													document.querySelector('#detailsTable').GM({
-														gridManagerName: 'details',
-														supportAutoOrder: false,
-														supportDrag: false,
-														supportCheckbox: false,
-														ajaxData: {"data": data},
-														columnData:  [{key: 'name', text: '参数名称'}, {key: 'value', text: '型号/数量'},{key: 'upLimit', text: '适用档距上限'}]
-													});
-												}
-											}
-										}
-									});
-								})
-							}
-						},
-						error: function (errorMsg) {
-							alert(errorMsg);
-						}
-					})
-				}
+			},
+			error: function (errorMsg) {
+				//alert(errorMsg);
+			}
+		});
+		//读取PWF
+		let pwfform = new FormData();
+		pwfform.append("FileName", ProjectName+".PWF");
+		pwfform.append("ProjectName", ProjectName);
+		$.ajax({
+			url: "http://202.114.118.138:8181/ReadfileToJson", //提交的路径
+			type: "post",       //提交方式
+			data: pwfform,    //提交的数据
+			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+			processData: false,
+			success: function(pwfdata){
+				console.log(pwfdata);
+				towerlist = pwfdata.TOWERLIST;
+				towerlist_tabledata = towerlist;
+				m_start = 0;
+				m_end = towerlist.length-1;
 			},
 			error: function (errorMsg) {
 				alert(errorMsg);
 			}
 		})
+		$("#liTowerlisttable").click();
+		$("#tb-towerlist-calc").click();
 	}
-	//打开本地json文件（路径固定）
-	window.upjsonfile = function(){
-		towerlist = [];
-		wirelist = [];
-		for (let i = 0; i < allChildren.length; i++){
-			group.remove(allChildren[i]);
-		}
-		for (let i = 0; i < scene.children.length; i++){
-			if (scene.children[i].name === "dem"||scene.children[i].name === "corner"){
-				dem.push(scene.children[i]);
-			}
-			if (scene.children[i].name === "fixTower"||scene.children[i].name === "wire"){
-				towerList.push(scene.children[i]);     //capital
-			}
-		}
-		for (let i = 0; i < dem.length; i++) {
-			scene.remove(dem[i]);
-		}
-		for (let i = 0; i < towerList.length; i++) {
-			scene.remove(towerList[i]);
-		}
-		savedJson = {"DEM":"","GEO":"","pwf":"","prk":"","Lao":""};
-		var fileObj = document.getElementById("jsonfile").files[0]; // js 获取文件对象
-		var fileName = fileObj.name;
 
-		var request = new XMLHttpRequest();
-		request.open("get","./json/" + fileName);
-		request.send(null);
-		request.onload = function () {
-			if (request.status === 200){
-				var jsonRead = JSON.parse(request.response);
-				console.log(jsonRead);
-
-				leftLineCor = jsonRead.DEM[0].LEFT;//左边线
-				rightLineCor = jsonRead.DEM[0].RIGHT;//右边线
-				midLineCor = jsonRead.DEM[0].MID;//中心断面
-				cornerCor = jsonRead.GEO;//转角
-				console.log(cornerCor);
-				let towerlist = jsonRead.pwf.TOWERLIST;
-				console.log(towerlist);
-
-				drawDEM(leftLineCor,rightLineCor,midLineCor,cornerCor);
-				drawGeo(cornerCor);
-				let pos = [];
-				for (let i = 0; i < towerlist.length; i++) {
-					pos.push(new THREE.Vector3(towerlist[i].Distance/10,towerlist[i].High - yMin,0));
-					createTower(pos[i]);
-				}
-			}
-		}
+	window.OpenMap = function (filedata,ProjectName,FileName){
+		prjName = ProjectName ;
+		MapFileName = FileName;
+		document.getElementById('span_id').innerHTML = prjName+"("+MapFileName+")";
+		console.log("SectionMapSave",filedata);
+		DEM= filedata.DEM;
+		mp = filedata.mp;
+		cross = filedata.cross;
+		console.log("DEM,mp,cross updata",DEM,mp,cross);
+		//$("#drawingpara").click();
+		ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =mp.m_Grid;
+		horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
+		xMin = mp.m_From;
+		drawDEM_whj(DEM);
+		MapCrossDraw(cross,false);  //cross added
+		TowerDraw(towerlist_tabledata);
+		window.initContent();
+		drawGeo(pile_tabledata);
 	}
-	//打开本地prj文件
-	window.upprjfile = function() {
-		for (let i = 0; i < allChildren.length; i++){
-			//group.remove(allChildren[i]);
-		}
-		for (let i = 0; i < scene.children.length; i++){
-			if (scene.children[i].name === "dem"||scene.children[i].name === "corner"){
-				dem.push(scene.children[i]);
-			}
-			if (scene.children[i].name === "fixTower"||scene.children[i].name === "wire"){
-				towerList.push(scene.children[i]);   //capital
-			}
-		}
-		for (let i = 0; i < dem.length; i++) {
-			scene.remove(dem[i]);
-		}
-		for (let i = 0; i < towerList.length; i++) {
-			scene.remove(towerList[i]);
-		}
 
-		towerlist = [];
-
-		savedJson = {"DEM":"","GEO":"","pwf":"","prk":"","Lao":""};
-		var fileObj = document.getElementById("TLfile").files[0]; // js 获取文件对象
-		console.log(fileObj);
-		var form = new FormData(); // FormData 对象
-		form.append("file", fileObj); // 文件对象
-		form.append("ProjectName", prjName);//控制路径
-
-		$.ajax({
-			url: "http://202.114.118.138:8181/UploadfileToJson", //提交的路径
-			type: "post",       //提交方式
-			data: form,    //提交的数据
-			// dataType:"json",
-			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-			processData: false,
-			success: function (data) {
-				console.log(data);
-				alert("已打开工程文件");
-				savedJson.GEO = data.GEO;
-				//打开本地prk文件
-				window.upprkfile = function(){
-					var prkfileObj = document.getElementById("TLprkfile").files[0]; // js 获取文件对象
-					console.log(prkfileObj);
-					var prkform = new FormData(); // FormData 对象
-					prkform.append("file", prkfileObj); // 文件对象
-					prkform.append("ProjectName", prjName);//控制路径
-
-					$.ajax({
-						url: "http://202.114.118.138:8181/UploadfileToJson", //提交的路径
-						type: "post",       //提交方式
-						data: prkform,    //提交的数据
-						contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-						processData: false,
-						success: function(prkdata){
-							let json = prkdata;
-							$('#guicheng').click(function () {
-								$('.edit').attr('disabled',true);
-								$('#database').attr('disabled',true);
-								$('#h2title').html($('#guicheng').html());
-								document.querySelector('#outlineTable').GM({
-									gridManagerName: 'outline',
-									supportAutoOrder: false,
-									supportDrag: false,
-									checkboxConfig: {
-										useRowCheck: true,
-										useRadio: true
-									},
-									ajaxData: {"data":[{id:1, name: '系统设置'}, {id: 2, name: '交叉跨越'}]},
-									columnData: columndataLeft,
-									checkedAfter: function (checkedList) {
-										if(checkedList[0].id === 1){
-											data = [];
-											console.log(json.PRIMARY);
-											data = [
-												{
-													'name': '电压等级',
-													'value':voltageArr[json.PRIMARY.voltage]
-												},
-												{
-													'name':'设计回路',
-													'value':circuitArr[json.PRIMARY.circuit - 1]
-												},
-												{
-													'name':'导线平均高度m',
-													'value':json.PRIMARY.windH
-												},
-												{
-													'name':'地面粗糙度系数a',
-													'value':json.PRIMARY.alfa
-												},
-												{
-													'name':'地线覆盖较冰导线增加mm',
-													'value':json.PRIMARY.dIce
-												},
-												{
-													'name':'导线过牵引长度m',
-													'value':json.PRIMARY.pLTract
-												},
-												{
-													'name':'孤立档最大档距m',
-													'value':json.PRIMARY.InsularMaxL
-												}
-											]
-											document.querySelector('#detailsTable').GM({
-												gridManagerName: 'details',
-												supportAutoOrder: false,
-												supportDrag: false,
-												supportCheckbox: false,
-												ajaxData: {"data":data},
-												columnData: columndataRight
-											});
-										}
-										else if (checkedList[0].id === 2){
-											$('#database').attr('disabled',false);
-											data = [];
-											console.log(json.PRIMARY.m_standard);
-											for (let i = 0; i < json.PRIMARY.m_standard.length; i++) {
-												data.push({'name':json.PRIMARY.m_standard[i].info,'value':json.PRIMARY.m_standard[i].dist})
-											}
-											document.querySelector('#detailsTable').GM({
-												gridManagerName: 'details',
-												supportAutoOrder: false,
-												supportDrag: false,
-												supportCheckbox: false,
-												ajaxData: {"data":data},
-												columnData: columndataRight
-											});
-										}
-									}
-								});
-							})
-							$('#daodixian').click(function () {
-								$('.edit').attr('disabled',false);
-								$('#database').attr('disabled',false);
-								$('#h2title').html($('#daodixian').html());
-								document.querySelector('#outlineTable').GM({
-									gridManagerName: 'outline',
-									supportAutoOrder: false,
-									supportDrag: false,
-									checkboxConfig: {
-										useRowCheck: true,
-										useRadio: true
-									},
-									ajaxData: {"data":[{id:1, name: ''}]},
-									columnData: columndataLeft,
-									checkedAfter: function (checkedList) {
-										if(checkedList[0].id === 1){
-											data = [];
-											console.log(json.CONDUCTOR[0]);
-											data = [
-												{
-													'name': '导地线类型',
-													'value':conductorArr[json.CONDUCTOR[0].type]
-												},
-												{
-													'name':'导地线截面积(mm^2)',
-													'value':json.CONDUCTOR[0].A
-												},
-												{
-													'name':'导地线直径(mm)',
-													'value':json.CONDUCTOR[0].d
-												},
-												{
-													'name':'计算拉断力(N)',
-													'value':json.CONDUCTOR[0].Tp
-												},
-												{
-													'name':'单位长度质量(kg/mm)',
-													'value':json.CONDUCTOR[0].p1
-												},
-												{
-													'name':'弹性系数(N/mm^2)',
-													'value':json.CONDUCTOR[0].E
-												},
-												{
-													'name':'膨胀系数x1E-6/℃',
-													'value':json.CONDUCTOR[0].a
-												},
-												{
-													'name':'导线分裂数',
-													'value':json.CONDUCTOR[0].num
-												}
-											]
-											document.querySelector('#detailsTable').GM({
-												gridManagerName: 'details',
-												supportAutoOrder: false,
-												supportDrag: false,
-												supportCheckbox: false,
-												ajaxData: {"data":data},
-												columnData: columndataRight
-											});
-										}
-									}
-								});
-							})
-							$('#qixiang').click(function () {
-								$('.edit').attr('disabled',false);
-								$('#database').attr('disabled',false);
-								$('#h2title').html($('#qixiang').html());
-								data = [];
-								for (let i = 0; i < json.WEATHER.length; i++) {
-									data.push({
-										'id':i+1,
-										'name':json.WEATHER[i].name
-									})
-								}
-								document.querySelector('#outlineTable').GM({
-									gridManagerName: 'outline',
-									supportAutoOrder: false,
-									supportDrag: false,
-									checkboxConfig: {
-										useRowCheck: true,
-										useRadio: true
-									},
-									ajaxData: {"data":data},
-									columnData: columndataLeft,
-									checkedAfter: function (checkedList) {
-										if (checkedList[0].id === 1) {
-											data = [];
-											for (let j = 0; j < json.WEATHER[0].TWI.length; j++) {
-												data.push({
-													'name': json.WEATHER[0].TWI[j].name,
-													't': json.WEATHER[0].TWI[j].t,
-													'v': json.WEATHER[0].TWI[j].v,
-													'b': json.WEATHER[0].TWI[j].b
-												})
-											}
-											document.querySelector('#detailsTable').GM({
-												gridManagerName: 'details',
-												supportAutoOrder: false,
-												supportDrag: false,
-												supportCheckbox: false,
-												ajaxData: {"data": data},
-												columnData: [{key: 'name', text: '气象条件'}, {key: 't', text: '温度℃'}, {
-													key: 'v',
-													text: '风速m/s'
-												}, {key: 'b', text: '覆冰(导)mm'}]
-											});
-										}
-										else if (checkedList[0].id === 2) {
-											data = [];
-											for (let j = 0; j < json.WEATHER[1].TWI.length; j++) {
-												data.push({
-													'name':json.WEATHER[1].TWI[j].name,
-													't':json.WEATHER[1].TWI[j].t,
-													'v':json.WEATHER[1].TWI[j].v,
-													'b':json.WEATHER[1].TWI[j].b
-												})
-											}
-											document.querySelector('#detailsTable').GM({
-												gridManagerName: 'details',
-												supportAutoOrder: false,
-												supportDrag: false,
-												supportCheckbox: false,
-												ajaxData: {"data":data},
-												columnData: [{key: 'name', text: '气象条件'}, {key: 't', text: '温度℃'},{key: 'v', text: '风速m/s'}, {key: 'b', text: '覆冰(导)mm'}]
-											});
-										}
-									}
-								});
-							})
-							$('#fenduan').click(function () {
-								$('.edit').attr('disabled',false);
-								$('#database').attr('disabled',true);
-								$('#h2title').html($('#fenduan').html());
-								document.querySelector('#outlineTable').GM({
-									gridManagerName: 'outline',
-									supportAutoOrder: false,
-									supportDrag: false,
-									checkboxConfig: {
-										useRowCheck: true,
-										useRadio: true
-									},
-									ajaxData: {"data":[{id:1, name: json.SECTION[0].name}]},
-									columnData: columndataLeft,
-									checkedAfter: function (checkedList) {
-										if(checkedList[0].id === 1){
-											data = [];
-											console.log(json.SECTION[0]);
-											data = [
-												{
-													'name': '起始桩号',
-													'value':json.SECTION[0].starJ
-												},
-												{
-													'name':'起始累距',
-													'value':json.SECTION[0].from
-												},
-												{
-													'name':'终点桩号',
-													'value':json.SECTION[0].endJ
-												},
-												{
-													'name':'终点累距',
-													'value':json.SECTION[0].to
-												},
-												{
-													'name':'气象区名称',
-													'value':json.SECTION[0].wertherName
-												},
-												{
-													'name':'导线型号',
-													'value':json.SECTION[0].powerLine
-												},
-												{
-													'name':'导线新线系数',
-													'value':json.SECTION[0].pLineK
-												},
-												{
-													'name':'导线安全系数',
-													'value':json.SECTION[0].pLineF
-												},
-												{
-													'name':'导线年平运行张力上限',
-													'value':json.SECTION[0].pLineC
-												},
-												{
-													'name':'地线型号',
-													'value':json.SECTION[0].groundLine
-												},
-												{
-													'name':'地线新线系数',
-													'value':json.SECTION[0].gLineK
-												},
-												{
-													'name':'地线安全系数',
-													'value':json.SECTION[0].gLineF
-												},
-												{
-													'name':'地线年平运行张力上限',
-													'value':json.SECTION[0].gLineC
-												},
-												{
-													'name':'设计回路',
-													'value':circuitArr[json.SECTION[0].circuit - 1]
-												}
-											]
-											document.querySelector('#detailsTable').GM({
-												gridManagerName: 'details',
-												supportAutoOrder: false,
-												supportDrag: false,
-												supportCheckbox: false,
-												ajaxData: {"data":data},
-												columnData: columndataRight
-											});
-										}
-									}
-								});
-							})
-							$('#gantashiyong').click(function () {
-								$('.edit').attr('disabled',false);
-								$('#database').attr('disabled',false);
-								$('#h2title').html($('#gantashiyong').html());
-								data = [];
-								for (let i = 0; i < json.TOWER.length; i++) {
-									data.push({
-										'id':i+1,
-										'name':json.TOWER[i].Name,
-										'NO':json.TOWER[i].No
-									})
-								}
-								document.querySelector('#outlineTable').GM({
-									gridManagerName: 'outline',
-									supportAutoOrder: false,
-									supportDrag: false,
-									checkboxConfig: {
-										useRowCheck: true,
-										useRadio: true
-									},
-									ajaxData: {"data":data},
-									columnData: columndataLeft,
-									checkedAfter: function (checkedList) {
-										for (let j = 0; j < json.TOWER.length; j++) {
-											if ( j === checkedList[0].NO){
-												data = [];
-												data = [
-													{
-														'name': '杆塔类型',
-														'value': towerArr[json.TOWER[j].type]
-													},
-													{
-														'name': '最大档距(m)',
-														'value': json.TOWER[j].MaxL
-													},
-													{
-														'name': '水平档距(m)',
-														'value': json.TOWER[j].LH
-													},
-													{
-														'name': '垂直档距(m)',
-														'value': json.TOWER[j].LV
-													},
-													{
-														'name': '起始呼高(m)',
-														'value': json.TOWER[j].StartHigh
-													},
-													{
-														'name':'级差增量(m)',
-														'value':json.TOWER[j].Dhigh
-													},
-													{
-														'name': '终止呼高(m)',
-														'value': json.TOWER[j].EndHigh
-													},
-													{
-														'name': '最小转角度数(°)',
-														'value': json.TOWER[j].MinAngle
-													},
-													{
-														'name': '最大转角度数(°)',
-														'value': json.TOWER[j].MaxAngle
-													},
-													{
-														'name': '角度折算水平档距(m/°)',
-														'value': json.TOWER[j].Angle2LH
-													},
-													{
-														'name': '摇摆角kv值',
-														'value': json.TOWER[j].KV
-													},
-													{
-														'name':'大风工况摇摆角(°)',
-														'value':json.TOWER[j].sway.WindA
-													},
-													{
-														'name':'内过电压摇摆角(°)',
-														'value':json.TOWER[j].sway.OperationA
-													},
-													{
-														'name':'外过电压摇摆角(°)',
-														'value':json.TOWER[j].sway.AtomosphereA
-													},
-													{
-														'name':'带电作业摇摆角(°)',
-														'value':json.TOWER[j].sway.ElecA
-													},
-													{
-														'name': '最大横担长度(m)',
-														'value': json.TOWER[j].Dist
-													},
-													{
-														'name': '地线支架高度(m)',
-														'value': json.TOWER[j].upToTop
-													},
-													{
-														'name': '上中导线高差(m)',
-														'value': json.TOWER[j].upToMid
-													},
-													{
-														'name': '中下导线高差(m)',
-														'value': json.TOWER[j].minToDown
-													},
-													{
-														'name': '其他附加属性',
-														'value': toweraddTypeArr[json.TOWER[j].typeEx - 1]
-													},
-													{
-														'name': '最低塔正面根开(m)',
-														'value': json.TOWER[j].baseLw
-													},
-													{
-														'name': '最低塔侧面根开(m)',
-														'value': json.TOWER[j].baseLl
-													},
-													{
-														'name': '最高塔正面根开(m)',
-														'value': json.TOWER[j].baseHw
-													},
-													{
-														'name': '最高塔侧面根开(m)',
-														'value': json.TOWER[j].baseHl
-													},
-													{
-														'name': '杆塔分组号',
-														'value': json.TOWER[j].Group
-													}];
-												document.querySelector('#detailsTable').GM({
-													gridManagerName: 'details',
-													supportAutoOrder: false,
-													supportDrag: false,
-													supportCheckbox: false,
-													ajaxData: {"data": data},
-													columnData: columndataRight
-												});
-											}
-										}
-									}
-								});
-							})
-							$('#gantatacai').click(function () {
-								$('.edit').attr('disabled',true);
-								$('#database').attr('disabled',false);
-								$('#h2title').html($('#gantatacai').html());
-								data = [];
-								for (let i = 0; i < json.TOWER.length; i++) {
-									data.push({
-										'id':i+1,
-										'name':json.TOWER[i].Name,
-										'NO':json.TOWER[i].No
-									})
-								}
-								document.querySelector('#outlineTable').GM({
-									gridManagerName: 'outline',
-									supportAutoOrder: false,
-									supportDrag: false,
-									checkboxConfig: {
-										useRowCheck: true,
-										useRadio: true
-									},
-									ajaxData: {"data":data},
-									columnData: columndataLeft,
-									checkedAfter: function (checkedList) {
-										for (let j = 0; j < json.TOWER.length; j++) {
-											if ( j === checkedList[0].NO){
-												data = [];
-												for (let k = 0; k < json.TOWER[j].price.length; k++){
-													data.push({
-														'name':json.TOWER[j].Name + '-' + json.TOWER[j].price[k].High,
-														'Weight':json.TOWER[j].price[k].Weight,
-														'BaseWight':json.TOWER[j].price[k].BaseWight,
-														'BaseM':json.TOWER[j].price[k].BaseM,
-														'JJ':json.TOWER[j].price[k].JJ
-													})
-													document.querySelector('#detailsTable').GM({
-														gridManagerName: 'details',
-														supportAutoOrder: false,
-														supportDrag: false,
-														supportCheckbox: false,
-														ajaxData: {"data": data},
-														columnData: [{key: 'name', text: '杆塔名称'}, {key: 'Weight', text: '塔材(kg)'},{key: 'BaseWight', text: '基础钢材(kg)'}, {key: 'BaseM', text: '混凝土(吨)'}, {key: 'JJ', text: '串折算'}]
-													});
-												}
-
-											}
-										}
-									}
-								});
-							})
-							$('#jueyuancan').click(function () {
-								$('.edit').attr('disabled',false);
-								$('#database').attr('disabled',false);
-								$('#h2title').html($('#jueyuancan').html());
-								data = [];
-								for (let i = 0; i < json.INSULATE.length; i++) {
-									data.push({
-										'id':i+1,
-										'name':json.INSULATE[i].name
-									})
-								}
-								document.querySelector('#outlineTable').GM({
-									gridManagerName: 'outline',
-									supportAutoOrder: false,
-									supportDrag: false,
-									checkboxConfig: {
-										useRowCheck: true,
-										useRadio: true
-									},
-									ajaxData: {"data":data},
-									columnData: columndataLeft,
-									checkedAfter: function (checkedList) {
-										// console.log(checkedList);
-										for (let j = 0; j < json.INSULATE.length; j++) {
-											if ( j === (checkedList[0].id - 1)){
-												data = [];
-												data = [
-													{
-														'name': '绝缘子串类型',
-														'value': insulateArr[json.INSULATE[j].type]
-													},
-													{
-														'name': '单联双联',
-														'value': sindouArr[json.INSULATE[j].Join - 1]
-													},
-													{
-														'name': '每联片数',
-														'value': json.INSULATE[j].Num
-													},
-													{
-														'name': '无冰串重(kg)',
-														'value': json.INSULATE[j].Weight
-													},
-													{
-														'name': '单片覆冰(kg)',
-														'value': json.INSULATE[j].IceWeight
-													},
-													{
-														'name':'等效串长(m)',
-														'value':json.INSULATE[j].Length
-													},
-													{
-														'name': '单片受风面积(m^2)',
-														'value': json.INSULATE[j].area
-													},
-													{
-														'name': '金具受风折算系数',
-														'value': json.INSULATE[j].k
-													},
-													{
-														'name': '绝缘子常年荷载安全系数',
-														'value': json.INSULATE[j].avergeK
-													},
-													{
-														'name': '绝缘子最大荷载安全系数',
-														'value': json.INSULATE[j].maxK
-													},
-													{
-														'name': '绝缘子断线工况安全系数',
-														'value': json.INSULATE[j].lineBrokeK
-													},
-													{
-														'name':'绝缘子破坏荷载(kN)',
-														'value':json.INSULATE[j].Strength
-													},
-													{
-														'name':'金具最大荷载安全系数',
-														'value':json.INSULATE[j].jjmaxK
-													},
-													{
-														'name':'金具断线工况安全系数',
-														'value':json.INSULATE[j].jjlineBrokeK
-													},
-													{
-														'name':'金具破坏荷载(kN)',
-														'value':json.INSULATE[j].jjStrength
-													},
-													{
-														'name': 'V型串夹角(°)',
-														'value': json.INSULATE[j].angleV
-													},
-													{
-														'name': '污秽区使用条件',
-														'value': dirtyareaArr[json.INSULATE[j].dirtyTpye]
-													},
-													{
-														'name': '绝缘子材料',
-														'value': insulateMateArr[json.INSULATE[j].material]
-													}];
-												document.querySelector('#detailsTable').GM({
-													gridManagerName: 'details',
-													supportAutoOrder: false,
-													supportDrag: false,
-													supportCheckbox: false,
-													ajaxData: {"data": data},
-													columnData: columndataRight
-												});
-											}
-										}
-									}
-								});
-							})
-							$('#jueyuancai').click(function () {
-								$('.edit').attr('disabled',true);
-								$('#database').attr('disabled',false);
-								$('#h2title').html($('#jueyuancai').html());
-								data = [];
-								for (let i = 0; i < json.INSULATE.length; i++) {
-									data.push({
-										'id':i+1,
-										'name':json.INSULATE[i].name
-									})
-								}
-								document.querySelector('#outlineTable').GM({
-									gridManagerName: 'outline',
-									supportAutoOrder: false,
-									supportDrag: false,
-									checkboxConfig: {
-										useRowCheck: true,
-										useRadio: true
-									},
-									ajaxData: {"data":data},
-									columnData: columndataLeft,
-									checkedAfter: function (checkedList) {
-										for (let j = 0; j < json.INSULATE.length; j++) {
-											if ( j === (checkedList[0].id - 1)){
-												data = [];
-												for (let k = 0; k < json.INSULATE[j].metrial.length; k++){
-													data.push({
-														'name':json.INSULATE[j].metrial[k].Name,
-														'Type':json.INSULATE[j].metrial[k].Type,
-														'Count':json.INSULATE[j].metrial[k].Count,
-														'Weight':json.INSULATE[j].metrial[k].Weight,
-														'about':json.INSULATE[j].metrial[k].about,
-														'unit':json.INSULATE[j].metrial[k].unit
-													})
-													document.querySelector('#detailsTable').GM({
-														gridManagerName: 'details',
-														supportAutoOrder: false,
-														supportDrag: false,
-														supportCheckbox: false,
-														ajaxData: {"data": data},
-														columnData: [{key: 'name', text: '材料名称'}, {key: 'Type', text: '材料型号'},{key: 'unit', text: '单位'},  {key: 'Weight', text: '单重'},{key: 'Count', text: '数量'}, {key: 'about', text: '备注'}]
-													});
-												}
-
-											}
-										}
-									}
-								});
-							})
-							$('#jiedican').click(function () {
-								$('.edit').attr('disabled',false);
-								$('#database').attr('disabled',false);
-								$('#h2title').html($('#jiedican').html());
-								data = [];
-								for (let i = 0; i < json.GCONNECT.length; i++) {
-									data.push({
-										'id':i+1,
-										'name':json.GCONNECT[i].Type
-									})
-								}
-								document.querySelector('#outlineTable').GM({
-									gridManagerName: 'outline',
-									supportAutoOrder: false,
-									supportDrag: false,
-									checkboxConfig: {
-										useRowCheck: true,
-										useRadio: true
-									},
-									ajaxData: {"data":data},
-									columnData: columndataLeft,
-									checkedAfter: function (checkedList) {
-										// console.log(checkedList);
-										for (let j = 0; j < json.GCONNECT.length; j++) {
-											if ( j === (checkedList[0].id - 1)){
-												data = [];
-												data = [
-													{
-														'name': '适用塔型',
-														'value': toweraddTypeArr[json.GCONNECT[j].TowerType - 1]
-													},
-													{
-														'name': '最小大地电阻率',
-														'value': json.GCONNECT[j].minResistance
-													},
-													{
-														'name': '最大大地电阻率',
-														'value': json.GCONNECT[j].maxResistance
-													}];
-												document.querySelector('#detailsTable').GM({
-													gridManagerName: 'details',
-													supportAutoOrder: false,
-													supportDrag: false,
-													supportCheckbox: false,
-													ajaxData: {"data": data},
-													columnData: columndataRight
-												});
-											}
-										}
-									}
-								});
-							})
-							$('#jiedicai').click(function () {
-								$('.edit').attr('disabled',true);
-								$('#database').attr('disabled',false);
-								$('#h2title').html($('#jiedicai').html());
-								data = [];
-								for (let i = 0; i < json.GCONNECT.length; i++) {
-									data.push({
-										'id':i+1,
-										'name':json.GCONNECT[i].Type
-									})
-								}
-								document.querySelector('#outlineTable').GM({
-									gridManagerName: 'outline',
-									supportAutoOrder: false,
-									supportDrag: false,
-									checkboxConfig: {
-										useRowCheck: true,
-										useRadio: true
-									},
-									ajaxData: {"data":data},
-									columnData: columndataLeft,
-									checkedAfter: function (checkedList) {
-										for (let j = 0; j < json.GCONNECT.length; j++) {
-											if ( j === (checkedList[0].id - 1)){
-												data = [];
-												for (let k = 0; k < json.GCONNECT[j].metrial.length; k++){
-													data.push({
-														'name':json.GCONNECT[j].metrial[k].Name,
-														'Type':json.GCONNECT[j].metrial[k].Type,
-														'Count':json.GCONNECT[j].metrial[k].Count,
-														'Weight':json.GCONNECT[j].metrial[k].Weight,
-														'about':json.GCONNECT[j].metrial[k].about,
-														'unit':json.GCONNECT[j].metrial[k].unit
-													})
-													document.querySelector('#detailsTable').GM({
-														gridManagerName: 'details',
-														supportAutoOrder: false,
-														supportDrag: false,
-														supportCheckbox: false,
-														ajaxData: {"data": data},
-														columnData: [{key: 'name', text: '材料名称'}, {key: 'Type', text: '材料型号'},{key: 'unit', text: '单位'},  {key: 'Weight', text: '单重'},{key: 'Count', text: '数量'}, {key: 'about', text: '备注'}]
-													});
-												}
-
-											}
-										}
-									}
-								});
-							})
-							$('#fangzhenchui').click(function () {
-								$('#database').attr('disabled',true);
-								$('.edit').attr('disabled',false);
-								$('#h2title').html($('#fangzhenchui').html());
-								data = [];
-								for (let i = 0; i < json.HAMMER.length; i++) {
-									data.push({
-										'id':i+1,
-										'name':json.HAMMER[i].Name
-									})
-								}
-								document.querySelector('#outlineTable').GM({
-									gridManagerName: 'outline',
-									supportAutoOrder: false,
-									supportDrag: false,
-									checkboxConfig: {
-										useRowCheck: true,
-										useRadio: true
-									},
-									ajaxData: {"data":data},
-									columnData: columndataLeft,
-									checkedAfter: function (checkedList) {
-										// console.log(checkedList);
-										for (let j = 0; j < json.HAMMER.length; j++) {
-											if ( j === (checkedList[0].id - 1)){
-												data = [{'name':'适用导地线','value': json.HAMMER[j].lineName}];
-												for (let i = 0; i < json.HAMMER[j].fRNum.length; i++) {
-													data.push({
-														'name':'第'+(i+1)+'组规则',
-														'value':json.HAMMER[j].fRNum[i],
-														'upLimit':json.HAMMER[j].upLimit[i]
-													})
-												}
-												document.querySelector('#detailsTable').GM({
-													gridManagerName: 'details',
-													supportAutoOrder: false,
-													supportDrag: false,
-													supportCheckbox: false,
-													ajaxData: {"data": data},
-													columnData:  [{key: 'name', text: '参数名称'}, {key: 'value', text: '型号/数量'},{key: 'upLimit', text: '适用档距上限'}]
-												});
-											}
-										}
-									}
-								});
-							})
-						},
-						error: function (errorMsg) {
-							alert(errorMsg);
-						}
-					})
-				}
-				//打开本地map文件
-				window.upmapfile = function () {
-					var mapfileObj = document.getElementById("TLmapfile").files[0]; // js 获取文件对象
-					console.log(mapfileObj);
-					var mapform = new FormData(); // FormData 对象
-					mapform.append("file", mapfileObj); // 文件对象
-					mapform.append("ProjectName", prjName);//控制路径
-
-					$.ajax({
-						url: "http://202.114.118.138:8181/UploadfileToJson", //提交的路径
-						type: "post",       //提交方式
-						data: mapform,    //提交的数据
-						// dataType:"json",
-						contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-						processData: false,
-						success: function (demdata){
-							console.log("Mapinfo",demdata);
-							savedJson.DEM = demdata;
-							DEM = demdata
-							drawDEM_whj(DEM);
-							//drawGeo(cornerCor);
-							//打开本地pwf文件
-							window.uppwffile = function() {
-								var pwffileObj = document.getElementById("TLpwffile").files[0]; // js 获取文件对象
-								console.log(pwffileObj);
-								var pwfform = new FormData(); // FormData 对象
-								pwfform.append("file", pwffileObj); // 文件对象
-								pwfform.append("ProjectName", prjName);//控制路径
-
-								$.ajax({
-									url: "http://202.114.118.138:8181/UploadfileToJson", //提交的路径
-									type: "post",       //提交方式
-									data: pwfform,    //提交的数据
-									contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-									processData: false,
-									success: function(pwfdata){
-										console.log(pwfdata);
-										alert("已打开排杆文件");
-										let towerlist = pwfdata.TOWERLIST;
-										let pos = [];
-										for (let i = 0; i < towerlist.length; i++) {
-											pos.push(new THREE.Vector3(towerlist[i].Distance/10,towerlist[i].High - yMin,0));
-											createTower(pos[i]);
-										}
-									},
-									error: function (errorMsg) {
-										alert(errorMsg);
-									}
-								})
-							}
-						},
-						error: function (errorMsg) {
-							alert(errorMsg);
-						}
-					})
-				}
-			},
-			error: function (errorMsg) {
-				alert(errorMsg);
-			}
-		});
-	}
-	}
-	//draw
-	{
+	//draw  relative
 	/* 预设格网参数 */
 	var verSize = 160;var horSize = 300; var ydivision=mp.m_HScale*mp.m_Grid/1000; var xdivision = mp.m_DScale*mp.m_Grid/1000;var Gridsize = mp.m_Grid;
 	console.log("initial paremeter",ydivision,xdivision);
@@ -5675,9 +2131,114 @@
 	var DEM;
 
 	//线、气象条件初始默认值
-	var UseLine = prk.CONDUCTOR[0];
-	var UseWeather = prk.WEATHER[0];
-	var section = prk.SECTION[0];
+	var UseLine = {
+				"name": "LGJX-400/35",
+				"type": 0,
+				"A": 425.24,
+				"d": 26.82,
+				"Tp": 103900,
+				"p1": 1.349,
+				"E": 65000,
+				"a": 0.0000205,
+				"num": 1
+			};
+	var UseWeather = {
+				"name": "Ⅱ",
+				"num": 12,
+				"h": 15.0,
+				"hs": 15.0,
+				"alfa": 0.16,
+				"B": 0.0,
+				"TWI": [{
+					"name": "平均气温",
+					"t": 15.0,
+					"v": 0.0,
+					"b": 0.0
+				},
+					{
+						"name": "最高气温",
+						"t": 40.0,
+						"v": 0.0,
+						"b": 0.0
+					},
+					{
+						"name": "最低气温",
+						"t": -10.0,
+						"v": 0.0,
+						"b": 0.0
+					},
+					{
+						"name": "最大风速",
+						"t": 10.0,
+						"v": 27.0,
+						"b": 0.0
+					},
+					{
+						"name": "最大覆冰",
+						"t": -5.0,
+						"v": 10.0,
+						"b": 5.0
+					},
+					{
+						"name": "安装情况",
+						"t": 0.0,
+						"v": 10.0,
+						"b": 0.0
+					},
+					{
+						"name": "操作情况",
+						"t": 15.0,
+						"v": 15.0,
+						"b": 0.0
+					},
+					{
+						"name": "大气有风",
+						"t": 15.0,
+						"v": 10.0,
+						"b": 0.0
+					},
+					{
+						"name": "大气无风",
+						"t": 15.0,
+						"v": 0.0,
+						"b": 0.0
+					},
+					{
+						"name": "最高线温",
+						"t": 70.0,
+						"v": 0.0,
+						"b": 0.0
+					},
+					{
+						"name": "检修工况",
+						"t": 0.0,
+						"v": 0.0,
+						"b": 0.0
+					},
+					{
+						"name": "事故工况",
+						"t": 0.0,
+						"v": 0.0,
+						"b": 0.0
+					}]
+			};
+	var section = {
+				"name": "1",
+				"starJ": "J2",
+				"from": 0.0,
+				"endJ": "J37(GL)",
+				"to": 57641.0,
+				"powerLine": "LGJX-400/35",
+				"groundLine": "LGJX-50/30",
+				"wertherName": "Ⅱ",
+				"pLineK": 0.95,
+				"pLineF": 2.500,
+				"pLineC": 0.250,
+				"gLineK": 1.000,
+				"gLineF": 3.000,
+				"gLineC": 0.250,
+				"circuit": 1
+			};
 
 	var theLine = UseLine,theWeather = UseWeather;
 	var designLine = 1;
@@ -6041,8 +2602,8 @@
 		if(r_linegroup.children.length!=0){r_linegroup.children.length = 0;}
 		if(l_linegroup.children.length!=0){l_linegroup.children.length = 0;}
 		if(DEM_pgroup.children.length!=0){DEM_pgroup.children.length = 0;}
-		
-		
+
+
 
 			console.log(m_linegroup.children.length,"after remove ");
 		// if(l_linegroup.children.length!=0){l_linegroup.clear();}
@@ -6150,94 +2711,6 @@
 		scene.add(DEM_pgroup);
 
 	}
-	function drawDEM(leftLineCor,rightLineCor,midLineCor,cornerCor){
-
-		for (let i = 0; i < allChildren.length; i++){
-			framegroup.remove(allChildren[i]);
-		}
-		midCoordinate.length = midLineCor.length;
-		leftCoordinate.length = leftLineCor.length;
-		rightCoordinate.length = rightLineCor.length;
-		console.log(rightCoordinate.length);
-		// midCoordinate.length =leftCoordinate.length = rightCoordinate.length =midLineCor.length;
-		for (let i = 0 ; i < midCoordinate.length ; i++){
-			midCoordinate[i] = new Array();
-			midCoordinate[i][0] = midLineCor[i].x;midCoordinate[i][1] = midLineCor[i].z;midCoordinate[i][2] = 0 ;
-		}
-		for (let i = 0 ; i < leftCoordinate.length ; i++){
-			leftCoordinate[i] = new Array();
-			leftCoordinate[i][0] = leftLineCor[i].x;leftCoordinate[i][1] = leftLineCor[i].z;leftCoordinate[i][2] = 0 ;
-		}
-		for (let i = 0 ; i < rightCoordinate.length ; i++){
-			rightCoordinate[i] = new Array();
-			rightCoordinate[i][0] = rightLineCor[i].x;rightCoordinate[i][1] = rightLineCor[i].z;rightCoordinate[i][2] = 0 ;
-		}
-
-		x.length = midCoordinate.length;
-		y.length = midCoordinate.length;
-		for (let i = 0 ; i <midCoordinate.length ; i++){
-			x[i] = midCoordinate[i][0];y[i] = midCoordinate[i][1];
-		}
-		for (let i = 0 ; i <leftCoordinate.length ; i++){
-			leftX[i] = leftCoordinate[i][0];leftY[i] = leftCoordinate[i][1];
-		}
-		for (let i = 0 ; i <rightCoordinate.length ; i++){
-			rightX[i] = rightCoordinate[i][0];rightY[i] = rightCoordinate[i][1];
-		}
-		//
-
-
-		yMax = Math.max.apply(Math,y);
-		yMin = Math.min.apply(Math,y);
-		var leftYmin = Math.min.apply(Math,leftY);
-		var rightYmin = Math.min.apply(Math,rightY);
-		tempDif = yMax - yMin;
-		dif = (parseInt((yMax - yMin)/10) + 2 ) * 10;
-		verSize = dif ;
-		xMax = (parseInt(x[x.length - 1]/10) + 1 ) * 10;
-		horSize = xMax/10;
-
-		window.initContent();
-		// 中心断面 object
-		// var c_material = new THREE.LineBasicMaterial( { color: 0x000000 } );
-		// var c_lineframegroup = new Array();
-		// for(let i=0;i<DEM.MID.size();i++){
-		// 	var c_vertice = new THREE.Geometry();
-		// 	for(let j=0;j<DEM.MID[i].section.size;j++) {
-		// 		c_vertice.vertices.push(new THREE.Vector3(DEM.MID[i].section[j].x / 10, DEM.MID[i].section[j].z - yMin, 0));
-		// 	}
-		// 	var  c_line= new THREE.Line(c_vertice,c_material);c_line.name = "Section"+i.toString();
-		// 	c_lineframegroup.push(c_line);
-		// 	scene.add(c_line);
-		// }
-		//
-		// consolo.log(c_linegroup);
-
-		/* 中心断面绘制 */
-		var material = new THREE.LineBasicMaterial( { color: 0x000000 } );
-		var centerDemGeo = new THREE.Geometry();
-		for (let i = 0 ; i <midCoordinate.length ; i++){
-			centerDemGeo.vertices.push(new THREE.Vector3(midCoordinate[i][0]/10,midCoordinate[i][1]-yMin,0));
-		}
-		/* 左断面绘制 */
-		var leftMaterial = new THREE.LineDashedMaterial({color:0x0000ff, dashSize:3, gapSize: 1});
-		var leftDemGeo = new THREE.Geometry();
-		for (let i = 0 ; i <leftCoordinate.length ; i++){
-			leftDemGeo.vertices.push(new THREE.Vector3(leftCoordinate[i][0]/10,leftCoordinate[i][1]-leftYmin,0));
-		}
-		/* 右断面绘制 */
-		var rightMaterial = new THREE.LineDashedMaterial({color:0x00ff00, dashSize: 2, gapSize: 2});
-		var rightDemGeo = new THREE.Geometry();
-		for (let i = 0 ; i <rightCoordinate.length ; i++){
-			rightDemGeo.vertices.push(new THREE.Vector3(rightCoordinate[i][0]/10,rightCoordinate[i][1]-rightYmin,0));
-		}
-		centerDem = new THREE.Line( centerDemGeo, material );centerDem.name = "dem";
-		var leftDem = new THREE.Line(leftDemGeo,leftMaterial);leftDem.name = "dem";
-		leftDem.computeLineDistances();
-		var rightDem = new THREE.Line(rightDemGeo,rightMaterial);rightDem.name = "dem";
-		rightDem.computeLineDistances();
-		scene.add( centerDem );scene.add(leftDem);scene.add(rightDem);
-	}
 	/* 转角投影线绘制函数 */
 	window.drawGeo= function (cornerCor){
 		for(let i = 0 ;i<scene.children.length;i++){
@@ -6272,7 +2745,7 @@
 		console.log("ProjectLineadd",scene);
 	})
 
-		/* 悬链线相关函数 */ 
+		/* 悬链线相关函数 */
 		window.ComputeLoad = function() {
 			var a0=1;							//风压不均匀系数
 			var p=1.2255;						//空气密度 ρ
@@ -7442,7 +3915,7 @@
 				if (towerHigh[i].value === towerHei.toString()){
 					towerHigh[i].selected = true;
 				}
-			}			
+			}
 			//var inputId = document.getElementById("towId");
 			var inputId2 =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
 			//inputId.value = "G" + towerlist.length;
@@ -7469,43 +3942,29 @@
 		}
 	//保存排杆
 	$("#saveTower").click(function () {
-		console.log(towerlist);
 		var towerpwf = {"TOWERLIST":towerlist};
 		savedJson.pwf = towerpwf;
 		var pwfStr = JSON.stringify(towerpwf);
-		console.log(pwfStr)
 		var formData = new FormData();
-
 		formData.append("pwf",pwfStr);
 		formData.append("ProjectName", prjName);
 		console.log(formData.get('pwf'));
+		$.ajax({
+			url: "http://202.114.118.138:8181/pwfsave", //提交的路径
+			type: "post",       //提交方式
+			data: formData,    //提交的数据
+			// dataType:"json",
+			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+			processData: false,
+			success: function (data) {
+				console.log(data);
+			},
+			error: function (errorMsg) {
+				alert(errorMsg);
+			}
+		});
+	})
 
-		if (towerlist.length > 0){
-			$.ajax({
-				url: "http://202.114.118.138:8181/pwfsave", //提交的路径
-				type: "post",       //提交方式
-				data: formData,    //提交的数据
-				// dataType:"json",
-				contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-				processData: false,
-				success: function (data) {
-					console.log(data);
-					alert("保存成功！");
-				},
-				error: function (errorMsg) {
-					alert(errorMsg);
-				}
-			});
-		}
-	})
-	savedJson.pwf = towerlist;
-	//保存json文件到本地（固定路径）
-	$("#saveJson").click(function () {
-		console.log(savedJson);
-		var content = JSON.stringify(savedJson);
-		var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
-		saveAs(blob, prjName + ".json");
-	})
 	//删除杆塔
 	function towerDelete(event) {
 			// document.body.style.cursor = "url(./css/cancel.ico) 9 9, default";
@@ -7585,205 +4044,176 @@
 		}
 	//插入杆塔
 	function towerInsert(event) {
-		if (event.button === 0){
-			let currentTow = [];
-			let deleteWire = [];
-			intersects = getIntersects(event);
-			tempintersects = intersects;
+			if (event.button === 0){
+				let currentTow = [];
+				let deleteWire = [];
+				intersects = getIntersects(event);
+				tempintersects = intersects;
 
-			var tempLine2Cor = [];
-			for (let i = 0; i < m_linegroup.children.length; i++) {
-				for(let j=0;j<m_linegroup.children[i].geometry.vertices.length;j++){
-					tempLine2Cor.push([m_linegroup.children[i].geometry.vertices[j].x,m_linegroup.children[i].geometry.vertices[j].y]);
-				}
-			}
-			var tempLine2 = turf.lineString(tempLine2Cor);
-			var temppointLine1 = turf.lineString([[tempintersects.x,tempintersects.y+500],[tempintersects.x,0]]); // m_line intersect point
-			var interPoint1 = turf.lineIntersect(temppointLine1, tempLine2);
-			tempintersects = new THREE.Vector3(tempintersects.x, interPoint1.features[0].geometry.coordinates[1], 0);
-			console.log("line interx ",tempintersects,"inter Point",interPoint1.features[0].geometry);
-
-			var pointsGeometry = new THREE.Geometry();
-			pointsGeometry.vertices.push(intersects);
-			var temppointsGeometry = new THREE.Geometry();
-			temppointsGeometry.vertices.push(tempintersects);
-
-			var pointsMaterial = new THREE.PointsMaterial({color:0xff0000, size: 3});
-			var points = new THREE.Points(pointsGeometry, pointsMaterial);
-			var temppoints = new THREE.Points(temppointsGeometry, pointsMaterial);
-			pointArray.push(temppoints);console.log(pointArray);
-			putInd++;
-
-			var pos = new THREE.Vector3(points.geometry.vertices[0].x,points.geometry.vertices[0].y,0);
-			var tempLine1 = turf.lineString([[pos.x,pos.y],[pos.x,0]]);
-			var interPoint = turf.lineIntersect(tempLine1, tempLine2);
-			pos = new THREE.Vector3(points.geometry.vertices[0].x, interPoint.features[0].geometry.coordinates[1], 0);
-
-			var towMesh = tower1(towerHei);
-			towMesh.position.x = pos.x;
-			towMesh.position.y = pos.y;
-			towMesh.position.z = 0;
-			towMesh.name = "fixTower";
-			scene.add(towMesh);
-			console.log("before",towerlist)
-
-			for (let i = 0; i < scene.children.length; i++) {
-				if (scene.children[i].name === "fixwire1" || scene.children[i].name === "fixwire2" || scene.children[i].name === "fixwire3" || scene.children[i].name === "fixwire4") {
-					deleteWire.push(scene.children[i]);
-				}
-			}
-			console.log(deleteWire)
-			for(let i = 0; i < deleteWire.length; i++){
-				scene.remove(deleteWire[i]);
-			}
-
-			console.log("before end",m_end)
-
-			console.log(scene.children)
-			scene.children.sort(compare('position'))
-			for (let i = 0; i < scene.children.length; i++) {
-				if (scene.children[i].name == "fixTower") {
-					currentTow.push({
-						"posX":scene.children[i].position.x,
-						"object":scene.children[i]
-					});
-				}
-			}
-			console.log(currentTow)
-			currentTow.sort(compare('posX'))
-			for (let j = 0; j < currentTow.length; j++) {
-				for (let i = 0; i < scene.children.length; i++) {
-					if (scene.children[i].uuid == currentTow[j].object.uuid){
-						scene.children[i].geometry.name = "G" + j;
+				var tempLine2Cor = [];
+				for (let i = 0; i < m_linegroup.children.length; i++) {
+					for(let j=0;j<m_linegroup.children[i].geometry.vertices.length;j++){
+						tempLine2Cor.push([m_linegroup.children[i].geometry.vertices[j].x,m_linegroup.children[i].geometry.vertices[j].y]);
 					}
 				}
-			}
+				var tempLine2 = turf.lineString(tempLine2Cor);
+				var temppointLine1 = turf.lineString([[tempintersects.x,tempintersects.y+500],[tempintersects.x,0]]); // m_line intersect point
+				var interPoint1 = turf.lineIntersect(temppointLine1, tempLine2);
+				tempintersects = new THREE.Vector3(tempintersects.x, interPoint1.features[0].geometry.coordinates[1], 0);
 
-			let disToPile = []
-			for (let i = 0; i < pile_tabledata.length; i++) {
-				disToPile.push({"name": pile_tabledata[i].name,
-					"dis":Math.abs(pile_tabledata[i].dist - pos.x/Gridsize*xdivision),
-					"value":i
-				})
-			}
-			disToPile.sort(compare("dis"));
-			//$("#pilelist").val(disToPile[0].value);
-			layer.getChildFrame('body',tpIndex).find("#pilelist").val(disToPile[0].value);
-			let gap;
-			for (let i = 0; i < pile_tabledata.length; i++) {
-				if (pile_tabledata[i].name == disToPile[0].name){
-					gap = pos.x/Gridsize*xdivision - pile_tabledata[i].dist;
+				var pointsGeometry = new THREE.Geometry();
+				pointsGeometry.vertices.push(intersects);
+				var temppointsGeometry = new THREE.Geometry();
+				temppointsGeometry.vertices.push(tempintersects);
+
+				var pointsMaterial = new THREE.PointsMaterial({color:0xff0000, size: 3});
+				var points = new THREE.Points(pointsGeometry, pointsMaterial);
+				var temppoints = new THREE.Points(temppointsGeometry, pointsMaterial);
+				pointArray.push(temppoints);
+				putInd++;
+
+				var pos = new THREE.Vector3(points.geometry.vertices[0].x,points.geometry.vertices[0].y,0);
+				var tempLine1 = turf.lineString([[pos.x,pos.y],[pos.x,0]]);
+				var interPoint = turf.lineIntersect(tempLine1, tempLine2);
+				pos = new THREE.Vector3(points.geometry.vertices[0].x, interPoint.features[0].geometry.coordinates[1], 0);
+
+				var towMesh = tower1(towerHei);
+				towMesh.position.x = pos.x;
+				towMesh.position.y = pos.y;
+				towMesh.position.z = 0;
+				towMesh.name = "fixTower";
+				scene.add(towMesh);
+
+				for (let i = 0; i < scene.children.length; i++) {
+					if (scene.children[i].name === "fixwire1" || scene.children[i].name === "fixwire2" || scene.children[i].name === "fixwire3" || scene.children[i].name === "fixwire4") {
+						deleteWire.push(scene.children[i]);
+					}
 				}
+				for(let i = 0; i < deleteWire.length; i++){
+					scene.remove(deleteWire[i]);
+				}
+
+				scene.children.sort(compare('position'))
+				/****修改****/
+				towerlist = []
+				for (let i = 0; i < scene.children.length; i++) {
+					if (scene.children[i].name == "fixTower") {
+						currentTow.push({
+							"posX":scene.children[i].position.x,
+							"object":scene.children[i]
+						});
+						towerlist.push({
+							"Name": "G" + i,
+							"Distance": scene.children[i].position.x / Gridsize * xdivision + xMin,
+							"High": scene.children[i].position.y / Gridsize * ydivision + yMin,
+							"TowerType": "ZMVA41",
+							"Base": 0,
+							"TowerHigh": scene.children[i].geometry.vertices[7].y / (1 / ydivision * Gridsize),
+							"Status": 0,
+							"InsulatorLength": 4.5,
+							"ConnectLength": 0.0,
+							"InsulateP": "",
+							"InsulatePA": "X01",
+							"InsulatePANum": -1,
+							"InsulatePB": "X01",
+							"InsulatePBNum": -1,
+							"InsulatePC": "",
+							"InsulatePCNum": 0,
+							"hugeHigh": 0,
+							"hugeGround": 0,		// 地线悬挂点高程
+							"Lk": 0,
+							"L": 0,
+							"cosa": 1,
+							"bInsular": false,
+							"constant": 0,
+							"u": 1,
+							"kPline": 0,			//导线大号侧k值系数
+							"kGround": 0,		//地线大号侧K值系数
+							"kWind": 0,			//大风条件前视档k值系数
+							"kMaxT": 0,			//70度高温k值系数
+							"constMaxT": 0,
+							"Lh": 0,				// 水平档距
+							"Lh1": 0,			// 小号侧垂直档距
+							"Lh2": 0,			// 大号侧垂直档距
+							"Lv": 0,				// 垂直档距
+							"Lv1": 0,			// 小号侧水平档距
+							"Lv2": 0,			// 大号侧水平档距
+							"lvMinTemp": 0,//最低气温垂直档距
+							"lvMaxTemp": 0,//最高气温垂直档距
+							"lvMaxIce": 0,//最大覆冰垂直档距
+							"lvMaxWind": 0,//最大风垂直档距
+							"displayKType": 0,	//k值类型，0为最大弧垂 1为最高线温
+							"displayGround": 0,		//显示地线
+							"displayPower": 1,		//显示导线
+							"displaySafe": 1,	//显示导线对地
+							"displayCross": 1,		//显示导线跨越
+							"LandDist": 8.5,		// 对地安全距离
+							"ElecDist": 6.0	// 电力线安全距离
+						})
+					}
+				}
+				/****修改****/
+				currentTow.sort(compare('posX'))
+				for (let j = 0; j < currentTow.length; j++) {
+					for (let i = 0; i < scene.children.length; i++) {
+						if (scene.children[i].uuid == currentTow[j].object.uuid){
+							scene.children[i].geometry.name = "G" + j;
+						}
+					}
+				}
+
+				let disToPile = []
+				for (let i = 0; i < pile_tabledata.length; i++) {
+					disToPile.push({"name": pile_tabledata[i].name,
+						"dis":Math.abs(pile_tabledata[i].dist - pos.x/Gridsize*xdivision),
+						"value":i
+					})
+				}
+				disToPile.sort(compare("dis"));
+				layer.getChildFrame('body',tpIndex).find("#pilelist").val(disToPile[0].value);
+				let gap;
+				for (let i = 0; i < pile_tabledata.length; i++) {
+					if (pile_tabledata[i].name == disToPile[0].name){
+						gap = pos.x/Gridsize*xdivision - pile_tabledata[i].dist;
+					}
+				}
+				let gaptoPile2 = layer.getChildFrame('body',tpIndex).find("#gap")[0];
+				gaptoPile2.value = gap.toFixed(2);
+				var inputHei2 = layer.getChildFrame('body',tpIndex).find("#hei")[0];
+				var inputDis2 = layer.getChildFrame('body',tpIndex).find("#dis")[0];
+
+				let disNum = pos.x/Gridsize*xdivision + xMin;
+				let heiNum = pos.y/Gridsize*ydivision + yMin;
+				inputDis2.value = disNum.toFixed(2);
+				inputHei2.value = heiNum.toFixed(2);
+
+				var inputId2 =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
+				inputId2.value = "G" + towerlist.length;
+
+				console.log("then",towerlist)
+				m_end = towerlist.length - 1;
+				/****修改****/
+				towerlist.sort(compare('Distance'));
+				ComputeHugeHigh();
+				/****修改****/
+				for (let i = 0; i < towerlist.length; i++) {
+					towerlist[i].Name = "G" + i;
+				}
+				for (let i = m_start; i < m_end; i++) {
+					DisplayFawCurve4(towerlist[i],towerlist[i+1], "fixwire");
+				}
+
+				towerlist_tabledata=towerlist;
+				GridManager.setAjaxData(towerlist_tableId,{"data":towerlist_tabledata});
+				GridManager.refreshGrid(towerlist_tableId);
 			}
-			// let gaptoPile = document.getElementById("gap");
-			// console.log("gap pile", gap)
-			// gaptoPile.value = gap.toFixed(2);
-			// var inputId = document.getElementById("towId");
-			// inputId.value = "G" + towerlist.length;
-			// var inputDis = document.getElementById("dis");
-			// var inputHei = document.getElementById("hei");
-			// let disNum = pos.x/Gridsize*xdivision + xMin;
-			// let heiNum = pos.y/Gridsize*ydivision + yMin;
-			// inputDis.value = disNum.toFixed(2);
-			// inputHei.value = heiNum.toFixed(2);
-
-			//let gaptoPile = document.getElementById("gap");
-			//gaptoPile.value = gap.toFixed(2);
-			let gaptoPile2 = layer.getChildFrame('body',tpIndex).find("#gap")[0];
-			gaptoPile2.value = gap.toFixed(2);
-			//var inputDis = document.getElementById("dis");
-			//var inputHei = document.getElementById("hei");
-			var inputHei2 = layer.getChildFrame('body',tpIndex).find("#hei")[0];
-			var inputDis2 = layer.getChildFrame('body',tpIndex).find("#dis")[0];
-
-			let disNum = pos.x/Gridsize*xdivision + xMin;
-			let heiNum = pos.y/Gridsize*ydivision + yMin;
-			//inputDis.value = disNum.toFixed(2);
-			inputDis2.value = disNum.toFixed(2);
-			//inputHei.value = heiNum.toFixed(2);
-			inputHei2.value = heiNum.toFixed(2);
-
-			//var inputId = document.getElementById("towId");
-			var inputId2 =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
-			//inputId.value = "G" + towerlist.length;
-			inputId2.value = "G" + towerlist.length;
-
-			towerlist.push({
-				"Name" : "G" + towerlist.length,
-				"Distance" : pos.x /Gridsize*xdivision +xMin,
-				"High" : pos.y/Gridsize*ydivision + yMin,
-				"Position" : layer.getChildFrame('body',tpIndex).find("#pilelist").find("option[value="+ disToPile[0].value +"]").text(),
-				"offset" : Number(gap.toFixed(0)),
-				"TowerType" : "ZMVA41",
-				"Base": 0,
-				"TowerHigh" : towerHei,
-				"Status" : 0,
-				"InsulatorLength": 4.5,
-				"ConnectLength": 0.0,
-				"InsulateP": "",
-				"InsulatePA": "X01",
-				"InsulatePANum": -1,
-				"InsulatePB": "X01",
-				"InsulatePBNum": -1,
-				"InsulatePC": "",
-				"InsulatePCNum": 0,
-				"hugeHigh":0,
-				"hugeGround" : 0,		// 地线悬挂点高程
-				"Lk": 0,
-				"L": 0,
-				"cosa":1,
-				"bInsular":false,
-				"constant": 0,
-				"u": 1,
-				"kPline": 0,			//导线大号侧k值系数
-				"kGround": 0,		//地线大号侧K值系数
-				"kWind": 0,			//大风条件前视档k值系数
-				"kMaxT": 0,			//70度高温k值系数
-				"constMaxT": 0,
-				"Lh": 0,				// 水平档距
-				"Lh1": 0,			// 小号侧垂直档距
-				"Lh2": 0,			// 大号侧垂直档距
-				"Lv" : 0,				// 垂直档距
-				"Lv1" : 0,			// 小号侧水平档距
-				"Lv2" : 0,			// 大号侧水平档距
-				"lvMinTemp": 0,//最低气温垂直档距
-				"lvMaxTemp": 0,//最高气温垂直档距
-				"lvMaxIce": 0,//最大覆冰垂直档距
-				"lvMaxWind": 0,//最大风垂直档距
-				"displayKType": 0,	//k值类型，0为最大弧垂 1为最高线温
-				"displayGround":0,		//显示地线
-				"displayPower" : 1,		//显示导线
-				"displaySafe" :  1,	//显示导线对地
-				"displayCross" : 1,		//显示导线跨越
-				"LandDist" : 8.5,		// 对地安全距离
-				"ElecDist" : 6.0	// 电力线安全距离
-			});
-			console.log("then",towerlist)
-			m_end = towerlist.length - 1;
-			towerlist.sort(compare('Distance'));
-			ComputeHugeHigh();
-			for (let i = 0; i < towerlist.length; i++) {
-				towerlist[i].Name = "G" + i;
+			if (event.button === 2){
+				clearTempTow();
+				scene.remove(scene.getObjectByName('tower'));
+				document.removeEventListener("mousedown",towerInsert);
+				document.removeEventListener("mousemove",onMouseMove);
 			}
-			console.log("after",towerlist)
-			for (let i = m_start; i < m_end; i++) {
-				DisplayFawCurve4(towerlist[i],towerlist[i+1], "fixwire");
-			}
-
-
-			console.log(towerlist);
-			towerlist_tabledata=towerlist;
-			console.log(towerlist_tabledata);
-			GridManager.setAjaxData(towerlist_tableId,{"data":towerlist_tabledata});
-			GridManager.refreshGrid(towerlist_tableId);
 		}
-		if (event.button === 2){
-			clearTempTow();
-			scene.remove(scene.getObjectByName('tower'));
-			document.removeEventListener("mousedown",towerInsert);
-			document.removeEventListener("mousemove",onMouseMove);
-		}
-	}
 	//移动杆塔
 	var liftMouseDown, rightMouseDown;
 	var selectObj, lastPosition;
@@ -7964,7 +4394,7 @@
 		// }
 		document.removeEventListener('mousemove',onDragMouseMove);
 		document.removeEventListener('mouseup',onMouseUp);
-		//selectObj={};
+		selectObj={};
 
 	}
 
@@ -8194,6 +4624,7 @@
 	function onDocumentMouseWheel(event) {
 			let factor = 60;
 			//从鼠标位置转化为webgl屏幕坐标位置
+			mainCanvas = document.querySelector("#iframe_box canvas");
 			let glScreenX = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
 			let glScreenY = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
 			let vector = new THREE.Vector3(glScreenX, glScreenY, 0);
