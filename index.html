@@ -929,8 +929,6 @@
 						optionList[1].options.add(newOption0);
 						optionList[2].options.add(newOption1);
 					}
-					console.log("filecata",fileCata,fileCata.length);
-
 					$.ajax({
 						url: "http://202.114.118.138:8181/directory/" + prjName, //提交的路径
 						type: "get",       //提交方式
@@ -1961,39 +1959,33 @@
 		MapFileName = prompt("新建MAP名称");
 		console.log(MapFileName);
 		document.getElementById('span_id').innerHTML = prjName+"("+MapFileName+")";
-		// for (let i = 0; i < scene.children.length; i++){
-		// 	if (scene.children[i].name === "dem"||scene.children[i].name === "corner"){
-		// 		dem.push(scene.children[i]);
-		// 	}
-		// 	if (scene.children[i].name === "fixTower"||scene.children[i].name === "wire"){
-		// 		towerList.push(scene.children[i]);   //capital
-		// 	}
-		// }
-		// for (let i = 0; i < dem.length; i++) {
-		// 	scene.remove(dem[i]);
-		// }
-		// for (let i = 0; i < towerList.length; i++) {
-		// 	scene.remove(towerList[i]);
-		// }
-		// for (let i = 0; i < allChildren.length; i++) {
-		// 	framegroup.remove(allChildren[i]);
-		// }
-
 		//input empty map
 		scene.children.length = 0;
 		console.log(scene);
-		mp = blankmp;
-		console.log("createMapFrameblank",mp);
-		//yMin = 100; ydivision= 10; xdivision =100; verSize = 220;horSize =300; Gridsize =10;    //先设大小   再按distance/length 比例尺绘制
-		ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =mp.m_Grid;
-		horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
-		xMin = mp.m_From;
+		prjNameJSON = {"ProjectName":prjName};
+		$.ajax({
+			url: "http://202.114.118.138:8181/CreateMap", //提交的路径
+			type: "post",       //提交方式
+			data: prjNameJSON,    //提交的数据
+			dataType:"json",
+			//填充prk设计参数表格
+			success: function (data) {
+				console.log("mapdata",data);
+				mp = data.mp;
+				console.log("createMapFrameblank",mp);
+				//yMin = 100; ydivision= 10; xdivision =100; verSize = 220;horSize =300; Gridsize =10;    //先设大小   再按distance/length 比例尺绘制
+				ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =mp.m_Grid;
+				horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
+				xMin = mp.m_From;
 
-		mainCanvas = document.querySelector("#iframe_box canvas");
-		console.log(mainCanvas);
-		initContent();
-		// save map file  ?
-
+				mainCanvas = document.querySelector("#iframe_box canvas");
+				console.log(mainCanvas);
+				initContent();
+			},
+			error: function (errorMsg) {
+				//alert(errorMsg);
+			}
+		});
 	})
 	/* 文件 */
 	$("#fileManage").click(function () {
@@ -2033,24 +2025,23 @@
 		prjName  = ProjectName;
 		document.getElementById('span_id').innerHTML = prjName;
 		pile_tabledata = filedata.m_jPile;
+		console.log("PRJ2data",pile_tabledata);
 		GridManager.setAjaxData(pile_tableId,{"data":pile_tabledata});
 		$("#liPiletable").click();
 		$("#tb_pile_calc").click();
+		//Read PRK
+		let prkform = new FormData();
+		prkform.append("FileName", ProjectName+".PRK");
+		prkform.append("ProjectName", ProjectName);
 		$.ajax({
-			url: "http://202.114.118.138:8181/CreateProject", //提交的路径
+			url: "http://202.114.118.138:8181/ReadfileToJson", //提交的路径
 			type: "post",       //提交方式
-			data: prjName,    //提交的数据
-			dataType:"json",
-			//填充prk设计参数表格
-			success: function (data) {
-				console.log("createproject",data);
-
-				let json = data.prk;
-				lao = data.Lao;
-				savedJson.Lao = lao;
-				blankmp = data.Map.mp;
-				mp = data.Map.mp;
-				prk = data.prk;
+			data: prkform,    //提交的数据
+			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+			processData: false,
+			success: function(prkdata){
+				console.log(prkdata);
+				prk = prkdata;
 				towerStartHei = prk.TOWER[0].StartHigh;
 				towerEndHei = prk.TOWER[0].EndHigh;
 				towerHeiDif = towerEndHei - towerStartHei;
@@ -2061,9 +2052,9 @@
 				}
 			},
 			error: function (errorMsg) {
-				//alert(errorMsg);
+				alert(errorMsg);
 			}
-		});
+		})
 		//读取PWF
 		let pwfform = new FormData();
 		pwfform.append("FileName", ProjectName+".PWF");
@@ -2085,8 +2076,8 @@
 				alert(errorMsg);
 			}
 		})
-		$("#liTowerlisttable").click();
-		$("#tb-towerlist-calc").click();
+		// $("#liTowerlisttable").click();
+		// $("#tb-towerlist-calc").click();
 	}
 
 	window.OpenMap = function (filedata,ProjectName,FileName){
@@ -2109,7 +2100,7 @@
 		drawGeo(pile_tabledata);
 	}
 
-	//draw  relative
+	//draw  related
 	/* 预设格网参数 */
 	var verSize = 160;var horSize = 300; var ydivision=mp.m_HScale*mp.m_Grid/1000; var xdivision = mp.m_DScale*mp.m_Grid/1000;var Gridsize = mp.m_Grid;
 	console.log("initial paremeter",ydivision,xdivision);
@@ -3401,7 +3392,7 @@
 			// scene.add(triangle);
 		}
 		//弧垂
-		window.DisplayFawCurve = function(x1,y1,x2,y2,k,x0,bInsular,constt,length,material, name) {
+	window.DisplayFawCurve = function(x1,y1,x2,y2,k,x0,bInsular,constt,length,material, name) {
 
 			if (x1 < 0) return;
 			let f,l1,l2,l,x3, y3;
@@ -3416,7 +3407,7 @@
 			loa = l/2.0 - arcsh(k*h/sinh(k*l))/2.0/k;
 			if(!bInsular)
 			{
-				startL=x1 + length;
+				startL=x1;
 				endL = Math.min(x2,xMax);
 				ptCount = parseInt(endL - startL)+1;
 				for(let i=0;i<ptCount &&i< 2048 ;i++ )
@@ -3429,14 +3420,14 @@
 						f = l1*h/l +( sinh(k*(2*loa-l1)) * sinh(k*l1) )/k;
 						x3 = x1 + l1;
 						y3 = (l1*y2+l2*y1)/l-f;
-						// y3 = y1-sinh(k*l2-arcsh(k*(y2-y1))/sinh(k*l)) * sinh(k*l1) /k;
+						//y3 = y1-sinh(k*l2-arcsh(k*(y2-y1))/sinh(k*l)) * sinh(k*l1) /k;
 					}
-					else if(x2 <= xmax)	//最后一点
+					else if(x2 <= xMax)	//最后一点
 					{
 						x3 = x2;
 						y3 = y2;
 					}
-					insertPoint.push(new THREE.Vector3((x3-xMin)/xdivision*Gridsize + 0.5, (y3 - yMin)/ydivision*Gridsize, 0))
+					insertPoint.push(new THREE.Vector3((x3-xMin)/xdivision*Gridsize, (y3 - yMin)/ydivision*Gridsize, 0))
 				}
 			}
 			else
@@ -3476,10 +3467,11 @@
 			}
 			var conductObj = new THREE.Line( conductGeo, material );
 			conductObj.name = name;
-
+			conductObj.renderOrder = 999;
+			conductObj.onBeforeRender = function( renderer ) { renderer.clearDepth(); };
 			scene.add(conductObj);
 		}
-		window.DisplayFawCurve2 = function(x1,y1,x2,y2,k,dspLwst,bInsular,constt,length,material, name) {
+	window.DisplayFawCurve2 = function(x1,y1,x2,y2,k,dspLwst,bInsular,constt,length,material, name) {
 			if( x2-x1<10 || x2-x1>3000 || Math.abs(y1-y2)>2000 ) {
 				return;
 			}
@@ -3525,7 +3517,7 @@
 			// 	DisplayFawCurve(x1, y1, x2, y2, k, lx1, bInsular, constt,length,material, name);
 			// }
 		}
-		window.DisplayFawCurve3 = function(tower1, tower2, kPower, kGround, name){
+	window.DisplayFawCurve3 = function(tower1, tower2, kPower, kGround, name){
 			let constt=0;
 			if(tower1.displayKType==0)
 				constt = tower1.constant;
@@ -3551,7 +3543,7 @@
 						kPower,false,tower1.bInsular,constt,tower1.InsulatorLength,wire_material3, name+"4");
 			}
 		}
-		window.DisplayFawCurve4 = function(tower1,tower2, name){
+	window.DisplayFawCurve4 = function(tower1,tower2, name){
 			if(tower1.displayKType==0){
 				DisplayFawCurve3(tower1, tower2, tower1.kPline, tower1.kGround, name);
 			}
@@ -3565,16 +3557,15 @@
 	window.tower1 = function(towerHei) {
 			let scale = 1 / ydivision * Gridsize;
 			let tower = new THREE.Shape();
-			tower.moveTo(0,0);
-			tower.lineTo(1,0);tower.lineTo(1,towerLineWid);tower.lineTo(0.75,towerLineWid);
-			tower.lineTo(0.75,towerHei-4.5-towerLineWid);tower.lineTo(1.5,towerHei-4.5-towerLineWid);
-			tower.lineTo(1.5,towerHei-4.5);tower.lineTo(0.75,towerHei-4.5);tower.lineTo(0.75,towerHei);
-			tower.lineTo(0.25,towerHei);tower.lineTo(0.25,towerHei-4.5);tower.lineTo(-0.5,towerHei-4.5);
-			tower.lineTo(-0.5,towerHei-4.5-towerLineWid);tower.lineTo(0.25,towerHei-4.5-towerLineWid);
-			tower.lineTo(0.25,towerLineWid);tower.lineTo(0,towerLineWid);
-			tower.lineTo(0,0);
+			tower.moveTo(-0.5,0);
+			tower.lineTo(0.5,0);tower.lineTo(0.5,towerLineWid);tower.lineTo(0.25,towerLineWid);
+			tower.lineTo(0.25,towerHei-4.5-towerLineWid);tower.lineTo(1,towerHei-4.5-towerLineWid);
+			tower.lineTo(1,towerHei-4.5);tower.lineTo(0.25,towerHei-4.5);tower.lineTo(0.25,towerHei);
+			tower.lineTo(-0.25,towerHei);tower.lineTo(-0.25,towerHei-4.5);tower.lineTo(-1,towerHei-4.5);
+			tower.lineTo(-1,towerHei-4.5-towerLineWid);tower.lineTo(-0.25,towerHei-4.5-towerLineWid);
+			tower.lineTo(-0.25,towerLineWid);tower.lineTo(-0.5,towerLineWid);
+			tower.lineTo(-0.5,0);
 			let towerGroup = new THREE.ShapeGeometry(tower);
-			towerGroup.translate(-0.25,0,0);
 			towerGroup.scale(scale,scale,scale);
 			let towMaterial = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.DoubleSide } );
 			var towMesh = new THREE.Mesh( towerGroup, towMaterial ) ;
@@ -4413,22 +4404,9 @@
 			} else return tempTowerHei;
 
 			var tempPoints = intersectsTower[0].object.position;
-			var tempLine2Cor = [];
-			for (let i = 0; i < m_linegroup.children.length; i++) {
-				for(let j=0;j<m_linegroup.children[i].geometry.vertices.length;j++){
-					tempLine2Cor.push([m_linegroup.children[i].geometry.vertices[j].x,m_linegroup.children[i].geometry.vertices[j].y]);
-				}
-			}
-			var tempLine2 = turf.lineString(tempLine2Cor);
-			var points = new THREE.Vector3(tempPoints.x, tempPoints.y + 500, 0);
-			var tempLine1 = turf.lineString([[points.x, points.y], [points.x, 0]]);
-			var interPoint = turf.lineIntersect(tempLine1, tempLine2);
-			points = new THREE.Vector3(tempPoints.x, interPoint.features[0].geometry.coordinates[1], 0);
-			// createTower(points, inx);
-
 			var towMesh = tower1(tempTowerHei);
-			towMesh.position.x = points.x;
-			towMesh.position.y = points.y;
+			towMesh.position.x = tempPoints.x;
+			towMesh.position.y = tempPoints.y;
 			towMesh.position.z = 0;
 			towMesh.name = "fixTower";
 			towMesh.geometry.name = intersectsTower[0].object.geometry.name;
@@ -4450,10 +4428,17 @@
 				}
 			}
 
+			towerlist.sort(compare('Distance'));
+			for (let i = 0; i < towerlist.length; i++) {
+				towerlist[i].Name = "G" + i;
+			}
 			ComputeHugeHigh();
 			towerlist.sort(compare('Distance'));
 			for (let i = 0; i < towerlist.length; i++) {
 				towerlist[i].Name = "G" + i;
+			}
+			for (let i = m_start; i < m_end; i++) {
+				DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
 			}
 			for (let i = m_start; i < m_end; i++) {
 				DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
@@ -4485,22 +4470,9 @@
 				let deleteWire = [];
 
 				var tempPoints = intersectsTower[0].object.position;
-				var tempLine2Cor = [];
-				for (let i = 0; i < m_linegroup.children.length; i++) {
-					for(let j=0;j<m_linegroup.children[i].geometry.vertices.length;j++){
-						tempLine2Cor.push([m_linegroup.children[i].geometry.vertices[j].x,m_linegroup.children[i].geometry.vertices[j].y]);
-					}
-				}
-				var tempLine2 = turf.lineString(tempLine2Cor);
-				var points = new THREE.Vector3(tempPoints.x, tempPoints.y + 500, 0);
-				var tempLine1 = turf.lineString([[points.x, points.y], [points.x, 0]]);
-				var interPoint = turf.lineIntersect(tempLine1, tempLine2);
-				points = new THREE.Vector3(tempPoints.x, interPoint.features[0].geometry.coordinates[1], 0);
-				// createTower(points, inx);
-
 				var towMesh = tower1(tempTowerHei);
-				towMesh.position.x = points.x;
-				towMesh.position.y = points.y;
+				towMesh.position.x = tempPoints.x;
+				towMesh.position.y = tempPoints.y;
 				towMesh.position.z = 0;
 				towMesh.name = "fixTower";
 				towMesh.geometry.name = intersectsTower[0].object.geometry.name;
