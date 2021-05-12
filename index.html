@@ -301,7 +301,7 @@
 	// 	var optionList = $("#fileDirectory");
 	// 	console.log(optionList);
 	// 	$.ajax({
-	// 		url: "http://202.114.118.138:8181/directory/" + prjName, //提交的路径
+	// 		url: "http://47.108.218.130:8181/directory/" + prjName, //提交的路径
 	// 		type: "get",       //提交方式
 	// 		dataType:"json",
 	// 		success: function(data){
@@ -611,7 +611,7 @@
 		form.append("ProjectName", prjName);//控制路径
 		console.log("ProjectName",prjName);
 		$.ajax({
-			url: "http://202.114.118.138:8181/txtToJson", //提交的路径
+			url: "http://47.108.218.130:8181/txtToJson", //提交的路径
 			type: "post",       //提交方式
 			data: form,    //提交的数据
 			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
@@ -633,7 +633,7 @@
 		form.append("table",JSON.stringify(pile_tabledata));
 		//console.log(pile_table.m_jPile);   //txt append jsondata
 		$.ajax({
-				url: "http://202.114.118.138:8181/tbCalc", //提交的路径
+				url: "http://47.108.218.130:8181/tbCalc", //提交的路径
 				type: "post",       //提交方式
 				data: form,    //提交的数据
 				// dataType:"json",
@@ -667,7 +667,7 @@
 		form.append("table",JSON.stringify(pile_tabledata));
 		form.append("ProjectName", prjName);
 		$.ajax({
-			url: "http://202.114.118.138:8181/JsonTotxtfile", //提交的路径
+			url: "http://47.108.218.130:8181/JsonTotxtfile", //提交的路径
 			type: "post",       //提交方式
 			data: form,    //提交的数据
 			// dataType:"json",
@@ -717,7 +717,7 @@
 		//console.log(pile_table.m_jPile);   //txt append jsondata
 
 		$.ajax({
-			url: "http://202.114.118.138:8181/tbtowerlistCalc", //提交的路径
+			url: "http://47.108.218.130:8181/tbtowerlistCalc", //提交的路径
 			type: "post",       //提交方式
 			data: form,    //提交的数据
 			//dataType:"json",
@@ -745,7 +745,7 @@
 		form.append("MapFile",(MapFileName+".MAP").toString());
 		form.append("PwfFile",(prjName+".PWF").toString());
 		$.ajax({
-			url: "http://202.114.118.138:8181/MapOutput", //提交的路径
+			url: "http://47.108.218.130:8181/MapOutput", //提交的路径
 			type: "post",       //提交方式
 			data: form,    //提交的数据
 			//dataType:"json",
@@ -764,7 +764,7 @@
 		form.append("MapFile",(MapFileName+".MAP").toString());
 		form.append("PwfFile",(prjName+".PWF").toString());
 		$.ajax({
-			url: "http://202.114.118.138:8181/MapOutput", //提交的路径
+			url: "http://47.108.218.130:8181/MapOutput", //提交的路径
 			type: "post",       //提交方式
 			data: form,    //提交的数据
 			//dataType:"json",
@@ -930,7 +930,7 @@
 						optionList[2].options.add(newOption1);
 					}
 					$.ajax({
-						url: "http://202.114.118.138:8181/directory/" + prjName, //提交的路径
+						url: "http://47.108.218.130:8181/directory/" + prjName, //提交的路径
 						type: "get",       //提交方式
 						dataType:"json",
 						success: function(data){
@@ -965,7 +965,7 @@
 		formData.append("SectionInfo",JSON.stringify(transobj)); //transobj get from sonPage SectionMap.html
 		formData.append("ProjectName", prjName);
 		$.ajax({
-			url: "http://202.114.118.138:8181/SectionMapSave", //提交的路径
+			url: "http://47.108.218.130:8181/SectionMapSave", //提交的路径
 			type: "post",       //提交方式
 			data: formData,    //提交的数据
 			dataType:"json",
@@ -997,7 +997,7 @@
 
 	window.download = function(ProjectName,FileName) {
 		console.log("download Name",ProjectName,FileName);
-		var url = 'http://202.114.118.138:8181/Pathdownload/Project='+ProjectName+'&filename=' + FileName;
+		var url = 'http://47.108.218.130:8181/Pathdownload/Project='+ProjectName+'&filename=' + FileName;
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', url, true);        // 也可以使用POST方式，根据接口
 		xhr.responseType = "blob";    // 返回类型blob
@@ -1054,7 +1054,7 @@
 			prjNameJSON = {"ProjectName":prjName};
 
 			$.ajax({
-				url: "http://202.114.118.138:8181/CreateProject", //提交的路径
+				url: "http://47.108.218.130:8181/CreateProject", //提交的路径
 				type: "post",       //提交方式
 				data: prjNameJSON,    //提交的数据
 				dataType:"json",
@@ -1875,15 +1875,15 @@
 				}
 			});
 		})
-		
-		
-	$('#save').click(function () {  
+
+
+	$('#save').click(function () {
 			var prkinfo = new FormData();
 			prkinfo.append("prk",JSON.stringify(prk));
 			prkinfo.append("ProjectName",prjName);
 			console.log("prkInfo",prkinfo);
 			$.ajax({
-				url: "http://202.114.118.138:8181/prksave", //提交的路径
+				url: "http://47.108.218.130:8181/prksave", //提交的路径
 				type: "post",       //提交方式
 				data: prkinfo,    //提交的数据
 				// dataType:"json",
@@ -1907,11 +1907,11 @@
 			var prjformData = new FormData();
 			prjformData.append("prk",JSON.stringify(prk));
 			prjformData.append("lao",JSON.stringify(lao));
-			prjformData.append("PointFile",fileObj.name);
+			prjformData.append("PointFile","table.txt");
 			prjformData.append("DemFile","");
 			prjformData.append("ProjectName", prjName);
 			$.ajax({
-				url: "http://202.114.118.138:8181/projectsave", //提交的路径
+				url: "http://47.108.218.130:8181/projectsave", //提交的路径
 				type: "post",       //提交方式
 				data: prjformData,    //提交的数据
 				// dataType:"json",
@@ -1941,7 +1941,7 @@
 			}
 			console.log(Map);
 			$.ajax({
-				url: "http://202.114.118.138:8181/MapSaveObj", //提交的路径
+				url: "http://47.108.218.130:8181/MapSaveObj", //提交的路径
 				type: "post",       //提交方式
 				data: demgeoCal,    //提交的数据
 				//dataType:"json",
@@ -1964,7 +1964,7 @@
 		console.log(scene);
 		prjNameJSON = {"ProjectName":prjName};
 		$.ajax({
-			url: "http://202.114.118.138:8181/CreateMap", //提交的路径
+			url: "http://47.108.218.130:8181/CreateMap", //提交的路径
 			type: "post",       //提交方式
 			data: prjNameJSON,    //提交的数据
 			dataType:"json",
@@ -2003,7 +2003,7 @@
 				let optionList;
 				optionList =  body.find("select");
 				$.ajax({
-					url: "http://202.114.118.138:8181/directory/%20", //提交的路径
+					url: "http://47.108.218.130:8181/directory/%20", //提交的路径
 					type: "get",       //提交方式
 					dataType:"json",
 					success: function(data){
@@ -2034,7 +2034,7 @@
 		prkform.append("FileName", ProjectName+".PRK");
 		prkform.append("ProjectName", ProjectName);
 		$.ajax({
-			url: "http://202.114.118.138:8181/ReadfileToJson", //提交的路径
+			url: "http://47.108.218.130:8181/ReadfileToJson", //提交的路径
 			type: "post",       //提交方式
 			data: prkform,    //提交的数据
 			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
@@ -2060,7 +2060,7 @@
 		pwfform.append("FileName", ProjectName+".PWF");
 		pwfform.append("ProjectName", ProjectName);
 		$.ajax({
-			url: "http://202.114.118.138:8181/ReadfileToJson", //提交的路径
+			url: "http://47.108.218.130:8181/ReadfileToJson", //提交的路径
 			type: "post",       //提交方式
 			data: pwfform,    //提交的数据
 			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
@@ -3944,7 +3944,7 @@
 		formData.append("ProjectName", prjName);
 		console.log(formData.get('pwf'));
 		$.ajax({
-			url: "http://202.114.118.138:8181/pwfsave", //提交的路径
+			url: "http://47.108.218.130:8181/pwfsave", //提交的路径
 			type: "post",       //提交方式
 			data: formData,    //提交的数据
 			// dataType:"json",

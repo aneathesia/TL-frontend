@@ -33,7 +33,7 @@
         var ProjectName = $("#Projectset").find("option:selected").text();
         $("#fileset").empty();  //清空
         $.ajax({
-            url: "http://202.114.118.138:8181/directory/"+ProjectName, //提交的路径
+            url: "http://47.108.218.130:8181/directory/"+ProjectName, //提交的路径
             type: "get",       //提交方式
             dataType:"json",
             success: function(data){
@@ -56,7 +56,7 @@
         console.log("uploadPath",ProjectName);
         if(ProjectName===""){alert("选择工程"); return false}
         else{
-            var url =  "http://202.114.118.138:8181/fileUpload"; // 接收上传文件的后台地址
+            var url =  "http://47.108.218.130:8181/fileUpload"; // 接收上传文件的后台地址
             var form = new FormData(); // FormData 对象
             form.append("file", fileObj); // 文件对象
             form.append("ProjectName", ProjectName);//控制路径
@@ -89,7 +89,7 @@
         form.append("FileName", FileName);
         form.append("ProjectName", ProjectName);
         $.ajax({
-            url: "http://202.114.118.138:8181/ReadfileToJson", //提交的路径
+            url: "http://47.108.218.130:8181/ReadfileToJson", //提交的路径
             type: "post",       //提交方式
             data: form,    //提交的数据
             contentType: false, // 告诉jQuery不要去设置Content-Type请求头
