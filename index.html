@@ -38,7 +38,9 @@
 	<script type="text/javascript" src="./js/three.js"></script>
 	<script type="text/javascript" src="./js/three.module.js"></script>
 	<script type="text/javascript" src="./js/gm.js"></script>
+	<script type="text/javascript" src="./config.js"></script>
 	<script src="./js/DragControls1.js"></script>
+
 
 
 	<title>架空输电线路勘测设计一体化系统</title>
@@ -152,7 +154,7 @@
 			<dt><i class="Hui-iconfont">&#xe646; </i><label id="Output"> 导出</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
 				<ul>
-					<li><a href="#"><label id="outputDXF">导出DXF</label></a></li>
+<!--					<li><a href="#"><label id="outputDXF">导出DXF</label></a></li>-->
 					<li><a href="#"><label id="outputORG">导出ORG</label></a></li>
 				</ul>
 			</dd>
@@ -301,7 +303,7 @@
 	// 	var optionList = $("#fileDirectory");
 	// 	console.log(optionList);
 	// 	$.ajax({
-	// 		url: "http://47.108.218.130:8181/directory/" + prjName, //提交的路径
+	// 		url: BASEURL+"/directory/" + prjName, //提交的路径
 	// 		type: "get",       //提交方式
 	// 		dataType:"json",
 	// 		success: function(data){
@@ -611,7 +613,7 @@
 		form.append("ProjectName", prjName);//控制路径
 		console.log("ProjectName",prjName);
 		$.ajax({
-			url: "http://47.108.218.130:8181/txtToJson", //提交的路径
+			url: BASEURL+"/txtToJson", //提交的路径
 			type: "post",       //提交方式
 			data: form,    //提交的数据
 			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
@@ -633,7 +635,7 @@
 		form.append("table",JSON.stringify(pile_tabledata));
 		//console.log(pile_table.m_jPile);   //txt append jsondata
 		$.ajax({
-				url: "http://47.108.218.130:8181/tbCalc", //提交的路径
+				url: BASEURL+"/tbCalc", //提交的路径
 				type: "post",       //提交方式
 				data: form,    //提交的数据
 				// dataType:"json",
@@ -667,7 +669,7 @@
 		form.append("table",JSON.stringify(pile_tabledata));
 		form.append("ProjectName", prjName);
 		$.ajax({
-			url: "http://47.108.218.130:8181/JsonTotxtfile", //提交的路径
+			url: BASEURL+"/JsonTotxtfile", //提交的路径
 			type: "post",       //提交方式
 			data: form,    //提交的数据
 			// dataType:"json",
@@ -717,7 +719,7 @@
 		//console.log(pile_table.m_jPile);   //txt append jsondata
 
 		$.ajax({
-			url: "http://47.108.218.130:8181/tbtowerlistCalc", //提交的路径
+			url: BASEURL+"/tbtowerlistCalc", //提交的路径
 			type: "post",       //提交方式
 			data: form,    //提交的数据
 			//dataType:"json",
@@ -739,24 +741,24 @@
 	}
 
 	//后台数据下载到本地
-	$("#outputDXF").click(function(){
-		var form = new FormData();
-		form.append("ProjectName",prjName);
-		form.append("MapFile",(MapFileName+".MAP").toString());
-		form.append("PwfFile",(prjName+".PWF").toString());
-		$.ajax({
-			url: "http://47.108.218.130:8181/MapOutput", //提交的路径
-			type: "post",       //提交方式
-			data: form,    //提交的数据
-			//dataType:"json",
-			contentType: false,
-			processData: false,
-			success: function () {
-				//download file
-				download(prjName,MapFileName+".DXF");
-			}
-		})
-	})
+	// $("#outputDXF").click(function(){
+	// 	var form = new FormData();
+	// 	form.append("ProjectName",prjName);
+	// 	form.append("MapFile",(MapFileName+".MAP").toString());
+	// 	form.append("PwfFile",(prjName+".PWF").toString());
+	// 	$.ajax({
+	// 		url: BASEURL+"/MapOutput", //提交的路径
+	// 		type: "post",       //提交方式
+	// 		data: form,    //提交的数据
+	// 		//dataType:"json",
+	// 		contentType: false,
+	// 		processData: false,
+	// 		success: function () {
+	// 			//download file
+	// 			download(prjName,MapFileName+".DXF");
+	// 		}
+	// 	})
+	// })
 
 	$("#outputORG").click(function(){
 		var form = new FormData();
@@ -764,7 +766,7 @@
 		form.append("MapFile",(MapFileName+".MAP").toString());
 		form.append("PwfFile",(prjName+".PWF").toString());
 		$.ajax({
-			url: "http://47.108.218.130:8181/MapOutput", //提交的路径
+			url: BASEURL+"/MapOutput", //提交的路径
 			type: "post",       //提交方式
 			data: form,    //提交的数据
 			//dataType:"json",
@@ -798,7 +800,7 @@
 			area:['700px','360px'],
 			maxmin:true,
 			//shadeClose:true,
-			content:'./drawingpara.html',
+			content:'./html/drawingpara.html',
 			success:function (layero,index) {
 				var body = layer.getChildFrame('body',index);
 				let i=0;
@@ -835,7 +837,7 @@
 		horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
 		xMin = mp.m_From;
 		console.log(horSize,verSize,xdivision,ydivision,mp.m_Grid,Gridsize,mp.m_CScale, mp.m_From,"update drawing");
-		drawDEM_whj(DEM);
+		drawDEM(DEM);
 		MapCrossDraw(cross,false);  //cross added
 		TowerDraw(towerlist_tabledata);
 		drawGeo(pile_tabledata);
@@ -849,7 +851,7 @@
 			title:'图框参数',
 			area:['500px','650px'],
 			maxmin:true,
-			content:'./framepara.html',
+			content:'./html/framepara.html',
 			success:function (layero,index) {
 				console.log(layero,index);
 				var body = layer.getChildFrame('body',index);
@@ -877,7 +879,7 @@
 			title:'选择地物类别',
 			area:['250px','400px'],
 			maxmin:true,
-			content:'./selectCode.html',
+			content:'./html/selectCode.html',
 			shade:0,
 			success:function (layero,index) {
 				console.log(layero,index);
@@ -906,7 +908,7 @@
 				title: 'DEM断面提取',
 				area: ['300px', '300px'],
 				maxmin: true,
-				content: './SectionMap.html',
+				content: './html/SectionMap.html',
 				success: function (layero, index) {
 					console.log(layero, index);
 					var body = layer.getChildFrame('body', index);
@@ -930,7 +932,7 @@
 						optionList[2].options.add(newOption1);
 					}
 					$.ajax({
-						url: "http://47.108.218.130:8181/directory/" + prjName, //提交的路径
+						url: BASEURL+"/directory/" + prjName, //提交的路径
 						type: "get",       //提交方式
 						dataType:"json",
 						success: function(data){
@@ -965,7 +967,7 @@
 		formData.append("SectionInfo",JSON.stringify(transobj)); //transobj get from sonPage SectionMap.html
 		formData.append("ProjectName", prjName);
 		$.ajax({
-			url: "http://47.108.218.130:8181/SectionMapSave", //提交的路径
+			url: BASEURL+"/SectionMapSave", //提交的路径
 			type: "post",       //提交方式
 			data: formData,    //提交的数据
 			dataType:"json",
@@ -988,7 +990,7 @@
 		ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =mp.m_Grid;
 		horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
 		xMin = mp.m_From;
-		drawDEM_whj(DEM);
+		drawDEM(DEM);
 		MapCrossDraw(cross,false);  //cross added
 		TowerDraw(towerlist_tabledata);
 		window.initContent();
@@ -997,7 +999,7 @@
 
 	window.download = function(ProjectName,FileName) {
 		console.log("download Name",ProjectName,FileName);
-		var url = 'http://47.108.218.130:8181/Pathdownload/Project='+ProjectName+'&filename=' + FileName;
+		var url = BASEURL+'/Pathdownload/Project='+ProjectName+'&filename=' + FileName;
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', url, true);        // 也可以使用POST方式，根据接口
 		xhr.responseType = "blob";    // 返回类型blob
@@ -1054,7 +1056,7 @@
 			prjNameJSON = {"ProjectName":prjName};
 
 			$.ajax({
-				url: "http://47.108.218.130:8181/CreateProject", //提交的路径
+				url: BASEURL+"/CreateProject", //提交的路径
 				type: "post",       //提交方式
 				data: prjNameJSON,    //提交的数据
 				dataType:"json",
@@ -1883,7 +1885,7 @@
 			prkinfo.append("ProjectName",prjName);
 			console.log("prkInfo",prkinfo);
 			$.ajax({
-				url: "http://47.108.218.130:8181/prksave", //提交的路径
+				url: BASEURL+"/prksave", //提交的路径
 				type: "post",       //提交方式
 				data: prkinfo,    //提交的数据
 				// dataType:"json",
@@ -1911,7 +1913,7 @@
 			prjformData.append("DemFile","");
 			prjformData.append("ProjectName", prjName);
 			$.ajax({
-				url: "http://47.108.218.130:8181/projectsave", //提交的路径
+				url: BASEURL+"/projectsave", //提交的路径
 				type: "post",       //提交方式
 				data: prjformData,    //提交的数据
 				// dataType:"json",
@@ -1941,7 +1943,7 @@
 			}
 			console.log(Map);
 			$.ajax({
-				url: "http://47.108.218.130:8181/MapSaveObj", //提交的路径
+				url: BASEURL+"/MapSaveObj", //提交的路径
 				type: "post",       //提交方式
 				data: demgeoCal,    //提交的数据
 				//dataType:"json",
@@ -1958,34 +1960,36 @@
 	$("#creatMap").click(function () {
 		MapFileName = prompt("新建MAP名称");
 		console.log(MapFileName);
-		document.getElementById('span_id').innerHTML = prjName+"("+MapFileName+")";
-		//input empty map
-		scene.children.length = 0;
-		console.log(scene);
-		prjNameJSON = {"ProjectName":prjName};
-		$.ajax({
-			url: "http://47.108.218.130:8181/CreateMap", //提交的路径
-			type: "post",       //提交方式
-			data: prjNameJSON,    //提交的数据
-			dataType:"json",
-			//填充prk设计参数表格
-			success: function (data) {
-				console.log("mapdata",data);
-				mp = data.mp;
-				console.log("createMapFrameblank",mp);
-				//yMin = 100; ydivision= 10; xdivision =100; verSize = 220;horSize =300; Gridsize =10;    //先设大小   再按distance/length 比例尺绘制
-				ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =mp.m_Grid;
-				horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
-				xMin = mp.m_From;
+		if(MapFileName){
+			document.getElementById('span_id').innerHTML = prjName+"("+MapFileName+")";
+			//input empty map
+			scene.children.length = 0;
+			console.log(scene);
+			prjNameJSON = {"ProjectName":prjName};
+			$.ajax({
+				url: BASEURL+"/CreateMap", //提交的路径
+				type: "post",       //提交方式
+				data: prjNameJSON,    //提交的数据
+				dataType:"json",
+				//填充prk设计参数表格
+				success: function (data) {
+					console.log("mapdata",data);
+					mp = data.mp;
+					console.log("createMapFrameblank",mp);
+					//yMin = 100; ydivision= 10; xdivision =100; verSize = 220;horSize =300; Gridsize =10;    //先设大小   再按distance/length 比例尺绘制
+					ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =mp.m_Grid;
+					horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
+					xMin = mp.m_From;
 
-				mainCanvas = document.querySelector("#iframe_box canvas");
-				console.log(mainCanvas);
-				initContent();
-			},
-			error: function (errorMsg) {
-				//alert(errorMsg);
-			}
-		});
+					mainCanvas = document.querySelector("#iframe_box canvas");
+					console.log(mainCanvas);
+					initContent();
+				},
+				error: function (errorMsg) {
+					//alert(errorMsg);
+				}
+			});
+		}
 	})
 	/* 文件 */
 	$("#fileManage").click(function () {
@@ -1994,7 +1998,7 @@
 			title:'工程文件',
 			maxmin:true,
 			area: ['300px', '250px'],
-			content:'./ProjectManage.html',
+			content:'./html/ProjectManage.html',
 			shade:0,
 			success:function (layero,index) {
 				console.log(layero,index);
@@ -2003,7 +2007,7 @@
 				let optionList;
 				optionList =  body.find("select");
 				$.ajax({
-					url: "http://47.108.218.130:8181/directory/%20", //提交的路径
+					url: BASEURL+"/directory/%20", //提交的路径
 					type: "get",       //提交方式
 					dataType:"json",
 					success: function(data){
@@ -2034,7 +2038,7 @@
 		prkform.append("FileName", ProjectName+".PRK");
 		prkform.append("ProjectName", ProjectName);
 		$.ajax({
-			url: "http://47.108.218.130:8181/ReadfileToJson", //提交的路径
+			url: BASEURL+"/ReadfileToJson", //提交的路径
 			type: "post",       //提交方式
 			data: prkform,    //提交的数据
 			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
@@ -2060,7 +2064,7 @@
 		pwfform.append("FileName", ProjectName+".PWF");
 		pwfform.append("ProjectName", ProjectName);
 		$.ajax({
-			url: "http://47.108.218.130:8181/ReadfileToJson", //提交的路径
+			url: BASEURL+"/ReadfileToJson", //提交的路径
 			type: "post",       //提交方式
 			data: pwfform,    //提交的数据
 			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
@@ -2093,7 +2097,7 @@
 		ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =mp.m_Grid;
 		horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
 		xMin = mp.m_From;
-		drawDEM_whj(DEM);
+		drawDEM(DEM);
 		MapCrossDraw(cross,false);  //cross added
 		TowerDraw(towerlist_tabledata);
 		window.initContent();
@@ -2575,7 +2579,7 @@
 	var tempDif = 0;
 	var dif = 0;
 	/* DEM绘制函数 */
-	window.drawDEM_whj=function (DEM){
+	window.drawDEM=function (DEM){
 		console.log(scene.children ,"drawscenechildren");
 		console.log(m_linegroup.children.length,"m_linegroup length");
 		if(m_linegroup.children.length!=0){
@@ -2597,15 +2601,8 @@
 
 
 			console.log(m_linegroup.children.length,"after remove ");
-		// if(l_linegroup.children.length!=0){l_linegroup.clear();}
-		// if(r_linegroup.children.length!=0){r_linegroup.clear();}
-		// if(DEM_pgroup.children.length!=0){DEM_pgroup.clear();}
 
-		console.log(DEM);
-		console.log(DEM.MID,DEM.LEFT,DEM.RIGHT);
-		console.log("sec",DEM.MID[0].Section);
-		console.log("sec[0]",DEM.MID[0].Section[0]);
-		console.log("sec[0].z",DEM.MID[0].Section[0].z);
+
 		yMin=DEM.MID[0].Section[0].z
 		for(let i=0;i<DEM.MID.length;i++){
 			for(let j=0;j<DEM.MID[i].Section.length;j++){
@@ -2629,7 +2626,7 @@
 		//起算标记  向下取整
 		yMin =  (parseInt(yMin/ydivision))*ydivision;
 		xMin =  (parseInt(xMin/xdivision))*xdivision;
-		xMax = parseInt(DEM.RIGHT[DEM.RIGHT.length-1].Section[DEM.RIGHT[DEM.RIGHT.length-1].Section.length-1].x);
+		xMax = parseInt(DEM.MID[DEM.MID.length-1].Section[DEM.MID[DEM.MID.length-1].Section.length-1].x);
 
 
 			//tempDif = yMax - yMin;
@@ -2644,64 +2641,72 @@
 
 		// draw object group;
 		// 中心断面 object
-		var m_material = new THREE.LineBasicMaterial( { color: 0x000000 } );
-		var mp_material = new THREE.PointsMaterial({color:0x888888,size:2.0});
-		var m_line = new Array();
-		var m_points=new Array();
+
 		//m_line.length=DEM.MID.length;
-		for(let i=0;i<DEM.MID.length;i++){
-			var m_vertice = new THREE.Geometry();
-			for(let j=0;j<DEM.MID[i].Section.length;j++) {
-				m_vertice.vertices.push(new THREE.Vector3((DEM.MID[i].Section[j].x - xMin)/ xdivision*Gridsize, (DEM.MID[i].Section[j].z - yMin)/ydivision*Gridsize, 0));
+		if(DEM.MID.length>0){
+			var m_material = new THREE.LineBasicMaterial( { color: 0x000000 } );
+			var mp_material = new THREE.PointsMaterial({color:0x888888,size:2.0});
+			var m_line = new Array();
+			var m_points=new Array();
+			for(let i=0;i<DEM.MID.length;i++){
+				var m_vertice = new THREE.Geometry();
+				for(let j=0;j<DEM.MID[i].Section.length;j++) {
+					m_vertice.vertices.push(new THREE.Vector3((DEM.MID[i].Section[j].x - xMin)/ xdivision*Gridsize, (DEM.MID[i].Section[j].z - yMin)/ydivision*Gridsize, 0));
+				}
+				m_line[i]= new THREE.Line(m_vertice,m_material);m_line[i].name = "MID"+"-"+i.toString();
+				m_points[i] = new THREE.Points(m_vertice,mp_material);
+				m_points[i].visible=false;
+				m_linegroup.add(m_line[i]);
+				DEM_pgroup.add(m_points[i]);
 			}
-			m_line[i]= new THREE.Line(m_vertice,m_material);m_line[i].name = "MID"+"-"+i.toString();
-			m_points[i] = new THREE.Points(m_vertice,mp_material);
-			m_points[i].visible=false;
-			m_linegroup.add(m_line[i]);
-			DEM_pgroup.add(m_points[i]);
+			scene.add(m_linegroup);
+
 		}
-		scene.add(m_linegroup);
+
 		//scene.add(DEM_pgroup);
-
-
-		var l_material = new THREE.LineDashedMaterial( { color: 0x0000ff ,dashSize:3, gapSize:1} );
-		var lp_material = new THREE.PointsMaterial({color:0x888888,size:2.0});
-		var l_line = new Array();
-		var l_points= new Array();
-		l_line.length=DEM.LEFT.length;
-		for(let i=0;i<DEM.LEFT.length;i++){
-			var l_vertice = new THREE.Geometry();
-			for(let j=0;j<DEM.LEFT[i].Section.length;j++) {
-				l_vertice.vertices.push(new THREE.Vector3((DEM.LEFT[i].Section[j].x -xMin)/ xdivision*Gridsize, (DEM.LEFT[i].Section[j].z - yMin)/ydivision*Gridsize, 0));
+		if(DEM.LEFT.length>0){
+			var l_material = new THREE.LineDashedMaterial( { color: 0x0000ff ,dashSize:3, gapSize:1} );
+			var lp_material = new THREE.PointsMaterial({color:0x888888,size:2.0});
+			var l_line = new Array();
+			var l_points= new Array();
+			l_line.length=DEM.LEFT.length;
+			for(let i=0;i<DEM.LEFT.length;i++){
+				var l_vertice = new THREE.Geometry();
+				for(let j=0;j<DEM.LEFT[i].Section.length;j++) {
+					l_vertice.vertices.push(new THREE.Vector3((DEM.LEFT[i].Section[j].x -xMin)/ xdivision*Gridsize, (DEM.LEFT[i].Section[j].z - yMin)/ydivision*Gridsize, 0));
+				}
+				l_line[i]= new THREE.Line(l_vertice,l_material);l_line[i].name = "LEFT"+"-"+i.toString();
+				l_line[i].computeLineDistances(); //for DashedMaterial
+				l_linegroup.add(l_line[i]);
+				l_points[i] = new THREE.Points(l_vertice,lp_material);
+				l_points[i].visible=false;
+				DEM_pgroup.add(l_points[i]);
 			}
-			l_line[i]= new THREE.Line(l_vertice,l_material);l_line[i].name = "LEFT"+"-"+i.toString();
-			l_line[i].computeLineDistances(); //for DashedMaterial
-			l_linegroup.add(l_line[i]);
-			l_points[i] = new THREE.Points(l_vertice,lp_material);
-			l_points[i].visible=false;
-			DEM_pgroup.add(l_points[i]);
+			scene.add(l_linegroup);
 		}
-		scene.add(l_linegroup);
+
 		//scene.add(DEM_pgroup);
-
-		var r_material = new THREE.LineDashedMaterial( { color: 0x00ff00,dashSize:2,gapSize:2 } );
-		var rp_material = new THREE.PointsMaterial({color:0x888888,size:2.0});
-		var r_line = new Array();
-		var r_points= new Array();
-		r_line.length=DEM.RIGHT.length;
-		for(let i=0;i<DEM.RIGHT.length;i++){
-			var r_vertice = new THREE.Geometry();
-			for(let j=0;j<DEM.RIGHT[i].Section.length;j++) {
-				r_vertice.vertices.push(new THREE.Vector3((DEM.RIGHT[i].Section[j].x-xMin) / xdivision*Gridsize, (DEM.RIGHT[i].Section[j].z - yMin)/ydivision*Gridsize, 0));
+		if(DEM.RIGHT.length>0){
+			var r_material = new THREE.LineDashedMaterial( { color: 0x00ff00,dashSize:2,gapSize:2 } );
+			var rp_material = new THREE.PointsMaterial({color:0x888888,size:2.0});
+			var r_line = new Array();
+			var r_points= new Array();
+			r_line.length=DEM.RIGHT.length;
+			for(let i=0;i<DEM.RIGHT.length;i++){
+				var r_vertice = new THREE.Geometry();
+				for(let j=0;j<DEM.RIGHT[i].Section.length;j++) {
+					r_vertice.vertices.push(new THREE.Vector3((DEM.RIGHT[i].Section[j].x-xMin) / xdivision*Gridsize, (DEM.RIGHT[i].Section[j].z - yMin)/ydivision*Gridsize, 0));
+				}
+				r_line[i]= new THREE.Line(r_vertice,r_material);r_line[i].name = "RIGHT"+"-"+i.toString();
+				r_line[i].computeLineDistances(); //for DashedMaterial
+				r_linegroup.add(r_line[i]);
+				r_points[i] = new THREE.Points(r_vertice,rp_material);
+				r_points[i].visible=false;
+				DEM_pgroup.add(r_points[i]);
 			}
-			r_line[i]= new THREE.Line(r_vertice,r_material);r_line[i].name = "RIGHT"+"-"+i.toString();
-			r_line[i].computeLineDistances(); //for DashedMaterial
-			r_linegroup.add(r_line[i]);
-			r_points[i] = new THREE.Points(r_vertice,rp_material);
-			r_points[i].visible=false;
-			DEM_pgroup.add(r_points[i]);
+			scene.add(r_linegroup);
 		}
-		scene.add(r_linegroup);
+
 		scene.add(DEM_pgroup);
 
 	}
@@ -3821,6 +3826,9 @@
 					gaptoPile.value = gap.toFixed(2);
 					towerlist[towerlist.length-1].Position = pileName;
 					towerlist[towerlist.length-1].offset = Number(gap.toFixed(0));
+
+					towerlist[towerlist.length-1].TowerType = layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
+
 					//whj 3.7 refresh GridManager 获取的只有参数  需要发起ajax请求帮助计算填充表格
 					console.log("set tower");
 					console.log(towerlist);
@@ -3944,7 +3952,7 @@
 		formData.append("ProjectName", prjName);
 		console.log(formData.get('pwf'));
 		$.ajax({
-			url: "http://47.108.218.130:8181/pwfsave", //提交的路径
+			url: BASEURL+"/pwfsave", //提交的路径
 			type: "post",       //提交方式
 			data: formData,    //提交的数据
 			// dataType:"json",
@@ -4887,7 +4895,7 @@
 						title:'选择地物类别',
 						area:['250px','400px'],
 						maxmin:true,
-						content:'./CrossTower.html',
+						content:'./html/CrossTower.html',
 						//shade:0,
 
 						success:function (layero,index) {
@@ -5117,7 +5125,7 @@
 				maxmin:true,
 				shadeClose:false,
 				shade:0,
-				content:'./TowerPlace.html',
+				content:'./html/TowerPlace.html',
 				//id: title,
 				success:function (layero,index) {
 					var body = layer.getChildFrame('body',index);

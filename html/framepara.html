@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>图框参数</title>
+</head>
+<body style="width: 500px;height: 600px">
+
+    <div style="float: left;width: 250px;height: 600px">
+        <img src="../images/FRAME.bmp"  alt="frame_example" />
+    </div>
+
+
+
+    <div class="layui-form-item" style="display: inline-block" style="float: left;height: 600px">
+            <div class="layui-input-block" style="width: 50px;height: 80px">
+                <input type="text" name="m_f14" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 80%;height: 90%">
+            </div>
+            <div class="layui-input-block" style="width: 50px;height: 70px">
+                <input type="text" name="m_f13" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 80%;height: 60px">
+            </div>
+            <div class="layui-input-block"style="width: 50px;height: 45px">
+                <input type="text" name="m_f12" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 80%;height: 35px">
+            </div>
+            <div class="layui-input-block" style="width: 50px;height: 30px">
+                 <input type="text" name="m_f11" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 80%;height:20px">
+            </div>
+            <div class="layui-input-block" style="width: 50px;height: 35px">
+                <input type="text" name="m_f10" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 80%;height:20px">
+            </div>
+        <div class="layui-input-block" style="width: 50px;height: 30px">
+            <input type="text" name="m_f9" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 80%;height:20px">
+        </div>
+        <div class="layui-input-block" style="width: 50px;height: 30px">
+            <input type="text" name="m_f8" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 80%;height:20px">
+        </div>
+        <div class="layui-input-block" style="width: 50px;height: 30px">
+            <input type="text" name="m_f7" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 80%;height:20px">
+        </div>
+        <div class="layui-input-block" style="width: 50px;height: 30px">
+            <input type="text" name="m_f6" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 80%;height:20px">
+        </div>
+        <div class="layui-input-block" style="width: 50px;height: 30px">
+            <input type="text" name="m_f5" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 80%;height:20px">
+        </div>
+        <div class="layui-input-block" style="width: 50px;height: 30px">
+            <input type="text" name="m_f4" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 80%;height:20px">
+        </div>
+        <div class="layui-input-block" style="width: 50px;height: 30px">
+            <input type="text" name="m_f3" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 80%;height:20px">
+        </div>
+        <div class="layui-input-block" style="width: 50px;height: 30px">
+            <input type="text" name="m_f2" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 80%;height:20px">
+        </div>
+        <div class="layui-input-block" style="width: 50px;height: 30px">
+            <input type="text" name="m_f1" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 80%;height:20px">
+        </div>
+        <div class="layui-input-block" style="width: 50px;height: 30px">
+            <input type="text" name="m_f0" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 80%;height:20px">
+        </div>
+    </div>
+
+    <div style="float: right;">
+        <label>
+            注释宽度
+        </label>
+        <div class="layui-input-block">
+            <input type="text" name="m_prefixLength" required  lay-verify="required" autocomplete="off" class="layui-input" style="width: 40%">
+        </div>
+        <div style="width: 100px;height: 100px">
+            该设置对话框中所有数值的单位均为 mm
+        </div>
+        <div class="layui-input-block" style="height: 50px">
+            <button class="layui-layer-btn layui-layer-close" onclick="mpUpdate()">确认修改</button>
+        </div>
+        <div class="layui-input-block">
+            <button type="reset" class="layui-layer-btn layui-btn-primary"  onclick="mpclose()">取消操作</button>
+        </div>
+    </div>
+
+
+    <script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+        let index = parent.layer.getFrameIndex(window.name);
+        let mp_list=[];
+        let framepara = [];
+        function mpUpdate(){
+            mp_list =[];
+            $(".layui-input").each(function () {   //获取同类型 layer input
+                mp_list.push($(this).val());
+            })
+            var temp=0;
+            for (let i=mp_list.length-2;i>=0;i--){
+
+                temp=temp+parseInt(mp_list[i]);
+                framepara.push(temp);
+            }
+            var mppara = {"m_prefixLength": mp_list[15], "m_Frame" : framepara }
+            parent.updatemp(mppara);
+            parent.initContent();
+            parent.layer.close(index);
+        };
+        function mpclose(){
+            parent.layer.close(index);
+        };
+
+
+    </script>
+</body>
+</html>

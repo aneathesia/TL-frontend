@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>图纸参数</title>
+</head>
+<body>
+
+<div style="width:650px;height:150px;">
+    <div style="float: left;width: 200px;" >
+            <div >
+                <div>
+                    <label  >卷册号
+                    <input type="text"  class="layui-layer-input" style="float:right;width: 40%">
+                    </label>
+                </div>
+            </div>
+            <div >
+                <label  style="float:left">图纸宽度mm
+                    <input type="number"  class="layui-layer-input" style="float:right;width: 40%">
+                </label>
+            </div>
+            <div >
+                <label  style="float:left">增加长度mm
+                    <input type="number" class="layui-layer-input" style="float:right;width: 40%">
+                </label>
+            </div>
+            <div >
+                <label  style="float:left">起点累距 m
+                    <input type="number"  class="layui-layer-input" style="float:right;width: 40%">
+                </label>
+            </div>
+            <div >
+                <label  style="float: left">终点累距 m
+                    <input type="number"  class="layui-layer-input" style="float:right;width: 40%">
+                </label>
+            </div>
+            <div >
+                <label  style="float: left">累距长度 m
+                    <input type="number"  class="layui-layer-input" style="float:right;width: 40%">
+                </label>
+            </div>
+
+        </div>
+
+    <div style="width: 200px;float: left;padding: 2px;">
+        <div style="display: inline-block" >
+            <label  >主格网线间距mm</label>
+            <input type="number"  class="layui-layer-input" style="width: 20%;float:right;">
+        </div>
+        <div style="display: inline-block">
+            <label  >平面格网点间距</label>
+            <input type="number"  class="layui-layer-input" style="width: 20%;float:right;">
+        </div>
+        <div style="display: inline-block">
+            <label  >断面格网点间距</label>
+            <input type="number"  class="layui-layer-input" style="width: 20%;float:right;">
+        </div>
+        <div style="display: inline-block">
+          <input type="checkbox" class="layui-layer-input" style="width: 50px;float:left;">
+            <label  >显示主格网线</label>
+        </div>
+        <div style="display: none">
+          <input type="checkbox" class="layui-layer-input" style="width: 50px;float:left;">
+            <label  >显示细格网线</label>
+        </div>
+        <div style="display: none">
+          <input type="checkbox" class="layui-layer-input" style="width: 50px;float:left;">
+            <label  >平面跟随断面</label>
+        </div>
+    </div>
+
+    <div style="width: 200px;float: left;padding: 2px; display: none" >
+        <div style="display: inline-block">
+          <input type="checkbox" class="layui-layer-input" style="width: 50px;float:left;" >
+            <label  >显示优化排位设置</label>
+        </div>
+        <div style="display: inline-block">
+          <input type="checkbox" class="layui-layer-input" style="width: 50px;float:left;" >
+            <label  >显示排位信息</label>
+        </div>
+        <div style="display: inline-block">
+          <input type="checkbox" class="layui-layer-input" style="width: 50px;float:left; " disabled ="disabled">
+            <label  >显示导线跨越</label>
+        </div>
+        <div style="display: inline-block">
+          <input type="checkbox" class="layui-layer-input" style="width: 50px;float:left;" disabled ="disabled">
+            <label  >显示导线对地</label>
+        </div>
+        <div style="display: inline-block">
+          <input type="checkbox" class="layui-layer-input" style="width: 50px;float:left;" disabled ="disabled">
+            <label  >显示直线桩位</label>
+        </div>
+        <div style="display: inline-block">
+          <input type="checkbox" class="layui-layer-input" style="width: 50px;float:left;" disabled ="disabled">
+            <label  >显示转角桩位</label>
+        </div>
+        <div style="display: inline-block">
+          <input type="checkbox" class="layui-layer-input" style="width: 50px;float:left;" disabled ="disabled">
+            <label  >显示杆塔位置</label>
+        </div>
+    </div>
+</div>
+<div style="width: 650px;height: 100px;">
+    <div style="width: 200px;float: left;padding: 2px;">
+        <div style="display: inline-block" >
+            <label  >平面比例</label>
+            <input type="text"  class="layui-layer-input" style="width: 20%;float:right;">
+        </div>
+        <div style="display: inline-block">
+            <label  >高程比例</label>
+            <input type="text"  class="layui-layer-input" style="width: 20%;float:right;">
+        </div>
+        <div style="display: inline-block">
+            <label  >横断面比例尺</label>
+            <input type="text"  class="layui-layer-input" style="width: 20%;float:right;">
+        </div>
+    </div>
+
+    <div style="width: 200px;float:left;padding: 2px;">
+        <div style="display: inline-block">
+          <input type="checkbox" class="layui-layer-input" style="width: 50px;float:left;">
+            <label  >显示标准卷册框</label>
+        </div>
+        <div style="display: inline-block">
+          <input type="checkbox" class="layui-layer-input" style="width: 50px;float:left;">
+            <label  >显示圆形卷册框</label>
+        </div>
+        <div style="display: inline-block">
+          <input type="checkbox" class="layui-layer-input" style="width: 50px;float:left;">
+            <label  >显示签名框</label>
+        </div>
+    </div>
+
+    <div style="width:200px;float: left;padding: 2px; display: none">
+        <div style="display: inline-block">
+          <input type="checkbox" class="layui-layer-input" style="width: 50px;float:left;">
+            <label  >显示所有地物点</label>
+        </div>
+        <div style="display: inline-block">
+          <input type="checkbox" class="layui-layer-input" style="width: 50px;float:left;">
+            <label  >显示测量点</label>
+        </div>
+        <div style="display: inline-block">
+          <input type="checkbox" class="layui-layer-input" style="width: 50px;float:left;">
+            <label  >显示测量点代码</label>
+        </div>
+        <div style="display: inline-block">
+          <input type="checkbox" class="layui-layer-input" style="width: 50px;float:left;">
+            <label  >显示测量点偏距</label>
+        </div>
+    </div>
+</div>
+
+<div style="width: 650px;height: 30px;">
+    <div >
+        <div>
+            <label  >边线宽度 m</label>
+            <input type="number"  class="layui-layer-input" style="width: 50px">
+            <label  >高程系统</label>
+            <input type="text"  class="layui-layer-input" style="width: 40%;">
+        </div>
+    </div>
+</div>
+
+<div class="layui-layer-btn" style="width:650px;display: flex;justify-content: space-around;">
+    <button class="layui-layer-btn layui-layer-close" onclick="drawUpdate()" style="width: 10%">ok</button>
+    <button class="layui-layer-btn layui-btn-primary" style="width: 10%;" onclick="drawclose()">cancel</button>
+</div>
+
+<script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
+<script>
+    let index = parent.layer.getFrameIndex(window.name);
+    let draw_list=[];
+    let framepara = [];
+    function drawUpdate(){
+        draw_list =[];
+        $(".layui-layer-input").each(function () {//获取同类型 layer input
+            if($(this).attr("type")=="checkbox"){
+                if($(this).is(':checked')){draw_list.push(1);}   //judge checked true false replace by  1 0;
+                else {draw_list.push(0);}
+            }
+            else
+                draw_list.push($(this).val());
+
+        })
+        parent.updatedrawing(draw_list);
+        parent.layer.close(index);
+    };
+    function drawclose(){
+        parent.layer.close(index);
+    }
+
+
+</script>
+
+</body>
+</html>

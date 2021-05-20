@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>选择跨越杆型</title>
+    <link rel="stylesheet" type="text/css" href="../lib/zTree/v3/css/zTreeStyle/zTreeStyle.css">
+    <script type="text/javascript" src="../lib/zTree/v3/js/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="../lib/zTree/v3/js/jquery.ztree.all-3.5.min.js"></script>
+
+
+</head>
+<body>
+<div style="display: inline-block;text-align: center">
+    <label>跨越杆高 (m)
+    <input type="text" class="layui-layer-input" style="width: 20%;text-align: right" placeholder="0">
+    </label>
+</div>
+<div>
+    <ul id="CrossTowertree" class="ztree"></ul>
+</div>
+<script>
+    let index = parent.layer.getFrameIndex(window.name);
+    let settingss = {
+        data: {
+            simpleData: {
+                enable: true,  //true 、 false 分别表示 使用 、 不使用 简单数据模式
+                idKey: "id",  //节点数据中保存唯一标识的属性名称
+               // pIdKey: "pId",    //节点数据中保存其父节点唯一标识的属性名称
+                rootPId: -1  //用于修正根节点父节点数据，即 pIdKey 指定的属性值
+            },
+            key: {
+                name: "name"  //zTree 节点数据保存节点名称的属性名称  默认值："name"
+            }
+        },
+        check:{
+            enable:false,  //true 、 false 分别表示 显示 、不显示 复选框或单选框
+            nocheckInherit:true  //当父节点设置 nocheck = true 时，设置子节点是否自动继承 nocheck = true
+        },
+        view:{
+            selectedMulti:false
+        },
+        callback:{
+            onDblClick : optionDoubleClick
+        }
+    };
+    let zNodes = [];
+    for(let i=0;i<100;i++){
+        zNodes.push({id:2000+i,name:(2000+i).toString()+":电力(通讯)线杆型",iconSkin:(2000+i).toString()+".bmp",attr:(2000+i).toString(),icon:"../symbols/"+(2000+i).toString()+".bmp"});
+    }
+
+    let towerhigh,codeId;
+    zTreeObj = $.fn.zTree.init($("#CrossTowertree"), settingss, zNodes); //初始化树
+
+    function optionDoubleClick(){
+        let input = $(".layui-layer-input").val();
+        if(input==""){towerhigh = 0;}else towerhigh = parseInt(input);
+       codeId =zTreeObj.getSelectedNodes()[0].id;
+       console.log(towerhigh,codeId) ;
+       parent.createCrossLabel(towerhigh,codeId,true);
+       parent.layer.close(index);
+    }
+
+
+</script>
+</body>
+</html>
