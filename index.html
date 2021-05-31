@@ -2029,7 +2029,6 @@
 		prjName  = ProjectName;
 		document.getElementById('span_id').innerHTML = prjName;
 		pile_tabledata = filedata.m_jPile;
-		console.log("PRJ2data",pile_tabledata);
 		GridManager.setAjaxData(pile_tableId,{"data":pile_tabledata});
 		$("#liPiletable").click();
 		$("#tb_pile_calc").click();
@@ -4850,7 +4849,6 @@
 				}
 			}
 			window.document.getElementById("footermsg").textContent = "		累距：" + (coord.x/Gridsize*xdivision+xMin).toFixed(2) + "	 高程: " + (coord.y/Gridsize*ydivision + yMin).toFixed(2);
-			//console.log("userData",redpoint);
 			if(redpoint!=undefined){window.document.getElementById("footermsg").textContent = redpoint.userData.dem + "第" + redpoint.userData.j + "点，" +
 					"坐标" + (redpoint.geometry.vertices[0].x/Gridsize*xdivision+xMin).toFixed(2) + "," + (redpoint.geometry.vertices[0].y/Gridsize*ydivision+yMin).toFixed(2)+
 					"		累距：" + (coord.x/Gridsize*xdivision+xMin).toFixed(2) + "	 高程: " + (coord.y/Gridsize*ydivision + yMin).toFixed(2) +
@@ -4892,7 +4890,7 @@
 				if(pCount>1) {  //pCount无法产生实体
 					layer.open({
 						type:2,
-						title:'选择地物类别',
+						title:'选择跨越杆型',
 						area:['250px','400px'],
 						maxmin:true,
 						content:'./html/CrossTower.html',
@@ -4931,7 +4929,7 @@
 		var Cross_matp = new THREE.PointsMaterial( { color: 0x888888,size:5 } );
 		var Cross_line = new THREE.Line(Cross_geo,Cross_mat);
 		var Cross_Point = new THREE.Points(Cross_geop,Cross_matp);
-		var Section_Point = new THREE.Points(Cross_geosp,Cross_matp);
+		var Section_Point = new THREE.Points(Cross_geosp,Cross_matp);  //Section_Point
 		Cross_line.name = crossAttrName;
 		let GroundGroup = new THREE.Group();
 		GroundGroup.name = "crossObject"
@@ -4951,9 +4949,10 @@
 			Points: { threshold: 0.1 },
 			Sprite: {}
 		};
-		var renewp = [];  var secp=[];
+		var renewp = [];  var secp=[]; var arr=[]
 		var target = ray.intersectObject(scene.children[scene.children.length-1].children[0]);   // children[0] line   children[1] points  children[2] section p
 
+		console.log("intersect_result",target);
 		// caculateDem intersect points and generate obj add to scene
 		for(let i=0 ;i<target.length;i++){
 			var sectionRay = new THREE.Raycaster();
@@ -5012,11 +5011,26 @@
 			renewp = GroundVertice;
 			renewp.pop();
 		}
-		for(let i = 0 ;i<target.length;i++){
-			renewp.push(target[i].point);
+
+
+		// for(let i = 0 ;i<target.length;i++){
+		// 	renewp.push(target[i].point);
+		// }
+		//renewp sort   cross point insert
+		//renewp.sort(compare('x'));
+
+		console.log("target ",target)
+		let flag= 0;
+		for (let i = 0; i < target.length; i++) {
+			for (let j = flag; j < renewp.length-1; j++) {
+				if((renewp[j].y-target[i].point.y)*(renewp[j+1].y-target[i].point.y)<0){
+					renewp.splice(j+1,0,target[i].point);
+					flag=j+2;
+					break;
+				}
+			}
 		}
-		//renewp sort
-		renewp.sort(compare('x'));
+		console.log("renewPoint",renewp);   //renewp repeat;
 		scene.children[scene.children.length-1].children[1].geometry.attributes.position.needsUpdate = true;
 		scene.children[scene.children.length-1].children[1].geometry.setFromPoints(renewp);
 		scene.children[scene.children.length-1].children[1].geometry.setDrawRange(0, renewp.length);
@@ -5089,17 +5103,21 @@
 		}
 
 		console.log("afterdeleteCrossObject",scene);
+		console.log("cross",cross);
 		for(let i=0;i<cross.length;i++){
 			let crossPoint = [];
 			let crossAttrName;
 			for(let j=0;j<cross[i].PointCount;j++){
-				var temp = new THREE.Vector3();
-				temp.x= (cross[i].CrossPoint[j].x-xMin)/xdivision*Gridsize;
-				temp.y= cross[i].CrossPoint[j].y/xdivision*Gridsize+mp.m_Frame[7]-mp.m_Frame[14];
-				temp.z= 0
-				crossPoint.push(temp);
+				if( cross[i].CrossPoint[j].y!=0){
+					var temp = new THREE.Vector3();
+					temp.x= (cross[i].CrossPoint[j].x-xMin)/xdivision*Gridsize;
+					temp.y= cross[i].CrossPoint[j].y/xdivision*Gridsize+mp.m_Frame[7]-mp.m_Frame[14];
+					temp.z= 0
+					crossPoint.push(temp);
+				}
 			}
 			crossAttrName = cross[i].AttrName;
+			console.log("GroundGroundCross",crossPoint);
 			createGroundCross(crossPoint,crossAttrName);
 			//GroundVertice = crossPoint;
 			let towerhigh=0;
