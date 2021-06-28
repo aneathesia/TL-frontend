@@ -9,27 +9,20 @@
     </style>
 </head>
 <body>
+<script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
     <form  id="towInfor">
         <p >基本耐张段长 <input style="width: 25%;" disabled="disabled" type="text" id="naizhang" value="0" placeholder=""></p>
         <p >前侧代表档距 <input style="width: 25%;" disabled="disabled" type="text" id="dangju" value="0" placeholder=""></p>
         <p >导线 最大K值 <input style="width: 25%;" disabled="disabled" type="text" id="maxK" value="7.333" placeholder=""></p>
         <p>地线 最小K值 <input style="width: 25%;" disabled="disabled" type="text" id="minK" value="7.550" placeholder=""></p>
         <p >编号 <input style="width: 25%;" type="text" id="towId" name="towId" value="G0" placeholder=""></p>
-        <p><input name="towType" type="radio" value="" checked="checked">直线塔 <input name="towType" type="radio" value="">转角塔 <input name="towType" type="radio" value="">门架</p>
+        <p><input name="towType" type="radio" value="0" checked="checked">直线塔 <input name="towType" type="radio" value="1">转角塔 <input name="towType" type="radio" value="3">门架</p>
         <p >塔型
             <select style="width: 40%;" id="TowerType">
-                <option value ="ZMVA41">ZMVA41</option>
             </select>
             高
-            <select id="towerheight">
-                <option value ="45">45</option>
-                <option value ="42">42</option>
-                <option value ="39">39</option>
-                <option value ="36">36</option>
-                <option value ="33">33</option>
-                <option value ="30">30</option>
-                <option value ="27">27</option>
-                <option value ="24">24</option>
+            <select  id="towerheight">
+
             </select>
         </p>
         <p >累距 <input style="width: 32%;" type="text" id="dis" name="dis" value="0.00" placeholder=""> 基降 <input style="width: 22%;" type="text" id="flow" name="flow" value="0.0" placeholder=""></p>
@@ -44,5 +37,50 @@
             <input type="button" id="closeBtn" name="closeBtn" value="关闭">
         </p>
     </form>
+<script>
+    let tower = parent.TowerInfo();
+    console.log(tower);
+    $(document).ready(function (){
+        $('input[type=radio][name=towType]').change(function (){
+            //
+            for (let i = 0;i<$('input[type=radio]').size();i++){
+                $('input[type=radio]')[i].checked = false;
+            }
+            $(this).prop('checked',true) ;
+
+            console.log($("input[type='radio']:checked").val());
+            $("#TowerType").empty();
+            console.log("this.value",this);
+            this.focus();
+            for(let i = 0;i<tower.length;i++){
+                if(tower[i].type == this.value||(this.value==1&&tower[i].type==2)){  //tower type 0 直线塔 1 2 转角塔 3 门架
+                    $("#TowerType").append("<option value='"+i+"'>"+tower[i].Name+"</option>");
+                }
+            }
+            selectindex = $("#TowerType").find("option:selected").val();
+            $("#towerheight").empty();
+            for (let i = tower[selectindex].StartHigh;i<=tower[selectindex].EndHigh;i=i+tower[selectindex].Dhigh){
+                $("#towerheight").append("<option value='"+i+"'>"+i+"</option>");
+            }
+
+
+        });
+    });
+    $("#TowerType").change(function (){
+        let TowerName = $("#TowerType option:selected").text();
+        let startHigh = 0 ; let endHigh = 0;let dHigh = 0;
+        console.log( $("#TowerType option:selected").text());
+        $("#towerheight").empty();
+        for(let i = 0;i<tower.length;i++){
+            if(tower[i].Name == TowerName) {startHigh = tower[i].StartHigh; endHigh  = tower[i].EndHigh; dHigh = tower[i].Dhigh;}
+        }
+        console.log(startHigh,endHigh,dHigh);
+        for (let i = startHigh;i<=endHigh;i=i+dHigh)
+        $("#towerheight").append("<option value='"+i+"'>"+i+"</option>");
+    })
+
+//data sendback
+
+</script>
 </body>
 </html>

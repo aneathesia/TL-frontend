@@ -23,6 +23,7 @@
 	<link href="css/xui.css" type="text/css" rel="stylesheet" />
 	<link rel="stylesheet" type="text/css" href="css/gm.css"/>
 	<link rel="stylesheet" href="https://www.jq22.com/jquery/font-awesome.4.7.0.css">
+	<link href="lib/layer/1.9.3/skin/layer.css" rel="stylesheet" type="text/css" />
 	<!--[if IE 6]>
     <script type="text/javascript" src="http://lib.h-ui.net/DD_belatedPNG_0.0.8a-min.js" ></script>
     <script>DD_belatedPNG.fix('*');</script>
@@ -299,25 +300,6 @@
 	let mp={};
 	let blankmp = {};
 	let cross=[];
-	// window.getFilelist = function (){
-	// 	var optionList = $("#fileDirectory");
-	// 	console.log(optionList);
-	// 	$.ajax({
-	// 		url: BASEURL+"/directory/" + prjName, //提交的路径
-	// 		type: "get",       //提交方式
-	// 		dataType:"json",
-	// 		success: function(data){
-	// 			console.log(data);
-	// 			for (let i = 0; i < data.length; i++) {
-	// 					var fileOption = new Option(data[i].name, i.toString());
-	// 					console.log(fileOption);
-	// 				    optionList[0].options.add(fileOption);
-	// 			}
-	// 		}
-	// 	})
-	// 	console.log(optionList);
-	//
-	// }
 
 	//pilelist table init
 	{
@@ -540,7 +522,7 @@
 	}
 
 	//pile table
-	$("#piletable").draggable();
+	//$("#piletable").draggable();
 	//window resize;
 	$("#piletable").hide();
 	$("#liPiletable").click(function () {
@@ -552,7 +534,7 @@
 
 	//towerlisttable
 	console.log(towerlist);
-	$("#towerlisttable").draggable();
+	//$("#towerlisttable").draggable();
 	//window resize;
 	$("#towerlisttable").hide();
 	$("#liTowerlisttable").click(function () {
@@ -579,7 +561,10 @@
 		m_end = towerlist_tabledata.length - 1;
 
 		for (let i = 0; i < towerlist_tabledata.length; i++) {
-			let towMesh = tower1(towerlist_tabledata[i].TowerHigh);
+			console.log(towerlist_tabledata[i].Status);
+			let towMesh;
+			if(towerlist_tabledata[i].Status!=0){towMesh = tower2(towerlist_tabledata[i].TowerHigh);}
+			else{towMesh = tower1(towerlist_tabledata[i].TowerHigh);}
 			towMesh.position.x = (towerlist_tabledata[i].Distance-xMin)/xdivision*Gridsize;
 			towMesh.position.y = (towerlist_tabledata[i].High - yMin)/ydivision*Gridsize;
 			towMesh.position.z = 0;
@@ -595,11 +580,25 @@
 	}
 
 	//prk设计参数框显示/隐藏
-	$("#Paramtable").draggable({handle:"#h2title"});
+	//$("#Paramtable").draggable({handle:"#h2title"});
 	$("#Paramtable").hide();
+	$("#database").click(function(){
+		layer.open({
+			type:2,
+			title:'读数据库',
+			resize :true,
+			//area:['500px','650px'],
+			content:'./tbTest.html',
+			success:function (layero,index) {
+
+			}
+		})
+	})
 	$("#designparameter").click(function () {
 		$("#Paramtable").show();
 	})
+    //prk database
+
 	$(".closeBtn").click(function () {
 		$("#Paramtable").hide();
 	})
@@ -718,47 +717,28 @@
 		form.append("table",JSON.stringify(towerlist_tabledata));
 		//console.log(pile_table.m_jPile);   //txt append jsondata
 
-		$.ajax({
-			url: BASEURL+"/tbtowerlistCalc", //提交的路径
-			type: "post",       //提交方式
-			data: form,    //提交的数据
-			//dataType:"json",
-			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-			processData: false,
-			success: function (res) {
-				console.log("calc pwf finsh");
-				console.log(res);
-				towerlist_tabledata = res.TOWERLIST;
-				console.log("res.TOWERLIST",res.TOWERLIST);
-				for(let i=0;i<res.TOWERLIST.length;i++){
-					if(res.TOWERLIST[i].offset>0)res.TOWERLIST[i].PosOffset = res.TOWERLIST[i].Position+"+"+res.TOWERLIST[i].offset.toString();
-					else res.TOWERLIST[i].PosOffset = res.TOWERLIST[i].Position+res.TOWERLIST[i].offset.toString();
-				}
-				GridManager.setAjaxData(towerlist_tableId,{"data":res.TOWERLIST});
-
-			}
-		})
+		// $.ajax({
+		// 	url: BASEURL+"/tbtowerlistCalc", //提交的路径
+		// 	type: "post",       //提交方式
+		// 	data: form,    //提交的数据
+		// 	//dataType:"json",
+		// 	contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+		// 	processData: false,
+		// 	success: function (res) {
+		// 		console.log("calc pwf finsh");
+		// 		console.log(res);
+		// 		towerlist_tabledata = res.TOWERLIST;
+		// 		console.log("res.TOWERLIST",res.TOWERLIST);
+		// 		for(let i=0;i<res.TOWERLIST.length;i++){
+		// 			if(res.TOWERLIST[i].offset>0)res.TOWERLIST[i].PosOffset = res.TOWERLIST[i].Position+"+"+res.TOWERLIST[i].offset.toString();
+		// 			else res.TOWERLIST[i].PosOffset = res.TOWERLIST[i].Position+res.TOWERLIST[i].offset.toString();
+		// 		}
+		// 		GridManager.setAjaxData(towerlist_tableId,{"data":res.TOWERLIST});
+		//
+		// 	}
+		// })
 	}
 
-	//后台数据下载到本地
-	// $("#outputDXF").click(function(){
-	// 	var form = new FormData();
-	// 	form.append("ProjectName",prjName);
-	// 	form.append("MapFile",(MapFileName+".MAP").toString());
-	// 	form.append("PwfFile",(prjName+".PWF").toString());
-	// 	$.ajax({
-	// 		url: BASEURL+"/MapOutput", //提交的路径
-	// 		type: "post",       //提交方式
-	// 		data: form,    //提交的数据
-	// 		//dataType:"json",
-	// 		contentType: false,
-	// 		processData: false,
-	// 		success: function () {
-	// 			//download file
-	// 			download(prjName,MapFileName+".DXF");
-	// 		}
-	// 	})
-	// })
 
 	$("#outputORG").click(function(){
 		var form = new FormData();
@@ -886,6 +866,10 @@
 				var body = layer.getChildFrame('body',index);
 				console.log(body);
 		},
+
+			resizing:function(layero){
+				console.log(layero);
+			},
 			cancel: function(index, layero){
 
 					document.removeEventListener('mousedown', window.createGroundObj);
@@ -897,6 +881,7 @@
 		})
 
 	})
+
 	// DEM断面提取layer
 	var secDEM=[];
 	console.log(secDEM);
@@ -912,7 +897,6 @@
 				success: function (layero, index) {
 					console.log(layero, index);
 					var body = layer.getChildFrame('body', index);
-					// body.find('input').val('Hi，我是从父页来的');
 					var inputList = body.find('input');     //取得子页面中input输入框
 					var dataLists = [15, 5];
 					for (var j = 0; j < inputList.length; j++) {			//把父页面的数据放到子页面的input框中
@@ -1070,14 +1054,6 @@
 					blankmp = data.Map.mp;
 					mp = data.Map.mp;
 					prk = data.prk;
-					towerStartHei = prk.TOWER[0].StartHigh;
-					towerEndHei = prk.TOWER[0].EndHigh;
-					towerHeiDif = towerEndHei - towerStartHei;
-					towerHeiInDif = prk.TOWER[0].Dhigh;
-					towerHeiArray.length = towerHeiDif / towerHeiInDif + 1;
-					for (let i = 0; i < towerHeiArray.length; i++) {
-						towerHeiArray[i] = towerStartHei + i * towerHeiInDif;
-					}
 				},
 				error: function (errorMsg) {
 					//alert(errorMsg);
@@ -2045,14 +2021,7 @@
 			success: function(prkdata){
 				console.log(prkdata);
 				prk = prkdata;
-				towerStartHei = prk.TOWER[0].StartHigh;
-				towerEndHei = prk.TOWER[0].EndHigh;
-				towerHeiDif = towerEndHei - towerStartHei;
-				towerHeiInDif = prk.TOWER[0].Dhigh;
-				towerHeiArray.length = towerHeiDif / towerHeiInDif + 1;
-				for (let i = 0; i < towerHeiArray.length; i++) {
-					towerHeiArray[i] = towerStartHei + i * towerHeiInDif;
-				}
+
 			},
 			error: function (errorMsg) {
 				alert(errorMsg);
@@ -2826,6 +2795,7 @@
 			if (theLine.type!= 0){
 				// theWeather.TWI[4].b = theWeather.TWI[4].b + prk.PRIMARY.dIce;(出错地点）
 				theWeather.TWI[4].b = 5 + prk.PRIMARY.dIce;
+				//console.log("weather4b",theWeather.TWI[4].b);
 			}
 			theLine.F = theLine.F/u;
 			theLine.S_p = theLine.Tp*theLine.k/theLine.A;
@@ -3561,7 +3531,7 @@
 		var towerLineWid = 0.5;
 
 	/* 创建杆塔函数 */
-	window.tower1 = function(towerHei) {
+	window.tower1 = function(towerHei) {  //4.5 InsulateLength
 			let scale = 1 / ydivision * Gridsize;
 			let tower = new THREE.Shape();
 			tower.moveTo(-0.5,0);
@@ -3578,10 +3548,32 @@
 			var towMesh = new THREE.Mesh( towerGroup, towMaterial ) ;
 			towMesh.renderOrder = towerHei;
 			return towMesh;
-		}
 
-	window.createTower = function(pos,index){
-			var towMesh = tower1(towerHei);
+			//draw line group
+		}
+	window.tower2 = function(towerHei) {
+		let scale = 1 / ydivision * Gridsize;
+		let tower = new THREE.Shape();
+		tower.moveTo(-0.5,0);
+		tower.lineTo(0.5,0);tower.lineTo(0.5,towerLineWid);tower.lineTo(0.25,towerLineWid);
+		tower.lineTo(0.25,towerHei-towerLineWid*1.4);tower.lineTo(1,towerHei-towerLineWid*1.4-1);
+		tower.lineTo(1,towerHei-towerLineWid*1.4);tower.lineTo(0,towerHei);tower.lineTo(-1,towerHei-towerLineWid*1.4);
+		tower.lineTo(-1,towerHei-towerLineWid*1.4-1);tower.lineTo(-0.25,towerHei-towerLineWid*1.4);tower.lineTo(-0.25,towerLineWid);
+
+		tower.lineTo(-0.5,towerLineWid);
+		tower.lineTo(-0.5,0);
+		let towerGroup = new THREE.ShapeGeometry(tower);
+		towerGroup.scale(scale,scale,scale);
+		let towMaterial = new THREE.MeshBasicMaterial( { color: 0x9400D3, side: THREE.DoubleSide } );
+		var towMesh = new THREE.Mesh( towerGroup, towMaterial ) ;
+		towMesh.renderOrder = towerHei;
+		return towMesh;
+	}
+
+
+	window.createTower = function(pos,index,towTypeIndex,towType){
+		if(towType!=0){var towMesh = tower2(towerHei);}
+		else {var towMesh = tower1(towerHei);}
 			towMesh.position.x = pos.x;
 			towMesh.position.y = pos.y;
 			towMesh.position.z = 0;
@@ -3593,10 +3585,10 @@
 				"High" : pos.y/Gridsize*ydivision + yMin,
 				"Position":"",
 				"offset":0,
-				"TowerType" : "ZMVA41",
+				"TowerType" : prk.TOWER[towTypeIndex].Name,
 				"Base": 0,
 				"TowerHigh" : towerHei,
-				"Status" : 0,
+				"Status" : towType,
 				"InsulatorLength": 5.5,
 				"ConnectLength": 0.0,
 				"InsulateP": "",
@@ -3648,13 +3640,16 @@
 			return towMesh;
 		}
 		var tempTowerlist =[];
-	function createTowerTemp(pos){
+	function createTowerTemp(pos,towTypeIndex,towType){
 			tempTowerlist = [];
-			var towMesh = tower1(towerHei);
+			console.log("towType",towType,"   toweTypeIndex",towTypeIndex);
+			if(towType!=0){var towMesh = tower2(towerHei);}
+			else {var towMesh = tower1(towerHei);}
 			towMesh.position.x = pos.x;
 			towMesh.position.y = pos.y;
 			towMesh.position.z = 0;
 			towMesh.name = "tower";
+
 
 			towerlist.push({
 				"Name" : "G",
@@ -3662,10 +3657,10 @@
 				"High" :pos.y/Gridsize*ydivision + yMin,
 				"Position":"",
 				"offset":0,
-				"TowerType" : "ZMVA41",
+				"TowerType" :  prk.TOWER[towTypeIndex].Name,
 				"Base": 0,
 				"TowerHigh" : towerHei,
-				"Status" : 0,
+				"Status" : towType,
 				"InsulatorLength": 5.5,
 				"ConnectLength": 0.0,
 				"InsulateP": "",
@@ -3801,7 +3796,7 @@
 				pos = new THREE.Vector3(points.geometry.vertices[0].x, interPoint.features[0].geometry.coordinates[1], 0);
 				console.log("addtower",putInd,pos.x/Gridsize*xdivision,towerlist)
 				if(putInd==0||pos.x/Gridsize*xdivision>towerlist[putInd-1].Distance){  //防止向前
-					createTower(pos,putInd);
+					createTower(pos,putInd,layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").val(),layer.getChildFrame('body',tpIndex).find('input[type=radio][name=towType]').value);
 					let disToPile = []
 					for (let i = 0; i < pile_tabledata.length; i++) {
 						disToPile.push({
@@ -3858,6 +3853,7 @@
 	function onMouseMove(event) {
 		intersects = getIntersects(event);
 		tempintersects = intersects;
+		if(intersects!=undefined){
 		if (intersects.x<horSize &&intersects.x>0 && intersects.y<verSize && intersects.y>0){
 			clearTempTow();
 			var tempLine2Cor = [];
@@ -3876,8 +3872,20 @@
 			var interPoint = turf.lineIntersect(tempLine1, tempLine2);
 			pos = new THREE.Vector3(intersects.x, interPoint.features[0].geometry.coordinates[1], 0);
 			let coorDif = intersects.y - interPoint.features[0].geometry.coordinates[1];
+			let towTypeIndex=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").val();
+			let towType =layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val();
+			towerStartHei = prk.TOWER[towTypeIndex].StartHigh;
+			towerEndHei = prk.TOWER[towTypeIndex].EndHigh;
+			towerHeiDif = towerEndHei - towerStartHei;
+			towerHeiInDif = prk.TOWER[towTypeIndex].Dhigh;
+			towerHeiArray.length = towerHeiDif / towerHeiInDif + 1;
+			for (let i = 0; i < towerHeiArray.length; i++) {
+				towerHeiArray[i] = towerStartHei + i * towerHeiInDif;
+			}
 			towerHei = limit(towerHeiArray,coorDif);
-			createTowerTemp(pos);
+			//console.log(prk.TOWER);
+			console.log(layer.getChildFrame('body',tpIndex));
+			createTowerTemp(pos,towTypeIndex,towType);
 			let disToPile = []
 			for (let i = 0; i < pile_tabledata.length; i++) {
 				disToPile.push({"name": pile_tabledata[i].name,
@@ -3921,6 +3929,7 @@
 			var inputId2 =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
 			//inputId.value = "G" + towerlist.length;
 			inputId2.value = "G" + towerlist.length;
+		}
 		}
 	}
 	//清除动态排杆中的临时数据
@@ -4050,6 +4059,7 @@
 				let deleteWire = [];
 				intersects = getIntersects(event);
 				tempintersects = intersects;
+
 
 				var tempLine2Cor = [];
 				for (let i = 0; i < m_linegroup.children.length; i++) {
@@ -4398,7 +4408,6 @@
 		selectObj={};
 
 	}
-
 	//升高杆塔
 	function riseTower(event){
 		document.body.style.cursor = "url(./css/rise.ico) 9 9, default";
@@ -5157,19 +5166,25 @@
 						body.find("#pilelist").append("<option value='"+i+"'>"+pile_tabledata[i].name+"</option>");
 					}
 					// tower high option bind don't need to set fixed
-					for (let i = 0; i < prk.TOWER.length; i++) {
-						body.find("#TowerType").append("<option value='"+i+"'>"+prk.TOWER[i].Name+"</option>");
+					//console.log(body.find('input[type^=radio]'));
+					console.log(body.find("input[type='radio']:checked").val());   //get checked value and set
+					if(prk.TOWER!=undefined){
+						for (let i = 0; i < prk.TOWER.length; i++) {
+							if(prk.TOWER[i].type==0){body.find("#TowerType").append("<option value='"+i+"'>"+prk.TOWER[i].Name+"</option>")};
+						}
+					}
+					var selectindex = body.find("#TowerType option:selected")[0].value;
+					for (let i = prk.TOWER[selectindex].StartHigh;i<=prk.TOWER[selectindex].EndHigh;i=i+prk.TOWER[selectindex].Dhigh){
+						body.find("#towerheight").append("<option value='"+i+"'>"+i+"</option>");
 					}
 
-					var towerHigh = body.find("#towerheight option:selected")[0].value;
-					console.log(towerHigh)
-
-					towerHei = parseInt(towerHigh); // 234;
-					console.log(towerHei);
 				}
 			})
 		}
 
+	}
+	window.TowerInfo = function(){
+		return prk.TOWER;
 	}
 	//sinh arcsh函数
 	function sinh(x) {
