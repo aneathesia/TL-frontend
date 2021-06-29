@@ -717,26 +717,26 @@
 		form.append("table",JSON.stringify(towerlist_tabledata));
 		//console.log(pile_table.m_jPile);   //txt append jsondata
 
-		// $.ajax({
-		// 	url: BASEURL+"/tbtowerlistCalc", //提交的路径
-		// 	type: "post",       //提交方式
-		// 	data: form,    //提交的数据
-		// 	//dataType:"json",
-		// 	contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-		// 	processData: false,
-		// 	success: function (res) {
-		// 		console.log("calc pwf finsh");
-		// 		console.log(res);
-		// 		towerlist_tabledata = res.TOWERLIST;
-		// 		console.log("res.TOWERLIST",res.TOWERLIST);
-		// 		for(let i=0;i<res.TOWERLIST.length;i++){
-		// 			if(res.TOWERLIST[i].offset>0)res.TOWERLIST[i].PosOffset = res.TOWERLIST[i].Position+"+"+res.TOWERLIST[i].offset.toString();
-		// 			else res.TOWERLIST[i].PosOffset = res.TOWERLIST[i].Position+res.TOWERLIST[i].offset.toString();
-		// 		}
-		// 		GridManager.setAjaxData(towerlist_tableId,{"data":res.TOWERLIST});
-		//
-		// 	}
-		// })
+		$.ajax({
+			url: BASEURL+"/tbtowerlistCalc", //提交的路径
+			type: "post",       //提交方式
+			data: form,    //提交的数据
+			//dataType:"json",
+			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+			processData: false,
+			success: function (res) {
+				console.log("calc pwf finsh");
+				console.log(res);
+				towerlist_tabledata = res.TOWERLIST;
+				console.log("res.TOWERLIST",res.TOWERLIST);
+				for(let i=0;i<res.TOWERLIST.length;i++){
+					if(res.TOWERLIST[i].offset>0)res.TOWERLIST[i].PosOffset = res.TOWERLIST[i].Position+"+"+res.TOWERLIST[i].offset.toString();
+					else res.TOWERLIST[i].PosOffset = res.TOWERLIST[i].Position+res.TOWERLIST[i].offset.toString();
+				}
+				GridManager.setAjaxData(towerlist_tableId,{"data":res.TOWERLIST});
+
+			}
+		})
 	}
 
 
@@ -2314,6 +2314,31 @@
 		textObj.position.set(posx, posy , 0);
 		return textObj;
 	}
+		function  createSpritelabel(text1,text2,text3,color,x,y,posx,posy,rotate) {
+			let canvas = document.createElement("canvas");
+			var ctx = canvas.getContext("2d");
+			ctx.strokeStyle = "red";
+			ctx.moveTo(x,y);
+			ctx.lineTo(x,y+100);
+			ctx.stroke();
+
+			ctx.fillStyle = color;
+			ctx.font = "22px Arial";
+			ctx.textAlign="center";
+			ctx.fillText(text1,x,y+20);
+			ctx.textAlign="center";
+			ctx.fillText(text2,x,y+40);
+			ctx.textAlign="center";
+			ctx.fillText(text3,x,y+60);
+
+			let texture = new THREE.Texture(canvas);
+			texture.needsUpdate = true;
+			let material = new THREE.SpriteMaterial({map:texture,transparent:true,rotation:rotate});
+			let textObj = new THREE.Sprite(material);//使用Sprite显示文字
+			textObj.scale.set(40, 20, 1);
+			textObj.position.set(posx, posy , 0);
+			return textObj;
+		}
 
 	/* 图幅格网绘制 */
 	window.initContent= function() {
@@ -3632,17 +3657,15 @@
 			m_start = 0;
 			m_end = towerlist.length - 1;
 			ComputeHugeHigh();
-			scene.add(towMesh);
-
 			if (m_end >= 1) {
 				DisplayFawCurve4(towerlist[m_end - 1],towerlist[m_end], "fixwire");
 			}
+
 			return towMesh;
 		}
 		var tempTowerlist =[];
 	function createTowerTemp(pos,towTypeIndex,towType){
 			tempTowerlist = [];
-			console.log("towType",towType,"   toweTypeIndex",towTypeIndex);
 			if(towType!=0){var towMesh = tower2(towerHei);}
 			else {var towMesh = tower1(towerHei);}
 			towMesh.position.x = pos.x;
@@ -3755,6 +3778,10 @@
 	var tempintersects;
 	var putInd = 0;
 
+	let TowerScriptGroup = new THREE.Group();
+	let TowerGroup = new THREE.Group();
+
+
 		//放置杆塔
 	function onMouseDown(event) {
 		intersects = getIntersects(event);
@@ -3796,7 +3823,22 @@
 				pos = new THREE.Vector3(points.geometry.vertices[0].x, interPoint.features[0].geometry.coordinates[1], 0);
 				console.log("addtower",putInd,pos.x/Gridsize*xdivision,towerlist)
 				if(putInd==0||pos.x/Gridsize*xdivision>towerlist[putInd-1].Distance){  //防止向前
-					createTower(pos,putInd,layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").val(),layer.getChildFrame('body',tpIndex).find('input[type=radio][name=towType]').value);
+					let towTypeIndex=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").val();
+					let towType =layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val();
+					console.log("beforetowmesh");console.log(scene.children.length);console.log(scene);
+					var towmesh = createTower(pos,putInd,towTypeIndex,towType);
+					TowerGroup.add(towmesh);
+					scene.add(TowerGroup);
+					var tlabel = createSpritelabel(towerlist[m_end].Name,
+							"Lh:"+towerlist[m_end].Lh.toFixed(0)+"/Lv:"+towerlist[m_end].Lv.toFixed(0),
+							towerlist[m_end].TowerType+"-"+towerlist[m_end].TowerHigh,
+							"#000000",150,0,pos.x,pos.y+towerHei/ydivision*Gridsize+5,0)
+					TowerScriptGroup.add(tlabel);
+					scene.add(TowerScriptGroup);
+
+					console.log("addtowmesh");console.log(scene.children.length);console.log(scene);
+
+
 					let disToPile = []
 					for (let i = 0; i < pile_tabledata.length; i++) {
 						disToPile.push({
@@ -3873,7 +3915,8 @@
 			pos = new THREE.Vector3(intersects.x, interPoint.features[0].geometry.coordinates[1], 0);
 			let coorDif = intersects.y - interPoint.features[0].geometry.coordinates[1];
 			let towTypeIndex=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").val();
-			let towType =layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val();
+			let towType =layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val();  //towType  Status
+
 			towerStartHei = prk.TOWER[towTypeIndex].StartHigh;
 			towerEndHei = prk.TOWER[towTypeIndex].EndHigh;
 			towerHeiDif = towerEndHei - towerStartHei;
@@ -3884,7 +3927,7 @@
 			}
 			towerHei = limit(towerHeiArray,coorDif);
 			//console.log(prk.TOWER);
-			console.log(layer.getChildFrame('body',tpIndex));
+
 			createTowerTemp(pos,towTypeIndex,towType);
 			let disToPile = []
 			for (let i = 0; i < pile_tabledata.length; i++) {
