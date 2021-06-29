@@ -50,7 +50,6 @@
 
             console.log($("input[type='radio']:checked").val());
             $("#TowerType").empty();
-            console.log("this.value",this);
             this.focus();
             for(let i = 0;i<tower.length;i++){
                 if(tower[i].type == this.value||(this.value==1&&tower[i].type==2)){  //tower type 0 直线塔 1 2 转角塔 3 门架
