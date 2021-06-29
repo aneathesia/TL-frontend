@@ -301,6 +301,11 @@
 	let blankmp = {};
 	let cross=[];
 
+	let TowerScriptGroup = new THREE.Group();
+	TowerScriptGroup.name = "TowerScriptLabel";
+	let TowerGroup = new THREE.Group();
+	TowerGroup.name = "fixTowerGroup";
+
 	//pilelist table init
 	{
 	var pile_tabledata=[];
@@ -427,7 +432,8 @@
 								}
 								console.log("tabledelete",towerlist);
 								console.log(towerlist_tabledata);
-
+								TowerGroup.children.length = 0;
+								TowerScriptGroup.children.length = 0;
 								TowerDraw(towerlist_tabledata);
 								towerlist = towerlist_tabledata;
 								console.log(towerlist);
@@ -560,18 +566,28 @@
 		console.log(m_end)
 		m_end = towerlist_tabledata.length - 1;
 
-		for (let i = 0; i < towerlist_tabledata.length; i++) {
-			console.log(towerlist_tabledata[i].Status);
-			let towMesh;
-			if(towerlist_tabledata[i].Status!=0){towMesh = tower2(towerlist_tabledata[i].TowerHigh);}
-			else{towMesh = tower1(towerlist_tabledata[i].TowerHigh);}
-			towMesh.position.x = (towerlist_tabledata[i].Distance-xMin)/xdivision*Gridsize;
-			towMesh.position.y = (towerlist_tabledata[i].High - yMin)/ydivision*Gridsize;
-			towMesh.position.z = 0;
-			towMesh.name = "fixTower";
-			towMesh.geometry.name = towerlist_tabledata[i].Name;
-			scene.add(towMesh);
+		for (let i = 0; i <  towerlist_tabledata.length; i++) {
+			console.log("Status",towerlist_tabledata[i].Status);
+			let tpos={};let towerset;
+			tpos.x = (towerlist_tabledata[i].Distance-xMin)/xdivision*Gridsize;
+			tpos.y = (towerlist_tabledata[i].High - yMin)/ydivision*Gridsize;
+			tpos.z = 0;
+			towerset = createTower(tpos,towerlist_tabledata[i].Name,
+					towerlist_tabledata[i].TowerType,
+					towerlist_tabledata[i].Status,
+					towerlist_tabledata[i].TowerHigh,
+					false);
+			TowerGroup.add(towerset);
+			scene.add(TowerGroup);
+			var tlabel = createSpritelabel(towerlist_tabledata[i].Name,
+					"Lh:"+towerlist_tabledata[i].Lh.toFixed(0)+"/Lv:"+towerlist_tabledata[i].Lv.toFixed(0)+
+					"/Kv:"+(towerlist_tabledata[i].Lv.toFixed(0)/towerlist_tabledata[i].Lh.toFixed(0)).toFixed(2),
+					towerlist_tabledata[i].TowerType+"-"+towerlist_tabledata[i].TowerHigh,
+					"#000000",150,0,tpos.x,tpos.y+towerlist_tabledata[i].TowerHigh/ydivision*Gridsize+5,0);
+			TowerScriptGroup.add(tlabel);
+			scene.add(TowerScriptGroup);
 		}
+
 		if(m_end > 0){
 			for (let i = m_start; i < m_end; i++) {
 				DisplayFawCurve4(towerlist_tabledata[i],towerlist_tabledata[i+1], "fixwire");
@@ -2314,7 +2330,7 @@
 		textObj.position.set(posx, posy , 0);
 		return textObj;
 	}
-		function  createSpritelabel(text1,text2,text3,color,x,y,posx,posy,rotate) {
+		window.createSpritelabel= function(text1,text2,text3,color,x,y,posx,posy,rotate) {
 			let canvas = document.createElement("canvas");
 			var ctx = canvas.getContext("2d");
 			ctx.strokeStyle = "red";
@@ -3553,9 +3569,11 @@
 			// 	DisplayFawCurve3(tower1, tower2, tower1.kMaxT,  tower1.kGround);
 		}
 
-		var towerLineWid = 0.5;
+
+
 
 	/* 创建杆塔函数 */
+	var towerLineWid = 0.5;
 	window.tower1 = function(towerHei) {  //4.5 InsulateLength
 			let scale = 1 / ydivision * Gridsize;
 			let tower = new THREE.Shape();
@@ -3596,75 +3614,73 @@
 	}
 
 
-	window.createTower = function(pos,index,towTypeIndex,towType){
+	window.createTower = function(pos,name,towTypeName,towType,towerHei,added){ //added true from draw false from tabledata push new or not
 		if(towType!=0){var towMesh = tower2(towerHei);}
 		else {var towMesh = tower1(towerHei);}
 			towMesh.position.x = pos.x;
 			towMesh.position.y = pos.y;
 			towMesh.position.z = 0;
 			towMesh.name = "fixTower";
-			towMesh.geometry.name = "G" + index;
-			towerlist.push({
-				"Name" : "G" + index,
-				"Distance" : pos.x /Gridsize *xdivision+xMin,
-				"High" : pos.y/Gridsize*ydivision + yMin,
-				"Position":"",
-				"offset":0,
-				"TowerType" : prk.TOWER[towTypeIndex].Name,
-				"Base": 0,
-				"TowerHigh" : towerHei,
-				"Status" : towType,
-				"InsulatorLength": 5.5,
-				"ConnectLength": 0.0,
-				"InsulateP": "",
-				"InsulatePA": "X01",
-				"InsulatePANum": -1,
-				"InsulatePB": "X01",
-				"InsulatePBNum": -1,
-				"InsulatePC": "",
-				"InsulatePCNum": 0,
-				"hugeHigh":0,
-				"hugeGround" : 0,		// 地线悬挂点高程
-				"Lk": 0,
-				"L": 0,
-				"cosa":1,
-				"bInsular":false,
-				"constant": 0,
-				"u": 1,
-				"kPline": 0,			//导线大号侧k值系数
-				"kGround": 0,		//地线大号侧K值系数
-				"kWind": 0,			//大风条件前视档k值系数
-				"kMaxT": 0,			//70度高温k值系数
-				"constMaxT": 0,
-				"Lh": 0,				// 水平档距
-				"Lh1": 0,			// 小号侧垂直档距
-				"Lh2": 0,			// 大号侧垂直档距
-				"Lv" : 0,				// 垂直档距
-				"Lv1" : 0,			// 小号侧水平档距
-				"Lv2" : 0,			// 大号侧水平档距
-				"lvMinTemp": 0,//最低气温垂直档距
-				"lvMaxTemp": 0,//最高气温垂直档距
-				"lvMaxIce": 0,//最大覆冰垂直档距
-				"lvMaxWind": 0,//最大风垂直档距
-				"displayKType": 0,	//k值类型，0为最大弧垂 1为最高线温
-				"displayGround":0,		//显示地线
-				"displayPower" : 1,		//显示导线
-				"displaySafe" :  1,	//显示导线对地
-				"displayCross" : 1,		//显示导线跨越
-				"LandDist" : 8.5,		// 对地安全距离
-				"ElecDist" : 6.0	// 电力线安全距离
-			});
-			m_start = 0;
-			m_end = towerlist.length - 1;
-			ComputeHugeHigh();
-			if (m_end >= 1) {
-				DisplayFawCurve4(towerlist[m_end - 1],towerlist[m_end], "fixwire");
+			towMesh.geometry.name = name;
+			if(added){
+				towerlist.push({
+					"Name" : name,
+					"Distance" : pos.x /Gridsize *xdivision+xMin,
+					"High" : pos.y/Gridsize*ydivision + yMin,
+					"Position":"",
+					"offset":0,
+					"TowerType" : towTypeName,
+					"Base": 0,
+					"TowerHigh" : towerHei,
+					"Status" : towType,
+					"InsulatorLength": 5.5,
+					"ConnectLength": 0.0,
+					"InsulateP": "",
+					"InsulatePA": "X01",
+					"InsulatePANum": -1,
+					"InsulatePB": "X01",
+					"InsulatePBNum": -1,
+					"InsulatePC": "",
+					"InsulatePCNum": 0,
+					"hugeHigh":0,
+					"hugeGround" : 0,		// 地线悬挂点高程
+					"Lk": 0,
+					"L": 0,
+					"cosa":1,
+					"bInsular":false,
+					"constant": 0,
+					"u": 1,
+					"kPline": 0,			//导线大号侧k值系数
+					"kGround": 0,		//地线大号侧K值系数
+					"kWind": 0,			//大风条件前视档k值系数
+					"kMaxT": 0,			//70度高温k值系数
+					"constMaxT": 0,
+					"Lh": 0,				// 水平档距
+					"Lh1": 0,			// 小号侧垂直档距
+					"Lh2": 0,			// 大号侧垂直档距
+					"Lv" : 0,				// 垂直档距
+					"Lv1" : 0,			// 小号侧水平档距
+					"Lv2" : 0,			// 大号侧水平档距
+					"lvMinTemp": 0,//最低气温垂直档距
+					"lvMaxTemp": 0,//最高气温垂直档距
+					"lvMaxIce": 0,//最大覆冰垂直档距
+					"lvMaxWind": 0,//最大风垂直档距
+					"displayKType": 0,	//k值类型，0为最大弧垂 1为最高线温
+					"displayGround":0,		//显示地线
+					"displayPower" : 1,		//显示导线
+					"displaySafe" :  1,	//显示导线对地
+					"displayCross" : 1,		//显示导线跨越
+					"LandDist" : 8.5,		// 对地安全距离
+					"ElecDist" : 6.0	// 电力线安全距离
+				});
+				m_start = 0;
+				m_end = towerlist.length - 1;
+				ComputeHugeHigh();
 			}
-
 			return towMesh;
 		}
 		var tempTowerlist =[];
-	function createTowerTemp(pos,towTypeIndex,towType){
+	function createTowerTemp(pos,towTypeName,towType){
 			tempTowerlist = [];
 			if(towType!=0){var towMesh = tower2(towerHei);}
 			else {var towMesh = tower1(towerHei);}
@@ -3680,7 +3696,7 @@
 				"High" :pos.y/Gridsize*ydivision + yMin,
 				"Position":"",
 				"offset":0,
-				"TowerType" :  prk.TOWER[towTypeIndex].Name,
+				"TowerType" :  towTypeName,
 				"Base": 0,
 				"TowerHigh" : towerHei,
 				"Status" : towType,
@@ -3764,10 +3780,12 @@
 		raycaster.setFromCamera(mouse,camera);
 		//计算射线相机到的对象，可能有多个对象，因此返回的是一个数组，按离相机远近排列
 		for (let i = 0; i < scene.children.length; i++) {
-			if (scene.children[i].name === "fixTower"){
-				towerArr.push(scene.children[i]);
+			if (scene.children[i].name === "fixTowerGroup"){
+				towerArr = scene.children[i].children;
 			}
 		}
+		console.log("TowerArr");
+		console.log(towerArr);
 		let intersectTower = raycaster.intersectObjects(towerArr,true);//获取点击杆塔对象
 		return intersectTower;
 	}
@@ -3777,9 +3795,6 @@
 	var intersects;
 	var tempintersects;
 	var putInd = 0;
-
-	let TowerScriptGroup = new THREE.Group();
-	let TowerGroup = new THREE.Group();
 
 
 		//放置杆塔
@@ -3823,10 +3838,10 @@
 				pos = new THREE.Vector3(points.geometry.vertices[0].x, interPoint.features[0].geometry.coordinates[1], 0);
 				console.log("addtower",putInd,pos.x/Gridsize*xdivision,towerlist)
 				if(putInd==0||pos.x/Gridsize*xdivision>towerlist[putInd-1].Distance){  //防止向前
-					let towTypeIndex=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").val();
+					let towTypeName=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 					let towType =layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val();
 					console.log("beforetowmesh");console.log(scene.children.length);console.log(scene);
-					var towmesh = createTower(pos,putInd,towTypeIndex,towType);
+					var towmesh = createTower(pos,"G"+putInd,towTypeName,towType,towerHei,true);
 					TowerGroup.add(towmesh);
 					scene.add(TowerGroup);
 					var tlabel = createSpritelabel(towerlist[m_end].Name,
@@ -3836,9 +3851,14 @@
 					TowerScriptGroup.add(tlabel);
 					scene.add(TowerScriptGroup);
 
+
+					//draw line
+					if (m_end >= 1) {
+						DisplayFawCurve4(towerlist[m_end - 1],towerlist[m_end], "fixwire");
+					}
 					console.log("addtowmesh");console.log(scene.children.length);console.log(scene);
 
-
+					//end draw
 					let disToPile = []
 					for (let i = 0; i < pile_tabledata.length; i++) {
 						disToPile.push({
@@ -3871,13 +3891,11 @@
 					towerlist_tabledata=towerlist;
 					GridManager.refreshGrid(towerlist_tableId);
 
-					//var inputId = document.getElementById("towId");
-					var inputId2 =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
-					//inputId.value = "G" + putInd;
-					inputId2.value = "G" + putInd;
-					for (let i = m_end-1; i < m_end; i++) {
-						DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
-					}
+					var inputId =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
+					inputId.value = "G" + putInd;
+					// for (let i = m_end-1; i < m_end; i++) {
+					// 	DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
+					// }
 
 				}
 			}
@@ -3914,8 +3932,9 @@
 			var interPoint = turf.lineIntersect(tempLine1, tempLine2);
 			pos = new THREE.Vector3(intersects.x, interPoint.features[0].geometry.coordinates[1], 0);
 			let coorDif = intersects.y - interPoint.features[0].geometry.coordinates[1];
-			let towTypeIndex=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").val();
+			let towTypeName=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 			let towType =layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val();  //towType  Status
+			let towTypeIndex=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").val();
 
 			towerStartHei = prk.TOWER[towTypeIndex].StartHigh;
 			towerEndHei = prk.TOWER[towTypeIndex].EndHigh;
@@ -3926,9 +3945,8 @@
 				towerHeiArray[i] = towerStartHei + i * towerHeiInDif;
 			}
 			towerHei = limit(towerHeiArray,coorDif);
-			//console.log(prk.TOWER);
 
-			createTowerTemp(pos,towTypeIndex,towType);
+			createTowerTemp(pos,towTypeName,towType);
 			let disToPile = []
 			for (let i = 0; i < pile_tabledata.length; i++) {
 				disToPile.push({"name": pile_tabledata[i].name,
@@ -3937,7 +3955,6 @@
 				})
 			}
 			disToPile.sort(compare("dis"));
-			//$("#pilelist").val(disToPile[0].value);
 			layer.getChildFrame('body',tpIndex).find("#pilelist").val(disToPile[0].value);
 
 			let gap;
@@ -3946,21 +3963,15 @@
 					gap = pos.x/Gridsize*xdivision - pile_tabledata[i].dist;
 				}
 			}
-			//let gaptoPile = document.getElementById("gap");
-			//gaptoPile.value = gap.toFixed(2);
-			let gaptoPile2 = layer.getChildFrame('body',tpIndex).find("#gap")[0];
-			gaptoPile2.value = gap.toFixed(2);
-			//var inputDis = document.getElementById("dis");
-			//var inputHei = document.getElementById("hei");
-			var inputHei2 = layer.getChildFrame('body',tpIndex).find("#hei")[0];
-			var inputDis2 = layer.getChildFrame('body',tpIndex).find("#dis")[0];
+			let gaptoPile = layer.getChildFrame('body',tpIndex).find("#gap")[0];
+			gaptoPile.value = gap.toFixed(2);
+			var inputHei = layer.getChildFrame('body',tpIndex).find("#hei")[0];
+			var inputDis = layer.getChildFrame('body',tpIndex).find("#dis")[0];
 
 			let disNum = pos.x/Gridsize*xdivision + xMin;
 			let heiNum = pos.y/Gridsize*ydivision + yMin;
-			//inputDis.value = disNum.toFixed(2);
-			inputDis2.value = disNum.toFixed(2);
-			//inputHei.value = heiNum.toFixed(2);
-			inputHei2.value = heiNum.toFixed(2);
+			inputDis.value = disNum.toFixed(2);
+			inputHei.value = heiNum.toFixed(2);
 
 			var towerHigh = layer.getChildFrame('body',tpIndex).find("#towerheight")[0];
 			for (let i = 0; i < towerHigh.length; i++) {
@@ -3968,10 +3979,8 @@
 					towerHigh[i].selected = true;
 				}
 			}
-			//var inputId = document.getElementById("towId");
-			var inputId2 =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
-			//inputId.value = "G" + towerlist.length;
-			inputId2.value = "G" + towerlist.length;
+			var inputId =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
+			inputId.value = "G" + towerlist.length;
 		}
 		}
 	}
@@ -4030,7 +4039,9 @@
 				let currentTow = [];
 				if(intersectsTower[0]!=undefined){
 					if (confirm(msg) === true) {
-						scene.remove(intersectsTower[0].object);
+						let deleteInd = TowerGroup.children.findindexOf(intersectsTower[0].object.uuid);
+						TowerGroup.remove(intersectsTower[0].object);
+						TowerScriptGroup.remove(TowerScriptGroup.children[deleteInd]);
 						for (let i = 0; i < scene.children.length; i++) {
 							if (scene.children[i].name === "fixwire1" || scene.children[i].name === "fixwire2" || scene.children[i].name === "fixwire3" || scene.children[i].name === "fixwire4") {
 								deleteWire.push(scene.children[i]);
@@ -4039,10 +4050,12 @@
 						for (let i = 0; i < deleteWire.length; i++) {
 							scene.remove(deleteWire[i]);
 						}
-						towerlist.removed(intersectsTower[0].object.geometry.name)
+
 						console.log(towerlist);
-						let deleteInd = towerlist.findindexOf(intersectsTower[0].object.geometry.name);
+
+
 						console.log("deleteind", deleteInd)
+						towerlist.splice(deleteInd,1);
 						m_end = towerlist.length - 1;
 						towerlist.sort(compare('Distance'));
 						for (let i = 0; i < towerlist.length; i++) {
@@ -4231,18 +4244,18 @@
 						gap = pos.x/Gridsize*xdivision - pile_tabledata[i].dist;
 					}
 				}
-				let gaptoPile2 = layer.getChildFrame('body',tpIndex).find("#gap")[0];
-				gaptoPile2.value = gap.toFixed(2);
-				var inputHei2 = layer.getChildFrame('body',tpIndex).find("#hei")[0];
-				var inputDis2 = layer.getChildFrame('body',tpIndex).find("#dis")[0];
+				let gaptoPile = layer.getChildFrame('body',tpIndex).find("#gap")[0];
+				gaptoPile.value = gap.toFixed(2);
+				var inputHei = layer.getChildFrame('body',tpIndex).find("#hei")[0];
+				var inputDis = layer.getChildFrame('body',tpIndex).find("#dis")[0];
 
 				let disNum = pos.x/Gridsize*xdivision + xMin;
 				let heiNum = pos.y/Gridsize*ydivision + yMin;
-				inputDis2.value = disNum.toFixed(2);
-				inputHei2.value = heiNum.toFixed(2);
+				inputDis.value = disNum.toFixed(2);
+				inputHei.value = heiNum.toFixed(2);
 
-				var inputId2 =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
-				inputId2.value = "G" + towerlist.length;
+				var inputId =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
+				inputId.value = "G" + towerlist.length;
 
 				console.log("then",towerlist)
 				m_end = towerlist.length - 1;
@@ -4457,22 +4470,24 @@
 		if (event.button === 0) {
 			var intersectsTower = getIntersectsObject(event);
 			console.log(intersectsTower[0]);
+			let riseInd = TowerGroup.children.findindexOf(intersectsTower[0].object.uuid);
+			//tower info in towerlist and match tower range
+			//towerlist[riseInd]
+			console.log("output");console.log(riseInd);console.log(towerlist[riseInd]);
+			TowerGroup.children[riseInd]=createTower(intersectsTower[0].object.position,
+					towerlist[riseInd].Name,
+					towerlist[riseInd].TowerType,
+					towerlist[riseInd].Status,
+					20,
+					false  //no need to push new tower to towerlist
+			);
+			//TowerScriptGroup.children[riseInd]=createSpritelabel();
+
+			console.log("output scene");console.log(scene);
+			//find towerlist index and change this
 			let tempTowerHei = intersectsTower[0].object.renderOrder;
 			let deleteWire = [];
 
-			if (tempTowerHei < 45) {
-				tempTowerHei += 3;
-				scene.remove(intersectsTower[0].object);
-			} else return tempTowerHei;
-
-			var tempPoints = intersectsTower[0].object.position;
-			var towMesh = tower1(tempTowerHei);
-			towMesh.position.x = tempPoints.x;
-			towMesh.position.y = tempPoints.y;
-			towMesh.position.z = 0;
-			towMesh.name = "fixTower";
-			towMesh.geometry.name = intersectsTower[0].object.geometry.name;
-			scene.add(towMesh);
 
 			for (let i = 0; i < scene.children.length; i++) {
 				if (scene.children[i].name === "fixwire1" || scene.children[i].name === "fixwire2" || scene.children[i].name === "fixwire3" || scene.children[i].name === "fixwire4") {
@@ -4499,7 +4514,8 @@
 			for (let i = 0; i < towerlist.length; i++) {
 				towerlist[i].Name = "G" + i;
 			}
-			for (let i = m_start; i < m_end; i++) {
+			console.log("m_start");console.log(m_start);
+			for (let i = m_start; i < m_end; i++) {  //m_start
 				DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
 			}
 			for (let i = m_start; i < m_end; i++) {
@@ -4725,15 +4741,9 @@
 			console.log("selected");
 			console.log(selectedObj);
 			if(selectedObj.material.color==selectedObj.parent.children[0].material.color){
-				console.log("change color");
-				console.log(selectedObj.material);
-				console.log(selectedObj.parent.children[1].material);
 				selectedObj.material=selectedObj.parent.children[1].material;
 			}
 			else{
-				console.log("change color index 0");
-				console.log(selectedObj.material);
-				console.log(selectedObj.parent.children[0].material);
 				selectedObj.material=selectedObj.parent.children[0].material;
 			};
 
@@ -4856,7 +4866,7 @@
 	/* 删除数组指定项 */
 	Array.prototype.findindexOf = function(val) {
 			for (var i = 0; i < this.length; i++) {
-				if (this[i].Name == val) return i;
+				if (this[i].uuid == val) return i;
 			}
 			return -1;
 		};
