@@ -41,6 +41,7 @@
 	<script type="text/javascript" src="./js/gm.js"></script>
 	<script type="text/javascript" src="./config.js"></script>
 	<script src="./js/DragControls1.js"></script>
+	<script type="text/javascript" src="./js/TL.js"></script>
 
 
 
@@ -3774,10 +3775,8 @@
 
 	function getIntersectsObject(event) {
 		var towerArr = [];
-		mouse.x = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
-		mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
-
-		raycaster.setFromCamera(mouse,camera);
+		var worldPoint  = getIntersects(event) ;
+		console.log(worldPoint);
 		//计算射线相机到的对象，可能有多个对象，因此返回的是一个数组，按离相机远近排列
 		for (let i = 0; i < scene.children.length; i++) {
 			if (scene.children[i].name === "fixTowerGroup"){
@@ -3786,8 +3785,15 @@
 		}
 		console.log("TowerArr");
 		console.log(towerArr);
-		let intersectTower = raycaster.intersectObjects(towerArr,true);//获取点击杆塔对象
-		return intersectTower;
+
+		for(let i=0;i<towerArr.length;i++){
+			//Scalar adjust possibility
+			var Box3= new THREE.Box3();
+			if(Box3.expandByObject(towerArr[i]).expandByScalar(5).containsPoint(worldPoint)){
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	var pointArray = [];
@@ -3800,7 +3806,6 @@
 		//放置杆塔
 	function onMouseDown(event) {
 		intersects = getIntersects(event);
-		console.log("intersects",intersects);
 		tempintersects = intersects;
 		if (event.button == 0 ){
 			if (!window_mouse){
@@ -3820,6 +3825,16 @@
 				var temppointLine1 = turf.lineString([[tempintersects.x,tempintersects.y+500],[tempintersects.x,0]]);  // +500? 4.8
 				var interPoint1 = turf.lineIntersect(temppointLine1, tempLine2);
 				tempintersects = new THREE.Vector3(tempintersects.x, interPoint1.features[0].geometry.coordinates[1], 0);
+				//attach
+				for(let i=0;i<pile_tabledata.length;i++){
+					if(Math.abs(pile_tabledata[i].dist-xMin-intersects.x/Gridsize*xdivision)<20){
+						intersects.x  = (pile_tabledata[i].dist-xMin)/xdivision*Gridsize;
+						intersects.y  = (pile_tabledata[i].z-yMin)/ydivision*Gridsize;
+						break;
+					}
+				}
+///goto
+				intersects.y+=20;
 
 				var pointsGeometry = new THREE.Geometry();
 				pointsGeometry.vertices.push(intersects);
@@ -3845,7 +3860,8 @@
 					TowerGroup.add(towmesh);
 					scene.add(TowerGroup);
 					var tlabel = createSpritelabel(towerlist[m_end].Name,
-							"Lh:"+towerlist[m_end].Lh.toFixed(0)+"/Lv:"+towerlist[m_end].Lv.toFixed(0),
+							"Lh:"+towerlist[m_end].Lh.toFixed(0)+"/Lv:"+towerlist[m_end].Lv.toFixed(0)+
+							"/Kv:"+(towerlist[m_end].Lv.toFixed(0)/towerlist[m_end].Lh.toFixed(0)).toFixed(2),
 							towerlist[m_end].TowerType+"-"+towerlist[m_end].TowerHigh,
 							"#000000",150,0,pos.x,pos.y+towerHei/ydivision*Gridsize+5,0)
 					TowerScriptGroup.add(tlabel);
@@ -3927,10 +3943,20 @@
 			var temppointLine1 = turf.lineString([[tempintersects.x,tempintersects.y],[tempintersects.x,0]]);
 			var interPoint1 = turf.lineIntersect(temppointLine1, tempLine2);
 			tempintersects = new THREE.Vector3(intersects.x, interPoint1.features[0].geometry.coordinates[1], 0);
+			//close to turning point setting attach
+			for(let i=0;i<pile_tabledata.length;i++){
+				if(Math.abs(pile_tabledata[i].dist-xMin-intersects.x/Gridsize*xdivision)<20){
+					intersects.x  = (pile_tabledata[i].dist-xMin)/xdivision*Gridsize;
+					//intersects.y  = (pile_tabledata[i].z-yMin)/ydivision*Gridsize;
+					break;
+				}
+			}
+///goto
 			var pos = new THREE.Vector3(intersects.x, intersects.y, 0);
 			var tempLine1 = turf.lineString([[pos.x,pos.y],[pos.x,0]]);
 			var interPoint = turf.lineIntersect(tempLine1, tempLine2);
 			pos = new THREE.Vector3(intersects.x, interPoint.features[0].geometry.coordinates[1], 0);
+
 			let coorDif = intersects.y - interPoint.features[0].geometry.coordinates[1];
 			let towTypeName=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 			let towType =layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val();  //towType  Status
@@ -3944,6 +3970,7 @@
 			for (let i = 0; i < towerHeiArray.length; i++) {
 				towerHeiArray[i] = towerStartHei + i * towerHeiInDif;
 			}
+			console.log(intersects.y , interPoint.features[0].geometry.coordinates[1],coorDif);
 			towerHei = limit(towerHeiArray,coorDif);
 
 			createTowerTemp(pos,towTypeName,towType);
@@ -4031,16 +4058,16 @@
 	function towerDelete(event) {
 			// document.body.style.cursor = "url(./css/cancel.ico) 9 9, default";
 			if (event.button === 0){
-				var intersectsTower = getIntersectsObject(event);
-				console.log("picked", intersectsTower[0]);
+				let deleteInd = getIntersectsObject(event);
+				console.log("picked", deleteInd);
 				// intersectsTower[0].object.material = new THREE.LineBasicMaterial({color: 0x00ffff});
-				var msg = "删除杆塔";
+				var msg = "删除杆塔"+towerlist[deleteInd].Name;
 				let deleteWire = [];
 				let currentTow = [];
-				if(intersectsTower[0]!=undefined){
+				if(deleteInd!=-1){
 					if (confirm(msg) === true) {
-						let deleteInd = TowerGroup.children.findindexOf(intersectsTower[0].object.uuid);
-						TowerGroup.remove(intersectsTower[0].object);
+						//let deleteInd = TowerGroup.children.findindexOf(intersectsTower[0].object.uuid);
+						TowerGroup.remove(TowerGroup.children[deleteInd]);
 						TowerScriptGroup.remove(TowerScriptGroup.children[deleteInd]);
 						for (let i = 0; i < scene.children.length; i++) {
 							if (scene.children[i].name === "fixwire1" || scene.children[i].name === "fixwire2" || scene.children[i].name === "fixwire3" || scene.children[i].name === "fixwire4") {
@@ -4468,24 +4495,27 @@
 	function riseTower(event){
 		document.body.style.cursor = "url(./css/rise.ico) 9 9, default";
 		if (event.button === 0) {
-			var intersectsTower = getIntersectsObject(event);
-			console.log(intersectsTower[0]);
-			let riseInd = TowerGroup.children.findindexOf(intersectsTower[0].object.uuid);
-			//tower info in towerlist and match tower range
-			//towerlist[riseInd]
-			console.log("output");console.log(riseInd);console.log(towerlist[riseInd]);
-			TowerGroup.children[riseInd]=createTower(intersectsTower[0].object.position,
-					towerlist[riseInd].Name,
-					towerlist[riseInd].TowerType,
-					towerlist[riseInd].Status,
-					20,
-					false  //no need to push new tower to towerlist
-			);
+			var riseInd = getIntersectsObject(event);
+			let tempTowerHei=towerlist[riseInd].TowerHigh;
+			console.log("output");console.log(riseInd);console.log(towerlist[riseInd]);console.log(TowerGroup.children[riseInd]);
+
+			let towerIndex = TowerPRKIndex(prk,towerlist[riseInd].TowerType);
+			console.log("towerIndex");console.log(towerIndex,prk.TOWER[towerIndex]);
+			if(towerlist[riseInd].TowerHigh< prk.TOWER[towerIndex].EndHigh){
+				 tempTowerHei = towerlist[riseInd].TowerHigh + prk.TOWER[towerIndex].Dhigh;
+				 console.log("tempTowerHigh");console.log(tempTowerHei);
+				TowerGroup.children[riseInd]=createTower(TowerGroup.children[riseInd].position,
+						towerlist[riseInd].Name,
+						towerlist[riseInd].TowerType,
+						towerlist[riseInd].Status,
+						tempTowerHei,
+						false  //no need to push new tower to towerlist
+				);
+			}
 			//TowerScriptGroup.children[riseInd]=createSpritelabel();
 
 			console.log("output scene");console.log(scene);
 			//find towerlist index and change this
-			let tempTowerHei = intersectsTower[0].object.renderOrder;
 			let deleteWire = [];
 
 
@@ -4499,28 +4529,15 @@
 				scene.remove(deleteWire[i]);
 			}
 
-			for (let i = 0; i < towerlist.length; i++) {
-				if (towerlist[i].Name == towMesh.geometry.name) {
-					towerlist[i].TowerHigh = tempTowerHei
-				}
-			}
+			towerlist[riseInd].TowerHigh = tempTowerHei
 
-			towerlist.sort(compare('Distance'));
-			for (let i = 0; i < towerlist.length; i++) {
-				towerlist[i].Name = "G" + i;
-			}
 			ComputeHugeHigh();
-			towerlist.sort(compare('Distance'));
-			for (let i = 0; i < towerlist.length; i++) {
-				towerlist[i].Name = "G" + i;
-			}
+
 			console.log("m_start");console.log(m_start);
 			for (let i = m_start; i < m_end; i++) {  //m_start
 				DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
 			}
-			for (let i = m_start; i < m_end; i++) {
-				DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
-			}
+
 			console.log(towerlist);
 			towerlist_tabledata = towerlist;
 			console.log(towerlist_tabledata);
@@ -4536,26 +4553,25 @@
 	function fallTower(event){
 			document.body.style.cursor = "url(./css/fall.ico) 9 9, default";
 			if (event.button === 0) {
-				var intersectsTower = getIntersectsObject(event);
-				console.log(intersectsTower[0]);
-				let tempTowerHei = intersectsTower[0].object.renderOrder;
+				var fallInd = getIntersectsObject(event);
+				let tempTowerHei=towerlist[fallInd].TowerHigh;
+				console.log("output");console.log(fallInd);console.log(towerlist[fallInd]);console.log(TowerGroup.children[fallInd]);
 
-				if (tempTowerHei > 24) {
-					tempTowerHei -= 3;
-					scene.remove(intersectsTower[0].object);
-				} else return tempTowerHei;
-				intersectsTower[0].object.renderOrder = tempTowerHei;
+				let towerIndex = TowerPRKIndex(prk,towerlist[fallInd].TowerType);
+				console.log("towerIndex");console.log(towerIndex,prk.TOWER[towerIndex]);
+				if(towerlist[fallInd].TowerHigh> prk.TOWER[towerIndex].StartHigh){
+					tempTowerHei = towerlist[fallInd].TowerHigh - prk.TOWER[towerIndex].Dhigh;
+					console.log("tempTowerHigh");console.log(tempTowerHei);
+					TowerGroup.children[fallInd]=createTower(TowerGroup.children[fallInd].position,
+							towerlist[fallInd].Name,
+							towerlist[fallInd].TowerType,
+							towerlist[fallInd].Status,
+							tempTowerHei,
+							false  //no need to push new tower to towerlist
+					);
+				}
+				//find towerlist index and change this
 				let deleteWire = [];
-
-				var tempPoints = intersectsTower[0].object.position;
-				var towMesh = tower1(tempTowerHei);
-				towMesh.position.x = tempPoints.x;
-				towMesh.position.y = tempPoints.y;
-				towMesh.position.z = 0;
-				towMesh.name = "fixTower";
-				towMesh.geometry.name = intersectsTower[0].object.geometry.name;
-				scene.add(towMesh);
-
 				for (let i = 0; i < scene.children.length; i++) {
 					if (scene.children[i].name === "fixwire1" || scene.children[i].name === "fixwire2" || scene.children[i].name === "fixwire3" || scene.children[i].name === "fixwire4") {
 						deleteWire.push(scene.children[i]);
@@ -4566,17 +4582,10 @@
 					scene.remove(deleteWire[i]);
 				}
 
-				for (let i = 0; i < towerlist.length; i++) {
-					if (towerlist[i].Name == towMesh.geometry.name) {
-						towerlist[i].TowerHigh = tempTowerHei
-					}
-				}
+				towerlist[fallInd].TowerHigh = tempTowerHei
 
 				ComputeHugeHigh();
-				towerlist.sort(compare('Distance'));
-				for (let i = 0; i < towerlist.length; i++) {
-					towerlist[i].Name = "G" + i;
-				}
+
 				for (let i = m_start; i < m_end; i++) {
 					DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
 				}
@@ -4732,10 +4741,6 @@
 	let selectedPoint = null;
 
 	function onDocumentSelected(event) {
-		//var intersect=getIntersects(event);
-		//getIntersectsObject()
-		// intersect.x,intersect.y+yMin
-		//console.log(getIntersectsMapObj);
 		event.preventDefault();
 		if (selectedObj) {
 			console.log("selected");
@@ -4863,33 +4868,7 @@
 		return obj;
 	}
 
-	/* 删除数组指定项 */
-	Array.prototype.findindexOf = function(val) {
-			for (var i = 0; i < this.length; i++) {
-				if (this[i].uuid == val) return i;
-			}
-			return -1;
-		};
-	Array.prototype.removed = function(val) {
-			var index = this.findindexOf(val);
-			if (index > -1) {
-				this.splice(index, 1);
-			}
-		};
-	/*禁止右键菜单*/
-	function blockContextmen(){
-		if(window.event){
-			window.event.returnValue=false;
-		}
-	}
-	/* 比较排序 */
-	function compare(property){
-			return function(a,b){
-				var value1 = a[property];
-				var value2 = b[property];
-				return value1 - value2;
-			}
-		}
+
 	/* 窗口自动适应 */
 	function onWindowResize() {
 		camera.aspect = canvasdiv.offsetWidth / canvasdiv.offsetHeight;
@@ -5236,29 +5215,11 @@
 		}
 
 	}
+
 	window.TowerInfo = function(){
 		return prk.TOWER;
 	}
-	//sinh arcsh函数
-	function sinh(x) {
-			let a = (Math.exp(x) - Math.exp(-x))/2;
-			return a;
-		}
-	function arcsh(x) {
-			let a = Math.log(x + Math.sqrt(x * x +1));
-			return a;
-		}
-	//求最近值
-	function limit(arr, num){
-		var newArr = [];
-		arr.map(function(x){
-			// 对数组各个数值求差值
-			newArr.push(Math.abs(x - num));
-		});
-		// 求最小值的索引
-		var index = newArr.indexOf(Math.min.apply(null, newArr));
-		return arr[index];
-	}	
+
 	/* 初始化 */
 	function init() {
 		initScene();
