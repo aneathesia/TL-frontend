@@ -18,7 +18,7 @@
         <p >编号 <input style="width: 25%;" type="text" id="towId" name="towId" value="G0" placeholder=""><label style="display: none"><input type="checkbox" name="attach">捕捉桩位</label></p>
         <p><input name="towType" type="radio" value="0" checked="checked">直线塔 <input name="towType" type="radio" value="1">转角塔 <input name="towType" type="radio" value="3">门架</p>
         <p >塔型
-            <select style="width: 40%;" id="TowerType">
+            <select style="width: 40%;" id="TowerType" >
             </select>
             高
             <select  id="towerheight">
@@ -32,38 +32,37 @@
             差距 <input style="width: 22%;" type="text" id="gap" name="gap" value="0" placeholder="">
         </p>
         <p >高程 <input style="width: 35%;" type="text" id="hei" name="hei" value="0.00" placeholder="">
-        <p class="confirm" style="text-align-last: right;display: none" >
+        <p class="confirm" style="text-align-last: right;" >
             <input type="button" id="saveBtn" name="saveBtn" value="保存">
             <input type="button" id="closeBtn" name="closeBtn" value="关闭">
+            <button id="editInd" style="display: none">保存</button>
         </p>
     </form>
 <script>
     let tower = parent.TowerInfo();
     console.log(tower);
-    $(document).ready(function (){
-        $('input[type=radio][name=towType]').change(function (){
-            //
-            for (let i = 0;i<$('input[type=radio]').size();i++){
-                $('input[type=radio]')[i].checked = false;
+    $('input[type=radio][name=towType]').change(function (){
+        //
+        for (let i = 0;i<$('input[type=radio]').size();i++){
+            $('input[type=radio]')[i].checked = false;
+        }
+        $(this).prop('checked',true) ;
+        console.log($(this));
+        console.log($("input[type='radio']:checked").val());
+        $("#TowerType").empty();
+        this.focus();
+        for(let i = 0;i<tower.length;i++){
+            if(tower[i].type == this.value||(this.value==1&&tower[i].type==2)){  //tower type 0 直线塔 1 2 转角塔 3 门架
+                $("#TowerType").append("<option value='"+i+"'>"+tower[i].Name+"</option>");
             }
-            $(this).prop('checked',true) ;
-
-            console.log($("input[type='radio']:checked").val());
-            $("#TowerType").empty();
-            this.focus();
-            for(let i = 0;i<tower.length;i++){
-                if(tower[i].type == this.value||(this.value==1&&tower[i].type==2)){  //tower type 0 直线塔 1 2 转角塔 3 门架
-                    $("#TowerType").append("<option value='"+i+"'>"+tower[i].Name+"</option>");
-                }
-            }
-            selectindex = $("#TowerType").find("option:selected").val();
-            $("#towerheight").empty();
-            for (let i = tower[selectindex].StartHigh;i<=tower[selectindex].EndHigh;i=i+tower[selectindex].Dhigh){
-                $("#towerheight").append("<option value='"+i+"'>"+i+"</option>");
-            }
+        }
+        let selectindex = $("#TowerType").find("option:selected").val();
+        $("#towerheight").empty();
+        for (let i = tower[selectindex].StartHigh;i<=tower[selectindex].EndHigh;i=i+tower[selectindex].Dhigh){
+            $("#towerheight").append("<option value='"+i+"'>"+i+"</option>");
+        }
 
 
-        });
     });
     $("#TowerType").change(function (){
         let TowerName = $("#TowerType option:selected").text();
@@ -78,7 +77,19 @@
         $("#towerheight").append("<option value='"+i+"'>"+i+"</option>");
     })
 
+    $("#saveBtn").click(function (){
+        console.log($("#editInd").val());
+        var editInd = $("#editInd").val();
+        parent.editTowerSave(editInd);
+    })
+
+    $("#closeBtn").click(function (){
+        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        parent.layer.close(index);
+    })
+
 //data sendback
+
 
 </script>
 </body>
