@@ -306,6 +306,9 @@
 	TowerScriptGroup.name = "TowerScriptLabel";
 	let TowerGroup = new THREE.Group();
 	TowerGroup.name = "fixTowerGroup";
+	let FawCurveGroup = new THREE.Group();
+	FawCurveGroup.name = "fixCurveGroup";
+
 
 	//pilelist table init
 	{
@@ -557,14 +560,9 @@
 	})
 
 	window.TowerDraw = function(towerlist_tabledata){
-		let deletelist = [];
-		for (let i = 0; i < scene.children.length; i++){
-			if (scene.children[i].name === "fixTower"||scene.children[i].name === "fixwire1" ||scene.children[i].name === "fixwire2"||scene.children[i].name === "fixwire3"||scene.children[i].name === "fixwire4"){
-				deletelist.push(scene.children[i]);
-			}
-		}
-		for (let i = 0; i < deletelist.length; i++) {scene.remove(deletelist[i]);}
-		console.log(m_end)
+		var conductset;
+
+		console.log(m_start,m_end)
 		m_end = towerlist_tabledata.length - 1;
 
 		for (let i = 0; i <  towerlist_tabledata.length; i++) {
@@ -577,7 +575,7 @@
 					towerlist_tabledata[i].TowerType,
 					towerlist_tabledata[i].Status,
 					towerlist_tabledata[i].TowerHigh,
-					false);
+					-1);
 			TowerGroup.add(towerset);
 			scene.add(TowerGroup);
 			var tlabel = createSpritelabel(towerlist_tabledata[i].Name,
@@ -591,9 +589,16 @@
 
 		if(m_end > 0){
 			for (let i = m_start; i < m_end; i++) {
-				DisplayFawCurve4(towerlist_tabledata[i],towerlist_tabledata[i+1], "fixwire");
+				conductset=DisplayFawCurve4(towerlist_tabledata[i],towerlist_tabledata[i+1], "fixwire");
+				console.log(conductset);
+				FawCurveGroup.add(conductset[0]);
+				FawCurveGroup.add(conductset[1]);
+				FawCurveGroup.add(conductset[2]);
 			}
 		}
+		console.log("update scene TowerDraw");
+		scene.add(FawCurveGroup);
+		console.log(scene);
 	}
 
 	//prk设计参数框显示/隐藏
@@ -3476,7 +3481,6 @@
 						y3 = y2;
 					}
 					insertPoint.push(new THREE.Vector3((x3-xMin)/xdivision*Gridsize, (y3 - yMin)/ydivision*Gridsize, 0))
-					console.log("insertPoint" ,insertPoint);
 				}
 			}
 			// var conductMaterial = new THREE.LineBasicMaterial( { color: 0xff00ff } );
@@ -3488,7 +3492,7 @@
 			conductObj.name = name;
 			conductObj.renderOrder = 999;
 			conductObj.onBeforeRender = function( renderer ) { renderer.clearDepth(); };
-			scene.add(conductObj);
+			return conductObj;
 		}
 	window.DisplayFawCurve2 = function(x1,y1,x2,y2,k,dspLwst,bInsular,constt,length,material, name) {
 			if( x2-x1<10 || x2-x1>3000 || Math.abs(y1-y2)>2000 ) {
@@ -3514,7 +3518,9 @@
 
 			// if (dspLwst)
 			//DisplayFawLowest(xx,  yy-constt, lx1, material);
-			DisplayFawCurve( x1, y1, x2, y2, k, lx1, bInsular, constt,length,material, name);
+			var Curve2res  = DisplayFawCurve( x1, y1, x2, y2, k, lx1, bInsular, constt,length,material, name);
+
+			return Curve2res;
 
 			//显示超出范围的弧垂
 			// if((xx<x1 || xx>x2) && dspLwst)
@@ -3538,36 +3544,48 @@
 		}
 	window.DisplayFawCurve3 = function(tower1, tower2, kPower, kGround, name){
 			let constt=0;
+			var conductobj=Array();
 			if(tower1.displayKType==0)
 				constt = tower1.constant;
 			else if(tower1.displayKType==1)
 				constt = tower1.constMaxT;
 			if(tower1.displayGround){
 				let wire_material = new THREE.LineBasicMaterial({color: 0x000000});
-				DisplayFawCurve2(tower1.Distance,tower1.hugeGround,tower2.Distance,tower2.hugeGround,kGround,false,false,0,0,wire_material, name+"1");
+				var conduct1 = DisplayFawCurve2(tower1.Distance,tower1.hugeGround,tower2.Distance,tower2.hugeGround,kGround,false,
+						false,0,0,wire_material, name+"1");
 			}
 			if(tower1.displayPower){
 				let wire_material1 = new THREE.LineBasicMaterial({color: 0x000000});
-				DisplayFawCurve2(tower1.Distance,tower1.hugeHigh, tower2.Distance,tower2.hugeHigh,kPower,true,
+				var conduct2 = DisplayFawCurve2(tower1.Distance,tower1.hugeHigh, tower2.Distance,tower2.hugeHigh,kPower,true,
 						tower1.bInsular,constt,tower1.InsulatorLength,wire_material1, name+"2");
 			}
 			if(tower1.displaySafe){
 				let wire_material2 = new THREE.LineBasicMaterial({color: 0x0000ff});
-				DisplayFawCurve2(tower1.Distance,tower1.hugeHigh-tower1.LandDist, tower2.Distance,tower2.hugeHigh-tower1.LandDist,
+				var conduct3 = DisplayFawCurve2(tower1.Distance,tower1.hugeHigh-tower1.LandDist, tower2.Distance,tower2.hugeHigh-tower1.LandDist,
 						kPower,false,tower1.bInsular,constt,tower1.InsulatorLength,wire_material2, name+"3");
 			}
 			if(tower1.displayCross){
 				let wire_material3 = new THREE.LineBasicMaterial({color: 0xff0000});
-				DisplayFawCurve2(tower1.Distance,tower1.hugeHigh-tower1.ElecDist, tower2.Distance,tower2.hugeHigh-tower1.ElecDist,
+				var conduct4 = DisplayFawCurve2(tower1.Distance,tower1.hugeHigh-tower1.ElecDist, tower2.Distance,tower2.hugeHigh-tower1.ElecDist,
 						kPower,false,tower1.bInsular,constt,tower1.InsulatorLength,wire_material3, name+"4");
 			}
+			//conductobj.push(conduct1);
+			conductobj.push(conduct2);
+			conductobj.push(conduct3);
+			conductobj.push(conduct4);
+
+			return conductobj;
 		}
 	window.DisplayFawCurve4 = function(tower1,tower2, name){
+			var ConductCurve;
 			if(tower1.displayKType==0){
-				DisplayFawCurve3(tower1, tower2, tower1.kPline, tower1.kGround, name);
+				ConductCurve = DisplayFawCurve3(tower1, tower2, tower1.kPline, tower1.kGround, name);
 			}
 			// else if(tower1.displayKType==1)
 			// 	DisplayFawCurve3(tower1, tower2, tower1.kMaxT,  tower1.kGround);
+
+			return ConductCurve;
+
 		}
 
 
@@ -3623,8 +3641,8 @@
 			towMesh.position.z = 0;
 			towMesh.name = "fixTower";
 			towMesh.geometry.name = name;
-			if(added){
-				towerlist.push({
+			if(added>-1){
+				towerlist.splice(added,1,{
 					"Name" : name,
 					"Distance" : pos.x /Gridsize *xdivision+xMin,
 					"High" : pos.y/Gridsize*ydivision + yMin,
@@ -3745,9 +3763,16 @@
 			ComputeHugeHigh();
 
 			scene.add(towMesh);
+			var tempCurve;
 			if (m_end > 0) {
-				DisplayFawCurve4(towerlist[m_end - 1],towerlist[m_end], "move_wire");
+				tempCurve = DisplayFawCurve4(towerlist[m_end - 1],towerlist[m_end], "move_wire");
 			}
+			console.log("temp");
+			console.log(tempCurve);
+			if(tempCurve[0]!=undefined){
+				scene.add(tempCurve[0]);scene.add(tempCurve[1]);scene.add(tempCurve[2]);
+			}
+
 			towerlist.pop();
 			m_end = towerlist.length - 1;
 			ComputeHugeHigh();
@@ -3776,16 +3801,12 @@
 	function getIntersectsObject(event) {
 		var towerArr = [];
 		var worldPoint  = getIntersects(event) ;
-		console.log(worldPoint);
 		//计算射线相机到的对象，可能有多个对象，因此返回的是一个数组，按离相机远近排列
 		for (let i = 0; i < scene.children.length; i++) {
 			if (scene.children[i].name === "fixTowerGroup"){
 				towerArr = scene.children[i].children;
 			}
 		}
-		console.log("TowerArr");
-		console.log(towerArr);
-
 		for(let i=0;i<towerArr.length;i++){
 			//Scalar adjust possibility
 			var Box3= new THREE.Box3();
@@ -3856,7 +3877,7 @@
 					let towTypeName=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 					let towType =layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val();
 					console.log("beforetowmesh");console.log(scene.children.length);console.log(scene);
-					var towmesh = createTower(pos,"G"+putInd,towTypeName,towType,towerHei,true);
+					var towmesh = createTower(pos,"G"+putInd,towTypeName,towType,towerHei,putInd);
 					TowerGroup.add(towmesh);
 					scene.add(TowerGroup);
 					var tlabel = createSpritelabel(towerlist[m_end].Name,
@@ -3869,9 +3890,13 @@
 
 
 					//draw line
+					var CurveInsert;
 					if (m_end >= 1) {
-						DisplayFawCurve4(towerlist[m_end - 1],towerlist[m_end], "fixwire");
+						CurveInsert=DisplayFawCurve4(towerlist[m_end - 1],towerlist[m_end], "fixwire");
 					}
+					FawCurveGroup.add(CurveInsert[0]);
+					FawCurveGroup.add(CurveInsert[1]);
+					FawCurveGroup.add(CurveInsert[2]);
 					console.log("addtowmesh");console.log(scene.children.length);console.log(scene);
 
 					//end draw
@@ -3940,12 +3965,12 @@
 				}
 			}
 			var tempLine2 = turf.lineString(tempLine2Cor);
-			var temppointLine1 = turf.lineString([[tempintersects.x,tempintersects.y],[tempintersects.x,0]]);
-			var interPoint1 = turf.lineIntersect(temppointLine1, tempLine2);
-			tempintersects = new THREE.Vector3(intersects.x, interPoint1.features[0].geometry.coordinates[1], 0);
+			//var temppointLine1 = turf.lineString([[tempintersects.x,tempintersects.y],[tempintersects.x,0]]);
+			//var interPoint1 = turf.lineIntersect(temppointLine1, tempLine2);
+			//tempintersects = new THREE.Vector3(intersects.x, interPoint1.features[0].geometry.coordinates[1], 0);
 			//close to turning point setting attach
 			for(let i=0;i<pile_tabledata.length;i++){
-				if(Math.abs(pile_tabledata[i].dist-xMin-intersects.x/Gridsize*xdivision)<20){
+				if(Math.abs(pile_tabledata[i].dist-xMin-intersects.x/Gridsize*xdivision)<20){  //attach pilelist point 
 					intersects.x  = (pile_tabledata[i].dist-xMin)/xdivision*Gridsize;
 					//intersects.y  = (pile_tabledata[i].z-yMin)/ydivision*Gridsize;
 					break;
@@ -3955,9 +3980,13 @@
 			var pos = new THREE.Vector3(intersects.x, intersects.y, 0);
 			var tempLine1 = turf.lineString([[pos.x,pos.y],[pos.x,0]]);
 			var interPoint = turf.lineIntersect(tempLine1, tempLine2);
-			pos = new THREE.Vector3(intersects.x, interPoint.features[0].geometry.coordinates[1], 0);
+			let coorDif;
+			if(interPoint.features[0]!=undefined){
+				pos = new THREE.Vector3(intersects.x, interPoint.features[0].geometry.coordinates[1], 0);
+				coorDif = intersects.y - interPoint.features[0].geometry.coordinates[1];
+			}
 
-			let coorDif = intersects.y - interPoint.features[0].geometry.coordinates[1];
+
 			let towTypeName=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 			let towType =layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val();  //towType  Status
 			let towTypeIndex=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").val();
@@ -3970,7 +3999,6 @@
 			for (let i = 0; i < towerHeiArray.length; i++) {
 				towerHeiArray[i] = towerStartHei + i * towerHeiInDif;
 			}
-			console.log(intersects.y , interPoint.features[0].geometry.coordinates[1],coorDif);
 			towerHei = limit(towerHeiArray,coorDif);
 
 			createTowerTemp(pos,towTypeName,towType);
@@ -4171,12 +4199,10 @@
 				var interPoint = turf.lineIntersect(tempLine1, tempLine2);
 				pos = new THREE.Vector3(points.geometry.vertices[0].x, interPoint.features[0].geometry.coordinates[1], 0);
 
-				var towMesh = tower1(towerHei);
-				towMesh.position.x = pos.x;
-				towMesh.position.y = pos.y;
-				towMesh.position.z = 0;
-				towMesh.name = "fixTower";
-				scene.add(towMesh);
+				let towTypeName=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
+				let towType =layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val();
+				console.log("beforetowmesh");console.log(scene.children.length);console.log(scene);
+				//var towmesh = createTower(pos,"G"+putInd,towTypeName,towType,towerHei,);
 
 				for (let i = 0; i < scene.children.length; i++) {
 					if (scene.children[i].name === "fixwire1" || scene.children[i].name === "fixwire2" || scene.children[i].name === "fixwire3" || scene.children[i].name === "fixwire4") {
@@ -4496,9 +4522,11 @@
 		document.body.style.cursor = "url(./css/rise.ico) 9 9, default";
 		if (event.button === 0) {
 			var riseInd = getIntersectsObject(event);
-			let tempTowerHei=towerlist[riseInd].TowerHigh;
+			//if return = -1
+			let tempTowerHei;
+			if(riseInd!=-1){tempTowerHei=towerlist[riseInd].TowerHigh;}else return;
 			console.log("output");console.log(riseInd);console.log(towerlist[riseInd]);console.log(TowerGroup.children[riseInd]);
-
+			let tpos = TowerGroup.children[riseInd].position;
 			let towerIndex = TowerPRKIndex(prk,towerlist[riseInd].TowerType);
 			console.log("towerIndex");console.log(towerIndex,prk.TOWER[towerIndex]);
 			if(towerlist[riseInd].TowerHigh< prk.TOWER[towerIndex].EndHigh){
@@ -4509,7 +4537,7 @@
 						towerlist[riseInd].TowerType,
 						towerlist[riseInd].Status,
 						tempTowerHei,
-						false  //no need to push new tower to towerlist
+						-1  //no need to push new tower to towerlist
 				);
 			}
 			//TowerScriptGroup.children[riseInd]=createSpritelabel();
@@ -4533,6 +4561,14 @@
 
 			ComputeHugeHigh();
 
+			TowerScriptGroup.children[riseInd] = createSpritelabel(towerlist[riseInd].Name,
+					"Lh:"+towerlist[riseInd].Lh.toFixed(0)+"/Lv:"+towerlist[riseInd].Lv.toFixed(0)+
+					"/Kv:"+(towerlist[riseInd].Lv.toFixed(0)/towerlist[riseInd].Lh.toFixed(0)).toFixed(2),
+					towerlist[riseInd].TowerType+"-"+towerlist[riseInd].TowerHigh,
+					"#000000",150,0,tpos.x,tpos.y+towerlist[riseInd].TowerHigh/ydivision*Gridsize+5,0);
+
+
+
 			console.log("m_start");console.log(m_start);
 			for (let i = m_start; i < m_end; i++) {  //m_start
 				DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
@@ -4554,9 +4590,10 @@
 			document.body.style.cursor = "url(./css/fall.ico) 9 9, default";
 			if (event.button === 0) {
 				var fallInd = getIntersectsObject(event);
-				let tempTowerHei=towerlist[fallInd].TowerHigh;
+				let tempTowerHei;
+				if(fallInd!=-1){tempTowerHei=towerlist[fallInd].TowerHigh;}else return;
 				console.log("output");console.log(fallInd);console.log(towerlist[fallInd]);console.log(TowerGroup.children[fallInd]);
-
+				let tpos = TowerGroup.children[fallInd].position;
 				let towerIndex = TowerPRKIndex(prk,towerlist[fallInd].TowerType);
 				console.log("towerIndex");console.log(towerIndex,prk.TOWER[towerIndex]);
 				if(towerlist[fallInd].TowerHigh> prk.TOWER[towerIndex].StartHigh){
@@ -4567,7 +4604,7 @@
 							towerlist[fallInd].TowerType,
 							towerlist[fallInd].Status,
 							tempTowerHei,
-							false  //no need to push new tower to towerlist
+							-1  //no need to push new tower to towerlist
 					);
 				}
 				//find towerlist index and change this
@@ -4585,6 +4622,14 @@
 				towerlist[fallInd].TowerHigh = tempTowerHei
 
 				ComputeHugeHigh();
+				TowerScriptGroup.children[fallInd] = createSpritelabel(towerlist[fallInd].Name,
+						"Lh:"+towerlist[fallInd].Lh.toFixed(0)+"/Lv:"+towerlist[fallInd].Lv.toFixed(0)+
+						"/Kv:"+(towerlist[fallInd].Lv.toFixed(0)/towerlist[fallInd].Lh.toFixed(0)).toFixed(2),
+						towerlist[fallInd].TowerType+"-"+towerlist[fallInd].TowerHigh,
+						"#000000",150,0,tpos.x,tpos.y+towerlist[fallInd].TowerHigh/ydivision*Gridsize+5,0);
+
+
+
 
 				for (let i = m_start; i < m_end; i++) {
 					DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
@@ -4604,7 +4649,49 @@
 	//修改杆塔
 	function editTower(event){
 		if (event.button === 0) {
-		var intersectsTower = getIntersectsObject(event);
+		var editInd = getIntersectsObject(event);
+		layer.getChildFrame('body',tpIndex).find("#editInd").val(editInd);
+		if(editInd!=-1){
+			console.log("selectedtower",editInd);
+			//layer.close(tpIndex);
+			//bindTowerPlace('修改杆塔信息',editInd);
+
+			layer.getChildFrame('body',tpIndex).find("#towId")[0].value=towerlist[editInd].Name;
+			layer.getChildFrame('body',tpIndex).find("#dis")[0].value=towerlist[editInd].Distance.toFixed(2);
+			layer.getChildFrame('body',tpIndex).find("#hei")[0].value=towerlist[editInd].High.toFixed(2);
+			layer.getChildFrame('body',tpIndex).find("#gap")[0].value=towerlist[editInd].offset;
+			console.log(layer.getChildFrame('body',tpIndex).find('input[type=radio][name = towType]'));
+			let St=layer.getChildFrame('body',tpIndex).find('input[type=radio]');
+			console.log("ST");console.log(St);
+			if(towerlist[editInd].Status==0){$(St[0]).prop('checked',true);}
+
+			else if(towerlist[editInd].Status==3){$(St[2]).prop('checked',true);}
+			else{$(St[1]).prop('checked',true);}
+			layer.getChildFrame('body',tpIndex).find("#TowerType").empty();
+			if(prk.TOWER!=undefined){
+				for (let i = 0; i < prk.TOWER.length; i++) {
+					if(prk.TOWER[i].type==towerlist[editInd].Status){layer.getChildFrame('body',tpIndex).find("#TowerType").append("<option value='"+i+"'>"+prk.TOWER[i].Name+"</option>")};
+				}
+			}
+			var selectindex = TowerPRKIndex(prk,towerlist[editInd].TowerType);
+			console.log("selectindex");console.log(selectindex);
+			layer.getChildFrame('body',tpIndex).find("#towerheight").empty();
+			for (let i = prk.TOWER[selectindex].StartHigh;i<=prk.TOWER[selectindex].EndHigh;i=i+prk.TOWER[selectindex].Dhigh){
+				layer.getChildFrame('body',tpIndex).find("#towerheight").append("<option value='"+i+"'>"+i+"</option>");
+			}
+			console.log(layer.getChildFrame('body',tpIndex).find("#towerheight"));
+			//console.log(layer.getChildFrame('body',tpIndex).find("#TowerType option[text='"+towerlist[editInd].TowerType+"']"));
+			layer.getChildFrame('body',tpIndex).find("#TowerType option:contains('"+towerlist[editInd].TowerType+"')").attr("selected",true);
+			layer.getChildFrame('body',tpIndex).find("#towerheight").val(towerlist[editInd].TowerHigh);
+			//bind select option setting
+			layer.getChildFrame('body',tpIndex).find("#pilelist").empty();
+			for (let i = 0; i < pile_tabledata.length; i++) {
+				layer.getChildFrame('body',tpIndex).find("#pilelist").append("<option value='"+i+"'>"+pile_tabledata[i].name+"</option>");
+			}
+			layer.getChildFrame('body',tpIndex).find("#pilelist option:contains('"+towerlist[editInd].Position+"')").attr("selected",true);
+			//Status;
+
+		}else return;
 		$("#towerset").mouseover(function () {
 			console.log("鼠标进入")
 			document.removeEventListener('mousedown', editTower);
@@ -4612,71 +4699,106 @@
 		$("#towerset").mouseout(function () {
 			document.addEventListener('mousedown', editTower);
 		})
-		console.log("editTowerMsg",intersectsTower[0]);
-		let name = intersectsTower[0].object.geometry.name;
-		console.log("edit_name", name);
-		let idInput =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
-		idInput.value = name;
-		let disInput= layer.getChildFrame('body',tpIndex).find("#dis")[0];
-		disInput.value = (intersectsTower[0].object.position.x/Gridsize*xdivision+xMin).toFixed(2);
-		let highInput = layer.getChildFrame('body',tpIndex).find("#hei")[0];
-		highInput.value = (intersectsTower[0].object.position.y/Gridsize*ydivision + yMin).toFixed(2);
-
-		let TowerHighInput = layer.getChildFrame('body',tpIndex).find("#towerheight")[0];
-			for (let i = 0; i < TowerHighInput.length; i++) {
-				if (TowerHighInput[i].value === towerHei.toString()){
-					TowerHighInput[i].selected = true;
-				}
-			}
-		TowerHighInput.value = Number(intersectsTower[0].object.renderOrder);
-		let oldTowerHigh = intersectsTower[0].object.renderOrder;
-
-		let pileInput =layer.getChildFrame('body',tpIndex).find("#pilelist")
-		let gapInput = layer.getChildFrame('body',tpIndex).find("#gap")[0];
-		let disToPile = []
-		for (let i = 0; i < pile_tabledata.length; i++) {
-			disToPile.push({
-				"name": pile_tabledata[i].name,
-				"dis": Math.abs(pile_tabledata[i].dist - intersectsTower[0].object.position.x/Gridsize*xdivision),
-				"value": i
-			})
-		}
-		disToPile.sort(compare("dis"));
-		pileInput.value = disToPile[0].value;
-		let gap;
-		for (let i = 0; i < pile_tabledata.length; i++) {
-			if (pile_tabledata[i].name == disToPile[0].name) {
-				gap = intersectsTower[0].object.position.x/Gridsize*xdivision - pile_tabledata[i].dist;
-			}
-		}
-		console.log("gap pile", gap)
-		gapInput.value = gap.toFixed(2);
-
-		$("#saveBtn").click(function () {
-			for (let i = 0; i < towerlist.length; i++) {
-				if (towerlist[i].Name == name) {
-					towerlist[i].Distance = Number(disInput.value);
-					towerlist[i].High = Number(highInput.value);
-					towerlist[i].TowerHigh = Number(TowerHighInput.value);
-					ComputeHugeHigh();
-					if (i > 0 && i < towerlist.length) {
-						DisplayFawCurve4(towerlist[i - 1], towerlist[i], "fixwire");
-						DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
-					} else DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
-				}
-			}
-
-			console.log("after edit", towerlist)
-
-			intersectsTower[0].object.position.x = (disInput.value -xMin) / xdivision*Gridsize;
-			intersectsTower[0].object.position.y = (highInput.value - yMin)/ ydivision*Gridsize;
-			intersectsTower[0].object.scale.set(1, TowerHighInput.value / oldTowerHigh, 1);
-		})
+		// let name = intersectsTower[0].object.geometry.name;
+		// console.log("edit_name", name);
+		// let idInput =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
+		// idInput.value = name;
+		// let disInput= layer.getChildFrame('body',tpIndex).find("#dis")[0];
+		// disInput.value = (intersectsTower[0].object.position.x/Gridsize*xdivision+xMin).toFixed(2);
+		// let highInput = layer.getChildFrame('body',tpIndex).find("#hei")[0];
+		// highInput.value = (intersectsTower[0].object.position.y/Gridsize*ydivision + yMin).toFixed(2);
+		//
+		// let TowerHighInput = layer.getChildFrame('body',tpIndex).find("#towerheight")[0];
+		// 	for (let i = 0; i < TowerHighInput.length; i++) {
+		// 		if (TowerHighInput[i].value === towerHei.toString()){
+		// 			TowerHighInput[i].selected = true;
+		// 		}
+		// 	}
+		// TowerHighInput.value = Number(intersectsTower[0].object.renderOrder);
+		// let oldTowerHigh = intersectsTower[0].object.renderOrder;
+		//
+		// let pileInput =layer.getChildFrame('body',tpIndex).find("#pilelist")
+		// let gapInput = layer.getChildFrame('body',tpIndex).find("#gap")[0];
+		// let disToPile = []
+		// for (let i = 0; i < pile_tabledata.length; i++) {
+		// 	disToPile.push({
+		// 		"name": pile_tabledata[i].name,
+		// 		"dis": Math.abs(pile_tabledata[i].dist - intersectsTower[0].object.position.x/Gridsize*xdivision),
+		// 		"value": i
+		// 	})
+		// }
+		// disToPile.sort(compare("dis"));
+		// pileInput.value = disToPile[0].value;
+		// let gap;
+		// for (let i = 0; i < pile_tabledata.length; i++) {
+		// 	if (pile_tabledata[i].name == disToPile[0].name) {
+		// 		gap = intersectsTower[0].object.position.x/Gridsize*xdivision - pile_tabledata[i].dist;
+		// 	}
+		// }
+		// console.log("gap pile", gap)
+		// gapInput.value = gap.toFixed(2);
+		//
+		// $("#saveBtn").click(function () {
+		// 	for (let i = 0; i < towerlist.length; i++) {
+		// 		if (towerlist[i].Name == name) {
+		// 			towerlist[i].Distance = Number(disInput.value);
+		// 			towerlist[i].High = Number(highInput.value);
+		// 			towerlist[i].TowerHigh = Number(TowerHighInput.value);
+		// 			ComputeHugeHigh();
+		// 			if (i > 0 && i < towerlist.length) {
+		// 				DisplayFawCurve4(towerlist[i - 1], towerlist[i], "fixwire");
+		// 				DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
+		// 			} else DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
+		// 		}
+		// 	}
+		//
+		// 	console.log("after edit", towerlist)
+		//
+		// 	intersectsTower[0].object.position.x = (disInput.value -xMin) / xdivision*Gridsize;
+		// 	intersectsTower[0].object.position.y = (highInput.value - yMin)/ ydivision*Gridsize;
+		// 	intersectsTower[0].object.scale.set(1, TowerHighInput.value / oldTowerHigh, 1);
+		// })
 		}
 		if (event.button === 2){
 			document.body.style.cursor = "default";
 			document.removeEventListener("mousedown",editTower);
 		}
+	}
+
+	window.editTowerSave=function(editInd){
+		//update towerlist
+		towerlist[editInd].Name = layer.getChildFrame('body',tpIndex).find("#towId")[0].value;
+		towerlist[editInd].Distance = Number(layer.getChildFrame('body',tpIndex).find("#dis")[0].value);
+		towerlist[editInd].High = Number(layer.getChildFrame('body',tpIndex).find("#hei")[0].value);
+		towerlist[editInd].offset = Number(layer.getChildFrame('body',tpIndex).find("#gap")[0].value);
+		towerlist[editInd].TowerType = layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
+		towerlist[editInd].Status = Number(layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val());
+		towerlist[editInd].TowerHigh = Number(layer.getChildFrame('body',tpIndex).find("#towerheight").find("option:selected").val());
+		console.log(towerlist[editInd]);
+		var tpos={};
+		tpos.x = (towerlist[editInd].Distance-xMin)/xdivision*Gridsize;
+		tpos.y = (towerlist[editInd].High - yMin)/ydivision*Gridsize;
+		tpos.z = 0;
+
+		//change towerstyle and towerscript
+		TowerGroup.children[editInd]=createTower(tpos,
+			towerlist[editInd].Name,
+			towerlist[editInd].TowerType,
+			towerlist[editInd].Status,
+			towerlist[editInd].TowerHigh,
+			-1  //no need to push new tower to towerlist
+		);
+		
+		TowerScriptGroup.children[editInd] = createSpritelabel(towerlist[editInd].Name,
+				"Lh:"+towerlist[editInd].Lh.toFixed(0)+"/Lv:"+towerlist[editInd].Lv.toFixed(0)+
+				"/Kv:"+(towerlist[editInd].Lv.toFixed(0)/towerlist[editInd].Lh.toFixed(0)).toFixed(2),
+				towerlist[editInd].TowerType+"-"+towerlist[editInd].TowerHigh,
+				"#000000",150,0,tpos.x,tpos.y+towerlist[editInd].TowerHigh/ydivision*Gridsize+5,0);
+
+		//change displayfawcurve
+
+
+
 	}
 
 		/*    鼠标缩放移动事件     */
@@ -5172,14 +5294,14 @@
 
 	}
 
-	window.bindTowerPlace = function(title){
+	window.bindTowerPlace = function(title,editInd){
 		console.log("title.",title);
 		if(title != $(".layui-layer-title").text()){
 			layer.close(tpIndex);
 			layer.open({
 				type:2,
 				title: title,
-				area:['250px','300px'],
+				area:['250px','340px'],
 				offset: ['200px', '200px'],
 				maxmin:true,
 				shadeClose:false,
@@ -5208,6 +5330,42 @@
 					var selectindex = body.find("#TowerType option:selected")[0].value;
 					for (let i = prk.TOWER[selectindex].StartHigh;i<=prk.TOWER[selectindex].EndHigh;i=i+prk.TOWER[selectindex].Dhigh){
 						body.find("#towerheight").append("<option value='"+i+"'>"+i+"</option>");
+					}
+					console.log(title);
+					if(title=='修改杆塔信息'){
+						layer.getChildFrame('body',tpIndex).find("#towId")[0].value=towerlist[editInd].Name;
+						layer.getChildFrame('body',tpIndex).find("#dis")[0].value=towerlist[editInd].Distance;
+						layer.getChildFrame('body',tpIndex).find("#hei")[0].value=towerlist[editInd].High;
+						layer.getChildFrame('body',tpIndex).find("#gap")[0].value=towerlist[editInd].offset;
+						console.log(layer.getChildFrame('body',tpIndex).find('input[type=radio][name = towType]'));
+						let St=layer.getChildFrame('body',tpIndex).find('input[type=radio]');
+						console.log("ST");console.log(St);
+						if(towerlist[editInd].Status==0){$(St[0]).prop('checked',true);}
+
+						else if(towerlist[editInd].Status==3){$(St[2]).prop('checked',true);}
+						else{$(St[1]).prop('checked',true);}
+						layer.getChildFrame('body',tpIndex).find("#TowerType").empty();
+						if(prk.TOWER!=undefined){
+							for (let i = 0; i < prk.TOWER.length; i++) {
+								if(prk.TOWER[i].type==towerlist[editInd].Status){layer.getChildFrame('body',tpIndex).find("#TowerType").append("<option value='"+i+"'>"+prk.TOWER[i].Name+"</option>")};
+							}
+						}
+						var selectindex = TowerPRKIndex(prk,towerlist[editInd].TowerType);
+						console.log("selectindex");console.log(selectindex);
+						layer.getChildFrame('body',tpIndex).find("#towerheight").empty();
+						for (let i = prk.TOWER[selectindex].StartHigh;i<=prk.TOWER[selectindex].EndHigh;i=i+prk.TOWER[selectindex].Dhigh){
+							layer.getChildFrame('body',tpIndex).find("#towerheight").append("<option value='"+i+"'>"+i+"</option>");
+						}
+						console.log(layer.getChildFrame('body',tpIndex).find("#towerheight"));
+						//console.log(layer.getChildFrame('body',tpIndex).find("#TowerType option[text='"+towerlist[editInd].TowerType+"']"));
+						layer.getChildFrame('body',tpIndex).find("#TowerType option:contains('"+towerlist[editInd].TowerType+"')").attr("selected",true);
+						layer.getChildFrame('body',tpIndex).find("#towerheight").val(towerlist[editInd].TowerHigh);
+						//bind select option setting
+						for (let i = 0; i < pile_tabledata.length; i++) {
+							layer.getChildFrame('body',tpIndex).find("#pilelist").append("<option value='"+i+"'>"+pile_tabledata[i].name+"</option>");
+						}
+						layer.getChildFrame('body',tpIndex).find("#pilelist option:contains('"+towerlist[editInd].Position+"')").attr("selected",true);
+						//Status;
 					}
 
 				}
@@ -5326,8 +5484,8 @@
 		})
 		/*修改杆塔*/
 		$("#editTower").click(function () {
-			bindTowerPlace('修改杆塔信息');
 			document.body.style.cursor = "default";
+			bindTowerPlace('修改杆塔信息');
 			clearTempTow();
 			document.removeEventListener('mousedown', onMouseDown);
 			document.removeEventListener('mousedown', riseTower);
