@@ -77,10 +77,14 @@
         $("#towerheight").append("<option value='"+i+"'>"+i+"</option>");
     })
 
+    console.log(parent.document.getElementsByClassName("layui-layer-title")[0].innerHTML);
     $("#saveBtn").click(function (){
+        var windowName = parent.document.getElementsByClassName("layui-layer-title")[0].innerHTML
         console.log($("#editInd").val());
-        var editInd = $("#editInd").val();
-        parent.editTowerSave(editInd);
+        if(windowName=='修改杆塔信息'){
+            var editInd = Number($("#editInd").val());
+            parent.editTowerSave(editInd);
+        }
     })
 
     $("#closeBtn").click(function (){
