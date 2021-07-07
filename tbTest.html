@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<script src="https://bossanova.uk/jspreadsheet/v4/jexcel.js"></script>
+<link rel="stylesheet" href="https://bossanova.uk/jspreadsheet/v4/jexcel.css" type="text/css" />
+
+<script src="https://jsuites.net/v4/jsuites.js"></script>
+<link rel="stylesheet" href="https://jsuites.net/v4/jsuites.css" type="text/css" />
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+<!--<script type="text/javascript" src="/config.js"></script>-->
+<div id = "spreadsheet" class="jexcel_content" style="overflow-y: auto;box-shadow: rgb(221, 221, 221) 2px 2px 5px 0.1px;height: 300px;"></div>
+<div id = "lefttable" class="jexcel_content" style="overflow-y: auto;box-shadow: rgb(221, 221, 221) 2px 2px 5px 0.1px;height: 300px;"></div>
+<div id = "righttable" class="jexcel_content" style="overflow-y: auto;box-shadow: rgb(221, 221, 221) 2px 2px 5px 0.1px;height: 300px;"></div>
+
+<div>
+    <button onclick="getweather()">
+        weather
+    </button>
+    <button onclick="getconductor()">
+        conductor
+    </button>
+    <button onclick="outjson()">
+        outjson
+    </button>
+    <button onclick="addrow()">
+        add row
+    </button>
+    <button onclick="deleterow()">
+        delete row
+    </button>
+</div>
+<select id="tbselect">
+</select>
+<select id="Contbselect">
+</select>
+<select id="locality-dropdown" name="locality" style="visibility:hidden;",popper-append-to-body="false">
+</select>
+<script>
+    //initial
+    var category = "Elc500kV"; var weather ='Ⅱ';
+
+
+    var crosstable = jspreadsheet(document.getElementById('spreadsheet'),{
+        url:"http://202.114.118.138:8181/tl/tcross/"+category,
+        method: 'GET',
+        contextMenu: menu,   //右键菜单是否开启  contextMenu:function(obj,x,y,e){}
+        //minDimensions: [10,10],
+        onbeforechange: beforeChangeEvent,
+        columns:[
+            {type:"text",title:"contabbr",width: 150, name: "contabbr"},
+            {type:"number",title:category, width: 50, name: category.toLocaleLowerCase()},
+            // {type:"text",title:"Start",name: "starthigh"}
+        ]});
+    console.log(crosstable);
+
+
+    //load data weather
+    $.ajax({
+        url: "http://202.114.118.138:8181/tl/weather/list", //提交的路径
+        type: "get",
+        //async: false,
+        success: function (data){
+            console.log(data);
+            for (let i = 0;i<data.length;i++){
+                var opt = document.createElement('option');
+                opt.text = data[i].nameqxq.toString();
+                opt.value = i;
+                $("#tbselect").append(opt);
+            }
+
+        },
+        error:function (error) {
+            console.log(error);
+        }
+    })
+
+    //load data conductor
+    $.ajax({
+        url: "http://202.114.118.138:8181/tl/conductor/list", //提交的路径
+        type: "get",
+        //async: false,
+        success: function (data){
+            console.log(data);
+            for (let i = 0;i<data.length;i++){
+                var opt = document.createElement('option');
+                opt.text = data[i].name;
+                opt.value = i;
+                $("#Contbselect").append(opt);
+            }
+
+        },
+        error:function (error) {
+            console.log(error);
+        }
+    })
+    getweather = function(){
+        let res = $("#tbselect").find("option:selected").text();
+        console.log(encodeURI(res));
+        //save interface ajax prk file save
+        $.ajax({
+            url: "http://202.114.118.138:8181/tl/weather/Search?Nameqxq="+encodeURI(res), //提交的路径
+            type: "get",
+            //async: false,
+            success: function (data){
+                console.log(data[0]);
+                crosstable.setData(data);
+
+            },
+            error:function (error) {
+                console.log(error);
+            }
+        })
+
+    }
+
+    getconductor = function () {
+        let res = $("#Contbselect").find("option:selected").text();
+        console.log(encodeURI(res));
+        //save interface ajax prk file save
+        $.ajax({
+            url: "http://202.114.118.138:8181/tl/conductor/Search?Name="+encodeURI(res), //提交的路径
+            type: "get",
+            //async: false,
+            success: function (data){
+                console.log(data[0]);
+            },
+            error:function (error) {
+                console.log(error);
+            }
+        })
+    }
+    outjson = function () {
+        console.log(crosstable.getJson())
+    }
+    addrow = function(){
+        crosstable.insertRow();
+    }
+    deleterow = function (){
+        crosstable.deleteRow();
+    }
+    function beforeChangeEvent(instance, cell, x, y, value){
+        if(instance.jspreadsheet.options.columns[x].type=='number'){return Number(value);} //modify this problem
+        else{ return value;}
+    }
+
+    function menu(obj, x, y, e) {
+        var items = [];
+
+        if (y == null) {
+            // Insert a new column
+            if (obj.options.allowInsertColumn == true) {
+                items.push({
+                    title:'在左侧插入列',
+                    onclick:function() {
+                        obj.insertColumn(1, parseInt(x), 1);
+                    }
+                });
+            }
+
+            if (obj.options.allowInsertColumn == true) {
+                items.push({
+                    title:'在右侧插入列',
+                    onclick:function() {
+                        obj.insertColumn(1, parseInt(x), 0);
+                    }
+                });
+            }
+
+
+            // Delete a column
+            if (obj.options.allowDeleteColumn == true) {
+                items.push({
+                    title:'删除选中列',
+                    onclick:function() {
+                        obj.deleteColumn(obj.getSelectedColumns().length ? undefined : parseInt(x));
+                    }
+                });
+            }
+
+            // Rename column
+            if (obj.options.allowRenameColumn == true) {
+                items.push({
+                    title:'重命名列名',
+                    onclick:function() {
+                        obj.setHeader(x);
+                    }
+                });
+            }
+
+            // Sorting
+            if (obj.options.columnSorting == true) {
+                // Line
+                items.push({ type:'line' });
+
+                items.push({
+                    title:'升序排列',
+                    onclick:function() {
+                        obj.orderBy(x, 0);
+                    }
+                });
+                items.push({
+                    title:'降序排列',
+                    onclick:function() {
+                        obj.orderBy(x, 1);
+                    }
+                });
+            }
+        } else {
+            // Insert new row
+            if (obj.options.allowInsertRow == true) {
+                items.push({
+                    title:'在上方插入一行',
+                    onclick:function() {
+                        obj.insertRow(1, parseInt(y), 1);
+                    }
+                });
+
+                items.push({
+                    title:'在下方插入一行',
+                    onclick:function() {
+                        obj.insertRow(1, parseInt(y));
+                    }
+                });
+            }
+
+            if (obj.options.allowDeleteRow == true) {
+                items.push({
+                    title:'删除所选行',
+                    onclick:function() {
+                        obj.deleteRow(obj.getSelectedRows().length ? undefined : parseInt(y));
+                    }
+                });
+            }
+            console.log(obj.options.text);
+            if (x) {
+                if (obj.options.allowComments == true) {
+                    items.push({ type:'line' });
+
+                    var title = obj.records[y][x].getAttribute('title') || '';
+
+                    items.push({
+                        title: title ? obj.options.text.editComments : obj.options.text.addComments,
+                        onclick:function() {
+                            obj.setComments([ x, y ], prompt(obj.options.text.comments, title));
+                        }
+                    });
+
+                    if (title) {
+                        items.push({
+                            title:obj.options.text.clearComments,
+                            onclick:function() {
+                                obj.setComments([ x, y ], '');
+                            }
+                        });
+                    }
+                }
+            }
+        }
+        return items;
+    }
+
+    var lefttable = jspreadsheet(document.getElementById('lefttable'),{
+        data:[['系统设置'],['交叉跨越']],
+        columns:[
+            {type:"text",title:"型号/名称/图号",width: 150, name: "No"}],
+        editable: false
+    })
+    var voltageArr = ['110kV','220kV','330kV','500kV','直流500kV','750kV','直流800','1000kV'];
+    data = [
+        {
+            'name': '电压等级',
+            'value': "500KV"
+        },
+        {
+            'name':'设计回路',
+            'value': "单回路"
+        },
+        {
+            'name':'导线平均高度m',
+            'value':20
+        },
+        {
+            'name':'地面粗糙度系数a',
+            'value':0.16
+        },
+        {
+            'name':'地线覆盖较冰导线增加mm',
+            'value':5.00
+        },
+        {
+            'name':'导线过牵引长度m',
+            'value':0.20
+        },
+        {
+            'name':'孤立档最大档距m',
+            'value':0.00
+        }
+    ]
+
+    var customColumnTwo = {
+
+        // Methods
+        closeEditor : function(cell, save) {
+            var testx1 =  cell.getAttribute('data-x'); //Get data-x value from cell
+            var testy1 =  cell.getAttribute('data-y'); //Get data-y value from cell
+            var e = document.getElementById("locality-dropdown"); //Define custom selection
+
+            //Find cell that will use custom dropdown based on data-x and data-y
+            if (testx1 == "1" && testy1 == "0") {
+                var value = e.options[e.selectedIndex].text; //Define value of custom cell
+            } else {
+                var value = cell.children[0].value; //Define value of non-custom cell in same column
+            }
+
+            cell.innerHTML = value; //Set value of cell
+            e.style.visibility = 'hidden'; //Hide dropdown after select
+            return value; //Return value
+
+        },
+        openEditor : function(cell) {
+            var testx1 =  cell.getAttribute('data-x'); //Get data-x value from cell
+            var testy1 =  cell.getAttribute('data-y'); //Get data-y value from cell
+
+            // Create input
+            var element = document.createElement('input');
+            element.value = cell.innerHTML;
+            // Update cell
+            cell.classList.add('editor');
+            cell.innerHTML = '';
+            cell.appendChild(element);
+
+
+            //Find cell that will use custom dropdown based on data-x and data-y
+            if (testx1 == "1" && testy1 == "0") {
+
+                var e = document.getElementById("locality-dropdown"); //Define custom selection
+                e.style.visibility = 'visible'; //Show dropdown on select
+
+                //Construct custom dropdown
+                let dropdown = $('#locality-dropdown');
+                dropdown.focus();
+                dropdown.empty();
+                for(let i=0;i<voltageArr.length;i++){
+                    var opt = document.createElement('option');
+                    opt.text = voltageArr[i];
+                    opt.value = i;
+                    dropdown.append(opt);
+                }
+            }
+            // Focus on the element
+            element.focus();
+
+        },
+        getValue : function(cell) {
+            return cell.innerHTML;
+        },
+        setValue : function(cell, value, save) {
+
+            var testx =  cell.getAttribute('data-x'); //Get data-x value from cell
+            var testy =  cell.getAttribute('data-y'); //Get data-y value from cell
+            if (testx == "1" && testy == "0") {
+                var e = document.getElementById("locality-dropdown");
+                var value = e.options[e.selectedIndex].text;
+                return value;
+            } else {
+                cell.innerHTML = value;
+            }
+        }
+    }
+
+    var righttable = jspreadsheet(document.getElementById('righttable'),{
+        data: data,
+        colAlignments:['left',''],  //Align
+        columns:[
+            {type:"text",title:"参数名称",width: 200, name: "name",readOnly:true},
+            {type:"text",title:"参数数值",width: 100, name: "value",editor:customColumnTwo}],
+        // editable: false,
+
+    })
+    righttable.hideIndex();//index show or not
+
+
+
+
+
+</script>
+</html>
