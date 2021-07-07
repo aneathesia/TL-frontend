@@ -3710,6 +3710,7 @@
 			towMesh.name = "tower";
 
 
+
 			towerlist.push({
 				"Name" : "G",
 				"Distance" : pos.x/Gridsize*xdivision+xMin,
@@ -3760,6 +3761,7 @@
 				"LandDist" : 8.5,		// 对地安全距离
 				"ElecDist" : 6.0	// 电力线安全距离
 			});
+			console.log("mousemove towerlist",towerlist);
 			m_end = towerlist.length - 1;
 			ComputeHugeHigh();
 
@@ -3767,14 +3769,15 @@
 			var tempCurve;
 			if (m_end > 0) {
 				tempCurve = DisplayFawCurve4(towerlist[m_end - 1],towerlist[m_end], "move_wire");
-			}
-			if(tempCurve[0]!=undefined){
-				scene.add(tempCurve[0]);scene.add(tempCurve[1]);scene.add(tempCurve[2]);
+				if(tempCurve[0]!=undefined){
+					scene.add(tempCurve[0]);scene.add(tempCurve[1]);scene.add(tempCurve[2]);
+				}
 			}
 
 			towerlist.pop();
 			m_end = towerlist.length - 1;
 			ComputeHugeHigh();
+			console.log("mousemove towerlist pop",towerlist);
 		}
 
 	/* 获取射线与平面相交的交点 */
@@ -3835,6 +3838,7 @@
 
 			if (intersects.x<horSize &&intersects.x>0 && intersects.y<verSize && intersects.y>0){
 				putInd = towerlist.length;
+				console.log("clickdown",towerlist);
 				var tempLine2Cor = [];
 				for (let i = 0; i < m_linegroup.children.length; i++) {
 					for(let j=0;j<m_linegroup.children[i].geometry.vertices.length;j++){
@@ -3897,7 +3901,7 @@
 					FawCurveGroup.add(CurveInsert[1]);
 					FawCurveGroup.add(CurveInsert[2]);
 					console.log("addtowmesh");console.log(scene.children.length);console.log(scene);
-
+					scene.add(FawCurveGroup);
 					//end draw
 					let disToPile = []
 					for (let i = 0; i < pile_tabledata.length; i++) {
@@ -3955,6 +3959,7 @@
 		tempintersects = intersects;
 		if(intersects!=undefined){
 		if (intersects.x<horSize &&intersects.x>0 && intersects.y<verSize && intersects.y>0){
+			clearTempTow();
 			clearTempTow();
 			var tempLine2Cor = [];
 
@@ -4765,7 +4770,7 @@
 				}
 				towerHei = limit(towerHeiArray,coorDif);
 				towerlist = [] ; //exchange ttowerlist towerlist
-				towerlist.push(ttowerlist[movingInd - 1]);
+				if(movingInd>0){towerlist.push(ttowerlist[movingInd - 1])};
 				towerlist.push({
 					"Name": "G" + movingInd,
 					"Distance": pos.x / Gridsize * xdivision + xMin,
@@ -4816,7 +4821,7 @@
 					"LandDist": 8.5,		// 对地安全距离
 					"ElecDist": 6.0	// 电力线安全距离
 				});
-				towerlist.push(ttowerlist[movingInd+1]);
+				if(movingInd<ttowerlist.length-1){towerlist.push(ttowerlist[movingInd+1]);}
 				console.log("towerlist after insert", towerlist);
 
 				let disToPile = []
@@ -4852,9 +4857,9 @@
 					}
 				}
 				if (towerlist[1].Status != 0) {
-					var towMesh = tower2(towerlist[1].TowerHigh);
+					var towMesh = tower2(towerHei);
 				} else {
-					var towMesh = tower1(towerlist[1].TowerHigh);
+					var towMesh = tower1(towerHei);
 				}
 				towMesh.position.x = pos.x;towMesh.position.y = pos.y;towMesh.position.z = 0;
 				towMesh.name = "tower";
@@ -4951,7 +4956,7 @@
 							towerlist[movingInd].TowerType+"-"+towerlist[movingInd].TowerHigh,
 							"#000000",150,0,tpos.x,tpos.y+towerlist[movingInd].TowerHigh/ydivision*Gridsize+5,0);
 
-					if(movingInd!=0&&movingInd<towerlist.length){ //judge delete head or end
+					if(movingInd!=0&&movingInd<towerlist.length-1){ //judge delete head or end
 						var leftCurve = DisplayFawCurve4(towerlist[movingInd-1],towerlist[movingInd],"fixwire");
 						var rightCurve = DisplayFawCurve4(towerlist[movingInd],towerlist[movingInd+1],"fixwire");
 						console.log("left,right",leftCurve,rightCurve);
@@ -4961,10 +4966,12 @@
 					}
 					else if(movingInd==0){
 						var rightCurve = DisplayFawCurve4(towerlist[movingInd],towerlist[movingInd+1],"fixwire");
+						console.log("rightCurve",rightCurve);
 						if(rightCurve[0]!=undefined){FawCurveGroup.children.splice((movingInd)*3,3,rightCurve[0],rightCurve[1],rightCurve[2]);}
 					}
-					else if(movingInd==towerlist.length){
+					else if(movingInd==towerlist.length-1){
 						var leftCurve = DisplayFawCurve4(towerlist[movingInd-1],towerlist[movingInd],"fixwire");
+						console.log("leftCurve",leftCurve);
 						if(leftCurve[0]!=undefined){FawCurveGroup.children.splice((movingInd-1)*3,3,leftCurve[0],leftCurve[1],leftCurve[2]);}
 					}
 					document.removeEventListener("mousemove",TowerMovingMove);
@@ -4980,188 +4987,6 @@
 				console.log("rightbuttondown",scene);
 			}
 		}
-	// var liftMouseDown, rightMouseDown;
-	// var selectObj, lastPosition;
-	// var lastIntersection, nowIntersection;
-	// function getRay(event) {
-	// 	event.preventDefault();
-	// 	var mouse = new THREE.Vector2();
-	// 	var rayCaster = new THREE.Raycaster();
-	// 	mouse.x =  ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
-	// 	mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
-	// 	rayCaster.setFromCamera(mouse, camera);
-	// 	return rayCaster;
-	// }
-	// function getIntersectionCoor(event) {
-	// 	var plane = new THREE.Plane();
-	// 	//通过相机位置生成法向量，该法向量和一个点可以建立一个平面
-	// 	plane.setFromNormalAndCoplanarPoint(camera.getWorldDirection(plane.normal), new THREE.Vector3(0, 0, 0));
-	// 	var rayCaster = getRay(event);
-	// 	var worldPoint = new THREE.Vector3();
-	// 	//获得射线和平面相交的世界坐标
-	// 	rayCaster.ray.intersectPlane(plane, worldPoint);
-	// 	return worldPoint;
-	// }
-	// function onDragMouseDown(event) {
-	// 	var dragIntersects = getIntersectsObject(event);
-	// 	let wireTemp = [];
-	// 	//左键点击并且点击的是物体时
-	// 	if (event.button === 0 && dragIntersects[0]) {
-	// 		selectObj = dragIntersects[0].object;//储存当前点击的对象
-	// 		liftMouseDown = true;
-	// 		lastPosition = selectObj.position;//储存当前物体坐标位置
-	// 		lastIntersection = getIntersectionCoor(event);//获取点击时的交点
-	// 		document.addEventListener('mousemove', onDragMouseMove);
-	// 		document.addEventListener('mouseup', onMouseUp);
-	// 		for (let i = 0; i < scene.children.length; i++) {
-	// 			if (scene.children[i].name === "fixwire1"||scene.children[i].name === "fixwire2"||scene.children[i].name === "fixwire3"||scene.children[i].name === "fixwire4") {
-	// 				wireTemp.push(scene.children[i]);
-	// 			}
-	// 		}
-	// 		for(let i = 0; i < wireTemp.length; i++){
-	// 			scene.remove(wireTemp[i]);
-	// 		}
-	// 	}
-	// 	if(event.button === 2){
-	// 		document.body.style.cursor = "default";
-	// 		document.removeEventListener("mousedown",onDragMouseDown);
-	// 	}
-	// }
-	// function onDragMouseMove(event) {
-	// 	//左键点击状态下移动，网格跟随鼠标移动
-	// 	if (liftMouseDown) {
-	// 		nowIntersection = getIntersectionCoor(event);//获得移动后当前的交点
-	// 		var offset = new THREE.Vector3();
-	// 		var tempLine2Cor = [];
-	// 		for (let i = 0; i < m_linegroup.children.length; i++) {
-	// 			for(let j=0;j<m_linegroup.children[i].geometry.vertices.length;j++){
-	// 				tempLine2Cor.push([m_linegroup.children[i].geometry.vertices[j].x,m_linegroup.children[i].geometry.vertices[j].y]);
-	// 			}
-	// 		}
-	// 		var tempLine2 = turf.lineString(tempLine2Cor);
-	// 		var points = new THREE.Vector3(nowIntersection.x, nowIntersection.y + 500, 0);
-	// 		var tempLine1 = turf.lineString([[points.x, points.y], [points.x, 0]]);
-	// 		var interPoint = turf.lineIntersect(tempLine1, tempLine2);
-	// 		points = new THREE.Vector3(nowIntersection.x, interPoint.features[0].geometry.coordinates[1], 0);
-	// 		//现在的交点减去之前的交点能够得到一个位移向量，再加上之前的物体坐标，就等于现在的物体坐标
-	// 		selectObj.position.copy(offset.subVectors(nowIntersection, lastIntersection).add(lastPosition));
-	// 		selectObj.position.y = points.y;
-	// 		lastIntersection = nowIntersection;
-	// 		lastPosition = offset;
-	// 	}
-	// }
-	// function onMouseUp(event) {
-	// 	liftMouseDown = false;
-	// 	rightMouseDown = false;
-	// 	let dragTower = [];
-	// 	towerlist = [];
-	// 	console.log(scene.children);
-	//
-	// 	if(selectObj.name==="fixTower"){
-	// 		for (let i = 0; i < scene.children.length; i++) {
-	// 			if (scene.children[i].name === "fixTower"){
-	// 				dragTower.push(scene.children[i]);
-	// 			}
-	// 		}
-	//
-	// 		let currentTow = [];
-	// 		for (let i = 0; i < dragTower.length; i++) {
-	// 			if (dragTower[i].name === "fixTower") {
-	// 				currentTow.push({
-	// 					"posX":dragTower[i].position.x,
-	// 					"object":dragTower[i]
-	// 				});
-	// 			}
-	// 		}
-	// 		console.log(currentTow)
-	// 		currentTow.sort(compare('posX'))
-	// 		for (let j = 0; j < currentTow.length; j++) {
-	// 			for (let i = 0; i < scene.children.length; i++) {
-	// 				if (scene.children[i].uuid === currentTow[j].object.uuid){
-	// 					scene.children[i].geometry.name = "G" + j;
-	// 				}
-	// 			}
-	// 		}
-	// 		console.log("dragtower",dragTower);
-	// 		for (let i = 0; i < dragTower.length; i++) {
-	// 			towerlist.push({
-	// 				"Name" : "G" + i,
-	// 				"Distance" : dragTower[i].position.x /Gridsize*xdivision +xMin,
-	// 				"High" : dragTower[i].position.y/Gridsize*ydivision + yMin,
-	// 				"TowerType" : "ZMVA41",
-	// 				"Base": 0,
-	// 				"TowerHigh" : dragTower[i].geometry.vertices[7].y / (1 / ydivision * Gridsize),
-	// 				"Status" : 0,
-	// 				"InsulatorLength": 5.5,
-	// 				"ConnectLength": 0.0,
-	// 				"InsulateP": "",
-	// 				"InsulatePA": "X01",
-	// 				"InsulatePANum": -1,
-	// 				"InsulatePB": "X01",
-	// 				"InsulatePBNum": -1,
-	// 				"InsulatePC": "",
-	// 				"InsulatePCNum": 0,
-	// 				"hugeHigh":0,
-	// 				"hugeGround" : 0,		// 地线悬挂点高程
-	// 				"Lk": 0,
-	// 				"L": 0,
-	// 				"cosa":1,
-	// 				"bInsular":false,
-	// 				"constant": 0,
-	// 				"u": 1,
-	// 				"kPline": 0,			//导线大号侧k值系数
-	// 				"kGround": 0,		//地线大号侧K值系数
-	// 				"kWind": 0,			//大风条件前视档k值系数
-	// 				"kMaxT": 0,			//70度高温k值系数
-	// 				"constMaxT": 0,
-	// 				"Lh": 0,				// 水平档距
-	// 				"Lh1": 0,			// 小号侧垂直档距
-	// 				"Lh2": 0,			// 大号侧垂直档距
-	// 				"Lv" : 0,				// 垂直档距
-	// 				"Lv1" : 0,			// 小号侧水平档距
-	// 				"Lv2" : 0,			// 大号侧水平档距
-	// 				"lvMinTemp": 0,//最低气温垂直档距
-	// 				"lvMaxTemp": 0,//最高气温垂直档距
-	// 				"lvMaxIce": 0,//最大覆冰垂直档距
-	// 				"lvMaxWind": 0,//最大风垂直档距
-	// 				"displayKType": 0,	//k值类型，0为最大弧垂 1为最高线温
-	// 				"displayGround":0,		//显示地线
-	// 				"displayPower" : 1,		//显示导线
-	// 				"displaySafe" :  1,	//显示导线对地
-	// 				"displayCross" : 1,		//显示导线跨越
-	// 				"LandDist" : 8.5,		// 对地安全距离
-	// 				"ElecDist" : 6.0	// 电力线安全距离
-	// 			})
-	// 		}
-	// 		console.log(towerlist)
-	// 		towerlist.sort(compare('Distance'));
-	// 		m_end = towerlist.length - 1;
-	// 		ComputeHugeHigh();
-	// 		towerlist.sort(compare('Distance'));
-	// 		for (let i = 0; i < towerlist.length; i++) {
-	// 			towerlist[i].Name = "G" + i;
-	// 		}
-	//
-	// 		for (let i = m_start; i < m_end; i++) {
-	// 			DisplayFawCurve4(towerlist[i],towerlist[i+1], "fixwire");
-	// 		}
-	// 		towerlist_tabledata = towerlist;
-	// 		console.log(towerlist_tabledata);
-	// 		GridManager.setAjaxData(towerlist_tableId, {"data": towerlist_tabledata});
-	// 		GridManager.refreshGrid(towerlist_tableId);
-	//
-	// 		document.removeEventListener('mousemove', onDragMouseMove);
-	//
-	// 	}
-	// 	// else{
-	// 	// 	document.removeEventListener('mousemove',onDragMouseMove);
-	// 	// 	document.removeEventListener('mouseup',onMouseUp);
-	// 	// }
-	// 	document.removeEventListener('mousemove',onDragMouseMove);
-	// 	document.removeEventListener('mouseup',onMouseUp);
-	// 	selectObj={};
-	//
-	// }
 	//升高杆塔
 	function riseTower(event){
 		document.body.style.cursor = "url(./css/rise.ico) 9 9, default";
@@ -6008,8 +5833,9 @@
 			document.removeEventListener('mousedown', TowerInsertDown);
 			document.removeEventListener('mousedown', editTower);
 			document.removeEventListener('mousedown', TowerMovingDown);
-			document.addEventListener('mousedown', onMouseDown, false);
 			document.addEventListener('mousemove', onMouseMove, false);
+			document.addEventListener('mousedown', onMouseDown, false);
+
 		})
 		/*鼠标删除杆塔*/
 		$("#deleteTower").click(function () {
