@@ -179,7 +179,7 @@
 
 .operateBtn {
     position: relative;
-    left: 17px;
+    /*left: 17px;*/
     bottom: -7.5px;
     width: 80px;
     height: 88%;

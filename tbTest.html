@@ -130,7 +130,7 @@
         })
     }
     outjson = function () {
-        console.log(crosstable.getJson())
+        console.log(righttable.getJson())
     }
     addrow = function(){
         crosstable.insertRow();
@@ -139,8 +139,13 @@
         crosstable.deleteRow();
     }
     function beforeChangeEvent(instance, cell, x, y, value){
-        if(instance.jspreadsheet.options.columns[x].type=='number'){return Number(value);} //modify this problem
-        else{ return value;}
+        // if(instance.jspreadsheet.options.columns[x].type=='number'){return Number(value);} //modify this problem
+        // else{ return value;}
+        console.log(x,y);
+        if(y!=0&&y!=1){
+            return Number(value);
+        }
+        //else{return value;}
     }
 
     function menu(obj, x, y, e) {
@@ -303,17 +308,27 @@
         closeEditor : function(cell, save) {
             var testx1 =  cell.getAttribute('data-x'); //Get data-x value from cell
             var testy1 =  cell.getAttribute('data-y'); //Get data-y value from cell
-            var e = document.getElementById("locality-dropdown"); //Define custom selection
+
 
             //Find cell that will use custom dropdown based on data-x and data-y
             if (testx1 == "1" && testy1 == "0") {
+                var e = document.getElementById("voltage"); //Define custom selection
                 var value = e.options[e.selectedIndex].text; //Define value of custom cell
-            } else {
+                //e.style.visibility = 'hidden'; //Hide dropdown after select
+                //e.parent.removeChild("localselct");
+            }
+            else if (testx1 == "1" && testy1 == "1") {
+                var e = document.getElementById("circuit"); //Define custom selection
+                var value = e.options[e.selectedIndex].text; //Define value of custom cell
+                //e.style.visibility = 'hidden'; //Hide dropdown after select
+                //e.parent.removeChild("localselct");
+            }
+            else {
                 var value = cell.children[0].value; //Define value of non-custom cell in same column
             }
 
             cell.innerHTML = value; //Set value of cell
-            e.style.visibility = 'hidden'; //Hide dropdown after select
+
             return value; //Return value
 
         },
@@ -333,19 +348,43 @@
             //Find cell that will use custom dropdown based on data-x and data-y
             if (testx1 == "1" && testy1 == "0") {
 
-                var e = document.getElementById("locality-dropdown"); //Define custom selection
+                element.style.display = "none";
+                var e = document.createElement('select'); //Define custom selection
                 e.style.visibility = 'visible'; //Show dropdown on select
+                e.id = "voltage";
+                console.log(e);
 
                 //Construct custom dropdown
-                let dropdown = $('#locality-dropdown');
-                dropdown.focus();
-                dropdown.empty();
                 for(let i=0;i<voltageArr.length;i++){
                     var opt = document.createElement('option');
                     opt.text = voltageArr[i];
                     opt.value = i;
-                    dropdown.append(opt);
+                    e.append(opt);
                 }
+                cell.appendChild(e);
+                console.log(cell);
+            }
+            else if (testx1 == "1" && testy1 == "1") {
+
+                element.style.display = "none";
+                var e = document.createElement('select'); //Define custom selection
+                e.style.visibility = 'visible'; //Show dropdown on select
+                e.id = "circuit";
+                console.log(e);
+
+                //Construct custom dropdown
+                var opt1 = document.createElement('option');
+                opt1.text = "单回路";
+                opt1.value = 1;
+                var opt2 = document.createElement('option');
+                opt2.text = "双回路";
+                opt2.value = 2;
+                e.append(opt1);
+                e.append(opt2);
+
+
+                cell.appendChild(e);
+                console.log(cell);
             }
             // Focus on the element
             element.focus();
@@ -359,10 +398,16 @@
             var testx =  cell.getAttribute('data-x'); //Get data-x value from cell
             var testy =  cell.getAttribute('data-y'); //Get data-y value from cell
             if (testx == "1" && testy == "0") {
-                var e = document.getElementById("locality-dropdown");
+                var e = document.getElementById("voltage");
                 var value = e.options[e.selectedIndex].text;
                 return value;
-            } else {
+            }
+            else if (testx == "1" && testy == "1") {
+                var e = document.getElementById("circuit");
+                var value = e.options[e.selectedIndex].text;
+                return value;
+            }
+            else {
                 cell.innerHTML = value;
             }
         }
@@ -375,9 +420,11 @@
             {type:"text",title:"参数名称",width: 200, name: "name",readOnly:true},
             {type:"text",title:"参数数值",width: 100, name: "value",editor:customColumnTwo}],
         // editable: false,
-
+        onbeforechange: beforeChangeEvent,
     })
     righttable.hideIndex();//index show or not
+
+
 
 
 
