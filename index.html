@@ -227,7 +227,13 @@
 		<p><button class="xbutton xround" id="youhua">优化排位参数</button></p>
 	</div>
 
-	<div id = "lefttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
+	<div id = "lguicheng" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
+	<div id = "ldaodixian" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
+<!--	<div id = "lefttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>-->
+<!--	<div id = "lefttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>-->
+<!--	<div id = "lefttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>-->
+<!--	<div id = "lefttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>-->
+
 
 	<div class="operateBtn" style="display:inline-block;">
 		<p><button class="xbutton xround edit">追加</button></p>
@@ -241,7 +247,14 @@
 		<p><button class="xbutton xround closeBtn">关闭</button></p>
 	</div>
 
-	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>
+	<div id = "rguicheng1" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>
+	<div id = "rguicheng2" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>
+	<div id = "rdaodixian" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>
+<!--	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
+<!--	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
+<!--	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
+<!--	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
+
 
 </div>
 <div class="dislpayArrow"><a class="pngfix" href="javascript:void(0);" onClick="displaynavbar(this)"></a></div>
@@ -1077,123 +1090,275 @@
 	/*设计参数*/
 	var customColumnTwo = {
 
-			// Methods
-			closeEditor : function(cell, save) {
-				var testx1 =  cell.getAttribute('data-x'); //Get data-x value from cell
-				var testy1 =  cell.getAttribute('data-y'); //Get data-y value from cell
+		// Methods
+		closeEditor : function(cell, save) {
+			var testx1 =  cell.getAttribute('data-x'); //Get data-x value from cell
+			var testy1 =  cell.getAttribute('data-y'); //Get data-y value from cell
 
 
-				//Find cell that will use custom dropdown based on data-x and data-y
-				if (testx1 == "1" && testy1 == "0") {
-					var e = document.getElementById("voltage"); //Define custom selection
-					var value = e.options[e.selectedIndex].text; //Define value of custom cell
-					//e.style.visibility = 'hidden'; //Hide dropdown after select
-					//e.parent.removeChild("localselct");
+			//Find cell that will use custom dropdown based on data-x and data-y
+			if (testx1 == "1" && testy1 == "0") {
+				var e = document.getElementById("voltage"); //Define custom selection
+				var value = e.options[e.selectedIndex].text; //Define value of custom cell
+				//e.style.visibility = 'hidden'; //Hide dropdown after select
+				//e.parent.removeChild("localselct");
+			}
+			else if (testx1 == "1" && testy1 == "1") {
+				var e = document.getElementById("circuit"); //Define custom selection
+				var value = e.options[e.selectedIndex].text; //Define value of custom cell
+				//e.style.visibility = 'hidden'; //Hide dropdown after select
+				//e.parent.removeChild("localselct");
+			}
+			else {
+				var value = cell.children[0].value; //Define value of non-custom cell in same column
+			}
+
+			cell.innerHTML = value; //Set value of cell
+
+			return value; //Return value
+
+		},
+		openEditor : function(cell) {
+			var testx1 =  cell.getAttribute('data-x'); //Get data-x value from cell
+			var testy1 =  cell.getAttribute('data-y'); //Get data-y value from cell
+
+			// Create input
+			var element = document.createElement('input');
+			element.value = cell.innerHTML;
+			// Update cell
+			cell.classList.add('editor');
+			cell.innerHTML = '';
+			cell.appendChild(element);
+
+
+			//Find cell that will use custom dropdown based on data-x and data-y
+			if (testx1 == "1" && testy1 == "0") {
+
+				element.style.display = "none";
+				var e = document.createElement('select'); //Define custom selection
+				e.style.visibility = 'visible'; //Show dropdown on select
+				e.id = "voltage";
+				console.log(e);
+
+				//Construct custom dropdown
+				for(let i=0;i<voltageArr.length;i++){
+					var opt = document.createElement('option');
+					opt.text = voltageArr[i];
+					opt.value = i;
+					e.append(opt);
 				}
-				else if (testx1 == "1" && testy1 == "1") {
-					var e = document.getElementById("circuit"); //Define custom selection
-					var value = e.options[e.selectedIndex].text; //Define value of custom cell
-					//e.style.visibility = 'hidden'; //Hide dropdown after select
-					//e.parent.removeChild("localselct");
-				}
-				else {
-					var value = cell.children[0].value; //Define value of non-custom cell in same column
-				}
+				cell.appendChild(e);
+				console.log(cell);
+			}
+			else if (testx1 == "1" && testy1 == "1") {
 
-				cell.innerHTML = value; //Set value of cell
+				element.style.display = "none";
+				var e = document.createElement('select'); //Define custom selection
+				e.style.visibility = 'visible'; //Show dropdown on select
+				e.id = "circuit";
+				console.log(e);
 
-				return value; //Return value
-
-			},
-			openEditor : function(cell) {
-				var testx1 =  cell.getAttribute('data-x'); //Get data-x value from cell
-				var testy1 =  cell.getAttribute('data-y'); //Get data-y value from cell
-
-				// Create input
-				var element = document.createElement('input');
-				element.value = cell.innerHTML;
-				// Update cell
-				cell.classList.add('editor');
-				cell.innerHTML = '';
-				cell.appendChild(element);
+				//Construct custom dropdown
+				var opt1 = document.createElement('option');
+				opt1.text = "单回路";
+				opt1.value = 1;
+				var opt2 = document.createElement('option');
+				opt2.text = "双回路";
+				opt2.value = 2;
+				e.append(opt1);
+				e.append(opt2);
 
 
-				//Find cell that will use custom dropdown based on data-x and data-y
-				if (testx1 == "1" && testy1 == "0") {
+				cell.appendChild(e);
+				console.log(cell);
+			}
+			// Focus on the element
+			element.focus();
 
-					element.style.display = "none";
-					var e = document.createElement('select'); //Define custom selection
-					e.style.visibility = 'visible'; //Show dropdown on select
-					e.id = "voltage";
-					console.log(e);
+		},
+		getValue : function(cell) {
+			return cell.innerHTML;
+		},
+		setValue : function(cell, value, save) {
 
-					//Construct custom dropdown
-					for(let i=0;i<voltageArr.length;i++){
-						var opt = document.createElement('option');
-						opt.text = voltageArr[i];
-						opt.value = i;
-						e.append(opt);
+			var testx =  cell.getAttribute('data-x'); //Get data-x value from cell
+			var testy =  cell.getAttribute('data-y'); //Get data-y value from cell
+			if (testx == "1" && testy == "0") {
+				var e = document.getElementById("voltage");
+				var value = e.options[e.selectedIndex].text;
+				return value;
+			}
+			else if (testx == "1" && testy == "1") {
+				var e = document.getElementById("circuit");
+				var value = e.options[e.selectedIndex].text;
+				return value;
+			}
+			else {
+				cell.innerHTML = value;
+			}
+		}
+	}
+	function beforeChangeEventConductor(instance, cell, x, y, value){
+		if(y!=0){
+			return Number(value);
+		}
+	}
+	function beforeChangeEventCross(instance, cell, x, y, value){
+		return Number(value);
+	}
+	function beforeChangeEvent(instance, cell, x, y, value){
+		// if(instance.jspreadsheet.options.columns[x].type=='number'){return Number(value);} //modify this problem
+		// else{ return value;}
+		console.log(x,y);
+		if(y!=0&&y!=1){
+			return Number(value);
+		}
+		//else{return value;}
+	}
+	function menu(obj, x, y, e) {
+		var items = [];
+
+		if (y == null) {
+			// Insert a new column
+			if (obj.options.allowInsertColumn == true) {
+				items.push({
+					title:'在左侧插入列',
+					onclick:function() {
+						obj.insertColumn(1, parseInt(x), 1);
 					}
-					cell.appendChild(e);
-					console.log(cell);
-				}
-				else if (testx1 == "1" && testy1 == "1") {
+				});
+			}
 
-					element.style.display = "none";
-					var e = document.createElement('select'); //Define custom selection
-					e.style.visibility = 'visible'; //Show dropdown on select
-					e.id = "circuit";
-					console.log(e);
-
-					//Construct custom dropdown
-					var opt1 = document.createElement('option');
-					opt1.text = "单回路";
-					opt1.value = 1;
-					var opt2 = document.createElement('option');
-					opt2.text = "双回路";
-					opt2.value = 2;
-					e.append(opt1);
-					e.append(opt2);
+			if (obj.options.allowInsertColumn == true) {
+				items.push({
+					title:'在右侧插入列',
+					onclick:function() {
+						obj.insertColumn(1, parseInt(x), 0);
+					}
+				});
+			}
 
 
-					cell.appendChild(e);
-					console.log(cell);
-				}
-				// Focus on the element
-				element.focus();
+			// Delete a column
+			if (obj.options.allowDeleteColumn == true) {
+				items.push({
+					title:'删除选中列',
+					onclick:function() {
+						obj.deleteColumn(obj.getSelectedColumns().length ? undefined : parseInt(x));
+					}
+				});
+			}
 
-			},
-			getValue : function(cell) {
-				return cell.innerHTML;
-			},
-			setValue : function(cell, value, save) {
+			// Rename column
+			if (obj.options.allowRenameColumn == true) {
+				items.push({
+					title:'重命名列名',
+					onclick:function() {
+						obj.setHeader(x);
+					}
+				});
+			}
 
-				var testx =  cell.getAttribute('data-x'); //Get data-x value from cell
-				var testy =  cell.getAttribute('data-y'); //Get data-y value from cell
-				if (testx == "1" && testy == "0") {
-					var e = document.getElementById("voltage");
-					var value = e.options[e.selectedIndex].text;
-					return value;
-				}
-				else if (testx == "1" && testy == "1") {
-					var e = document.getElementById("circuit");
-					var value = e.options[e.selectedIndex].text;
-					return value;
-				}
-				else {
-					cell.innerHTML = value;
+			// Sorting
+			if (obj.options.columnSorting == true) {
+				// Line
+				items.push({ type:'line' });
+
+				items.push({
+					title:'升序排列',
+					onclick:function() {
+						obj.orderBy(x, 0);
+					}
+				});
+				items.push({
+					title:'降序排列',
+					onclick:function() {
+						obj.orderBy(x, 1);
+					}
+				});
+			}
+		} else {
+			// Insert new row
+			if (obj.options.allowInsertRow == true) {
+				items.push({
+					title:'在上方插入一行',
+					onclick:function() {
+						obj.insertRow(1, parseInt(y), 1);
+					}
+				});
+
+				items.push({
+					title:'在下方插入一行',
+					onclick:function() {
+						obj.insertRow(1, parseInt(y));
+					}
+				});
+			}
+
+			if (obj.options.allowDeleteRow == true) {
+				items.push({
+					title:'删除所选行',
+					onclick:function() {
+						obj.deleteRow(obj.getSelectedRows().length ? undefined : parseInt(y));
+					}
+				});
+			}
+			console.log(obj.options.text);
+			if (x) {
+				if (obj.options.allowComments == true) {
+					items.push({ type:'line' });
+
+					var title = obj.records[y][x].getAttribute('title') || '';
+
+					items.push({
+						title: title ? obj.options.text.editComments : obj.options.text.addComments,
+						onclick:function() {
+							obj.setComments([ x, y ], prompt(obj.options.text.comments, title));
+						}
+					});
+
+					if (title) {
+						items.push({
+							title:obj.options.text.clearComments,
+							onclick:function() {
+								obj.setComments([ x, y ], '');
+							}
+						});
+					}
 				}
 			}
 		}
-	var lefttable = jspreadsheet(document.getElementById('lefttable'),{
-		data:[['系统设置'],['交叉跨越']],
+		return items;
+	}
+	function selectionActive (instance, x1, y1, x2, y2, origin) {
+		if(y1==0){
+			$('#rguicheng2,.jexcel_container .jexcel_content').hide();
+			$('#rguicheng1,.jexcel_container .jexcel_content').show();
+		}
+		if(y1==1){
+			$('#rguicheng1,.jexcel_container .jexcel_content').hide();
+			$('#rguicheng2,.jexcel_container .jexcel_content').show();
+
+		}
+		//console.log(origin);
+
+	}
+	var customColumnCross = {}
+	function selectionActiveCross (instance, x1, y1, x2, y2, origin) {
+		console.log(instance,origin);
+		//rdaodixian.setData()
+		//console.log(origin);
+	}
+
+
+	var lguicheng = jspreadsheet(document.getElementById('lguicheng'),{
 		contextMenu: menu,
 		columns:[
 			{type:"text",title:"型号/名称/图号",width: 150, name: "No"}],
 		editable: false,
 		onselection: selectionActive
 	})
-	var righttable = jspreadsheet(document.getElementById('righttable'),{
+	var rguicheng1 = jspreadsheet(document.getElementById('rguicheng1'),{
 		//data: data,
 		contextMenu:function(obj,x,y,e){},
 		colAlignments:['left',''],  //Align
@@ -1203,8 +1368,34 @@
 		// editable: false,
 		onbeforechange: beforeChangeEvent,
 	})
-		var guicheng =
-				[
+	var rguicheng2 = jspreadsheet(document.getElementById('rguicheng2'),{
+			//data: data,
+			contextMenu:function(obj,x,y,e){},
+			colAlignments:['left',''],  //Align
+			columns:[
+				{type:"text",title:"内容简称",width: 150, name: "contabbr",readOnly:true},
+				{type:"Numeric",title:"距离要求",width: 80, name: "elc500kv"}],
+			// editable: false,
+			onbeforechange: beforeChangeEventCross,
+		})
+	var ldaodixian = jspreadsheet(document.getElementById('ldaodixian'),{
+		contextMenu: menu,
+		columns:[
+			{type:"text",title:"型号/名称/图号",width: 150, name: "conductor"}],
+		onselection: selectionActiveCross
+	})
+	var rdaodixian = jspreadsheet(document.getElementById('rdaodixian'),{
+			contextMenu:function(obj,x,y,e){},
+			colAlignments:['left',''],  //Align
+			columns:[
+				{type:"text",title:"参数名称",width: 200, name: "name",readOnly:true},
+				{type:"text",title:"参数数值",width: 100, name: "value"}],
+			// editable: false,
+			onbeforechange: beforeChangeEventConductor,
+			// editable: false
+		})
+
+	var guicheng = [
 					{
 						'name': '电压等级',
 						'value': "500KV"
@@ -1234,185 +1425,63 @@
 						'value':0.00
 					}
 				]
-		righttable.setData(guicheng);
-		righttable.hideIndex();
-
-	function beforeChangeEvent(instance, cell, x, y, value){
-			// if(instance.jspreadsheet.options.columns[x].type=='number'){return Number(value);} //modify this problem
-			// else{ return value;}
-			console.log(x,y);
-			if(y!=0&&y!=1){
-				return Number(value);
-			}
-			//else{return value;}
-		}
-	function menu(obj, x, y, e) {
-			var items = [];
-
-			if (y == null) {
-				// Insert a new column
-				if (obj.options.allowInsertColumn == true) {
-					items.push({
-						title:'在左侧插入列',
-						onclick:function() {
-							obj.insertColumn(1, parseInt(x), 1);
-						}
-					});
-				}
-
-				if (obj.options.allowInsertColumn == true) {
-					items.push({
-						title:'在右侧插入列',
-						onclick:function() {
-							obj.insertColumn(1, parseInt(x), 0);
-						}
-					});
-				}
+	var tcross = [{'contabbr':'01对居民地','elc500kv':10},{'contabbr':'02对非居民地','elc500kv':8.5},{'contabbr':'04风偏对地净空距离','elc500kv':8.5}]
+	var daodixian = []
 
 
-				// Delete a column
-				if (obj.options.allowDeleteColumn == true) {
-					items.push({
-						title:'删除选中列',
-						onclick:function() {
-							obj.deleteColumn(obj.getSelectedColumns().length ? undefined : parseInt(x));
-						}
-					});
-				}
 
-				// Rename column
-				if (obj.options.allowRenameColumn == true) {
-					items.push({
-						title:'重命名列名',
-						onclick:function() {
-							obj.setHeader(x);
-						}
-					});
-				}
-
-				// Sorting
-				if (obj.options.columnSorting == true) {
-					// Line
-					items.push({ type:'line' });
-
-					items.push({
-						title:'升序排列',
-						onclick:function() {
-							obj.orderBy(x, 0);
-						}
-					});
-					items.push({
-						title:'降序排列',
-						onclick:function() {
-							obj.orderBy(x, 1);
-						}
-					});
-				}
-			} else {
-				// Insert new row
-				if (obj.options.allowInsertRow == true) {
-					items.push({
-						title:'在上方插入一行',
-						onclick:function() {
-							obj.insertRow(1, parseInt(y), 1);
-						}
-					});
-
-					items.push({
-						title:'在下方插入一行',
-						onclick:function() {
-							obj.insertRow(1, parseInt(y));
-						}
-					});
-				}
-
-				if (obj.options.allowDeleteRow == true) {
-					items.push({
-						title:'删除所选行',
-						onclick:function() {
-							obj.deleteRow(obj.getSelectedRows().length ? undefined : parseInt(y));
-						}
-					});
-				}
-				console.log(obj.options.text);
-				if (x) {
-					if (obj.options.allowComments == true) {
-						items.push({ type:'line' });
-
-						var title = obj.records[y][x].getAttribute('title') || '';
-
-						items.push({
-							title: title ? obj.options.text.editComments : obj.options.text.addComments,
-							onclick:function() {
-								obj.setComments([ x, y ], prompt(obj.options.text.comments, title));
-							}
-						});
-
-						if (title) {
-							items.push({
-								title:obj.options.text.clearComments,
-								onclick:function() {
-									obj.setComments([ x, y ], '');
-								}
-							});
-						}
-					}
-				}
-			}
-			return items;
-		}
-	function selectionActive (instance, x1, y1, x2, y2, origin) {
-			if(y1==0){
-				$("td[title='参数名称']").text("change");
-				console.log($("thead"));
-			}
-			if(y1==1){
-				console.log(y1)
-			}
-			console.log(origin);
-
-		}
 
 	$('#guicheng').click(function () {
+		// console.log($('.jexcel_container .jexcel_content'));
+		// console.log("var rguicheng",rguicheng1.el);
+		// console.log($('#rguicheng,.jexcel_container .jexcel_content'));
+		rguicheng1.hideIndex();rguicheng2.hideIndex();
+		$(".jexcel_content").hide();
 
-		lefttable.setData([['系统设置'],['交叉跨越']]);
 
-		var guicheng =
-			[
-					{
-						'name': '电压等级',
-						'value': "500KV"
-					},
-		{
-			'name':'设计回路',
-			'value': "单回路"
-		},
-		{
-			'name':'导线平均高度m',
-				'value':20
-		},
-		{
-			'name':'地面粗糙度系数a',
-				'value':0.16
-		},
-		{
-			'name':'地线覆盖较冰导线增加mm',
-				'value':5.00
-		},
-		{
-			'name':'导线过牵引长度m',
-				'value':0.20
-		},
-		{
-			'name':'孤立档最大档距m',
-				'value':0.00
+		lguicheng.setData([['系统设置'],['交叉跨越']]);
+		$('#lguicheng,.jexcel_container .jexcel_content').show();
+
+		rguicheng1.setData(guicheng);
+		$('#rguicheng1,.jexcel_container .jexcel_content').show();
+		rguicheng2.setData(tcross);
+	})
+	$('#guicheng').click();
+
+	var conductor = [{'name':'导地线类型','value':'导线'},
+			{'name':'导地线截面积(mm²)','value':0},
+			{'name':'导地线直径','value':0},
+			{'name':'计算拉断力','value':0},
+			{'name':'单位长度质量(kg/m)','value':0},
+			{'name':'弹性系数(N/mm²)','value':0},
+			{'name':'膨胀系数×1E-6/℃','value':0},
+			{'name':'导线分裂数','value':0}]
+	$('#daodixian').click(function () {
+		daodixian = [];
+		for(let i = 0; i<prk.CONDUCTOR.length;i++){
+			daodixian.push(prk.CONDUCTOR[i]);
 		}
-	]
-		righttable.setData(guicheng);
+		var nameset=[];
+		for(let i = 0; i<daodixian.length;i++){
+			nameset.push([daodixian[i].name]);
+		}
 
+		$(".jexcel_content").hide();
+
+
+
+		ldaodixian.setData(nameset);
+		$('#ldaodixian,.jexcel_container .jexcel_content').show();
+		var dataset = [];
+
+		dataset.push(conductor);
+		console.log(dataset);
+		rdaodixian.setData(dataset[0]);
+		console.log(prk.CONDUCTOR);
+		rdaodixian.hideIndex();
+		$('#rdaodixian,.jexcel_container .jexcel_content').show();
 
 	})
-	// $('#daodixian')
 	// $('#qixiang')
 	// $('#fenduan')
 	// $('#gantashiyong')
@@ -1425,6 +1494,7 @@
 
 
 	$('#save').click(function () {
+		console.log(rguicheng2.getJson());
 			var prkinfo = new FormData();
 			prkinfo.append("prk",JSON.stringify(prk));
 			prkinfo.append("ProjectName",prjName);
