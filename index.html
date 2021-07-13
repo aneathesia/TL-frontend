@@ -165,6 +165,7 @@
 				</ul>
 			</dd>
 		</dl>
+
 		<div style="display: none">
 			<label>打开本地json文件: <input type="file" style="display:inline-block" id="jsonfile" name="myjsonfile" accept=".json"/>
 				<input type="button" style="display:inline-block" id="openjsonfile" onclick="window.upjsonfile()" value="打开" /></label>
@@ -229,6 +230,8 @@
 
 	<div id = "lguicheng" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
 	<div id = "ldaodixian" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
+	<div id = "lqixiang" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
+
 <!--	<div id = "lefttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>-->
 <!--	<div id = "lefttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>-->
 <!--	<div id = "lefttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>-->
@@ -250,7 +253,9 @@
 	<div id = "rguicheng1" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>
 	<div id = "rguicheng2" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>
 	<div id = "rdaodixian" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>
-<!--	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
+	<div id = "rqixiang" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
+
+	<!--	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
 <!--	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
 <!--	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
 <!--	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
@@ -328,6 +333,10 @@
 	let ttowerlist = Array;
 	let movingInd;
 
+//expand parameter
+	let enableExpand = false;
+
+
 	//pilelist table init
 	{
 	var pile_tabledata=[];
@@ -403,14 +412,11 @@
 	);
 	console.log(GridManager.get(pile_tableId));
 	}
-// towerlist table init
+	// towerlist table init
 	{
 		var towerlist_tabledata=[];
-		console.log("towerlist begin data");
-		console.log(towerlist_tabledata);
-		console.log("tihuan data");
+
 		towerlist_tabledata=towerlist;  //table data format different with towerlist_tabledata parameters default
-		console.log(towerlist_tabledata);
 		var towerlist_tableId=document.getElementById("towerlist_table");
 		console.log(pile_tableId);
 		var tb_towerlist=new GridManager(towerlist_tableId,{
@@ -585,7 +591,6 @@
 		m_end = towerlist_tabledata.length - 1;
 
 		for (let i = 0; i <  towerlist_tabledata.length; i++) {
-			console.log("Status",towerlist_tabledata[i].Status);
 			let tpos={};let towerset;
 			tpos.x = (towerlist_tabledata[i].Distance-xMin)/xdivision*Gridsize;
 			tpos.y = (towerlist_tabledata[i].High - yMin)/ydivision*Gridsize;
@@ -614,9 +619,7 @@
 				FawCurveGroup.add(conductset[2]);
 			}
 		}
-		console.log("update scene TowerDraw");
 		scene.add(FawCurveGroup);
-		console.log(scene);
 	}
 
 	//prk设计参数框显示/隐藏
@@ -635,11 +638,13 @@
 		})
 	})
 	$("#designparameter").click(function () {
+		document.removeEventListener('mousedown', onDocumentSelected);
 		$("#Paramtable").show();
 	})
     //prk database
 
 	$(".closeBtn").click(function () {
+		document.addEventListener('mousedown', onDocumentSelected, false);
 		$("#Paramtable").hide();
 	})
 	var fileObj=[];
@@ -1203,10 +1208,10 @@
 			return Number(value);
 		}
 	}
-	function beforeChangeEventCross(instance, cell, x, y, value){
+	function beforeChangeEvent(instance, cell, x, y, value){
 		return Number(value);
 	}
-	function beforeChangeEvent(instance, cell, x, y, value){
+	function beforeChangeEventGuicheng(instance, cell, x, y, value){
 		// if(instance.jspreadsheet.options.columns[x].type=='number'){return Number(value);} //modify this problem
 		// else{ return value;}
 		console.log(x,y);
@@ -1343,11 +1348,24 @@
 		//console.log(origin);
 
 	}
-	var customColumnCross = {}
-	function selectionActiveCross (instance, x1, y1, x2, y2, origin) {
-		console.log(instance,origin);
-		//rdaodixian.setData()
-		//console.log(origin);
+	//var customColumnCross = {}
+	function selectionActiveConductor (instance, x1, y1, x2, y2, origin) {
+		console.log(rdaodixian.getData());
+		console.log(rdaodixian.getJson());
+		for(let i= 0;i<conductorset.length;i++){
+			console.log("conductor i",conductorset[i]);
+			console.log("value",conductorset[i][1].value, rdaodixian.getJson()[1].value)
+			if(conductorset[i][1].value == rdaodixian.getJson()[1].value||
+					conductorset[i][2].value == rdaodixian.getJson()[2].value){ //保存更改的数据 判断方式通过面积或者直径一样达到协同
+				conductorset[i] = rdaodixian.getJson();
+			}
+		}
+		console.log("after",conductorset);
+		rdaodixian.setData(conductorset[y1]);
+	}
+	function selectionActiveQixiang (instance, x1, y1, x2, y2, origin) {
+		console.log("after weather",weatherset);
+		rqixiang.setData(weatherset[y1]);
 	}
 
 
@@ -1366,7 +1384,7 @@
 			{type:"text",title:"参数名称",width: 200, name: "name",readOnly:true},
 			{type:"text",title:"参数数值",width: 100, name: "value",editor:customColumnTwo}],
 		// editable: false,
-		onbeforechange: beforeChangeEvent,
+		onbeforechange: beforeChangeEventGuicheng,
 	})
 	var rguicheng2 = jspreadsheet(document.getElementById('rguicheng2'),{
 			//data: data,
@@ -1376,13 +1394,13 @@
 				{type:"text",title:"内容简称",width: 150, name: "contabbr",readOnly:true},
 				{type:"Numeric",title:"距离要求",width: 80, name: "elc500kv"}],
 			// editable: false,
-			onbeforechange: beforeChangeEventCross,
+			onbeforechange: beforeChangeEvent,
 		})
 	var ldaodixian = jspreadsheet(document.getElementById('ldaodixian'),{
 		contextMenu: menu,
 		columns:[
 			{type:"text",title:"型号/名称/图号",width: 150, name: "conductor"}],
-		onselection: selectionActiveCross
+		onselection: selectionActiveConductor
 	})
 	var rdaodixian = jspreadsheet(document.getElementById('rdaodixian'),{
 			contextMenu:function(obj,x,y,e){},
@@ -1394,6 +1412,25 @@
 			onbeforechange: beforeChangeEventConductor,
 			// editable: false
 		})
+	var lqixiang = jspreadsheet(document.getElementById('lqixiang'),{
+		contextMenu: menu,
+		columns:[
+			{type:"text",title:"型号/名称/图号",width: 150, name: "weather"}],
+		onselection: selectionActiveQixiang
+	})
+	var rqixiang = jspreadsheet(document.getElementById('rqixiang'),{
+		contextMenu:function(obj,x,y,e){},
+		colAlignments:['left',''],  //Align
+		columns:[
+			{type:"text",title:"气象条件",width: 80, name: "name",readOnly:true},
+			{type:"text",title:"温度℃",width: 80, name: "wd"},
+			{type:"text",title:"风速m/s",width: 80, name: "fs"},
+			{type:"text",title:"覆冰(导)mm",width: 80, name: "fb"}
+		],
+		// editable: false,
+		onbeforechange: beforeChangeEvent,
+		// editable: false
+})
 
 	var guicheng = [
 					{
@@ -1448,41 +1485,78 @@
 	})
 	$('#guicheng').click();
 
-	var conductor = [{'name':'导地线类型','value':'导线'},
-			{'name':'导地线截面积(mm²)','value':0},
-			{'name':'导地线直径','value':0},
-			{'name':'计算拉断力','value':0},
-			{'name':'单位长度质量(kg/m)','value':0},
-			{'name':'弹性系数(N/mm²)','value':0},
-			{'name':'膨胀系数×1E-6/℃','value':0},
-			{'name':'导线分裂数','value':0}]
+
+	var conductorName=[];
+	var conductorset=[];
 	$('#daodixian').click(function () {
-		daodixian = [];
+		conductorName = [];
 		for(let i = 0; i<prk.CONDUCTOR.length;i++){
-			daodixian.push(prk.CONDUCTOR[i]);
+			conductorName.push([prk.CONDUCTOR[i].name]);
 		}
-		var nameset=[];
-		for(let i = 0; i<daodixian.length;i++){
-			nameset.push([daodixian[i].name]);
-		}
-
 		$(".jexcel_content").hide();
-
-
-
-		ldaodixian.setData(nameset);
+		ldaodixian.setData(conductorName);
 		$('#ldaodixian,.jexcel_container .jexcel_content').show();
-		var dataset = [];
-
-		dataset.push(conductor);
-		console.log(dataset);
-		rdaodixian.setData(dataset[0]);
-		console.log(prk.CONDUCTOR);
+		conductorset=[];
+		for(let i = 0;i<prk.CONDUCTOR.length;i++){
+			var conductor = [{'name':'导地线类型','value':'导线'},
+				{'name':'导地线截面积(mm²)','value':0},
+				{'name':'导地线直径','value':0},
+				{'name':'计算拉断力','value':0},
+				{'name':'单位长度质量(kg/m)','value':0},
+				{'name':'弹性系数(N/mm²)','value':0},
+				{'name':'膨胀系数/℃','value':0},
+				{'name':'导线分裂数','value':0}];
+			conductorset.push(conductor);
+			console.log(prk.CONDUCTOR[i].type);
+			console.log(prk.CONDUCTOR[i]);
+			if(prk.CONDUCTOR[i].type === 0 )conductorset[i][0].value = "导线";
+			else conductorset[i][0].value = "地线";
+			conductorset[i][1].value = prk.CONDUCTOR[i].A;
+			conductorset[i][2].value = prk.CONDUCTOR[i].d;
+			conductorset[i][3].value = prk.CONDUCTOR[i].Tp;
+			conductorset[i][4].value = prk.CONDUCTOR[i].p1;
+			conductorset[i][5].value = prk.CONDUCTOR[i].E;
+			conductorset[i][6].value = prk.CONDUCTOR[i].a;
+			conductorset[i][7].value = prk.CONDUCTOR[i].num;
+		}
+		console.log("conductorset",conductorset);
+		rdaodixian.setData(conductorset[0]);
+		console.log(conductorset[0]);
 		rdaodixian.hideIndex();
 		$('#rdaodixian,.jexcel_container .jexcel_content').show();
 
 	})
-	// $('#qixiang')
+	var weatherName=[];
+	var weatherset=[];
+	$('#qixiang').click(function(){
+		weatherName = [];
+		for(let i = 0; i<prk.WEATHER.length;i++){
+			console.log(prk.WEATHER[0]);
+			weatherName.push([prk.WEATHER[i].name]);
+		}
+		$(".jexcel_content").hide();
+		lqixiang.setData(weatherName);
+		$('#lqixiang,.jexcel_container .jexcel_content').show();
+
+		weatherset=[];
+		for(let i = 0;i<prk.WEATHER.length;i++){
+			var weatemp  =  [];
+			for(let j = 0 ; j<prk.WEATHER[i].num;j++){
+				var row = {};
+				row.name = prk.WEATHER[i].TWI[j].name;
+				row.wd= prk.WEATHER[i].TWI[j].t;
+				row.fs= prk.WEATHER[i].TWI[j].v;
+				row.fb= prk.WEATHER[i].TWI[j].b;
+				weatemp.push(row);
+			}
+			weatherset.push(weatemp);
+		}
+		console.log("weatherset",weatherset);
+		rqixiang.setData(weatherset[0]);
+		console.log(weatherset[0]);
+		rqixiang.hideIndex();
+		$('#rqixiang,.jexcel_container .jexcel_content').show();
+	})
 	// $('#fenduan')
 	// $('#gantashiyong')
 	// $('#gantatacai')
@@ -1629,7 +1703,6 @@
 						console.log(data);
 						for (let i = 0; i < data.length; i++) {
 								var fileOption = new Option(data[i].name, i.toString());
-								console.log(fileOption);
 								optionList[0].options.add(fileOption);
 						}
 					}
@@ -1733,114 +1806,115 @@
 	var DEM;
 
 	//线、气象条件初始默认值
-	var UseLine = {
-				"name": "LGJX-400/35",
-				"type": 0,
-				"A": 425.24,
-				"d": 26.82,
-				"Tp": 103900,
-				"p1": 1.349,
-				"E": 65000,
-				"a": 0.0000205,
-				"num": 1
-			};
-	var UseWeather = {
-				"name": "Ⅱ",
-				"num": 12,
-				"h": 15.0,
-				"hs": 15.0,
-				"alfa": 0.16,
-				"B": 0.0,
-				"TWI": [{
-					"name": "平均气温",
-					"t": 15.0,
-					"v": 0.0,
-					"b": 0.0
-				},
-					{
-						"name": "最高气温",
-						"t": 40.0,
-						"v": 0.0,
-						"b": 0.0
-					},
-					{
-						"name": "最低气温",
-						"t": -10.0,
-						"v": 0.0,
-						"b": 0.0
-					},
-					{
-						"name": "最大风速",
-						"t": 10.0,
-						"v": 27.0,
-						"b": 0.0
-					},
-					{
-						"name": "最大覆冰",
-						"t": -5.0,
-						"v": 10.0,
-						"b": 5.0
-					},
-					{
-						"name": "安装情况",
-						"t": 0.0,
-						"v": 10.0,
-						"b": 0.0
-					},
-					{
-						"name": "操作情况",
-						"t": 15.0,
-						"v": 15.0,
-						"b": 0.0
-					},
-					{
-						"name": "大气有风",
-						"t": 15.0,
-						"v": 10.0,
-						"b": 0.0
-					},
-					{
-						"name": "大气无风",
-						"t": 15.0,
-						"v": 0.0,
-						"b": 0.0
-					},
-					{
-						"name": "最高线温",
-						"t": 70.0,
-						"v": 0.0,
-						"b": 0.0
-					},
-					{
-						"name": "检修工况",
-						"t": 0.0,
-						"v": 0.0,
-						"b": 0.0
-					},
-					{
-						"name": "事故工况",
-						"t": 0.0,
-						"v": 0.0,
-						"b": 0.0
-					}]
-			};
-	var section = {
-				"name": "1",
-				"starJ": "J2",
-				"from": 0.0,
-				"endJ": "J37(GL)",
-				"to": 57641.0,
-				"powerLine": "LGJX-400/35",
-				"groundLine": "LGJX-50/30",
-				"wertherName": "Ⅱ",
-				"pLineK": 0.95,
-				"pLineF": 2.500,
-				"pLineC": 0.250,
-				"gLineK": 1.000,
-				"gLineF": 3.000,
-				"gLineC": 0.250,
-				"circuit": 1
-			};
+	// var UseLine = {
+	// 			"name": "LGJX-400/35",
+	// 			"type": 0,
+	// 			"A": 425.24,
+	// 			"d": 26.82,
+	// 			"Tp": 103900,
+	// 			"p1": 1.349,
+	// 			"E": 65000,
+	// 			"a": 0.0000205,
+	// 			"num": 1
+	// 		};
+	// var UseWeather = {
+	// 			"name": "Ⅱ",
+	// 			"num": 12,
+	// 			"h": 15.0,
+	// 			"hs": 15.0,
+	// 			"alfa": 0.16,
+	// 			"B": 0.0,
+	// 			"TWI": [{
+	// 				"name": "平均气温",
+	// 				"t": 15.0,
+	// 				"v": 0.0,
+	// 				"b": 0.0
+	// 			},
+	// 				{
+	// 					"name": "最高气温",
+	// 					"t": 40.0,
+	// 					"v": 0.0,
+	// 					"b": 0.0
+	// 				},
+	// 				{
+	// 					"name": "最低气温",
+	// 					"t": -10.0,
+	// 					"v": 0.0,
+	// 					"b": 0.0
+	// 				},
+	// 				{
+	// 					"name": "最大风速",
+	// 					"t": 10.0,
+	// 					"v": 27.0,
+	// 					"b": 0.0
+	// 				},
+	// 				{
+	// 					"name": "最大覆冰",
+	// 					"t": -5.0,
+	// 					"v": 10.0,
+	// 					"b": 5.0
+	// 				},
+	// 				{
+	// 					"name": "安装情况",
+	// 					"t": 0.0,
+	// 					"v": 10.0,
+	// 					"b": 0.0
+	// 				},
+	// 				{
+	// 					"name": "操作情况",
+	// 					"t": 15.0,
+	// 					"v": 15.0,
+	// 					"b": 0.0
+	// 				},
+	// 				{
+	// 					"name": "大气有风",
+	// 					"t": 15.0,
+	// 					"v": 10.0,
+	// 					"b": 0.0
+	// 				},
+	// 				{
+	// 					"name": "大气无风",
+	// 					"t": 15.0,
+	// 					"v": 0.0,
+	// 					"b": 0.0
+	// 				},
+	// 				{
+	// 					"name": "最高线温",
+	// 					"t": 70.0,
+	// 					"v": 0.0,
+	// 					"b": 0.0
+	// 				},
+	// 				{
+	// 					"name": "检修工况",
+	// 					"t": 0.0,
+	// 					"v": 0.0,
+	// 					"b": 0.0
+	// 				},
+	// 				{
+	// 					"name": "事故工况",
+	// 					"t": 0.0,
+	// 					"v": 0.0,
+	// 					"b": 0.0
+	// 				}]
+	// 		};
+	// var section = {
+	// 			"name": "1",
+	// 			"starJ": "J2",
+	// 			"from": 0.0,
+	// 			"endJ": "J37(GL)",
+	// 			"to": 57641.0,
+	// 			"powerLine": "LGJX-400/35",
+	// 			"groundLine": "LGJX-50/30",
+	// 			"wertherName": "Ⅱ",
+	// 			"pLineK": 0.95,
+	// 			"pLineF": 2.500,
+	// 			"pLineC": 0.250,
+	// 			"gLineK": 1.000,
+	// 			"gLineF": 3.000,
+	// 			"gLineC": 0.250,
+	// 			"circuit": 1
+	// 		};
+		var UseLine ={};var UseWeather = {};var section = {};
 
 	var theLine = UseLine,theWeather = UseWeather;
 	var designLine = 1;
@@ -2010,7 +2084,8 @@
 		var material = new THREE.LineBasicMaterial({ color: 0x0000ff});
 		var grid = new THREE.Mesh(gridBound,material);
 		grid.position.x =(horSize -30)/2;
-		grid.position.y = (verSize - mp.m_Frame[14])/2;
+		grid.position.y = (verSize - mp.m_Frame[14])/2
+		;
 		var box = new THREE.BoxHelper( grid, 0x0000ff );
 		framegroup.add(box);
 		//居中
@@ -3377,7 +3452,7 @@
 				"LandDist" : 8.5,		// 对地安全距离
 				"ElecDist" : 6.0	// 电力线安全距离
 			});
-			console.log("mousemove towerlist",towerlist);
+
 			m_end = towerlist.length - 1;
 			ComputeHugeHigh();
 
@@ -3393,7 +3468,7 @@
 			towerlist.pop();
 			m_end = towerlist.length - 1;
 			ComputeHugeHigh();
-			console.log("mousemove towerlist pop",towerlist);
+
 		}
 
 	/* 获取射线与平面相交的交点 */
@@ -3566,6 +3641,7 @@
 			window_mouse = false;
 			document.removeEventListener("mousemove",onMouseMove);
 			document.removeEventListener("mousedown",onMouseDown);
+			document.body.style.cursor = "default";
 			console.log("afterset",towerlist);
 		}
 	}
@@ -3684,7 +3760,6 @@
 		var formData = new FormData();
 		formData.append("pwf",pwfStr);
 		formData.append("ProjectName", prjName);
-		console.log(formData.get('pwf'));
 		$.ajax({
 			url: BASEURL+"/pwfsave", //提交的路径
 			type: "post",       //提交方式
@@ -4216,6 +4291,7 @@
 				scene.remove(scene.getObjectByName('tower'));
 				document.removeEventListener("mousemove",TowerInsertMove);
 				document.removeEventListener("mousedown",TowerInsertDown);
+				document.body.style.cursor = "default";
 				console.log("rightbuttondown",scene);
 			}
 		}
@@ -4223,7 +4299,6 @@
 	let	movingReady  = new Boolean(true);
 	function TowerMovingMove(event){
 			intersects = getIntersects(event);
-			console.log("movingInd",movingInd);
 			if(intersects!=undefined){
 				clearTempTow();
 				clearTempTow();
@@ -4321,7 +4396,6 @@
 					"ElecDist": 6.0	// 电力线安全距离
 				});
 				if(movingInd<ttowerlist.length-1){towerlist.push(ttowerlist[movingInd+1]);}
-				console.log("towerlist after insert", towerlist);
 
 				let disToPile = []
 				for (let i = 0; i < pile_tabledata.length; i++) {
@@ -4372,12 +4446,6 @@
 				}
 
 				towerlist = ttowerlist;
-				console.log("moveafterscene ",scene,towerlist);
-
-
-				console.log("Movingafter");
-				console.log(scene,towerlist);
-
 			}
 		}
 	function TowerMovingDown(event) {
@@ -4389,9 +4457,7 @@
 					layer.getChildFrame('body',tpIndex).find("#dis")[0].value=towerlist[movingInd].Distance.toFixed(2);
 					layer.getChildFrame('body',tpIndex).find("#hei")[0].value=towerlist[movingInd].High.toFixed(2);
 					layer.getChildFrame('body',tpIndex).find("#gap")[0].value=towerlist[movingInd].offset;
-					console.log(layer.getChildFrame('body',tpIndex).find('input[type=radio][name = towType]'));
 					let St=layer.getChildFrame('body',tpIndex).find('input[type=radio]');
-					console.log("ST");console.log(St);
 					if(towerlist[movingInd].Status==0){$(St[0]).prop('checked',true);}
 
 					else if(towerlist[movingInd].Status==3){$(St[2]).prop('checked',true);}
@@ -4789,7 +4855,7 @@
 	let selectedObj = null;
 	let selectedPoint = null;
 
-	function onDocumentSelected(event) {
+	window.onDocumentSelected= function(event) {
 		event.preventDefault();
 		if (selectedObj) {
 			console.log("selected");
@@ -4825,8 +4891,7 @@
 			const res = intersects.filter(function (res) {
 				return res && res.object;
 			})[0];
-			console.log("res,resobj");
-			console.log(res && res.object);
+
 			if (res && res.object) {
 				selectedObj = res.object;
 				selectedObj.material = new THREE.LineBasicMaterial({color: 0xFF0011});
@@ -5305,6 +5370,26 @@
 		return prk.TOWER;
 	}
 
+	function onKeyDown( event ) {
+
+		enableExpand = ( event.keyCode === 16 ) ? true : false;
+
+	}
+
+	function onKeyUp() {
+
+		enableExpand = false;
+
+	}
+
+	function ExpandMouseMove (event){
+
+	}
+
+	function ExpandMouseDown (event){
+
+	}
+
 	/* 初始化 */
 	function init() {
 		initScene();
@@ -5312,11 +5397,15 @@
 		initRender();
 		initLight();
 
+
+		window.addEventListener( 'keydown', onKeyDown );
+		window.addEventListener( 'keyup', onKeyUp );
+
 		/* 事件监听 */
 		document.addEventListener('mousewheel', onDocumentMouseWheel, false);//兼容ie chrome
 		document.addEventListener('DOMMouseScroll', onDocumentMouseWheel, false);//兼容火狐
 		document.addEventListener('mousedown', onDocumentMouseDown, false);
-		//document.addEventListener('mousedown', onDocumentSelected, false);
+		document.addEventListener('mousedown', onDocumentSelected, false);
 		document.addEventListener('mousemove', onDocumentMsg, false);
 
 		drawGeo(pile_tabledata);
@@ -5324,7 +5413,7 @@
 		/*鼠标放置杆塔*/
 		$("#putTower").click(function () {
 			bindTowerPlace('前进方向排杆');
-			document.body.style.cursor = "default";
+			document.body.style.cursor = "url(./css/add.ico) 9 9, default";
 			clearTempTow();
 			document.removeEventListener('mousedown', towerDelete);
 			document.removeEventListener('mousedown', riseTower);
@@ -5352,7 +5441,7 @@
 		/*鼠标插入杆塔*/
 		$("#insertTower").click(function () {
 			bindTowerPlace('插入杆塔');
-			document.body.style.cursor = "default";
+			document.body.style.cursor = "url(./css/insert.ico) 9 9, default";
 			clearTempTow();
 			document.removeEventListener('mousedown', onMouseDown);
 			document.removeEventListener('mousedown', riseTower);
@@ -5364,7 +5453,7 @@
 		})
 		/* 鼠标移动杆塔 */
 		$("#moveTower").click(function () {
-			document.body.style.cursor = "crosshair";
+			document.body.style.cursor = "url(./css/move.ico) 9 9, default";
 			bindTowerPlace('移动杆塔');
 			clearTempTow();
 			document.removeEventListener('mousedown', towerDelete);
@@ -5407,7 +5496,7 @@
 		})
 		/*修改杆塔*/
 		$("#editTower").click(function () {
-			document.body.style.cursor = "default";
+			document.body.style.cursor = "url(./css/modify.ico) 9 9, default";
 			bindTowerPlace('修改杆塔信息');
 			clearTempTow();
 			document.removeEventListener('mousedown', onMouseDown);
