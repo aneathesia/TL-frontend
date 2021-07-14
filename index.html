@@ -334,7 +334,7 @@
 	let movingInd;
 
 //expand parameter
-	let enableExpand = false;
+	let enableExpand = false;  	let expandvec; let expandmouse;
 
 
 	//pilelist table init
@@ -586,6 +586,12 @@
 
 	window.TowerDraw = function(towerlist_tabledata){
 		var conductset;
+
+		for(let i = 0;i<scene.children.length;i++){
+			if(scene.children[i].name == "fixTowerGroup"){scene.children[i].children.length=0;}
+			if(scene.children[i].name == "TowerScriptLabel"){scene.children[i].children.length=0;}
+			if(scene.children[i].name == "fixCurveGroup"){scene.children[i].children.length=0;}
+		}
 
 		console.log(m_start,m_end)
 		m_end = towerlist_tabledata.length - 1;
@@ -1920,26 +1926,6 @@
 	var designLine = 1;
 	var xmin = 0; var xmax = 0;
 
-		//清空当前画布
-	function reclear(){
-		for (let i = 0; i < allChildren.length; i++){
-			framegroup.remove(allChildren[i]);
-		}
-		for (let i = 0; i < scene.children.length; i++){
-			if (scene.children[i].name === "dem"||scene.children[i].name === "corner"){
-				dem.push(scene.children[i]);
-			}
-			if (scene.children[i].name === "fixTower"||scene.children[i].name === "fixwire1" || scene.children[i].name === "fixwire2" ||scene.children[i].name === "fixwire3"||scene.children[i].name === "fixwire4"){
-				towerList.push(scene.children[i]);
-			}
-		}
-		for (let i = 0; i < dem.length; i++) {
-			scene.remove(dem[i]);
-		}
-		for (let i = 0; i < towerList.length; i++) {
-			scene.remove(towerList[i]);
-		}
-	}
 	/* 将读取结果保存为坐标数组*/
 	var midCoordinate = new Array();
 	var leftCoordinate = new Array();
@@ -1989,6 +1975,7 @@
 		camera.position.set(cameraX, cameraY, cameraZ);
 		camera.up.set(0,1,0);
 		camera.lookAt(new THREE.Vector3(sceneX, sceneY, sceneZ));
+
 	}
 	/* 渲染器 */
 	function initRender() {
@@ -5382,12 +5369,53 @@
 
 	}
 
-	function ExpandMouseMove (event){
+	function ExpandMouseUp (event){
+		if(enableExpand){
+			//if mainCanvas not null
+			mouse.x = ((event.clientX - mainCanvas.getBoundingClientRect().left) / mainCanvas.offsetWidth) * 2 - 1;
+			mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top) / mainCanvas.offsetHeight) * 2 + 1;
+			//get position in present camera
+			var lefttop = expandvec;
+			var rightbot = getIntersects(event);
+			cameraX = (lefttop.x+rightbot.x)/2;
+			cameraY = (lefttop.y+rightbot.y)/2;
+			camera.position.x = cameraX;
+			camera.position.x = cameraY;
+			sceneX = cameraX; sceneY = cameraY; cameraZ = (mouse.x-expandmouse.x)/2*cameraZ;
+			camera.position.set(cameraX, cameraY, cameraZ);
+			camera.up.set(0,1,0);
+			camera.lookAt(new THREE.Vector3(sceneX, sceneY, sceneZ));
 
+			//camera.rotation._x = 0;camera.rotation._y = 0;camera.rotation._z = 0;
+
+			camera.updateProjectionMatrix();
+			renderer.render(scene,camera);
+			labelRenderer.render(scene,camera);
+
+			document.body.style.cursor = "default";
+			expandvec = {};
+			expandmouse = {};
+		}
+		else{
+			document.body.style.cursor = "default";
+		}
 	}
 
-	function ExpandMouseDown (event){
 
+	function ExpandMouseDown (event){
+		if(enableExpand){
+			document.body.style.cursor = "url(./css/window.ico) 9 9, default";
+			mouse.x = ((event.clientX - mainCanvas.getBoundingClientRect().left) / mainCanvas.offsetWidth) * 2 - 1;
+			mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top) / mainCanvas.offsetHeight) * 2 + 1;
+			expandvec = getIntersects(event);
+			expandmouse = new THREE.Vector3(mouse.x,mouse.y,0);
+
+		}
+		else{
+			expandvec = {};
+			expandmouse = {};
+			document.body.style.cursor = "default";
+		}
 	}
 
 	/* 初始化 */
@@ -5400,6 +5428,8 @@
 
 		window.addEventListener( 'keydown', onKeyDown );
 		window.addEventListener( 'keyup', onKeyUp );
+		window.addEventListener( 'mousedown', ExpandMouseDown);
+		window.addEventListener( 'mouseup', ExpandMouseUp);
 
 		/* 事件监听 */
 		document.addEventListener('mousewheel', onDocumentMouseWheel, false);//兼容ie chrome
