@@ -132,6 +132,14 @@
 				</ul>
 			</dd>
 		</dl>
+		<dl id="menu-editObject">
+			<dt><i class="Hui-iconfont">&#xe647;</i> 编辑<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+			<dd>
+				<ul>
+					<li><a href="#"><label id="editcross">修改节点</label></a></li>
+				</ul>
+			</dd>
+		</dl>
 		<dl id="menu-manualrank">
 			<dt><i class="Hui-iconfont">&#xe647; </i><label id="hand"> 手工排位</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
@@ -903,6 +911,7 @@
 		MapCrossDraw(cross,false);
 	}
 
+	//选择编码按钮点击事件
 	$("#select_code").click(function(){
 
 		layer.open({
@@ -933,6 +942,27 @@
 
 	})
 
+	//节点编辑按钮点击事件
+	$("#editcross").click(function(){
+		layer.open({
+			type:2,
+			title:'修改节点信息',
+			area:['250px','390px'],
+			maxmin:true,
+			content:'./html/EditCrossPoint.html',
+			shade:0,
+			success:function (layero,index) {
+				tpIndex = index;
+				console.log(layero,index);
+				var body = layer.getChildFrame('body',index);
+				console.log(body);
+			},
+			cancel: function(index, layero){
+				layer.close(index)
+			}
+		})
+	})
+
 	// DEM断面提取layer
 	var secDEM=[];
 	console.log(secDEM);
@@ -953,10 +983,6 @@
 					for (var j = 0; j < inputList.length; j++) {			//把父页面的数据放到子页面的input框中
 						body.find(inputList[j]).val(dataLists[j]);
 					}
-
-
-
-
 					var optionList = body.find('select');
 					console.log(optionList);
 					console.log(pile_tabledata);
@@ -4844,6 +4870,13 @@
 
 	window.onDocumentSelected= function(event) {
 		event.preventDefault();
+
+		for(let i=0;i<scene.children.length;i++){
+			if(scene.children[i].name =="crossObject"){
+				scene.children[i].children[1].visible = false;
+				scene.children[i].children[2].visible = false;
+			}
+		}
 		if (selectedObj) {
 			console.log("selected");
 			console.log(selectedObj);
@@ -4862,6 +4895,8 @@
 				scene.remove(scene.children[i]);
 			}
 		}
+
+
 		// console.log("clear redpoint");
 		// console.log(scene.children);
 		if(selectedPoint){
@@ -4869,6 +4904,13 @@
 			console.log(selectedPoint);
 			selectedPoint.visible = false;
 			selectedPoint = null;
+
+			// for(let i=0;i<scene.children.length;i++){
+			// 	if(scene.children[i].name =="crossObject"){
+			// 		scene.children[i].children[1].visible = false;
+			// 		scene.children[i].children[2].visible = false;
+			// 	}
+			// }
 		}
 		const intersects = getIntersectsMapObj(event);
 
@@ -4917,10 +4959,16 @@
 						redcross.children[2].geometry.attributes.position.array!= undefined){
 					var target1 =  redcross.children[1].geometry.attributes.position.array;
 					var target2 =  redcross.children[2].geometry.attributes.position.array;
+
 				}
+
+
 				for(let j = 0 ; j< target1.length/3;j=j+1){
 					if((Math.abs(target1[3*j]-coord_inter.x)<0.5&&Math.abs(target1[3*j+1]-coord_inter.y)<0.5)||
 							(Math.abs(target2[3*j]-coord_inter.x)<0.5&&Math.abs(target2[3*j+1]-coord_inter.y)<0.5)){
+						redcross.children[1].visible = true;
+						redcross.children[2].visible = true;
+
 						var red = new THREE.Geometry();
 						red.vertices.push(new THREE.Vector3(target2[3*j],target2[3*j+1],0));
 						red.vertices.push(new THREE.Vector3(target1[3*j],target1[3*j+1],0));
@@ -4928,6 +4976,8 @@
 						var redpoint =new THREE.Points(red,redmaterial);
 						redpoint.name="redpoint";
 						redpoint.userData={"dem":redcross.children[0].name,"j":j}; //output offset y
+
+						console.log("selected CrossObject and index",redcross.children[0],j,cross);
 						scene.add(redpoint);
 						break;
 					}
@@ -5078,6 +5128,8 @@
 		GroundGroup.add(Cross_line);
 		GroundGroup.add(Cross_Point)
 		GroundGroup.add(Section_Point);
+		GroundGroup.children[1].visible = false;
+		GroundGroup.children[2].visible = false;  //unvisible
 		scene.add(GroundGroup);
 	}
 
@@ -5130,11 +5182,22 @@
 				var cross_notehigh = createSprite(high.toFixed(2),"#000000",10,20,target[i].point.x+5,mp.m_Frame[13]-mp.m_Frame[14],Math.PI/2);
 				var cross_notesumD = createSprite(sumD.toFixed(0),"#000000",20,20,target[i].point.x+5,mp.m_Frame[11]-mp.m_Frame[14]+10,Math.PI/2);
 				var cross_note = createSprite(target[i].object.name,"#000000",10,20,target[i].point.x+5,mp.m_Frame[12]-mp.m_Frame[14],Math.PI/2);
+
+				//cross label style add circle
+				var	circlegeo = new THREE.Geometry();
+				circlegeo.vertices.push(new THREE.Vector3(m_linetarget[j].point.x,
+							m_linetarget[j].point.y+towerhigh/ydivision*Gridsize,
+							m_linetarget[j].point.z));
+				var tex = new THREE.TextureLoader().load('./css/circle.bmp');
+				var pMater = new THREE.PointsMaterial({size:5,map:tex});
+				var cross_cir = new THREE.Points(circlegeo,pMater);
+
 				scene.children[scene.children.length-1].add(cross_note);
 				scene.children[scene.children.length-1].add(cross_notehigh);
 				scene.children[scene.children.length-1].add(cross_notesumD);
 				scene.children[scene.children.length-1].add(line);
 				scene.children[scene.children.length-1].add(line2);
+				scene.children[scene.children.length-1].add(cross_cir);
 				}
 			}
 		}
@@ -5273,6 +5336,10 @@
 
 	}
 
+	window.MapCrossModify = function(crossIndex,pointIndex,leiju,gaocheng,dimiangao,ganxing){
+
+	}
+
 	window.bindTowerPlace = function(title,editInd){
 		console.log("title.",title);
 		if(title != $(".layui-layer-title").text()){
@@ -5396,9 +5463,9 @@
 			expandvec = {};
 			expandmouse = {};
 		}
-		else{
-			document.body.style.cursor = "default";
-		}
+		// else{
+		// 	document.body.style.cursor = "default";
+		// }
 	}
 
 
@@ -5411,11 +5478,11 @@
 			expandmouse = new THREE.Vector3(mouse.x,mouse.y,0);
 
 		}
-		else{
-			expandvec = {};
-			expandmouse = {};
-			document.body.style.cursor = "default";
-		}
+		// else{
+		// 	expandvec = {};
+		// 	expandmouse = {};
+		// 	document.body.style.cursor = "default";
+		// }
 	}
 
 	/* 初始化 */
@@ -5425,7 +5492,7 @@
 		initRender();
 		initLight();
 
-
+		/*window expand function*/
 		window.addEventListener( 'keydown', onKeyDown );
 		window.addEventListener( 'keyup', onKeyUp );
 		window.addEventListener( 'mousedown', ExpandMouseDown);
