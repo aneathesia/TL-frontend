@@ -23,13 +23,16 @@
 <p>偏距 <input type="text" id = "pianju" style="width: 60%;float:right;"></p>
 <p>高程 <input type="text" id = "gaocheng" style="width: 60%;float:right;"></p>
 <p>杆型 <input type="text" id = "ganxing" style="width: 60%;float:right;"></p>
-<p>dx <input type="text" id = "dx" style="width: 60%;float:right;"></p>
-<p>dy<input type="text" id = "dy" style="width: 60%;float:right;"></p>
+<p>dx <input type="text" id = "dx" style="width: 60%;float:right;" disabled></p>
+<p>dy<input type="text" id = "dy" style="width: 60%;float:right;" disabled></p>
 <p>地面高 <input type="text" id = "dimiangao" style="width: 60%;float:right;"></p>
-<p>X<input type="text" id = "X" style="width: 60%;float:right;"></p>
-<p>Y <input type="text" id = "Y" style="width: 60%;float:right;"></p>
-<p>Z <input type="text" id = "Z" style="width: 60%;float:right;"></p>
-<p>  </p>
+<p>X<input type="text" id = "X" style="width: 60%;float:right;" disabled placeholder="0"></p>
+<p>Y <input type="text" id = "Y" style="width: 60%;float:right;" disabled placeholder="0"></p>
+<p>Z <input type="text" id = "Z" style="width: 60%;float:right;" disabled placeholder="0"></p>
+
+<p style="display:none;">crossIndex <input type="text" id = "crossIndex" ></p>
+<p style="display:none;">pointIndex <input type="text" id = "pointIndex" ></p>
+
 <p style="display: flex;justify-content: space-around;">
     <button class="layui-layer-btn layui-layer-close"  style="width:20%" onclick="Editsave()">保存</button>
     <button class="layui-layer-btn layui-btn-primary" style="width: 20%;" onclick="Editclose()">取消</button>
@@ -40,7 +43,16 @@
 <script>
     let index = parent.layer.getFrameIndex(window.name);
     function Editsave(){
-        parent.MapCrossModify(crossIndex,pointIndex,leiju,gaocheng,dimiangao,ganxing);
+        var crossIndex = Number($("#crossIndex").val());
+        var pointIndex = Number($("#pointIndex").val());
+        var leiju = Number($("#leiju").val());
+        var pianju = Number($("#pianju").val());
+        var gaocheng = Number($("#gaocheng").val());
+        var dimiangao = Number($("#dimiangao").val());
+        var ganxing = Number($("#ganxing").val());
+        parent.MapCrossModify(crossIndex,pointIndex,leiju,pianju,gaocheng,dimiangao,ganxing);
+
+
     }
     function Editclose(){
         parent.layer.close(index);

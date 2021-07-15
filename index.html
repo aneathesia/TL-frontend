@@ -4964,8 +4964,8 @@
 
 
 				for(let j = 0 ; j< target1.length/3;j=j+1){
-					if((Math.abs(target1[3*j]-coord_inter.x)<0.5&&Math.abs(target1[3*j+1]-coord_inter.y)<0.5)||
-							(Math.abs(target2[3*j]-coord_inter.x)<0.5&&Math.abs(target2[3*j+1]-coord_inter.y)<0.5)){
+					if((Math.abs(target1[3*j]-coord_inter.x)<0.5&&Math.abs(target1[3*j+1]-coord_inter.y)<1)||
+							(Math.abs(target2[3*j]-coord_inter.x)<0.5&&Math.abs(target2[3*j+1]-coord_inter.y)<1)){
 						redcross.children[1].visible = true;
 						redcross.children[2].visible = true;
 
@@ -4978,7 +4978,35 @@
 						redpoint.userData={"dem":redcross.children[0].name,"j":j}; //output offset y
 
 						console.log("selected CrossObject and index",redcross.children[0],j,cross);
+						var crossIndex;
+						for(let ii = 0;ii<scene.children.length;ii++){
+							if(redcross.children[0].name == cross[ii].AttrName&&
+									redcross.children[1].geometry.attributes.position.array[0]/Gridsize*xdivision+xMin==
+									cross[ii].CrossPoint[0].x){
+								crossIndex = ii;
+								break;
+							}
+
+						}
+
 						scene.add(redpoint);
+					// CrossPoint info to layer page
+					if(layer.getChildFrame('body',tpIndex).find("#shuxing")[0]!=undefined) {
+						if (cross[crossIndex].CrossPoint[j].y == 0) {
+							layer.getChildFrame('body', tpIndex).find("#shuxing")[0].value = 3;
+						} else {
+							layer.getChildFrame('body', tpIndex).find("#shuxing")[0].value = 1;
+						}
+						layer.getChildFrame('body', tpIndex).find("#leiju")[0].value = cross[crossIndex].CrossPoint[j].x;
+						layer.getChildFrame('body', tpIndex).find("#pianju")[0].value = cross[crossIndex].CrossPoint[j].y;
+						layer.getChildFrame('body', tpIndex).find("#gaocheng")[0].value = cross[crossIndex].CrossPoint[j].z;
+						layer.getChildFrame('body', tpIndex).find("#dimiangao")[0].value = cross[crossIndex].CrossPoint[j].z - cross[crossIndex].CrossPoint[j].towerHigh;
+						layer.getChildFrame('body', tpIndex).find("#ganxing")[0].value = cross[crossIndex].CrossPoint[j].dc;
+						layer.getChildFrame('body', tpIndex).find("#crossIndex")[0].value =crossIndex;
+						layer.getChildFrame('body', tpIndex).find("#pointIndex")[0].value =j;
+					}
+
+
 						break;
 					}
 				}
@@ -5336,7 +5364,93 @@
 
 	}
 
-	window.MapCrossModify = function(crossIndex,pointIndex,leiju,gaocheng,dimiangao,ganxing){
+	window.MapCrossModify = function(crossIndex,pointIndex,leiju,pianju,gaocheng,dimiangao,ganxing){ //from 0
+		console.log(crossIndex,pointIndex);console.log("find crossobject");
+		var sceneIndex;
+		for(let i=0;i<scene.children.length;i++){
+			var  obj = scene.children[i];
+			if(obj.name == "crossObject"){
+				var coordx = (obj.children[1].geometry.attributes.position.array[3*pointIndex])/Gridsize*xdivision+xMin;
+				if(Math.abs(coordx-leiju)<1){
+					sceneIndex = i;
+					break;
+				}
+			}
+		}
+		console.log(sceneIndex);
+		// modify the scene cause the original DSA didn't support
+		scene.children[sceneIndex].children[2].geometry.attributes.position.needsUpdate = true;
+		if(pianju!=0){
+			scene.children[sceneIndex].children[2].geometry.attributes.position.array[3*pointIndex+1]= (Number(gaocheng)-yMin)/ydivision*Gridsize;
+		}
+		else{ //search index and change label
+			scene.children[sceneIndex].children[2].geometry.attributes.position.array[3*pointIndex+1]= (Number(gaocheng)-yMin)/ydivision*Gridsize;
+			var subIndex=0;  //crossTowerPlace index
+			for(let i = 0;i<pointIndex;i++){ if(cross[i].CrossPoint[i].y==0)subIndex++;}
+			scene.children[sceneIndex].children.splice(3+6*subIndex,6);
+			//insert new label
+
+			const material = new THREE.LineBasicMaterial( { color: 0x0000ff } );
+			const points = [];
+			//dimiandian point1中可取
+			var target = new THREE.Vector3(scene.children[sceneIndex].children[1].geometry.attributes.position.array[3*pointIndex],
+					scene.children[sceneIndex].children[1].geometry.attributes.position.array[3*pointIndex+1],0);
+			var m_linetarget = new THREE.Vector3((leiju-xMin)/xdivision*Gridsize,(dimiangao-yMin)/ydivision*Gridsize,0);
+			points.push( target );
+			points.push( m_linetarget);
+
+			console.log(target,m_linetarget);
+
+			const geometry = new THREE.BufferGeometry().setFromPoints( points );
+			const line = new THREE.Line( geometry, material );
+			const pline2 = []; pline2.push(m_linetarget);
+			pline2.push(new THREE.Vector3((leiju-xMin)/xdivision*Gridsize,
+					(gaocheng-yMin)/ydivision*Gridsize,
+					0));
+
+			const line2 = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pline2),
+					new THREE.LineDashedMaterial( {
+						color: 0x00ff00,
+						linewidth: 1,
+						scale: 1,
+						dashSize: 3,
+						gapSize: 1,
+					} ));     //跨越杆高 towerHigh 虚线
+			line2.computeLineDistances();  //for DashedMaterial
+			line2.name =  ganxing;
+			let high = gaocheng;
+			let sumD = leiju;
+			var cross_notehigh = createSprite(high.toFixed(2),"#000000",10,20,target.x+5,mp.m_Frame[13]-mp.m_Frame[14],Math.PI/2);
+			var cross_notesumD = createSprite(sumD.toFixed(0),"#000000",20,20,target.x+5,mp.m_Frame[11]-mp.m_Frame[14]+10,Math.PI/2);
+			var cross_note = createSprite(scene.children[sceneIndex].children[0].name,"#000000",10,20,target.x+5,mp.m_Frame[12]-mp.m_Frame[14],Math.PI/2);
+
+			//cross label style add circle
+			var	circlegeo = new THREE.Geometry();
+			circlegeo.vertices.push(new THREE.Vector3(m_linetarget.x,
+					(gaocheng-yMin)/ydivision*Gridsize,
+					m_linetarget.z));
+			var tex = new THREE.TextureLoader().load('./css/circle.bmp');
+			var pMater = new THREE.PointsMaterial({size:5,map:tex});
+			var cross_cir = new THREE.Points(circlegeo,pMater);
+
+			console.log(scene.children[sceneIndex],cross_cir);
+			scene.children[sceneIndex].children.splice(3+6*subIndex,0,cross_note);
+			scene.children[sceneIndex].children.splice(3+6*subIndex+1,0,cross_notehigh);
+			scene.children[sceneIndex].children.splice(3+6*subIndex+2,0,cross_notesumD);
+			scene.children[sceneIndex].children.splice(3+6*subIndex+3,0,line);
+			scene.children[sceneIndex].children.splice(3+6*subIndex+4,0,line2);
+			scene.children[sceneIndex].children.splice(3+6*subIndex+5,0,cross_cir);
+		}
+
+
+		/*cross data modify*/
+		// cross[crossIndex].CrossPoint[pointIndex].dc = ganxing;
+		cross[crossIndex].CrossPoint[pointIndex].towerHigh = gaocheng-dimiangao;
+		// cross[crossIndex].CrossPoint[pointIndex].x = leiju;
+		cross[crossIndex].CrossPoint[pointIndex].y = pianju;
+		cross[crossIndex].CrossPoint[pointIndex].z = gaocheng;
+
+
 
 	}
 
