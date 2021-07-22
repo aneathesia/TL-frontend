@@ -1332,7 +1332,7 @@
 						e.append(opt);
 					}
 					cell.appendChild(e);
-					console.log(cell);
+
 				}
 				else if (testx1 == "1" && testy1 == "2") {
 
@@ -1340,7 +1340,6 @@
 					var e = document.createElement('select'); //Define custom selection
 					e.style.visibility = 'visible'; //Show dropdown on select
 					e.id = "endJ";
-					console.log(e);
 
 					//Construct custom dropdown
 					for(let i=0;i<pile_tabledata.length;i++){
@@ -1350,7 +1349,6 @@
 						e.append(opt);
 					}
 					cell.appendChild(e);
-					console.log(cell);
 				}
 				else if (testx1 == "1" && testy1 == "4") {
 
@@ -1710,38 +1708,31 @@
 	}
 	//var customColumnCross = {}
 	function selectionActiveConductor (instance, x1, y1, x2, y2, origin) {
-		console.log(rdaodixian.getData());
-		console.log(rdaodixian.getJson());
-		for(let i= 0;i<conductorset.length;i++){
-			console.log("conductor i",conductorset[i]);
-			console.log("value",conductorset[i][1].value, rdaodixian.getJson()[1].value)
-			if(conductorset[i][1].value == rdaodixian.getJson()[1].value||
-					conductorset[i][2].value == rdaodixian.getJson()[2].value){ //保存更改的数据 判断方式通过面积或者直径一样达到协同
-				conductorset[i] = rdaodixian.getJson();
-			}
-		}
 		console.log("after",conductorset);
+		ridconductor = y1;
 		rdaodixian.setData(conductorset[y1]);
 	}
 	function selectionActiveQixiang (instance, x1, y1, x2, y2, origin) {
+		ridweather = y1;
 		rqixiang.setData(weatherset[y1]);
 	}
 	function selectionActiveTower(instance, x1, y1, x2, y2, origin) {
+		ridtower =y1;
 		rtower.setData(towerset[y1]);
 	}
 
 	function AfterchangeWeather(){
-		weatherset[0]= rqixiang.getJson();
+		weatherset[ridweather]= rqixiang.getJson();
 		console.log("after change weather",weatherset);
 	}
 	function AfterchangeConductor(){
-		conductorset[0]= rdaodixian.getJson();
+		conductorset[ridconductor]= rdaodixian.getJson();
 	}
 	function AfterchangeSection(){
-		Sectionset[0]= rfenduan.getJson();
+		Sectionset[ridsection]= rfenduan.getJson();
 	}
 	function AfterchangeTower(){
-		towerset[0]= rtower.getJson();
+		towerset[ridtower]= rtower.getJson();
 	}
 
 
@@ -1873,15 +1864,17 @@
 	$('#guicheng').click();
 	var conductorName=[];
 	var conductorset=[];
+	var ridconductor = 0;
 	$('#daodixian').click(function () {
+		ridconductor = 0;
 		if(conductorName.length ==0){
 			for(let i = 0; i<prk.CONDUCTOR.length;i++){
 				conductorName.push([prk.CONDUCTOR[i].name]);
 			}
 		}
-		else{
-			conductorName = ldaodixian.getJson();
-		}
+		// else{
+		// 	conductorName = ldaodixian.getJson();
+		// }
 
 		$(".jexcel_content").hide();
 		ldaodixian.setData(conductorName);
@@ -1910,9 +1903,6 @@
 				conductorset[i][7].value = prk.CONDUCTOR[i].num;
 			}
 		}
-		else{
-			conductorset[0] = rdaodixian.getJson();
-		}
 		console.log("conductorset",conductorset);
 		rdaodixian.setData(conductorset[0]);
 		console.log(conductorset[0]);
@@ -1922,7 +1912,9 @@
 	})
 	var weatherName=[];
 	var weatherset=[];
+	var ridweather = 0;
 	$('#qixiang').click(function(){
+		ridweather = 0;
 		if(weatherName.length == 0){
 			for(let i = 0; i<prk.WEATHER.length;i++){
 				console.log(prk.WEATHER[0]);
@@ -1956,7 +1948,9 @@
 	})
 	var	SectionName = [];
 	var Sectionset = [];
+	var ridsection = 0;
 	$('#fenduan').click(function(){
+		ridsection = 0;
 		if(SectionName.length==0){
 			for(let i = 0; i<prk.SECTION.length;i++){
 				SectionName.push([prk.SECTION[i].name]);
@@ -2000,16 +1994,16 @@
 
 			}
 		}
-		else{
-			Sectionset[0] = rfenduan.getJson();
-		}
+
 
 		rfenduan.setData(Sectionset[0]);rfenduan.hideIndex();
 		$('#rfenduan,.jexcel_container .jexcel_content').show();
 	})
 	var towerName=[];
 	var towerset=[];
+	var ridtower = 0;
 	$('#gantashiyong').click(function(){
+		ridtower = 0;
 		if(towerName.length==0){
 			for(let i = 0; i<prk.TOWER.length;i++){
 				towerName.push([prk.TOWER[i].Name]);
@@ -2073,9 +2067,7 @@
 
 			}
 		}
-		else{
-			towerset[0] = rtower.getJson();
-		}
+
 		rtower.setData(towerset[0]);rtower.hideIndex();
 		$('#rtower,.jexcel_container .jexcel_content').show();
 	})
@@ -2105,7 +2097,7 @@
 			if(voltageArr[i] == guicheng[0].value){prk.PRIMARY.voltage = i; break;}
 		}
 		for(let i=0;i<circuitArr.length;i++){
-			if(circuitArr[i] == guicheng[1].value){prk.PRIMARY.circuit = i; break;}
+			if(circuitArr[i] == guicheng[1].value){prk.PRIMARY.circuit = i+1; break;} //12 01
 		}
 		prk.PRIMARY.windH =guicheng[2].value;
 		prk.PRIMARY.alfa =guicheng[3].value;
@@ -2128,15 +2120,20 @@
 			prk.CONDUCTOR.splice(i,1,temp);
 		}
 		for (let i = 0; i < conductorName.length; i++) {
+			console.log(conductorName[i]);
 			prk.CONDUCTOR[i].name = conductorName[i][0];
 		}
 		//weather
 		for(let i=0;i<weatherset.length;i++){
 			for (let j = 0; j < weatherset[i].length; j++) {
 				prk.WEATHER[i].TWI[j].name = weatherset[i][j].name;
+				prk.WEATHER[i].TWI[j].t = weatherset[i][j].wd;
 				prk.WEATHER[i].TWI[j].v = weatherset[i][j].fs;
 				prk.WEATHER[i].TWI[j].b = weatherset[i][j].fb;
 			}
+		}
+		for(let i=0;i<weatherName.length;i++){
+			prk.WEATHER[i].name = weatherName[i][0];
 		}
 
 		//Section
@@ -2172,7 +2169,7 @@
 			prk.TOWER.splice(i,1,temp);
 		}
 		for (let i = 0; i < towerName.length; i++) {
-			prk.TOWER[i].name = towerName[i][0];
+			prk.TOWER[i].Name = towerName[i][0];
 		}
 
 
@@ -2183,23 +2180,22 @@
 			prkinfo.append("prk",JSON.stringify(prk));
 			prkinfo.append("ProjectName",prjName);
 			console.log("prkInfo",prkinfo);
-			// $.ajax({
-			// 	url: BASEURL+"/prksave", //提交的路径
-			// 	type: "post",       //提交方式
-			// 	data: prkinfo,    //提交的数据
-			// 	// dataType:"json",
-			// 	// async: false,
-			// 	// cache: false,
-			// 	contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-			// 	processData: false,
-			// 	success: function (data) {
-			// 		alert("保存成功！");
-			// 		console.log(data);
-			// 	},
-			// 	error: function (errorMsg) {
-			// 		alert(errorMsg);
-			// 	}
-			// });
+			$.ajax({
+				url: BASEURL+"/prksave", //提交的路径
+				type: "post",       //提交方式
+				data: prkinfo,    //提交的数据
+				// dataType:"json",
+				// async: false,
+				// cache: false,
+				contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+				processData: false,
+				success: function (data) {
+					console.log(data);
+				},
+				error: function (errorMsg) {
+					alert(errorMsg);
+				}
+			});
 		})
 
 	$('#savePrj').click(function () {
