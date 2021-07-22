@@ -3,16 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <link rel="stylesheet" type="text/css" href="Login.css"/>
 </head>
 <body>
 <div id="login">
-    <h1>Login</h1>
+    <h2>Login</h2>
     <form method="post">
-        <input type="text" required="required" placeholder="用户名" name="username"></input>
-        <input type="password" required="required" placeholder="密码" name="password"></input>
-        <button class="but" type="submit">登录</button>
+        <input type="text" required="required" placeholder="用户名" id="username"></input>
+        <input type="password" required="required" placeholder="密码" id="password"></input>
+        <button type="button" id = "loginsub">登录</button>
     </form>
 </div>
+<a href="#"><label id="reg" style="color: grey;font-size: xx-small">注册</label></a>
+<a href="#"><label id="getpass" style="color: grey;font-size: xx-small;float: right">忘记密码？</label></a>
+<!--<div>-->
+<!--    <a href="#"><label id="register">注册</label></a>-->
+<!--</div>-->
 </body>
+<script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../config.js"></script>
+<script>
+
+    $("#loginsub").click(function () {
+        console.log($("#username").val());
+        console.log($("#password").val());
+        parent.login($("#username").val(),$("#password").val());
+    })
+
+</script>
 </html>

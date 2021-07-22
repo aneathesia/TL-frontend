@@ -332,6 +332,38 @@
 //expand parameter
 	let enableExpand = false;  	let expandvec; let expandmouse;
 
+	//ajax login token
+	let token;
+
+
+	//login register
+	$("#login").click(function(){
+		layer.open({
+			type:2,
+			title:'登录',
+			resize: true,
+			content:'./html/login.html'
+		})
+	})
+
+	window.login = function(name,password) {
+		var user = {"name":name,"password":password}
+		$.ajax({
+			url: BASEURL+"/tl/user/login", //提交的路径
+			type: "post",       //提交方式
+			data: JSON.stringify(user) ,    //提交的数据
+			async: false,
+			cache: false,
+			contentType:'application/json',
+			success: function (res) {
+				console.log(res);
+				token = res;
+			},
+			error: function (errorMsg) {
+				alert(errorMsg);
+			}
+		});
+	}
 
 	//pilelist table init
 	{
@@ -733,7 +765,7 @@
 		console.log("begindata");
 		console.log("towerlistTabledata",towerlist_tabledata);
 		console.log("towerlist",towerlist);
-
+		towerlist_tabledata = towerlist;
 		//position and offset setting "J0"+"±123"
 		for(let j=0;j<towerlist_tabledata.length;j++){
 			let disToPile = []
@@ -1087,7 +1119,6 @@
 		if(prjName){
 			document.getElementById('span_id').innerHTML = prjName;
 			prjNameJSON = {"ProjectName":prjName};
-
 			$.ajax({
 				url: BASEURL+"/CreateProject", //提交的路径
 				type: "post",       //提交方式
@@ -1644,21 +1675,37 @@
 	function selectionActive (instance, x1, y1, x2, y2, origin) {
 		if(y1==0){
 			$('#rguicheng2,.jexcel_container .jexcel_content').hide();
+			if(guicheng.length==0){
+				guicheng =[{'name':'电压等级','value':voltageArr[prk.PRIMARY.voltage]},
+					{'name':'设计回路','value':circuitArr[prk.PRIMARY.circuit-1]},
+					{'name':'导线平均高度 m','value':prk.PRIMARY.windH},
+					{'name':'地面粗糙系数 a','value':prk.PRIMARY.alfa},
+					{'name':'地线覆冰较导线增加mm','value':prk.PRIMARY.dIce},
+					{'name':'导线过牵引长度 m','value':prk.PRIMARY.pLTract},
+					{'name':'孤立档最大档距 m','value':180},
+				]
+			}
+
+			tcross = rguicheng2.getJson();
+			rguicheng1.setData(guicheng);
 			$('#rguicheng1,.jexcel_container .jexcel_content').show();
 		}
 		if(y1==1){
 			$('#rguicheng1,.jexcel_container .jexcel_content').hide();
-			tcross=[];
-			for(let i =0;i<25;i++){
-				if(prk.PRIMARY.m_standard[i].info!=""){
-					tcross.push({'contabbr':prk.PRIMARY.m_standard[i].info,'voltage':prk.PRIMARY.m_standard[i].dist});
+			if(tcross.length==0){
+				for(let i =0;i<25;i++){
+					if(prk.PRIMARY.m_standard[i].info!=""){
+						tcross.push({'contabbr':prk.PRIMARY.m_standard[i].info,'voltage':prk.PRIMARY.m_standard[i].dist});
+					}
 				}
 			}
+			guicheng = rguicheng1.getJson();
 			rguicheng2.setData(tcross);
 			$('#rguicheng2,.jexcel_container .jexcel_content').show();
 
 		}
 		//console.log(origin);
+
 
 	}
 	//var customColumnCross = {}
@@ -1682,6 +1729,23 @@
 	function selectionActiveTower(instance, x1, y1, x2, y2, origin) {
 		rtower.setData(towerset[y1]);
 	}
+
+	function AfterchangeWeather(){
+		weatherset[0]= rqixiang.getJson();
+		console.log("after change weather",weatherset);
+	}
+	function AfterchangeConductor(){
+		conductorset[0]= rdaodixian.getJson();
+	}
+	function AfterchangeSection(){
+		Sectionset[0]= rfenduan.getJson();
+	}
+	function AfterchangeTower(){
+		towerset[0]= rtower.getJson();
+	}
+
+
+
 
 	var lguicheng = jspreadsheet(document.getElementById('lguicheng'),{
 		contextMenu: menu,
@@ -1724,6 +1788,8 @@
 				{type:"text",title:"参数数值",width: 100, name: "value"}],
 			// editable: false,
 			onbeforechange: beforeChangeEventConductor,
+			onafterchanges: AfterchangeConductor
+
 			// editable: false
 		})
 	var lqixiang = jspreadsheet(document.getElementById('lqixiang'),{
@@ -1743,6 +1809,7 @@
 		],
 		// editable: false,
 		onbeforechange: beforeChangeEvent,
+		onafterchanges: AfterchangeWeather
 		// editable: false
 })
 	var lfenduan = jspreadsheet(document.getElementById('lfenduan'),{
@@ -1758,7 +1825,8 @@
 				{type:"text",title:"参数名称",width: 150, name: "name",readOnly:true},
 				{type:"text",title:"参数数值",width: 150, name: "value",editor:customColumnSection}],
 			// editable: false
-			onbeforechange: beforeChangeEventSection
+			onbeforechange: beforeChangeEventSection,
+			onafterchanges: AfterchangeSection
 		})
 	var ltower = jspreadsheet(document.getElementById('ltower'),{
 			contextMenu: menu,
@@ -1773,7 +1841,8 @@
 				{type:"text",title:"参数名称",width: 150, name: "name",readOnly:true},
 				{type:"text",title:"参数数值",width: 150, name: "value",editor:customColumnTower}],
 			// editable: false
-			onbeforechange: beforeChangeEventTower
+			onbeforechange: beforeChangeEventTower,
+			onafterchanges: AfterchangeTower
 		})
 
 	var guicheng=[]
@@ -1783,13 +1852,16 @@
 		rguicheng1.hideIndex();rguicheng2.hideIndex();
 		$(".jexcel_content").hide();
 
-
 		if(lguicheng.getJson().length==0){lguicheng.setData([['系统设置'],['交叉跨越']]);}
 		else lguicheng.setData(lguicheng.getJson());
 		$('#lguicheng,.jexcel_container .jexcel_content').show();
-
+		if(guicheng.length==0){}
+		else guicheng = rguicheng1.getJson();
 		rguicheng1.setData(guicheng);
 		$('#rguicheng1,.jexcel_container .jexcel_content').show();
+
+		if(tcross.length==0){}
+		else tcross = rguicheng2.getJson();
 
 		// for(let i =0;i<25;i++){
 		// 	if(prk.PRIMARY.m_standard[i]!=""){
@@ -1802,35 +1874,44 @@
 	var conductorName=[];
 	var conductorset=[];
 	$('#daodixian').click(function () {
-		conductorName = [];
-		for(let i = 0; i<prk.CONDUCTOR.length;i++){
-			conductorName.push([prk.CONDUCTOR[i].name]);
+		if(conductorName.length ==0){
+			for(let i = 0; i<prk.CONDUCTOR.length;i++){
+				conductorName.push([prk.CONDUCTOR[i].name]);
+			}
 		}
+		else{
+			conductorName = ldaodixian.getJson();
+		}
+
 		$(".jexcel_content").hide();
 		ldaodixian.setData(conductorName);
 		$('#ldaodixian,.jexcel_container .jexcel_content').show();
-		conductorset=[];
-		for(let i = 0;i<prk.CONDUCTOR.length;i++){
-			var conductor = [{'name':'导地线类型','value':'导线'},
-				{'name':'导地线截面积(mm²)','value':0},
-				{'name':'导地线直径','value':0},
-				{'name':'计算拉断力','value':0},
-				{'name':'单位长度质量(kg/m)','value':0},
-				{'name':'弹性系数(N/mm²)','value':0},
-				{'name':'膨胀系数/℃','value':0},
-				{'name':'导线分裂数','value':0}];
-			conductorset.push(conductor);
-			console.log(prk.CONDUCTOR[i].type);
-			console.log(prk.CONDUCTOR[i]);
-			if(prk.CONDUCTOR[i].type === 0 )conductorset[i][0].value = "导线";
-			else conductorset[i][0].value = "地线";
-			conductorset[i][1].value = prk.CONDUCTOR[i].A;
-			conductorset[i][2].value = prk.CONDUCTOR[i].d;
-			conductorset[i][3].value = prk.CONDUCTOR[i].Tp;
-			conductorset[i][4].value = prk.CONDUCTOR[i].p1;
-			conductorset[i][5].value = prk.CONDUCTOR[i].E;
-			conductorset[i][6].value = prk.CONDUCTOR[i].a;
-			conductorset[i][7].value = prk.CONDUCTOR[i].num;
+		if(conductorset.length == 0){
+			for(let i = 0;i<prk.CONDUCTOR.length;i++){
+				var conductor = [{'name':'导地线类型','value':'导线'},
+					{'name':'导地线截面积(mm²)','value':0},
+					{'name':'导地线直径','value':0},
+					{'name':'计算拉断力','value':0},
+					{'name':'单位长度质量(kg/m)','value':0},
+					{'name':'弹性系数(N/mm²)','value':0},
+					{'name':'膨胀系数/℃','value':0},
+					{'name':'导线分裂数','value':0}];
+				conductorset.push(conductor);
+				console.log(prk.CONDUCTOR[i].type);
+				console.log(prk.CONDUCTOR[i]);
+				if(prk.CONDUCTOR[i].type === 0 )conductorset[i][0].value = "导线";
+				else conductorset[i][0].value = "地线";
+				conductorset[i][1].value = prk.CONDUCTOR[i].A;
+				conductorset[i][2].value = prk.CONDUCTOR[i].d;
+				conductorset[i][3].value = prk.CONDUCTOR[i].Tp;
+				conductorset[i][4].value = prk.CONDUCTOR[i].p1;
+				conductorset[i][5].value = prk.CONDUCTOR[i].E;
+				conductorset[i][6].value = prk.CONDUCTOR[i].a;
+				conductorset[i][7].value = prk.CONDUCTOR[i].num;
+			}
+		}
+		else{
+			conductorset[0] = rdaodixian.getJson();
 		}
 		console.log("conductorset",conductorset);
 		rdaodixian.setData(conductorset[0]);
@@ -1842,28 +1923,31 @@
 	var weatherName=[];
 	var weatherset=[];
 	$('#qixiang').click(function(){
-		weatherName = [];
-		for(let i = 0; i<prk.WEATHER.length;i++){
-			console.log(prk.WEATHER[0]);
-			weatherName.push([prk.WEATHER[i].name]);
+		if(weatherName.length == 0){
+			for(let i = 0; i<prk.WEATHER.length;i++){
+				console.log(prk.WEATHER[0]);
+				weatherName.push([prk.WEATHER[i].name]);
+			}
 		}
 		$(".jexcel_content").hide();
 		lqixiang.setData(weatherName);
 		$('#lqixiang,.jexcel_container .jexcel_content').show();
 
-		weatherset=[];
-		for(let i = 0;i<prk.WEATHER.length;i++){
-			var weatemp  =  [];
-			for(let j = 0 ; j<prk.WEATHER[i].num;j++){
-				var row = {};
-				row.name = prk.WEATHER[i].TWI[j].name;
-				row.wd= prk.WEATHER[i].TWI[j].t;
-				row.fs= prk.WEATHER[i].TWI[j].v;
-				row.fb= prk.WEATHER[i].TWI[j].b;
-				weatemp.push(row);
+		if(weatherset.length==0){
+			for(let i = 0;i<prk.WEATHER.length;i++){
+				var weatemp  =  [];
+				for(let j = 0 ; j<prk.WEATHER[i].num;j++){
+					var row = {};
+					row.name = prk.WEATHER[i].TWI[j].name;
+					row.wd= prk.WEATHER[i].TWI[j].t;
+					row.fs= prk.WEATHER[i].TWI[j].v;
+					row.fb= prk.WEATHER[i].TWI[j].b;
+					weatemp.push(row);
+				}
+				weatherset.push(weatemp);
 			}
-			weatherset.push(weatemp);
 		}
+
 		console.log("weatherset",weatherset);
 		rqixiang.setData(weatherset[0]);
 		console.log(weatherset[0]);
@@ -1873,112 +1957,124 @@
 	var	SectionName = [];
 	var Sectionset = [];
 	$('#fenduan').click(function(){
-		SectionName = [];
-		for(let i = 0; i<prk.SECTION.length;i++){
-			SectionName.push([prk.SECTION[i].name]);
+		if(SectionName.length==0){
+			for(let i = 0; i<prk.SECTION.length;i++){
+				SectionName.push([prk.SECTION[i].name]);
+			}
 		}
+
 		$(".jexcel_content").hide();
 		lfenduan.setData(SectionName);
 		$('#lfenduan,.jexcel_container .jexcel_content').show();
-		Sectionset=[];
-		for(let i = 0; i<prk.SECTION.length;i++){
-			var sec = [{'name':'起始桩号','value':''},
-				{'name':'起始累距','value':0},
-				{'name':'终点桩号','value':''},
-				{'name':'终点累距','value':0},
-				{'name':'气象区名称','value':''},
-				{'name':'导线型号','value':''},
-				{'name':'导线新线系数','value':0},
-				{'name':'导线安全系数','value':0},
-				{'name':'导线年平运行张力上限','value':0},
-				{'name':'地线型号','value':''},
-				{'name':'地线新线系数','value':0},
-				{'name':'地线安全系数','value':0},
-				{'name':'地线年平运行张力上限','value':0},
-				{'name':'设计回路','value':'单回路'}];
-			Sectionset.push(sec);
-			Sectionset[i][0].value = prk.SECTION[i].starJ;
-			Sectionset[i][1].value = prk.SECTION[i].from;
-			Sectionset[i][2].value = prk.SECTION[i].endJ;
-			Sectionset[i][3].value = prk.SECTION[i].to;
-			Sectionset[i][4].value = prk.SECTION[i].wertherName;
-			Sectionset[i][5].value = prk.SECTION[i].powerLine;
-			Sectionset[i][6].value = prk.SECTION[i].pLineK;
-			Sectionset[i][7].value = prk.SECTION[i].pLineF;
-			Sectionset[i][8].value = prk.SECTION[i].pLineC;
-			Sectionset[i][9].value = prk.SECTION[i].groundLine;
-			Sectionset[i][10].value = prk.SECTION[i].gLineK;
-			Sectionset[i][11].value = prk.SECTION[i].gLineF;
-			Sectionset[i][12].value = prk.SECTION[i].gLineC;
-			Sectionset[i][13].value = prk.SECTION[i].circuit;
+		if(Sectionset.length==0){
+			for(let i = 0; i<prk.SECTION.length;i++){
+				var sec = [{'name':'起始桩号','value':''},
+					{'name':'起始累距','value':0},
+					{'name':'终点桩号','value':''},
+					{'name':'终点累距','value':0},
+					{'name':'气象区名称','value':''},
+					{'name':'导线型号','value':''},
+					{'name':'导线新线系数','value':0},
+					{'name':'导线安全系数','value':0},
+					{'name':'导线年平运行张力上限','value':0},
+					{'name':'地线型号','value':''},
+					{'name':'地线新线系数','value':0},
+					{'name':'地线安全系数','value':0},
+					{'name':'地线年平运行张力上限','value':0},
+					{'name':'设计回路','value':'单回路'}];
+				Sectionset.push(sec);
+				Sectionset[i][0].value = prk.SECTION[i].starJ;
+				Sectionset[i][1].value = prk.SECTION[i].from;
+				Sectionset[i][2].value = prk.SECTION[i].endJ;
+				Sectionset[i][3].value = prk.SECTION[i].to;
+				Sectionset[i][4].value = prk.SECTION[i].wertherName;
+				Sectionset[i][5].value = prk.SECTION[i].powerLine;
+				Sectionset[i][6].value = prk.SECTION[i].pLineK;
+				Sectionset[i][7].value = prk.SECTION[i].pLineF;
+				Sectionset[i][8].value = prk.SECTION[i].pLineC;
+				Sectionset[i][9].value = prk.SECTION[i].groundLine;
+				Sectionset[i][10].value = prk.SECTION[i].gLineK;
+				Sectionset[i][11].value = prk.SECTION[i].gLineF;
+				Sectionset[i][12].value = prk.SECTION[i].gLineC;
+				Sectionset[i][13].value = prk.SECTION[i].circuit;
 
+			}
 		}
+		else{
+			Sectionset[0] = rfenduan.getJson();
+		}
+
 		rfenduan.setData(Sectionset[0]);rfenduan.hideIndex();
 		$('#rfenduan,.jexcel_container .jexcel_content').show();
 	})
 	var towerName=[];
 	var towerset=[];
 	$('#gantashiyong').click(function(){
-		towerName = [];
-		for(let i = 0; i<prk.TOWER.length;i++){
-			towerName.push([prk.TOWER[i].Name]);
+		if(towerName.length==0){
+			for(let i = 0; i<prk.TOWER.length;i++){
+				towerName.push([prk.TOWER[i].Name]);
+			}
 		}
 		$(".jexcel_content").hide();
 		ltower.setData(towerName);
 		$('#ltower,.jexcel_container .jexcel_content').show();
-		towerset=[];
-		for(let i = 0; i<prk.TOWER.length;i++){
-			var tow = [{'name':'杆塔类型','value':''},
-				{'name':'最大档距','value':0},
-				{'name':'水平档距','value':0},
-				{'name':'垂直档距','value':0},
-				{'name':'起始呼高','value':0},
-				{'name':'级差增量','value':0},
-				{'name':'终止呼高','value':0},
-				{'name':'最小转角度数(°)','value':0},
-				{'name':'最大转角度数(°)','value':0},
-				{'name':'角度折算水平档距(m/°)','value':0},
-				{'name':'摇摆角kv值','value':0},
-				{'name':'大风工况摇摆角(°)','value':0},
-				{'name':'内过电压摇摆角','value':0},
-				{'name':'外过电压摇摆角','value':0},
-				{'name':'最大横担长度(m)','value':0},
-				{'name':'地面支架高度(m)','value':0},
-				{'name':'中上导线高差(m)','value':0},
-				{'name':'中下导线高差(m)','value':0},
-				{'name':'附加属性','value':0},
-				{'name':'最低塔正面根开','value':0},
-				{'name':'最低塔侧面根开','value':0},
-				{'name':'最高塔正面根开','value':0},
-				{'name':'最高塔侧面根开','value':0},
-				{'name':'杆塔分组号(1,2)','value':1},];
-			towerset.push(tow);
-			towerset[i][0].value = towerArr[prk.TOWER[i].type];
-			towerset[i][1].value = prk.TOWER[i].MaxL;
-			towerset[i][2].value = prk.TOWER[i].LH;
-			towerset[i][3].value = prk.TOWER[i].LV;
-			towerset[i][4].value = prk.TOWER[i].StartHigh;
-			towerset[i][5].value = prk.TOWER[i].Dhigh;
-			towerset[i][6].value = prk.TOWER[i].EndHigh;
-			towerset[i][7].value = prk.TOWER[i].MinAngle;
-			towerset[i][8].value = prk.TOWER[i].MaxAngle;
-			towerset[i][9].value = prk.TOWER[i].Angle2LH;
-			towerset[i][10].value = prk.TOWER[i].KV;
-			towerset[i][11].value = prk.TOWER[i].sway.WindA;
-			towerset[i][12].value = prk.TOWER[i].sway.OperationA;
-			towerset[i][13].value = prk.TOWER[i].sway.AtomosphereA;
-			towerset[i][14].value = prk.TOWER[i].sway.ElecA;
-			towerset[i][15].value = prk.TOWER[i].Dist;
-			towerset[i][16].value = prk.TOWER[i].upToTop;
-			towerset[i][17].value = prk.TOWER[i].upToMid;
-			towerset[i][18].value = prk.TOWER[i].midToDown;
-			towerset[i][19].value = prk.TOWER[i].typeEx;
-			towerset[i][20].value = prk.TOWER[i].baseLw;
-			towerset[i][21].value = prk.TOWER[i].baseLl;
-			towerset[i][22].value = prk.TOWER[i].baseHw;
-			towerset[i][23].value = prk.TOWER[i].baseHl;
-			//towerset[i][24].value = prk.TOWER[i].Group;
+		if(towerset.length==0){
+			for(let i = 0; i<prk.TOWER.length;i++){
+				var tow = [{'name':'杆塔类型','value':''},
+					{'name':'最大档距','value':0},
+					{'name':'水平档距','value':0},
+					{'name':'垂直档距','value':0},
+					{'name':'起始呼高','value':0},
+					{'name':'级差增量','value':0},
+					{'name':'终止呼高','value':0},
+					{'name':'最小转角度数(°)','value':0},
+					{'name':'最大转角度数(°)','value':0},
+					{'name':'角度折算水平档距(m/°)','value':0},
+					{'name':'摇摆角kv值','value':0},
+					{'name':'大风工况摇摆角(°)','value':0},
+					{'name':'内过电压摇摆角','value':0},
+					{'name':'外过电压摇摆角','value':0},
+					{'name':'最大横担长度(m)','value':0},
+					{'name':'地面支架高度(m)','value':0},
+					{'name':'中上导线高差(m)','value':0},
+					{'name':'中下导线高差(m)','value':0},
+					{'name':'附加属性','value':0},
+					{'name':'最低塔正面根开','value':0},
+					{'name':'最低塔侧面根开','value':0},
+					{'name':'最高塔正面根开','value':0},
+					{'name':'最高塔侧面根开','value':0},
+					{'name':'杆塔分组号(1,2)','value':1},];
+				towerset.push(tow);
+				towerset[i][0].value = towerArr[prk.TOWER[i].type];
+				towerset[i][1].value = prk.TOWER[i].MaxL;
+				towerset[i][2].value = prk.TOWER[i].LH;
+				towerset[i][3].value = prk.TOWER[i].LV;
+				towerset[i][4].value = prk.TOWER[i].StartHigh;
+				towerset[i][5].value = prk.TOWER[i].Dhigh;
+				towerset[i][6].value = prk.TOWER[i].EndHigh;
+				towerset[i][7].value = prk.TOWER[i].MinAngle;
+				towerset[i][8].value = prk.TOWER[i].MaxAngle;
+				towerset[i][9].value = prk.TOWER[i].Angle2LH;
+				towerset[i][10].value = prk.TOWER[i].KV;
+				towerset[i][11].value = prk.TOWER[i].sway.WindA;
+				towerset[i][12].value = prk.TOWER[i].sway.OperationA;
+				towerset[i][13].value = prk.TOWER[i].sway.AtomosphereA;
+				towerset[i][14].value = prk.TOWER[i].sway.ElecA;
+				towerset[i][15].value = prk.TOWER[i].Dist;
+				towerset[i][16].value = prk.TOWER[i].upToTop;
+				towerset[i][17].value = prk.TOWER[i].upToMid;
+				towerset[i][18].value = prk.TOWER[i].midToDown;
+				towerset[i][19].value = prk.TOWER[i].typeEx;
+				towerset[i][20].value = prk.TOWER[i].baseLw;
+				towerset[i][21].value = prk.TOWER[i].baseLl;
+				towerset[i][22].value = prk.TOWER[i].baseHw;
+				towerset[i][23].value = prk.TOWER[i].baseHl;
+				//towerset[i][24].value = prk.TOWER[i].Group;
 
+			}
+		}
+		else{
+			towerset[0] = rtower.getJson();
 		}
 		rtower.setData(towerset[0]);rtower.hideIndex();
 		$('#rtower,.jexcel_container .jexcel_content').show();
@@ -1993,37 +2089,117 @@
 
 	$('#save').click(function () {
 
-		console.log("系统设置",rguicheng1.getJson());
-		console.log("交叉跨越",rguicheng2.getJson());
-		console.log("导地线参数",rdaodixian.getJson());
-		console.log("气象条件",rqixiang.getJson());
-		console.log("分段设置",rfenduan.getJson());
-		console.log("杆塔使用参数",rtower.getJson());
+		console.log("系统设置",guicheng);
+		console.log("交叉跨越",tcross);
+		console.log("导地线参数",conductorset);
+		console.log("导地线参数name",conductorName);
+		console.log("气象条件",weatherset);
+		console.log("气象条件name",weatherName);
+		console.log("分段设置",Sectionset);
+		console.log("分段设置name",SectionName);
+		console.log("杆塔使用参数",towerset);
+		console.log("杆塔使用参数name",towerName);
+
+		//modify PRK content  not empty splice
+		for(let i=0;i<voltageArr.length;i++){
+			if(voltageArr[i] == guicheng[0].value){prk.PRIMARY.voltage = i; break;}
+		}
+		for(let i=0;i<circuitArr.length;i++){
+			if(circuitArr[i] == guicheng[1].value){prk.PRIMARY.circuit = i; break;}
+		}
+		prk.PRIMARY.windH =guicheng[2].value;
+		prk.PRIMARY.alfa =guicheng[3].value;
+		prk.PRIMARY.dIce= guicheng[4].value;
+		prk.PRIMARY.pLTract= guicheng[5].value;
+		prk.PRIMARY.InsularMaxL= guicheng[6].value;
+		//tcross
+		for(let i = 1;i < 21;i++){
+			prk.PRIMARY.m_standard[i].info = tcross[i-1].contabbr;
+			prk.PRIMARY.m_standard[i].dist = tcross[i-1].voltage;
+		}
+		//conductorset
+		for(let i=0;i<conductorset.length;i++){
+			var ctype=0;
+			if(conductorset[i][0].value=="地线"){ctype =1 ;}
+			var temp = {"type":ctype,"A":conductorset[i][1].value,
+						"d":conductorset[i][2].value,"Tp":conductorset[i][3].value,
+				"p1":conductorset[i][4].value,"E":conductorset[i][5].value,
+			"a":conductorset[i][6].value,"num":conductorset[i][7].value,"name":""};
+			prk.CONDUCTOR.splice(i,1,temp);
+		}
+		for (let i = 0; i < conductorName.length; i++) {
+			prk.CONDUCTOR[i].name = conductorName[i][0];
+		}
+		//weather
+		for(let i=0;i<weatherset.length;i++){
+			for (let j = 0; j < weatherset[i].length; j++) {
+				prk.WEATHER[i].TWI[j].name = weatherset[i][j].name;
+				prk.WEATHER[i].TWI[j].v = weatherset[i][j].fs;
+				prk.WEATHER[i].TWI[j].b = weatherset[i][j].fb;
+			}
+		}
+
+		//Section
+		for(let i=0;i<Sectionset.length;i++){
+			var temp = {"starJ":Sectionset[i][0].value,"from":Sectionset[i][1].value,
+				"endJ":Sectionset[i][2].value,"to":Sectionset[i][3].value,
+				"wertherName":Sectionset[i][4].value,"powerLine":Sectionset[i][5].value,
+				"pLineK":Sectionset[i][6].value,"pLineF":Sectionset[i][7].value,"pLineC":Sectionset[i][8].value,
+				"groundLine":Sectionset[i][9].value,
+				"gLineK":Sectionset[i][10].value,"gLineF":Sectionset[i][11].value,"gLineC":Sectionset[i][12].value,
+				"circuit":Sectionset[i][13].value,"name":""
+			};
+
+			prk.SECTION.splice(i,1,temp);
+		}
+		for (let i = 0; i < SectionName.length; i++) {
+			prk.SECTION[i].name = SectionName[i][0];
+		}
+		//
+		for(let i=0;i<towerset.length;i++){
+			var ttype=0;
+			for(let ii=0;ii<towerArr.length;ii++){
+				if(towerArr[ii] == towerset[0].value){ ttype = ii; break;}
+			}
+			var temp = {"type":ttype,"MaxL":towerset[i][1].value,
+				"LH":towerset[i][2].value,"LV":towerset[i][3].value,
+				"StartHigh":towerset[i][4].value,"Dhigh":towerset[i][5].value,
+				"EndHigh":towerset[i][6].value,"MinAngle":towerset[i][7].value,"MaxAngle":towerset[i][8].value,
+				"Angle2LH":towerset[i][9].value,
+				"KV":towerset[i][10].value,"Name":""
+			};
+
+			prk.TOWER.splice(i,1,temp);
+		}
+		for (let i = 0; i < towerName.length; i++) {
+			prk.TOWER[i].name = towerName[i][0];
+		}
 
 
+		console.log(prk);
 
 
-			var prkinfo = new FormData();
+		var prkinfo = new FormData();
 			prkinfo.append("prk",JSON.stringify(prk));
 			prkinfo.append("ProjectName",prjName);
 			console.log("prkInfo",prkinfo);
-			$.ajax({
-				url: BASEURL+"/prksave", //提交的路径
-				type: "post",       //提交方式
-				data: prkinfo,    //提交的数据
-				// dataType:"json",
-				// async: false,
-				// cache: false,
-				contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-				processData: false,
-				success: function (data) {
-					alert("保存成功！");
-					console.log(data);
-				},
-				error: function (errorMsg) {
-					alert(errorMsg);
-				}
-			});
+			// $.ajax({
+			// 	url: BASEURL+"/prksave", //提交的路径
+			// 	type: "post",       //提交方式
+			// 	data: prkinfo,    //提交的数据
+			// 	// dataType:"json",
+			// 	// async: false,
+			// 	// cache: false,
+			// 	contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+			// 	processData: false,
+			// 	success: function (data) {
+			// 		alert("保存成功！");
+			// 		console.log(data);
+			// 	},
+			// 	error: function (errorMsg) {
+			// 		alert(errorMsg);
+			// 	}
+			// });
 		})
 
 	$('#savePrj').click(function () {
