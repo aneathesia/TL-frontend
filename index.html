@@ -56,7 +56,7 @@
 	@import url(./css/nativestyle.css);
 </style>
 <header class="Hui-header cl"> <a class="Hui-logo l" title="架空输电线路勘测设计一体化系统" href="#">架空输电线路勘测设计一体化系统</a>
-	<div style="float:right;margin-right: 2%;margin-top: 1%">
+	<div style="float:right;margin-right: 2%;margin-top: 1%;display:none;">
 		<li style="display: inline-block;"><a href="#"><label id="login" style="background: wheat">登录</label></a></li>
 		<li style="display: inline-block;"><a href="#"><label id="UserCenter" style="background: wheat">用户中心</label></a></li>
 	</div>
@@ -1680,11 +1680,10 @@
 					{'name':'地面粗糙系数 a','value':prk.PRIMARY.alfa},
 					{'name':'地线覆冰较导线增加mm','value':prk.PRIMARY.dIce},
 					{'name':'导线过牵引长度 m','value':prk.PRIMARY.pLTract},
-					{'name':'孤立档最大档距 m','value':180},
+					{'name':'孤立档最大档距 m','value':prk.PRIMARY.InsularMaxL},
 				]
 			}
 
-			tcross = rguicheng2.getJson();
 			rguicheng1.setData(guicheng);
 			$('#rguicheng1,.jexcel_container .jexcel_content').show();
 		}
@@ -1697,7 +1696,6 @@
 					}
 				}
 			}
-			guicheng = rguicheng1.getJson();
 			rguicheng2.setData(tcross);
 			$('#rguicheng2,.jexcel_container .jexcel_content').show();
 
@@ -1720,7 +1718,12 @@
 		ridtower =y1;
 		rtower.setData(towerset[y1]);
 	}
-
+	function Afterchangeguicheng(){
+		guicheng = rguicheng1.getJson();
+	}
+	function Afterchangetcross(){
+		tcross = rguicheng2.getJson();
+	}
 	function AfterchangeWeather(){
 		weatherset[ridweather]= rqixiang.getJson();
 		console.log("after change weather",weatherset);
@@ -1754,6 +1757,8 @@
 			{type:"text",title:"参数数值",width: 100, name: "value",editor:customColumnGuicheng}],
 		// editable: false,
 		onbeforechange: beforeChangeEventGuicheng,
+		onafterchanges: Afterchangeguicheng
+
 	})
 	var rguicheng2 = jspreadsheet(document.getElementById('rguicheng2'),{
 			//data: data,
@@ -1764,6 +1769,7 @@
 				{type:"Numeric",title:"距离要求",width: 80, name: "voltage"}],
 			// editable: false,
 			onbeforechange: beforeChangeEvent,
+			onafterchanges: Afterchangetcross
 		})
 	var ldaodixian = jspreadsheet(document.getElementById('ldaodixian'),{
 		contextMenu: menu,
@@ -1890,8 +1896,6 @@
 					{'name':'膨胀系数/℃','value':0},
 					{'name':'导线分裂数','value':0}];
 				conductorset.push(conductor);
-				console.log(prk.CONDUCTOR[i].type);
-				console.log(prk.CONDUCTOR[i]);
 				if(prk.CONDUCTOR[i].type === 0 )conductorset[i][0].value = "导线";
 				else conductorset[i][0].value = "地线";
 				conductorset[i][1].value = prk.CONDUCTOR[i].A;
@@ -2081,33 +2085,27 @@
 
 	$('#save').click(function () {
 
-		console.log("系统设置",guicheng);
-		console.log("交叉跨越",tcross);
-		console.log("导地线参数",conductorset);
-		console.log("导地线参数name",conductorName);
-		console.log("气象条件",weatherset);
-		console.log("气象条件name",weatherName);
-		console.log("分段设置",Sectionset);
-		console.log("分段设置name",SectionName);
-		console.log("杆塔使用参数",towerset);
-		console.log("杆塔使用参数name",towerName);
-
 		//modify PRK content  not empty splice
-		for(let i=0;i<voltageArr.length;i++){
-			if(voltageArr[i] == guicheng[0].value){prk.PRIMARY.voltage = i; break;}
+		if(guicheng.length>0){
+			for(let i=0;i<voltageArr.length;i++){
+				if(voltageArr[i] == guicheng[0].value){prk.PRIMARY.voltage = i; break;}
+			}
+			for(let i=0;i<circuitArr.length;i++){
+				if(circuitArr[i] == guicheng[1].value){prk.PRIMARY.circuit = i+1; break;} //12 01
+			}
+			prk.PRIMARY.windH =guicheng[2].value;
+			prk.PRIMARY.alfa =guicheng[3].value;
+			prk.PRIMARY.dIce= guicheng[4].value;
+			prk.PRIMARY.pLTract= guicheng[5].value;
+			prk.PRIMARY.InsularMaxL= guicheng[6].value;
 		}
-		for(let i=0;i<circuitArr.length;i++){
-			if(circuitArr[i] == guicheng[1].value){prk.PRIMARY.circuit = i+1; break;} //12 01
-		}
-		prk.PRIMARY.windH =guicheng[2].value;
-		prk.PRIMARY.alfa =guicheng[3].value;
-		prk.PRIMARY.dIce= guicheng[4].value;
-		prk.PRIMARY.pLTract= guicheng[5].value;
-		prk.PRIMARY.InsularMaxL= guicheng[6].value;
+
 		//tcross
-		for(let i = 1;i < 21;i++){
-			prk.PRIMARY.m_standard[i].info = tcross[i-1].contabbr;
-			prk.PRIMARY.m_standard[i].dist = tcross[i-1].voltage;
+		if(tcross.length>0){
+			for(let i = 1;i < 21;i++){
+				prk.PRIMARY.m_standard[i].info = tcross[i-1].contabbr;
+				prk.PRIMARY.m_standard[i].dist = tcross[i-1].voltage;
+			}
 		}
 		//conductorset
 		for(let i=0;i<conductorset.length;i++){
@@ -2156,7 +2154,7 @@
 		for(let i=0;i<towerset.length;i++){
 			var ttype=0;
 			for(let ii=0;ii<towerArr.length;ii++){
-				if(towerArr[ii] == towerset[0].value){ ttype = ii; break;}
+				if(towerArr[ii] == towerset[i][0].value){ ttype = ii; break;}
 			}
 			var temp = {"type":ttype,"MaxL":towerset[i][1].value,
 				"LH":towerset[i][2].value,"LV":towerset[i][3].value,
@@ -2523,6 +2521,8 @@
 		var UseLine ={};var UseWeather = {};var section = {};
 
 	var theLine = UseLine,theWeather = UseWeather;
+
+	console.log("line parameter",theLine,theWeather,section);
 	var designLine = 1;
 	var xmin = 0; var xmax = 0;
 
@@ -3138,24 +3138,29 @@
 			x= x+5;
 			for(let i=0;i<prk.SECTION.length;i++)
 			{
-				if(x>=prk.SECTION[i].from && x<=prk.SECTION[i].to)
+				if(x>=prk.SECTION[i].from && x<=prk.SECTION[i].to){
+					console.log("return section",i);
 					return i;
+				}
 			}
 			return -1;
 		}
 		window.FindUsingLine = function(i) {
 			for(let j=0;i >-1 && j<prk.CONDUCTOR.length;j++)
 			{
-				if(prk.SECTION[i].powerLine==prk.CONDUCTOR[j].name)
-					return j;
+				if(prk.SECTION[i].powerLine==prk.CONDUCTOR[j].name){
+					console.log("return poweline",j);return j;
+				}
+
 			}
 			return -1;
 		}
 		window.FindUsingGLine = function(i) {
 			for(let j=0;i >-1 && j<prk.CONDUCTOR.length;j++)
 			{
-				if(prk.SECTION[i].groundLine==prk.CONDUCTOR[j].name)
-					return j;
+				if(prk.SECTION[i].groundLine==prk.CONDUCTOR[j].name){
+					console.log("return groundline",j);return j;
+				}
 			}
 			return -1;
 		}
@@ -3177,10 +3182,14 @@
 			return -1;
 		}
 		window.initializeDataBool = function(x,u,isPower,designLine){
-			UseLine = prk.CONDUCTOR[0];
-			UseWeather = prk.WEATHER[0];
-			section = prk.SECTION[0];
+			// UseLine = prk.CONDUCTOR[0];
+			// UseWeather = prk.WEATHER[0];
+			// section = prk.SECTION[0];
+			UseLine = {};
+			UseWeather = {};
+			section = {};
 			let l = 0,w=0,gl = 0,SectionNo = 0;
+			console.log("isPower",isPower);
 			SectionNo = FindUsingSection(x);
 			if (SectionNo <0) return false;
 			section = prk.SECTION[SectionNo];
@@ -3205,6 +3214,7 @@
 			if(w<0) return false;
 			UseWeather = prk.WEATHER[w];
 
+			console.log("whj the line",theLine,theWeather,section);
 			initializeData(UseWeather,UseLine,u,designLine);
 			return true;
 		}
@@ -3368,9 +3378,15 @@
 				//地线悬点高
 				towerlist[i].hugeGround = towerlist[i].High + towerlist[i].Base + towerlist[i].TowerHigh + down2top;
 			}
+			theWeather  =   {} ;
+			theLine  =   {} ;
+			section  =   {} ;
+
+			console.log('parameter',theWeather,theLine,section,designLine);
 
 			ComputeLk();
 			ComputeK2();
+			console.log("After K2",theWeather,theLine,section,designLine);
 			ComputeLhLv();
 			ComputeGK2();
 		}
@@ -3552,6 +3568,7 @@
 				if (towerlist[i].bInsular){
 					let k,constant,kMaxT,constMaxT;
 					ComputeIsolate(towerlist[i],towerlist[i+1],k,constant,kMaxT,constMaxT);
+					console.log("IsolateAfter11",k,constant,kMaxT,constMaxT);
 					towerlist[i].kPline = k;
 					towerlist[i].kWind  = k;
 					towerlist[i].kMaxT  = kMaxT;
@@ -3561,6 +3578,7 @@
 					towerlist[i].kPline = ComputeK(towerlist[i].Lk,towerlist[i].cosa);
 					towerlist[i].kWind = GetLoad(3,7)/theLine.A/GetStrain(towerlist[i].Lk,towerlist[i].cosa,3)/2.0;
 					towerlist[i].kMaxT = GetLoad(9,7)/theLine.A/GetStrain(towerlist[i].Lk,towerlist[i].cosa,9)/2.0;
+					console.log("IsolateAfter22",towerlist[i].kPline,towerlist[i].kWind,towerlist[i].kMaxT);
 				}
 			}
 		}
@@ -4046,8 +4064,10 @@
 			scene.add(towMesh);
 			var tempCurve;
 			if (m_end > 0) {
+
 				tempCurve = DisplayFawCurve4(towerlist[m_end - 1],towerlist[m_end], "move_wire");
 				if(tempCurve[0]!=undefined){
+					console.log("temp tower end",towerlist[m_end - 1],towerlist[m_end]);
 					scene.add(tempCurve[0]);scene.add(tempCurve[1]);scene.add(tempCurve[2]);
 				}
 			}
@@ -4178,7 +4198,6 @@
 					FawCurveGroup.add(CurveInsert[0]);
 					FawCurveGroup.add(CurveInsert[1]);
 					FawCurveGroup.add(CurveInsert[2]);
-					console.log("addtowmesh");console.log(scene.children.length);console.log(scene);
 					scene.add(FawCurveGroup);
 					//end draw
 					let disToPile = []
