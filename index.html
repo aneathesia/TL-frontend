@@ -251,7 +251,7 @@
 	<div id = "rqixiang" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
 	<div id = "rfenduan" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
 	<div id = "rtower" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
-	<!--	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
+<!--	<div id = "rtowerpara" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
 <!--	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
 <!--	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
 <!--	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
@@ -499,6 +499,7 @@
 								console.log(towerlist_tabledata);
 								for(let i=0;i<towerlist_tabledata.length;i++){
 									if(towerlist_tabledata[i].offset>0)towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position+"+"+towerlist_tabledata[i].offset.toString();
+									else if(towerlist_tabledata[i].offset==0)towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position.toString();//
 									else towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position+towerlist_tabledata[i].offset.toString();
 								}
 								GridManager.setAjaxData(towerlist_tableId,{"data":towerlist_tabledata});
@@ -605,6 +606,7 @@
 
 		//towerlist_tabledata=towerlist;
 		towerlistCalc();
+
 		GridManager.refreshGrid(towerlist_tableId);
 
 	})
@@ -621,7 +623,6 @@
 			if(scene.children[i].name == "fixCurveGroup"){scene.children[i].children.length=0;}
 		}
 
-		console.log(m_start,m_end)
 		m_end = towerlist_tabledata.length - 1;
 
 		for (let i = 0; i <  towerlist_tabledata.length; i++) {
@@ -810,12 +811,16 @@
 				console.log("res.TOWERLIST",res.TOWERLIST);
 				for(let i=0;i<res.TOWERLIST.length;i++){
 					if(res.TOWERLIST[i].offset>0)res.TOWERLIST[i].PosOffset = res.TOWERLIST[i].Position+"+"+res.TOWERLIST[i].offset.toString();
+					else if(res.TOWERLIST[i].offset==0)res.TOWERLIST[i].PosOffset = res.TOWERLIST[i].Position.toString();
 					else res.TOWERLIST[i].PosOffset = res.TOWERLIST[i].Position+res.TOWERLIST[i].offset.toString();
 				}
+				TowerDraw(towerlist_tabledata);
 				GridManager.setAjaxData(towerlist_tableId,{"data":res.TOWERLIST});
 
 			}
 		})
+
+
 	}
 
 
@@ -1842,7 +1847,19 @@
 			onafterchanges: AfterchangeTower
 		})
 
-	var guicheng=[]
+	// var rtowerpara = jspreadsheet(document.getElementById('rtowerpara'),{
+	// 	contextMenu:function(obj,x,y,e){},
+	// 	colAlignments:['left',''],  //Align
+	// 	columns:[
+	// 		{type:"text",title:"参数名称",width: 150, name: "name",readOnly:true},
+	// 		{type:"text",title:"参数数值",width: 150, name: "value",editor:customColumnTower}],
+	// 	// editable: false
+	// 	onbeforechange: beforeChangeEventTower,
+	// 	onafterchanges: AfterchangeTower
+	// })
+
+
+		var guicheng=[]
 	var tcross = []
 
 	$('#guicheng').click(function () {
@@ -2032,6 +2049,7 @@
 					{'name':'大风工况摇摆角(°)','value':0},
 					{'name':'内过电压摇摆角','value':0},
 					{'name':'外过电压摇摆角','value':0},
+					{'name':'带点作业摇摆角','value':0},
 					{'name':'最大横担长度(m)','value':0},
 					{'name':'地面支架高度(m)','value':0},
 					{'name':'中上导线高差(m)','value':0},
@@ -2161,7 +2179,8 @@
 				"StartHigh":towerset[i][4].value,"Dhigh":towerset[i][5].value,
 				"EndHigh":towerset[i][6].value,"MinAngle":towerset[i][7].value,"MaxAngle":towerset[i][8].value,
 				"Angle2LH":towerset[i][9].value,
-				"KV":towerset[i][10].value,"Name":""
+				"KV":towerset[i][10].value,"Name":"",
+				"Count":(towerset[i][6].value-towerset[i][4].value)/towerset[i][5].value+1
 			};
 
 			prk.TOWER.splice(i,1,temp);
@@ -3139,7 +3158,6 @@
 			for(let i=0;i<prk.SECTION.length;i++)
 			{
 				if(x>=prk.SECTION[i].from && x<=prk.SECTION[i].to){
-					console.log("return section",i);
 					return i;
 				}
 			}
@@ -3149,7 +3167,7 @@
 			for(let j=0;i >-1 && j<prk.CONDUCTOR.length;j++)
 			{
 				if(prk.SECTION[i].powerLine==prk.CONDUCTOR[j].name){
-					console.log("return poweline",j);return j;
+					return j;
 				}
 
 			}
@@ -3159,7 +3177,7 @@
 			for(let j=0;i >-1 && j<prk.CONDUCTOR.length;j++)
 			{
 				if(prk.SECTION[i].groundLine==prk.CONDUCTOR[j].name){
-					console.log("return groundline",j);return j;
+					return j;
 				}
 			}
 			return -1;
@@ -3189,7 +3207,7 @@
 			UseWeather = {};
 			section = {};
 			let l = 0,w=0,gl = 0,SectionNo = 0;
-			console.log("isPower",isPower);
+			// console.log("isPower",isPower);
 			SectionNo = FindUsingSection(x);
 			if (SectionNo <0) return false;
 			section = prk.SECTION[SectionNo];
@@ -3214,7 +3232,7 @@
 			if(w<0) return false;
 			UseWeather = prk.WEATHER[w];
 
-			console.log("whj the line",theLine,theWeather,section);
+			// console.log("whj the line",theLine,theWeather,section);
 			initializeData(UseWeather,UseLine,u,designLine);
 			return true;
 		}
@@ -3382,11 +3400,11 @@
 			theLine  =   {} ;
 			section  =   {} ;
 
-			console.log('parameter',theWeather,theLine,section,designLine);
+
 
 			ComputeLk();
 			ComputeK2();
-			console.log("After K2",theWeather,theLine,section,designLine);
+
 			ComputeLhLv();
 			ComputeGK2();
 		}
@@ -3463,6 +3481,7 @@
 				m_weights =300;
 				m_area =   1.0;
 			}
+
 			m_Tav =  theLine.Tp*theLine.k*theLine.C;
 			m_Tmax = theLine.Tp*theLine.k/theLine.F;
 			m_Ttract = m_Tmax;
@@ -3555,6 +3574,13 @@
 					constMaxT = (rs-r)*cl0*cl0/2/S[i];
 				}
 			}
+
+			t1.kPline = k;
+			t1.kWind  = k;
+			t1.kMaxT  = kMaxT;
+			//t1.constant = constant;
+			t1.constMaxT = constMaxT;
+
 		}
 		window.ComputeK = function(l0,sita) {
 			let k=0;
@@ -3566,24 +3592,17 @@
 			for (let i = m_start; i < m_end; i++) {
 				initializeDataBool(towerlist[i].Distance,towerlist[i].u,true,1);
 				if (towerlist[i].bInsular){
-					let k,constant,kMaxT,constMaxT;
+					let k=0,constant=0,kMaxT=0,constMaxT=0;
 					ComputeIsolate(towerlist[i],towerlist[i+1],k,constant,kMaxT,constMaxT);
-					console.log("IsolateAfter11",k,constant,kMaxT,constMaxT);
-					towerlist[i].kPline = k;
-					towerlist[i].kWind  = k;
-					towerlist[i].kMaxT  = kMaxT;
-					towerlist[i].constant = constant;
-					towerlist[i].constMaxT = constMaxT;
 				}else {
 					towerlist[i].kPline = ComputeK(towerlist[i].Lk,towerlist[i].cosa);
 					towerlist[i].kWind = GetLoad(3,7)/theLine.A/GetStrain(towerlist[i].Lk,towerlist[i].cosa,3)/2.0;
 					towerlist[i].kMaxT = GetLoad(9,7)/theLine.A/GetStrain(towerlist[i].Lk,towerlist[i].cosa,9)/2.0;
-					console.log("IsolateAfter22",towerlist[i].kPline,towerlist[i].kWind,towerlist[i].kMaxT);
 				}
 			}
 		}
 		window.GetLoaLob = function(l0,cosa,condition,l,h,Loa,Lob) {
-			let s, p,r;
+			let s,p,r;
 			s = GetStrain(l0,  cosa,condition);
 			p = theWeather.TWI[condition].P7;//r为综合比载
 			r = p/theLine.A;
@@ -3592,6 +3611,7 @@
 			Lob = l - Loa;
 		}
 		window.GetLoaLob2 = function(k,l,h) {
+			console.log("k,l,h",k,l,h);
 			let Loa = l/2.0 - arcsh(k*h/sinh(k*l))/2.0/k;
 			let Lob = l - Loa;
 			let lo = new Array(Loa,Lob);
@@ -3647,6 +3667,7 @@
 						k = GetLoad(condition,7)/theLine.A/GetStrain(towerlist[i].Lk,towerlist[i].cosa,condition)/2.0;
 					}
 					Lo = GetLoaLob2(k, (towerlist[i+1].Distance - towerlist[i].Distance), towerlist[i+1].hugeHigh-towerlist[i].hugeHigh)
+					console.log("LoaLob",Lo);
 					Loa = Lo[0];
 					Lob = Lo[1];
 					towerlist[i].Lv2 = Loa;
@@ -3948,7 +3969,7 @@
 					"TowerType" : towTypeName,
 					"Base": 0,
 					"TowerHigh" : towerHei,
-					"Status" : towType,
+					"Status" : Number(towType),
 					"InsulatorLength": 5.5,
 					"ConnectLength": 0.0,
 					"InsulateP": "",
@@ -4016,7 +4037,7 @@
 				"TowerType" :  towTypeName,
 				"Base": 0,
 				"TowerHigh" : towerHei,
-				"Status" : towType,
+				"Status" : Number(towType),
 				"InsulatorLength": 5.5,
 				"ConnectLength": 0.0,
 				"InsulateP": "",
@@ -4062,19 +4083,21 @@
 			ComputeHugeHigh();
 
 			scene.add(towMesh);
+
+			// console.log("tlist",towerlist[m_end - 1],towerlist[m_end]);
 			var tempCurve;
 			if (m_end > 0) {
 
 				tempCurve = DisplayFawCurve4(towerlist[m_end - 1],towerlist[m_end], "move_wire");
 				if(tempCurve[0]!=undefined){
-					console.log("temp tower end",towerlist[m_end - 1],towerlist[m_end]);
+					// console.log("temp tower end",towerlist[m_end - 1],towerlist[m_end]);
 					scene.add(tempCurve[0]);scene.add(tempCurve[1]);scene.add(tempCurve[2]);
 				}
 			}
 
 			towerlist.pop();
 			m_end = towerlist.length - 1;
-			ComputeHugeHigh();
+			//ComputeHugeHigh();
 
 		}
 
@@ -4501,7 +4524,7 @@
 				"TowerType": towTypeName,
 				"Base": 0,
 				"TowerHigh": towerHei,
-				"Status": towType,
+				"Status": Number(towType),
 				"InsulatorLength": 5.5,
 				"ConnectLength": 0.0,
 				"InsulateP": "",
@@ -4960,7 +4983,7 @@
 					"TowerType": towTypeName,
 					"Base": 0,
 					"TowerHigh": towerHei,
-					"Status": towType,
+					"Status": Number(towType),
 					"InsulatorLength": 5.5,
 					"ConnectLength": 0.0,
 					"InsulateP": "",
@@ -5186,6 +5209,7 @@
 			//find towerlist index and change this
 
 			towerlist[riseInd].TowerHigh = tempTowerHei
+			console.log(m_end);
 
 			ComputeHugeHigh();
 
@@ -5231,7 +5255,6 @@
 				if(fallInd!=-1){tempTowerHei=towerlist[fallInd].TowerHigh;}else return;
 				let tpos = TowerGroup.children[fallInd].position;
 				let towerIndex = TowerPRKIndex(prk,towerlist[fallInd].TowerType);
-				console.log("towerIndex");console.log(towerIndex,prk.TOWER[towerIndex]);
 				if(towerlist[fallInd].TowerHigh> prk.TOWER[towerIndex].StartHigh){
 					tempTowerHei = towerlist[fallInd].TowerHigh - prk.TOWER[towerIndex].Dhigh;
 					console.log("tempTowerHigh");console.log(tempTowerHei);
@@ -5247,6 +5270,7 @@
 
 
 				towerlist[fallInd].TowerHigh = tempTowerHei
+				console.log(m_end);
 
 				ComputeHugeHigh();
 				TowerScriptGroup.children[fallInd] = createSpritelabel(towerlist[fallInd].Name,
@@ -5471,8 +5495,8 @@
 			}
 		}
 		if (selectedObj) {
-			console.log("selected");
-			console.log(selectedObj);
+			// console.log("selected");
+			// console.log(selectedObj);
 			if(selectedObj.material.color==selectedObj.parent.children[0].material.color){
 				selectedObj.material=selectedObj.parent.children[1].material;
 			}
@@ -5493,8 +5517,6 @@
 		// console.log("clear redpoint");
 		// console.log(scene.children);
 		if(selectedPoint){
-			console.log("change visiual");
-			console.log(selectedPoint);
 			selectedPoint.visible = false;
 			selectedPoint = null;
 
@@ -5539,7 +5561,7 @@
 
 			}
 
-			if(scene.children.length!=num){console.log(scene.children.length);break;}
+			if(scene.children.length!=num){break;}
 		}
 
 		//crossObject redPoint caught
@@ -5979,7 +6001,7 @@
 		else{ //search index and change label
 			scene.children[sceneIndex].children[2].geometry.attributes.position.array[3*pointIndex+1]= (Number(gaocheng)-yMin)/ydivision*Gridsize;
 			var subIndex=0;  //crossTowerPlace index
-			for(let i = 0;i<pointIndex;i++){ if(cross[i].CrossPoint[i].y==0)subIndex++;}
+			for(let ii = 0;ii<pointIndex;ii++){ if(cross[crossIndex].CrossPoint[ii].y==0)subIndex++;}
 			scene.children[sceneIndex].children.splice(3+6*subIndex,6);
 			//insert new label
 
@@ -6036,6 +6058,8 @@
 		}
 
 
+
+		console.log("modify scene result",scene.children[sceneIndex].children)
 		/*cross data modify*/
 		// cross[crossIndex].CrossPoint[pointIndex].dc = ganxing;
 		cross[crossIndex].CrossPoint[pointIndex].towerHigh = gaocheng-dimiangao;
