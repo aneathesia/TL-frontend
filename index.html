@@ -56,7 +56,7 @@
 	@import url(./css/nativestyle.css);
 </style>
 <header class="Hui-header cl"> <a class="Hui-logo l" title="架空输电线路勘测设计一体化系统" href="#">架空输电线路勘测设计一体化系统</a>
-	<div style="float:right;margin-right: 2%;margin-top: 1%;display:none;">
+	<div style="float:right;margin-right: 2%;margin-top: 1%;">
 		<li style="display: inline-block;"><a href="#"><label id="login" style="background: wheat">登录</label></a></li>
 		<li style="display: inline-block;"><a href="#"><label id="UserCenter" style="background: wheat">用户中心</label></a></li>
 	</div>
@@ -338,7 +338,8 @@
 
 	//login register
 	$("#login").click(function(){
-		layer.open({
+
+		tpIndex = layer.open({
 			type:2,
 			title:'登录',
 			resize: true,
@@ -357,10 +358,18 @@
 			contentType:'application/json',
 			success: function (res) {
 				console.log(res);
-				token = res;
+
+				if(res.code == 200){
+					token = res.data;
+					localStorage.setItem("token",token);
+					layer.close(tpIndex);
+				}
+				if(res.code == 500){
+					alert(res.message);
+				}
 			},
-			error: function (errorMsg) {
-				alert(errorMsg);
+			error: function (res) {
+				alert(res.message);
 			}
 		});
 	}
@@ -369,7 +378,6 @@
 	{
 	var pile_tabledata=[];
 	var pile_tableId=document.getElementById("mpile_table");
-	console.log(pile_tableId);
 	var tb_pile=new GridManager(pile_tableId,{
 		gridManagerName: 'TL-piletable',
 				ajaxData: {"data":pile_tabledata},
@@ -438,7 +446,6 @@
 		},
 			function(){}
 	);
-	console.log(GridManager.get(pile_tableId));
 	}
 	// towerlist table init
 	{
@@ -446,7 +453,6 @@
 
 		towerlist_tabledata=towerlist;  //table data format different with towerlist_tabledata parameters default
 		var towerlist_tableId=document.getElementById("towerlist_table");
-		console.log(pile_tableId);
 		var tb_towerlist=new GridManager(towerlist_tableId,{
 					gridManagerName: 'TL-towerlisttable',
 					ajaxData: {"data":towerlist_tabledata},
@@ -463,6 +469,7 @@
 									console.log(fid-"0"+i);
 									towerlist_tabledata[i].Name=head.toString()+(fid-"0"+i).toString();
 								}
+								console.log(towerlist_tabledata);
 								towerlistCalc();
 								GridManager.setAjaxData(towerlist_tableId,{"data":towerlist_tabledata});
 								GridManager.refreshGrid(towerlist_tableId);
@@ -596,8 +603,6 @@
 		$("#piletable").hide();
 	})
 
-	//towerlisttable
-	console.log(towerlist);
 	//$("#towerlisttable").draggable();
 	//window resize;
 	$("#towerlisttable").hide();
@@ -661,16 +666,149 @@
 	//$("#Paramtable").draggable({handle:"#h2title"});
 	$("#Paramtable").hide();
 	$("#database").click(function(){
-		layer.open({
-			type:2,
-			title:'读数据库',
-			resize :true,
-			//area:['500px','650px'],
-			content:'./tbTest.html',
-			success:function (layero,index) {
+		if($("#rguicheng2").is(":visible")){
+			layer.open({
+				type:2,
+				title:'读数据库',
+				resize :true,
+				content:'./html/DatabaseInput.html',
+				success:function (layero,index) {
+					var body = layer.getChildFrame('body',index);
+					body.find("#note").text("交叉跨越");
+					body.find("#DataSelect").empty();
+					for (let i = 0;i<voltageArr.length;i++){
+						var opt = document.createElement('option');
+						opt.text = voltageArr[i];
+						opt.value = i;
+						body.find("#DataSelect").append(opt);
+					}
+				}
+			})
+		}
+		if($("#rdaodixian").is(":visible")){
+			layer.open({
+				type:2,
+				title:'读数据库',
+				resize :true,
+				content:'./html/DatabaseInput.html',
+				success:function (layero,index) {
+					var body = layer.getChildFrame('body',index);
+					body.find("#note").text("电线型号");
+					$.ajax({
+						url: BASEURL+"/tl/conductor/list", //提交的路径
+						type: "get",
+						//async: false,
+						success: function (data){
+							console.log(data);
+							body.find("#DataSelect").empty();
+							for (let i = 0;i<data.length;i++){
+								var opt = document.createElement('option');
+								opt.text = data[i].name;
+								opt.value = i;
+								body.find("#DataSelect").append(opt);
+							}
 
-			}
-		})
+						},
+						error:function (error) {
+							console.log(error);
+						}
+					})
+				}
+			})
+		};
+		if($("#rqixiang").is(":visible")){
+			layer.open({
+				type:2,
+				title:'读数据库',
+				resize :true,
+				content:'./html/DatabaseInput.html',
+				success:function (layero,index) {
+					var body = layer.getChildFrame('body',index);
+					body.find("#note").text("气象区");
+					$.ajax({
+						url: BASEURL+"/tl/weather/list", //提交的路径
+						type: "get",
+						//async: false,
+						success: function (data){
+							console.log(data);
+							body.find("#DataSelect").empty();
+							for (let i = 0;i<data.length;i++){
+								var opt = document.createElement('option');
+								opt.text = data[i].nameqxq;
+								opt.value = i;
+								body.find("#DataSelect").append(opt);
+							}
+
+						},
+						error:function (error) {
+							console.log(error);
+						}
+					})
+				}
+			})
+		}
+		if($("#rtower").is(":visible")){
+			layer.open({
+				type:2,
+				title:'读数据库',
+				resize :true,
+				content:'./html/DatabaseInput.html',
+				success:function (layero,index) {
+					var body = layer.getChildFrame('body',index);
+					body.find("#note").text("杆塔型号");
+					$.ajax({
+						url: BASEURL+"/tl/tower/list", //提交的路径
+						type: "get",
+						//async: false,
+						success: function (data){
+							console.log(data);
+							body.find("#DataSelect").empty();
+							for (let i = 0;i<data.length;i++){
+								var opt = document.createElement('option');
+								opt.text = data[i].name;
+								opt.value = i;
+								body.find("#DataSelect").append(opt);
+							}
+
+						},
+						error:function (error) {
+							console.log(error);
+						}
+					})
+				}
+			})
+		}
+
+
+		// layer.open({
+		// 	type:2,
+		// 	title:'读数据库',
+		// 	resize :true,
+		// 	content:'./html/DatabaseInput.html',
+		// 	success:function (layero,index) {
+		// 		var body = layer.getChildFrame('body',index);
+		// 		body.find("#note").text("电线型号");
+		// 		$.ajax({
+		// 			url: BASEURL+"/tl/conductor/list", //提交的路径
+		// 			type: "get",
+		// 			//async: false,
+		// 			success: function (data){
+		// 				console.log(data);
+		// 				body.find("#DataSelect").empty();
+		// 				for (let i = 0;i<data.length;i++){
+		// 					var opt = document.createElement('option');
+		// 					opt.text = data[i].name;
+		// 					opt.value = i;
+		// 					body.find("#DataSelect").append(opt);
+		// 				}
+		//
+		// 			},
+		// 			error:function (error) {
+		// 				console.log(error);
+		// 			}
+		// 		})
+		// 	}
+		// })
 	})
 	$("#designparameter").click(function () {
 		document.removeEventListener('mousedown', onDocumentSelected);
@@ -697,6 +835,7 @@
 			data: form,    //提交的数据
 			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
 			processData: false,
+			headers:{"token":localStorage.getItem("token")},
 			success: function (res) {
 				console.log(res);
 				pile_tabledata =res;
@@ -720,6 +859,7 @@
 				// dataType:"json",
 				contentType: false, // 告诉jQuery不要去设置Content-Type请求头
 				processData: false,
+			headers:{"token":localStorage.getItem("token")},
 				success: function (res) {
 					console.log("caculate cacu res");
 					console.log(res.m_jPile);
@@ -754,6 +894,7 @@
 			// dataType:"json",
 			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
 			processData: false,
+			headers:{"token":localStorage.getItem("token")},
 			success: function (res) {
 				console.log(res);
 			}
@@ -795,6 +936,7 @@
 		}
 
 		form.append("table",JSON.stringify(towerlist_tabledata));
+		console.log("calcdata",towerlist_tabledata);
 		//console.log(pile_table.m_jPile);   //txt append jsondata
 
 		$.ajax({
@@ -804,6 +946,7 @@
 			//dataType:"json",
 			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
 			processData: false,
+			headers:{"token":localStorage.getItem("token")},
 			success: function (res) {
 				console.log("calc pwf finsh");
 				console.log(res);
@@ -836,6 +979,7 @@
 			//dataType:"json",
 			contentType: false,
 			processData: false,
+			headers:{"token":localStorage.getItem("token")},
 			success: function () {
 				//download file
 				download(prjName,MapFileName+".ORG");
@@ -990,7 +1134,6 @@
 
 	// DEM断面提取layer
 	var secDEM=[];
-	console.log(secDEM);
 	$("#inputDem").click(function (){
 		//转角文件exist
 		//if(parent.document.getElementById('tb_pile_input').files[0]==null||pile_tabledata.length==0){alert("选择转角文件");}
@@ -1021,6 +1164,7 @@
 						url: BASEURL+"/directory/" + prjName, //提交的路径
 						type: "get",       //提交方式
 						dataType:"json",
+						headers:{"token":localStorage.getItem("token")},
 						success: function(data){
 							console.log(data);
 							for (let i = 0; i < data.length; i++) {
@@ -1061,6 +1205,7 @@
 			cache: false,
 			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
 			processData: false,
+			headers:{"token":localStorage.getItem("token")},
 			success: function (data) {
 				console.log("SectionMapSave",data);
 				DEM= data.DEM;
@@ -1088,6 +1233,7 @@
 		var url = BASEURL+'/Pathdownload/Project='+ProjectName+'&filename=' + FileName;
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', url, true);        // 也可以使用POST方式，根据接口
+		xhr.setRequestHeader("token",localStorage.getItem("token"));
 		xhr.responseType = "blob";    // 返回类型blob
 		// 定义请求完成的处理函数，请求前也可以增加加载框/禁用下载按钮逻辑
 		xhr.onload = function () {
@@ -1129,6 +1275,7 @@
 				type: "post",       //提交方式
 				data: prjNameJSON,    //提交的数据
 				dataType:"json",
+				headers:{"token":localStorage.getItem("token")},
 				//填充prk设计参数表格
 				success: function (data) {
 					console.log("createproject",data);
@@ -2206,6 +2353,7 @@
 				// cache: false,
 				contentType: false, // 告诉jQuery不要去设置Content-Type请求头
 				processData: false,
+				headers:{"token":localStorage.getItem("token")},
 				success: function (data) {
 					console.log(data);
 				},
@@ -2231,6 +2379,7 @@
 				// dataType:"json",
 				contentType: false, // 告诉jQuery不要去设置Content-Type请求头
 				processData: false,
+				headers:{"token":localStorage.getItem("token")},
 				success: function (data) {
 					console.log(data);
 					alert("保存成功！");
@@ -2259,6 +2408,7 @@
 				type: "post",       //提交方式
 				data: demgeoCal,    //提交的数据
 				//dataType:"json",
+				headers:{"token":localStorage.getItem("token")},
 				success: function (data) {
 					console.log(data);
 				},
@@ -2284,6 +2434,7 @@
 				data: prjNameJSON,    //提交的数据
 				dataType:"json",
 				//填充prk设计参数表格
+				headers:{"token":localStorage.getItem("token")},
 				success: function (data) {
 					console.log("mapdata",data);
 					mp = data.mp;
@@ -2313,17 +2464,14 @@
 			content:'./html/ProjectManage.html',
 			shade:0,
 			success:function (layero,index) {
-				console.log(layero,index);
 				var body = layer.getChildFrame('body',index);
-				console.log(body);
 				let optionList;
 				optionList =  body.find("select");
 				$.ajax({
 					url: BASEURL+"/directory/%20", //提交的路径
 					type: "get",       //提交方式
-					dataType:"json",
+					headers:{"token":localStorage.getItem("token")},
 					success: function(data){
-						console.log(data);
 						for (let i = 0; i < data.length; i++) {
 								var fileOption = new Option(data[i].name, i.toString());
 								optionList[0].options.add(fileOption);
@@ -2353,6 +2501,7 @@
 			data: prkform,    //提交的数据
 			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
 			processData: false,
+			headers:{"token":localStorage.getItem("token")},
 			success: function(prkdata){
 				console.log(prkdata);
 				prk = prkdata;
@@ -2372,6 +2521,7 @@
 			data: pwfform,    //提交的数据
 			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
 			processData: false,
+			headers:{"token":localStorage.getItem("token")},
 			success: function(pwfdata){
 				console.log(pwfdata);
 				towerlist = pwfdata.TOWERLIST;
@@ -2410,7 +2560,6 @@
 	//draw  related
 	/* 预设格网参数 */
 	var verSize = 160;var horSize = 300; var ydivision=mp.m_HScale*mp.m_Grid/1000; var xdivision = mp.m_DScale*mp.m_Grid/1000;var Gridsize = mp.m_Grid;
-	console.log("initial paremeter",ydivision,xdivision);
 	var width,dis,gridHor,gridVer;
 	var x = new Array();var y = new Array();
 	var leftX = new Array();var leftY = new Array();
@@ -2541,7 +2690,6 @@
 
 	var theLine = UseLine,theWeather = UseWeather;
 
-	console.log("line parameter",theLine,theWeather,section);
 	var designLine = 1;
 	var xmin = 0; var xmax = 0;
 
@@ -2580,7 +2728,6 @@
 	var cameraX = 0 , cameraY = 0 , cameraZ=250;
 	var sceneX = 0 , sceneY = 0, sceneZ = 0;
 	var canvasdiv = document.getElementById('iframe_box');
-	console.log(canvasdiv.offsetWidth);
 	/* 场景 */
 	function initScene() {
 		scene = new THREE.Scene();
@@ -3602,7 +3749,7 @@
 			}
 		}
 		window.GetLoaLob = function(l0,cosa,condition,l,h,Loa,Lob) {
-			let s,p,r;
+			let s, p,r;
 			s = GetStrain(l0,  cosa,condition);
 			p = theWeather.TWI[condition].P7;//r为综合比载
 			r = p/theLine.A;
@@ -3611,7 +3758,6 @@
 			Lob = l - Loa;
 		}
 		window.GetLoaLob2 = function(k,l,h) {
-			console.log("k,l,h",k,l,h);
 			let Loa = l/2.0 - arcsh(k*h/sinh(k*l))/2.0/k;
 			let Lob = l - Loa;
 			let lo = new Array(Loa,Lob);
@@ -3667,7 +3813,6 @@
 						k = GetLoad(condition,7)/theLine.A/GetStrain(towerlist[i].Lk,towerlist[i].cosa,condition)/2.0;
 					}
 					Lo = GetLoaLob2(k, (towerlist[i+1].Distance - towerlist[i].Distance), towerlist[i+1].hugeHigh-towerlist[i].hugeHigh)
-					console.log("LoaLob",Lo);
 					Loa = Lo[0];
 					Lob = Lo[1];
 					towerlist[i].Lv2 = Loa;
@@ -4290,9 +4435,6 @@
 				}
 			}
 			var tempLine2 = turf.lineString(tempLine2Cor);
-			//var temppointLine1 = turf.lineString([[tempintersects.x,tempintersects.y],[tempintersects.x,0]]);
-			//var interPoint1 = turf.lineIntersect(temppointLine1, tempLine2);
-			//tempintersects = new THREE.Vector3(intersects.x, interPoint1.features[0].geometry.coordinates[1], 0);
 			//close to turning point setting attach
 			for(let i=0;i<pile_tabledata.length;i++){
 				if(Math.abs(pile_tabledata[i].dist-xMin-intersects.x/Gridsize*xdivision)<20){  //attach pilelist point 
@@ -4396,6 +4538,7 @@
 			// dataType:"json",
 			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
 			processData: false,
+			headers:{"token":localStorage.getItem("token")},
 			success: function (data) {
 				console.log(data);
 			},
@@ -4751,167 +4894,6 @@
 
 				document.removeEventListener("mousemove",TowerInsertMove);
 			}
-				// let currentTow = [];
-				// let deleteWire = [];
-				// intersects = getIntersects(event);
-				// tempintersects = intersects;
-				//
-				//
-				//
-				// var tempLine2Cor = [];
-				// for (let i = 0; i < m_linegroup.children.length; i++) {
-				// 	for(let j=0;j<m_linegroup.children[i].geometry.vertices.length;j++){
-				// 		tempLine2Cor.push([m_linegroup.children[i].geometry.vertices[j].x,m_linegroup.children[i].geometry.vertices[j].y]);
-				// 	}
-				// }
-				// var tempLine2 = turf.lineString(tempLine2Cor);
-				// var temppointLine1 = turf.lineString([[tempintersects.x,tempintersects.y+500],[tempintersects.x,0]]); // m_line intersect point
-				// var interPoint1 = turf.lineIntersect(temppointLine1, tempLine2);
-				// tempintersects = new THREE.Vector3(tempintersects.x, interPoint1.features[0].geometry.coordinates[1], 0);
-				//
-				// var pointsGeometry = new THREE.Geometry();
-				// pointsGeometry.vertices.push(intersects);
-				// var temppointsGeometry = new THREE.Geometry();
-				// temppointsGeometry.vertices.push(tempintersects);
-				//
-				// var pointsMaterial = new THREE.PointsMaterial({color:0xff0000, size: 3});
-				// var points = new THREE.Points(pointsGeometry, pointsMaterial);
-				// var temppoints = new THREE.Points(temppointsGeometry, pointsMaterial);
-				// pointArray.push(temppoints);
-				// putInd++;
-				//
-				// var pos = new THREE.Vector3(points.geometry.vertices[0].x,points.geometry.vertices[0].y,0);
-				// var tempLine1 = turf.lineString([[pos.x,pos.y],[pos.x,0]]);
-				// var interPoint = turf.lineIntersect(tempLine1, tempLine2);
-				// pos = new THREE.Vector3(points.geometry.vertices[0].x, interPoint.features[0].geometry.coordinates[1], 0);
-				//
-				// let towTypeName=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
-				// let towType =layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val();
-				// console.log("beforetowmesh");console.log(scene.children.length);console.log(scene);
-				// //var towmesh = createTower(pos,"G"+putInd,towTypeName,towType,towerHei,);
-				//
-				// for (let i = 0; i < scene.children.length; i++) {
-				// 	if (scene.children[i].name === "fixwire1" || scene.children[i].name === "fixwire2" || scene.children[i].name === "fixwire3" || scene.children[i].name === "fixwire4") {
-				// 		deleteWire.push(scene.children[i]);
-				// 	}
-				// }
-				// for(let i = 0; i < deleteWire.length; i++){
-				// 	scene.remove(deleteWire[i]);
-				// }
-				//
-				// scene.children.sort(compare('position'))
-				// /****修改****/
-				// towerlist = []
-				// for (let i = 0; i < scene.children.length; i++) {
-				// 	if (scene.children[i].name == "fixTower") {
-				// 		currentTow.push({
-				// 			"posX":scene.children[i].position.x,
-				// 			"object":scene.children[i]
-				// 		});
-				// 		towerlist.push({
-				// 			"Name": "G" + i,
-				// 			"Distance": scene.children[i].position.x / Gridsize * xdivision + xMin,
-				// 			"High": scene.children[i].position.y / Gridsize * ydivision + yMin,
-				// 			"TowerType": "ZMVA41",
-				// 			"Base": 0,
-				// 			"TowerHigh": scene.children[i].geometry.vertices[7].y / (1 / ydivision * Gridsize),
-				// 			"Status": 0,
-				// 			"InsulatorLength": 5.5,
-				// 			"ConnectLength": 0.0,
-				// 			"InsulateP": "",
-				// 			"InsulatePA": "X01",
-				// 			"InsulatePANum": -1,
-				// 			"InsulatePB": "X01",
-				// 			"InsulatePBNum": -1,
-				// 			"InsulatePC": "",
-				// 			"InsulatePCNum": 0,
-				// 			"hugeHigh": 0,
-				// 			"hugeGround": 0,		// 地线悬挂点高程
-				// 			"Lk": 0,
-				// 			"L": 0,
-				// 			"cosa": 1,
-				// 			"bInsular": false,
-				// 			"constant": 0,
-				// 			"u": 1,
-				// 			"kPline": 0,			//导线大号侧k值系数
-				// 			"kGround": 0,		//地线大号侧K值系数
-				// 			"kWind": 0,			//大风条件前视档k值系数
-				// 			"kMaxT": 0,			//70度高温k值系数
-				// 			"constMaxT": 0,
-				// 			"Lh": 0,				// 水平档距
-				// 			"Lh1": 0,			// 小号侧垂直档距
-				// 			"Lh2": 0,			// 大号侧垂直档距
-				// 			"Lv": 0,				// 垂直档距
-				// 			"Lv1": 0,			// 小号侧水平档距
-				// 			"Lv2": 0,			// 大号侧水平档距
-				// 			"lvMinTemp": 0,//最低气温垂直档距
-				// 			"lvMaxTemp": 0,//最高气温垂直档距
-				// 			"lvMaxIce": 0,//最大覆冰垂直档距
-				// 			"lvMaxWind": 0,//最大风垂直档距
-				// 			"displayKType": 0,	//k值类型，0为最大弧垂 1为最高线温
-				// 			"displayGround": 0,		//显示地线
-				// 			"displayPower": 1,		//显示导线
-				// 			"displaySafe": 1,	//显示导线对地
-				// 			"displayCross": 1,		//显示导线跨越
-				// 			"LandDist": 8.5,		// 对地安全距离
-				// 			"ElecDist": 6.0	// 电力线安全距离
-				// 		})
-				// 	}
-				// }
-				// /****修改****/
-				// currentTow.sort(compare('posX'))
-				// for (let j = 0; j < currentTow.length; j++) {
-				// 	for (let i = 0; i < scene.children.length; i++) {
-				// 		if (scene.children[i].uuid == currentTow[j].object.uuid){
-				// 			scene.children[i].geometry.name = "G" + j;
-				// 		}
-				// 	}
-				// }
-				//
-				// let disToPile = []
-				// for (let i = 0; i < pile_tabledata.length; i++) {
-				// 	disToPile.push({"name": pile_tabledata[i].name,
-				// 		"dis":Math.abs(pile_tabledata[i].dist - pos.x/Gridsize*xdivision),
-				// 		"value":i
-				// 	})
-				// }
-				// disToPile.sort(compare("dis"));
-				// layer.getChildFrame('body',tpIndex).find("#pilelist").val(disToPile[0].value);
-				// let gap;
-				// for (let i = 0; i < pile_tabledata.length; i++) {
-				// 	if (pile_tabledata[i].name == disToPile[0].name){
-				// 		gap = pos.x/Gridsize*xdivision - pile_tabledata[i].dist;
-				// 	}
-				// }
-				// let gaptoPile = layer.getChildFrame('body',tpIndex).find("#gap")[0];
-				// gaptoPile.value = gap.toFixed(2);
-				// var inputHei = layer.getChildFrame('body',tpIndex).find("#hei")[0];
-				// var inputDis = layer.getChildFrame('body',tpIndex).find("#dis")[0];
-				//
-				// let disNum = pos.x/Gridsize*xdivision + xMin;
-				// let heiNum = pos.y/Gridsize*ydivision + yMin;
-				// inputDis.value = disNum.toFixed(2);
-				// inputHei.value = heiNum.toFixed(2);
-				//
-				// var inputId =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
-				// inputId.value = "G" + towerlist.length;
-				//
-				// console.log("then",towerlist)
-				// m_end = towerlist.length - 1;
-				// /****修改****/
-				// towerlist.sort(compare('Distance'));
-				// ComputeHugeHigh();
-				// /****修改****/
-				// for (let i = 0; i < towerlist.length; i++) {
-				// 	towerlist[i].Name = "G" + i;
-				// }
-				// for (let i = m_start; i < m_end; i++) {
-				// 	DisplayFawCurve4(towerlist[i],towerlist[i+1], "fixwire");
-				// }
-				//
-				// towerlist_tabledata=towerlist;
-				// GridManager.setAjaxData(towerlist_tableId,{"data":towerlist_tabledata});
-				// GridManager.refreshGrid(towerlist_tableId);
 			}
 			if (event.button === 2){
 				clearTempTow();
@@ -5257,7 +5239,6 @@
 				let towerIndex = TowerPRKIndex(prk,towerlist[fallInd].TowerType);
 				if(towerlist[fallInd].TowerHigh> prk.TOWER[towerIndex].StartHigh){
 					tempTowerHei = towerlist[fallInd].TowerHigh - prk.TOWER[towerIndex].Dhigh;
-					console.log("tempTowerHigh");console.log(tempTowerHei);
 					TowerGroup.children[fallInd]=createTower(TowerGroup.children[fallInd].position,
 							towerlist[fallInd].Name,
 							towerlist[fallInd].TowerType,
@@ -5322,9 +5303,7 @@
 			layer.getChildFrame('body',tpIndex).find("#dis")[0].value=towerlist[editInd].Distance.toFixed(2);
 			layer.getChildFrame('body',tpIndex).find("#hei")[0].value=towerlist[editInd].High.toFixed(2);
 			layer.getChildFrame('body',tpIndex).find("#gap")[0].value=towerlist[editInd].offset;
-			console.log(layer.getChildFrame('body',tpIndex).find('input[type=radio][name = towType]'));
 			let St=layer.getChildFrame('body',tpIndex).find('input[type=radio]');
-			console.log("ST");console.log(St);
 			if(towerlist[editInd].Status==0){$(St[0]).prop('checked',true);}
 
 			else if(towerlist[editInd].Status==3){$(St[2]).prop('checked',true);}
@@ -5336,12 +5315,10 @@
 				}
 			}
 			var selectindex = TowerPRKIndex(prk,towerlist[editInd].TowerType);
-			console.log("selectindex");console.log(selectindex);
 			layer.getChildFrame('body',tpIndex).find("#towerheight").empty();
 			for (let i = prk.TOWER[selectindex].StartHigh;i<=prk.TOWER[selectindex].EndHigh;i=i+prk.TOWER[selectindex].Dhigh){
 				layer.getChildFrame('body',tpIndex).find("#towerheight").append("<option value='"+i+"'>"+i+"</option>");
 			}
-			console.log(layer.getChildFrame('body',tpIndex).find("#towerheight"));
 			//console.log(layer.getChildFrame('body',tpIndex).find("#TowerType option[text='"+towerlist[editInd].TowerType+"']"));
 			layer.getChildFrame('body',tpIndex).find("#TowerType option:contains('"+towerlist[editInd].TowerType+"')").attr("selected",true);
 			layer.getChildFrame('body',tpIndex).find("#towerheight").val(towerlist[editInd].TowerHigh);
@@ -5378,7 +5355,6 @@
 		towerlist[editInd].TowerType = layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 		towerlist[editInd].Status = Number(layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val());
 		towerlist[editInd].TowerHigh = Number(layer.getChildFrame('body',tpIndex).find("#towerheight").find("option:selected").val());
-		console.log(towerlist[editInd]);
 		var tpos={};
 		tpos.x = (towerlist[editInd].Distance-xMin)/xdivision*Gridsize;
 		tpos.y = (towerlist[editInd].High - yMin)/ydivision*Gridsize;
@@ -5410,17 +5386,13 @@
 			FawCurveGroup.children[(editInd-1)*3] = leftCurve[0];
 			FawCurveGroup.children[(editInd-1)*3+1] = leftCurve[1];
 			FawCurveGroup.children[(editInd-1)*3+2] = leftCurve[2];
-			console.log(leftCurve);
 		}
 		if(editInd<towerlist.length){
 			var rightCurve = DisplayFawCurve4(towerlist[editInd],towerlist[editInd+1],"fixwire");
 			FawCurveGroup.children[(editInd)*3] = rightCurve[0];
 			FawCurveGroup.children[(editInd)*3+1] = rightCurve[1];
 			FawCurveGroup.children[(editInd)*3+2] = rightCurve[2];
-			console.log(rightCurve);
 		}
-		console.log("after");
-		console.log(FawCurveGroup);
 
 	}
 
@@ -5495,8 +5467,6 @@
 			}
 		}
 		if (selectedObj) {
-			// console.log("selected");
-			// console.log(selectedObj);
 			if(selectedObj.material.color==selectedObj.parent.children[0].material.color){
 				selectedObj.material=selectedObj.parent.children[1].material;
 			}
@@ -5520,12 +5490,6 @@
 			selectedPoint.visible = false;
 			selectedPoint = null;
 
-			// for(let i=0;i<scene.children.length;i++){
-			// 	if(scene.children[i].name =="crossObject"){
-			// 		scene.children[i].children[1].visible = false;
-			// 		scene.children[i].children[2].visible = false;
-			// 	}
-			// }
 		}
 		const intersects = getIntersectsMapObj(event);
 
@@ -5568,6 +5532,7 @@
 
 		for(let i=0;i<scene.children.length;i++){
 			var num = scene.children.length;
+
 			if(scene.children[i].name == "crossObject"){
 				var redcross = scene.children[i];
 				if(redcross.children[1].geometry.attributes.position.array!= undefined&&
@@ -5593,20 +5558,20 @@
 						redpoint.userData={"dem":redcross.children[0].name,"j":j}; //output offset y
 
 						console.log("selected CrossObject and index",redcross.children[0],j,cross);
-						var crossIndex;
-						for(let ii = 0;ii<scene.children.length;ii++){
+						let crossIndex;
+						for(let ii = 0;ii<cross.length;ii++){
 							if(redcross.children[0].name == cross[ii].AttrName&&
-									redcross.children[1].geometry.attributes.position.array[0]/Gridsize*xdivision+xMin==
-									cross[ii].CrossPoint[0].x){
+									redcross.children[1].geometry.attributes.position.array[0]/Gridsize*xdivision+xMin-
+									cross[ii].CrossPoint[0].x<1){
 								crossIndex = ii;
 								break;
 							}
-
 						}
 
 						scene.add(redpoint);
 					// CrossPoint info to layer page
 					if(layer.getChildFrame('body',tpIndex).find("#shuxing")[0]!=undefined) {
+
 						if (cross[crossIndex].CrossPoint[j].y == 0) {
 							layer.getChildFrame('body', tpIndex).find("#shuxing")[0].value = 3;
 						} else {
@@ -5647,18 +5612,7 @@
 		if(raycaster.intersectObjects(m_linegroup.children,true)[0]!=undefined){obj.push(raycaster.intersectObjects(m_linegroup.children,true)[0]);}
 		if(raycaster.intersectObjects(l_linegroup.children,true)[0]!=undefined){obj.push(raycaster.intersectObjects(l_linegroup.children,true)[0]);}
 		if(raycaster.intersectObjects(r_linegroup.children,true)[0]!=undefined){obj.push(raycaster.intersectObjects(r_linegroup.children,true)[0]);}
-		// crossobject can be caught
-		// console.log("raycastScene",scene.children);
-		// for(let i = 0;i<scene.children.length;i++){
-		// 	if(scene.children[i].name == "crossObject"){
-		// 		console.log(scene.children[i])
-		// 		if(raycaster.intersectObject(scene.children[i].children[1],true)!=[]){
-		// 			obj.push(raycaster.intersectObject(scene.children[i].children[1],true));
-		// 		}
-		// 	}
-		// }
-		//
-		// console.log(obj);
+
 		return obj;
 	}
 
@@ -5676,7 +5630,6 @@
 
 		var redpoint;
 		if(coord!=undefined) {
-			//console.log("x,z",coord.x,coord.y);
 			for (let i = 0; i < scene.children.length; i++) {
 				if (scene.children[i].name == "redpoint") {
 					redpoint = scene.children[i];
@@ -5710,9 +5663,6 @@
 				scene.children[scene.children.length-1].children[0].geometry.setDrawRange(0, pCount);
 				scene.children[scene.children.length-1].children[0].geometry.computeBoundingSphere();    //children Line ;
 
-
-				//console.log(GroundVertice);
-				console.log("pCount",scene,pCount);
 			}
 			if(event.button ===2){
 				console.log("right button");
@@ -5732,9 +5682,7 @@
 						//shade:0,
 
 						success:function (layero,index) {
-							console.log(layero,index);
 							var body = layer.getChildFrame('body',index);
-							console.log(body);
 						}
 					})
 				}
@@ -5789,7 +5737,6 @@
 		var renewp = [];  var secp=[]; var arr=[]
 		var target = ray.intersectObject(scene.children[scene.children.length-1].children[0]);   // children[0] line   children[1] points  children[2] section p
 
-		console.log("intersect_result",target);
 		// caculateDem intersect points and generate obj add to scene
 		for(let i=0 ;i<target.length;i++){
 			var sectionRay = new THREE.Raycaster();
@@ -5860,14 +5807,6 @@
 			renewp.pop();
 		}
 
-
-		// for(let i = 0 ;i<target.length;i++){
-		// 	renewp.push(target[i].point);
-		// }
-		//renewp sort   cross point insert
-		//renewp.sort(compare('x'));
-
-		console.log("target ",target)
 		let flag= 0;
 		for (let i = 0; i < target.length; i++) {
 			for (let j = flag; j < renewp.length-1; j++) {
@@ -5975,6 +5914,13 @@
 				if(cross[i].CrossPoint[ii].towerHigh>0&&cross[i].CrossPoint[ii].y ==0){towerhigh = cross[i].CrossPoint[ii].towerHigh;};
 			}
 			createCrossLabel(towerhigh,codeId,added);
+		}
+
+		for(let i=0;i<cross.length;i++){
+			for(let ii=0;ii<cross[i].CrossPoint.length;ii++){
+				MapCrossModify(i,ii,cross[i].CrossPoint[ii].x,cross[i].CrossPoint[ii].y,cross[i].CrossPoint[ii].z,
+						cross[i].CrossPoint[ii].z-cross[i].CrossPoint[ii].towerHigh,cross[i].CrossPoint[ii].dc);
+			}
 		}
 
 	}
@@ -6109,42 +6055,6 @@
 						body.find("#towerheight").append("<option value='"+i+"'>"+i+"</option>");
 					}
 					console.log(title);
-					// if(title=='修改杆塔信息'){
-					// 	layer.getChildFrame('body',tpIndex).find("#towId")[0].value=towerlist[editInd].Name;
-					// 	layer.getChildFrame('body',tpIndex).find("#dis")[0].value=towerlist[editInd].Distance;
-					// 	layer.getChildFrame('body',tpIndex).find("#hei")[0].value=towerlist[editInd].High;
-					// 	layer.getChildFrame('body',tpIndex).find("#gap")[0].value=towerlist[editInd].offset;
-					// 	console.log(layer.getChildFrame('body',tpIndex).find('input[type=radio][name = towType]'));
-					// 	let St=layer.getChildFrame('body',tpIndex).find('input[type=radio]');
-					// 	console.log("ST");console.log(St);
-					// 	if(towerlist[editInd].Status==0){$(St[0]).prop('checked',true);}
-					//
-					// 	else if(towerlist[editInd].Status==3){$(St[2]).prop('checked',true);}
-					// 	else{$(St[1]).prop('checked',true);}
-					// 	layer.getChildFrame('body',tpIndex).find("#TowerType").empty();
-					// 	if(prk.TOWER!=undefined){
-					// 		for (let i = 0; i < prk.TOWER.length; i++) {
-					// 			if(prk.TOWER[i].type==towerlist[editInd].Status){layer.getChildFrame('body',tpIndex).find("#TowerType").append("<option value='"+i+"'>"+prk.TOWER[i].Name+"</option>")};
-					// 		}
-					// 	}
-					// 	var selectindex = TowerPRKIndex(prk,towerlist[editInd].TowerType);
-					// 	console.log("selectindex");console.log(selectindex);
-					// 	layer.getChildFrame('body',tpIndex).find("#towerheight").empty();
-					// 	for (let i = prk.TOWER[selectindex].StartHigh;i<=prk.TOWER[selectindex].EndHigh;i=i+prk.TOWER[selectindex].Dhigh){
-					// 		layer.getChildFrame('body',tpIndex).find("#towerheight").append("<option value='"+i+"'>"+i+"</option>");
-					// 	}
-					// 	console.log(layer.getChildFrame('body',tpIndex).find("#towerheight"));
-					// 	//console.log(layer.getChildFrame('body',tpIndex).find("#TowerType option[text='"+towerlist[editInd].TowerType+"']"));
-					// 	layer.getChildFrame('body',tpIndex).find("#TowerType option:contains('"+towerlist[editInd].TowerType+"')").attr("selected",true);
-					// 	layer.getChildFrame('body',tpIndex).find("#towerheight").val(towerlist[editInd].TowerHigh);
-					// 	//bind select option setting
-					// 	for (let i = 0; i < pile_tabledata.length; i++) {
-					// 		layer.getChildFrame('body',tpIndex).find("#pilelist").append("<option value='"+i+"'>"+pile_tabledata[i].name+"</option>");
-					// 	}
-					// 	layer.getChildFrame('body',tpIndex).find("#pilelist option:contains('"+towerlist[editInd].Position+"')").attr("selected",true);
-					// 	//Status;
-					// }
-
 				}
 			})
 		}

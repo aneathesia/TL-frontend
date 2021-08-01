@@ -37,6 +37,7 @@
             url: BASEURL+"/directory/"+ProjectName, //提交的路径
             type: "get",       //提交方式
             dataType:"json",
+            headers:{"token":localStorage.getItem("token")},
             success: function(data){
                 for (let i = 0; i < data.length; i++) {
                     var fileOption = new Option(data[i].name, i.toString());
@@ -64,6 +65,7 @@
 
             xhr = new XMLHttpRequest();  // XMLHttpRequest 对象
             xhr.open("post", url, true); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
+            xhr.setRequestHeader("token",localStorage.getItem("token"));
             xhr.onload = uploadcomplete; //请求完成
             xhr.onerror =  uploadfailed; //请求失败
 
@@ -95,6 +97,7 @@
             data: form,    //提交的数据
             contentType: false, // 告诉jQuery不要去设置Content-Type请求头
             processData: false,
+            headers:{"token":localStorage.getItem("token")},
             success: function(data){
                 console.log("openfile return data",data);
                 //打开工程文件
