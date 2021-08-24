@@ -43,6 +43,7 @@
 <script>
     let index = parent.layer.getFrameIndex(window.name);
     function Editsave(){
+        var shuxing = Number($("#shuxing").val());
         var crossIndex = Number($("#crossIndex").val());
         var pointIndex = Number($("#pointIndex").val());
         var leiju = Number($("#leiju").val());
@@ -50,7 +51,7 @@
         var gaocheng = Number($("#gaocheng").val());
         var dimiangao = Number($("#dimiangao").val());
         var ganxing = Number($("#ganxing").val());
-        parent.MapCrossModify(crossIndex,pointIndex,leiju,pianju,gaocheng,dimiangao,ganxing);
+        parent.MapCrossModify(crossIndex,pointIndex,shuxing,leiju,pianju,gaocheng,dimiangao,ganxing);
 
 
     }

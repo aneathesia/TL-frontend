@@ -14,20 +14,23 @@
 <body>
 <div style="display: inline-block">
     <label id="note"></label>
-    <select id="DataSelect" style="max-height: 50px"></select>
+    <select id="DataSelect" style="max-height: 20px"></select>
 </div>
-<div id = "DataContent" class="jexcel_content" style="overflow-y: auto;height:40%;box-shadow: rgb(221, 221, 221) 2px 2px 2px 2px;"></div>
+
+<div id = "DataContent" class="jexcel_content" style="overflow-y: auto;box-shadow: rgb(221, 221, 221) 2px 2px 2px 2px;"></div>
+
 
 <div class="layui-layer-btn" style="display: flex;justify-content: space-around;">
-    <button class="layui-layer-btn layui-layer-close"  >确定</button>
-    <button class="layui-layer-btn layui-btn-primary"  >取消</button>
+    <button class="layui-layer-btn layui-layer-close"  onclick="setData()">确定</button>
+    <button class="layui-layer-btn layui-btn-primary"  onclick="exitSet()">取消</button>
 </div>
 </body>
 
 
 
 <script>
-
+    let index = parent.layer.getFrameIndex(window.name);
+    var voltageHeader = ['Elc110kV','Elc220kV','Elc330kV','Elc500kV','Direct500kV','Elc750kV','Direct800','Elc1000kV'];
     var Datatable = jspreadsheet(document.getElementById('DataContent'),{
         columns:[
             {type:"text",title:"参数名称",width: 100, name: "name"},
@@ -36,48 +39,136 @@
     })
     Datatable.hideIndex();
 
-    var conductor = [{'name':'电线型号','value':''},
-        {'name':'截面积(mm²)','value':0},
-        {'name':'外径(mm)','value':0},
-        {'name':'重量kg/km','value':0},
-        {'name':'弹性系数(kg)','value':0},
-        {'name':'弹性系数(N)','value':0},
-        {'name':'线膨胀系数','value':0},
-        {'name':'断应力kgmm','value':0},
-        {'name':'拉断力N','value':0},
-        {'name':'导线1地线2','value':0},
-        {'name':'标称截面','value':''}];
+    var crossSample= [];
+    // var conductor = [{'name':'电线型号','value':''},
+    //     {'name':'截面积(mm²)','value':0},
+    //     {'name':'外径(mm)','value':0},
+    //     {'name':'重量kg/km','value':0},
+    //     {'name':'弹性系数(kg)','value':0},
+    //     {'name':'弹性系数(N)','value':0},
+    //     {'name':'线膨胀系数','value':0},
+    //     {'name':'断应力kgmm','value':0},
+    //     {'name':'拉断力N','value':0},
+    //     {'name':'导线1地线2','value':0},
+    //     {'name':'标称截面','value':''}];
+    var conductorSample = [{'name':'导地线类型','value':'导线'},
+        {'name':'导地线截面积(mm²)','value':0},
+        {'name':'导地线直径','value':0},
+        {'name':'计算拉断力','value':0},
+        {'name':'单位长度质量(kg/m)','value':0},
+        {'name':'弹性系数(N/mm²)','value':0},
+        {'name':'膨胀系数/℃','value':0},
+        {'name':'导线分裂数','value':0}];
+    var weatherSample=[];
+    var towerSample =[];
+
 
     $("#DataSelect").change(function () {
         let res = $("#DataSelect").find("option:selected").text();
         console.log(encodeURI(res));
+        let noteContent = $("#note").text();
+        console.log("noteContent",noteContent);
+        switch ($("#note").text()){
+            //tcross
+            case "交叉跨越":
+                {
+                    var sel = this.value;
+                    console.log($("#DataSelect").get(0).selectedIndex);
+                $.ajax({
+                    url: BASEURL+"/tl/tcross/"+voltageHeader[sel], //提交的路径
+                    type: "get",
+                    //async: false,
+                    success: function (data){
+                        crossSample =[];
+                        for(let i=0;i<data.length;i++){
+                            var temp = Object.values(data[i]);
+                            crossSample.push({'contabbr':temp[1],'voltage':temp[0]});
+                        }
+                        console.log(crossSample);
 
-        $.ajax({
-            url: BASEURL+"/tl/conductor/Search?Name="+encodeURI(res), //提交的路径
-            type: "get",
-            //async: false,
-            success: function (data){
-                console.log(data,data[0]);
-                conductor[0].value = data[0].name;
-                conductor[1].value = data[0].a;
-                conductor[2].value = data[0].d;
-                conductor[3].value = data[0].p1;
-                conductor[4].value = data[0].ekg;
-                conductor[5].value = data[0].en;
-                conductor[6].value = data[0].ac;
-                conductor[7].value = data[0].tpkg;
-                conductor[8].value = data[0].tpn;
-                conductor[9].value = data[0].type;
-                conductor[10].value = data[0].stda;
-
-                Datatable.setData(conductor);
-
-            },
-            error:function (error) {
-                console.log(error);
+                    },
+                    error:function (error) {
+                        console.log(error);
+                    }
+                })
             }
-        })
+            break;
+            //conductor
+            case "电线型号":
+                {
+                $.ajax({
+                    url: BASEURL+"/tl/conductor/Search?Name="+encodeURI(res), //提交的路径
+                    type: "get",
+                    //async: false,
+                    success: function (data){
+                        console.log(data,data[0]);
+
+                    },
+                    error:function (error) {
+                        console.log(error);
+                    }
+                })
+            }
+            break;
+            //weather
+            case "气象区":
+                {
+                $.ajax({
+                    url: BASEURL+"/tl/weather/Search?Nameqxq="+encodeURI(res), //提交的路径
+                    type: "get",
+                    //async: false,
+                    success: function (data){
+                        console.log(data,data[0]);
+                        weatherSample = [];
+                        for(let j = 0 ; j<data[0].length;j++){
+                            var row = {};
+                            var para = Object.values(data[0][j]).split(",");
+                            console.log(para);
+                            row.name = "";
+                            row.wd= para[0];
+                            row.fs= para[1];
+                            row.fb= para[2];
+                            weatherSample.push(row);
+                        }
+                        console.log(weatherSample);
+                    },
+                    error:function (error) {
+                        console.log(error);
+                    }
+                })
+            }
+            break;
+            //tower
+            case "杆塔类型":
+                {
+                $.ajax({
+                    url: BASEURL+"/tl/tower/Search?Name="+encodeURI(res), //提交的路径
+                    type: "get",
+                    //async: false,
+                    success: function (data){
+                        console.log(data,data[0]);
+
+                    },
+                    error:function (error) {
+                        console.log(error);
+                    }
+                })
+            }
+            break;
+            default:
+                break;
+        }
+
+
     })
+
+    function setData() {
+
+    }
+
+    function exitSet() {
+        parent.layer.close(index);
+    }
 
 </script>
 

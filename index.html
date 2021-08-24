@@ -468,6 +468,8 @@
 								{
 									console.log(fid-"0"+i);
 									towerlist_tabledata[i].Name=head.toString()+(fid-"0"+i).toString();
+									towerlist[i].Name=head.toString()+(fid-"0"+i).toString();
+
 								}
 								console.log(towerlist_tabledata);
 								towerlistCalc();
@@ -639,14 +641,16 @@
 					towerlist_tabledata[i].TowerType,
 					towerlist_tabledata[i].Status,
 					towerlist_tabledata[i].TowerHigh,
+					towerlist_tabledata[i].Base,
 					-1);
+			console.log(towerset);
 			TowerGroup.add(towerset);
 			scene.add(TowerGroup);
 			var tlabel = createSpritelabel(towerlist_tabledata[i].Name,
 					"Lh:"+towerlist_tabledata[i].Lh.toFixed(0)+"/Lv:"+towerlist_tabledata[i].Lv.toFixed(0)+
 					"/Kv:"+(towerlist_tabledata[i].Lv.toFixed(0)/towerlist_tabledata[i].Lh.toFixed(0)).toFixed(2),
 					towerlist_tabledata[i].TowerType+"-"+towerlist_tabledata[i].TowerHigh,
-					"#000000",150,0,tpos.x,tpos.y+towerlist_tabledata[i].TowerHigh/ydivision*Gridsize+5,0);
+					"#000000",150,0,tpos.x,tpos.y+(towerlist_tabledata[i].TowerHigh+towerlist_tabledata[i].Base)/ydivision*Gridsize+5,0);
 			TowerScriptGroup.add(tlabel);
 			scene.add(TowerScriptGroup);
 		}
@@ -2578,114 +2582,6 @@
 	var DEM;
 
 	//线、气象条件初始默认值
-	// var UseLine = {
-	// 			"name": "LGJX-400/35",
-	// 			"type": 0,
-	// 			"A": 425.24,
-	// 			"d": 26.82,
-	// 			"Tp": 103900,
-	// 			"p1": 1.349,
-	// 			"E": 65000,
-	// 			"a": 0.0000205,
-	// 			"num": 1
-	// 		};
-	// var UseWeather = {
-	// 			"name": "Ⅱ",
-	// 			"num": 12,
-	// 			"h": 15.0,
-	// 			"hs": 15.0,
-	// 			"alfa": 0.16,
-	// 			"B": 0.0,
-	// 			"TWI": [{
-	// 				"name": "平均气温",
-	// 				"t": 15.0,
-	// 				"v": 0.0,
-	// 				"b": 0.0
-	// 			},
-	// 				{
-	// 					"name": "最高气温",
-	// 					"t": 40.0,
-	// 					"v": 0.0,
-	// 					"b": 0.0
-	// 				},
-	// 				{
-	// 					"name": "最低气温",
-	// 					"t": -10.0,
-	// 					"v": 0.0,
-	// 					"b": 0.0
-	// 				},
-	// 				{
-	// 					"name": "最大风速",
-	// 					"t": 10.0,
-	// 					"v": 27.0,
-	// 					"b": 0.0
-	// 				},
-	// 				{
-	// 					"name": "最大覆冰",
-	// 					"t": -5.0,
-	// 					"v": 10.0,
-	// 					"b": 5.0
-	// 				},
-	// 				{
-	// 					"name": "安装情况",
-	// 					"t": 0.0,
-	// 					"v": 10.0,
-	// 					"b": 0.0
-	// 				},
-	// 				{
-	// 					"name": "操作情况",
-	// 					"t": 15.0,
-	// 					"v": 15.0,
-	// 					"b": 0.0
-	// 				},
-	// 				{
-	// 					"name": "大气有风",
-	// 					"t": 15.0,
-	// 					"v": 10.0,
-	// 					"b": 0.0
-	// 				},
-	// 				{
-	// 					"name": "大气无风",
-	// 					"t": 15.0,
-	// 					"v": 0.0,
-	// 					"b": 0.0
-	// 				},
-	// 				{
-	// 					"name": "最高线温",
-	// 					"t": 70.0,
-	// 					"v": 0.0,
-	// 					"b": 0.0
-	// 				},
-	// 				{
-	// 					"name": "检修工况",
-	// 					"t": 0.0,
-	// 					"v": 0.0,
-	// 					"b": 0.0
-	// 				},
-	// 				{
-	// 					"name": "事故工况",
-	// 					"t": 0.0,
-	// 					"v": 0.0,
-	// 					"b": 0.0
-	// 				}]
-	// 		};
-	// var section = {
-	// 			"name": "1",
-	// 			"starJ": "J2",
-	// 			"from": 0.0,
-	// 			"endJ": "J37(GL)",
-	// 			"to": 57641.0,
-	// 			"powerLine": "LGJX-400/35",
-	// 			"groundLine": "LGJX-50/30",
-	// 			"wertherName": "Ⅱ",
-	// 			"pLineK": 0.95,
-	// 			"pLineF": 2.500,
-	// 			"pLineC": 0.250,
-	// 			"gLineK": 1.000,
-	// 			"gLineF": 3.000,
-	// 			"gLineC": 0.250,
-	// 			"circuit": 1
-	// 		};
 		var UseLine ={};var UseWeather = {};var section = {};
 
 	var theLine = UseLine,theWeather = UseWeather;
@@ -4056,7 +3952,7 @@
 
 	/* 创建杆塔函数 */
 	var towerLineWid = 0.5;
-	window.tower1 = function(towerHei) {  //4.5 InsulateLength
+	window.tower1 = function(towerHei,Base) {  //4.5 InsulateLength
 			let scale = 1 / ydivision * Gridsize;
 			let tower = new THREE.Shape();
 			tower.moveTo(-0.5,0);
@@ -4069,6 +3965,7 @@
 			tower.lineTo(-0.5,0);
 			let towerGroup = new THREE.ShapeGeometry(tower);
 			towerGroup.scale(scale,scale,scale);
+			towerGroup.translate(0,Base/ydivision*Gridsize,0);
 			let towMaterial = new THREE.MeshBasicMaterial( { color: 0x00ff00, side: THREE.DoubleSide } );
 			var towMesh = new THREE.Mesh( towerGroup, towMaterial ) ;
 			towMesh.renderOrder = towerHei;
@@ -4076,7 +3973,7 @@
 
 			//draw line group
 		}
-	window.tower2 = function(towerHei) {
+	window.tower2 = function(towerHei,Base) {
 		let scale = 1 / ydivision * Gridsize;
 		let tower = new THREE.Shape();
 		tower.moveTo(-0.5,0);
@@ -4089,6 +3986,7 @@
 		tower.lineTo(-0.5,0);
 		let towerGroup = new THREE.ShapeGeometry(tower);
 		towerGroup.scale(scale,scale,scale);
+		towerGroup.translate(0,Base/ydivision*Gridsize,0);
 		let towMaterial = new THREE.MeshBasicMaterial( { color: 0x9400D3, side: THREE.DoubleSide } );
 		var towMesh = new THREE.Mesh( towerGroup, towMaterial ) ;
 		towMesh.renderOrder = towerHei;
@@ -4096,14 +3994,8 @@
 	}
 
 
-	window.createTower = function(pos,name,towTypeName,towType,towerHei,added){ //added true from draw false from tabledata push new or not
-		if(towType!=0){var towMesh = tower2(towerHei);}
-		else {var towMesh = tower1(towerHei);}
-			towMesh.position.x = pos.x;
-			towMesh.position.y = pos.y;
-			towMesh.position.z = 0;
-			towMesh.name = "fixTower";
-			towMesh.geometry.name = name;
+	window.createTower = function(pos,name,towTypeName,towType,towerHei,Base,added){ //added true from draw false from tabledata push new or not
+			console.log(pos,name,towTypeName,towType,towerHei,Base,added);
 			if(added>-1){
 				towerlist.splice(added,0,{
 					"Name" : name,
@@ -4112,10 +4004,10 @@
 					"Position":"",
 					"offset":0,
 					"TowerType" : towTypeName,
-					"Base": 0,
+					"Base": Base,
 					"TowerHigh" : towerHei,
 					"Status" : Number(towType),
-					"InsulatorLength": 5.5,
+					"InsulatorLength": 4.5,
 					"ConnectLength": 0.0,
 					"InsulateP": "",
 					"InsulatePA": "X01",
@@ -4159,20 +4051,19 @@
 				m_end = towerlist.length - 1;
 				ComputeHugeHigh();
 			}
+
+			if(towType!=0){var towMesh = tower2(towerHei,Base);}
+			else {var towMesh = tower1(towerHei,Base);}
+			towMesh.position.x = pos.x;
+			towMesh.position.y = pos.y;
+			towMesh.position.z = 0;
+			towMesh.name = "fixTower";
+			towMesh.geometry.name = name;
+			console.log("Mesh",towMesh);
 			return towMesh;
 		}
 
 	function createTowerTemp(pos,towTypeName,towType){
-
-			if(towType!=0){var towMesh = tower2(towerHei);}
-			else {var towMesh = tower1(towerHei);}
-			towMesh.position.x = pos.x;
-			towMesh.position.y = pos.y;
-			towMesh.position.z = 0;
-			towMesh.name = "tower";
-
-
-
 			towerlist.push({
 				"Name" : "G",
 				"Distance" : pos.x/Gridsize*xdivision+xMin,
@@ -4183,7 +4074,7 @@
 				"Base": 0,
 				"TowerHigh" : towerHei,
 				"Status" : Number(towType),
-				"InsulatorLength": 5.5,
+				"InsulatorLength": 4.5,
 				"ConnectLength": 0.0,
 				"InsulateP": "",
 				"InsulatePA": "X01",
@@ -4223,6 +4114,12 @@
 				"LandDist" : 8.5,		// 对地安全距离
 				"ElecDist" : 6.0	// 电力线安全距离
 			});
+		if(towType!=0){var towMesh = tower2(towerlist[towerlist.length-1].TowerHigh,towerlist[towerlist.length-1].Base);}
+		else {var towMesh = tower1(towerlist[towerlist.length-1].TowerHigh,towerlist[towerlist.length-1].Base);}
+		towMesh.position.x = pos.x;
+		towMesh.position.y = pos.y;
+		towMesh.position.z = 0;
+		towMesh.name = "tower";
 
 			m_end = towerlist.length - 1;
 			ComputeHugeHigh();
@@ -4346,7 +4243,7 @@
 					let towTypeName=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 					let towType =layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val();
 					console.log("beforetowmesh");console.log(scene.children.length);console.log(scene);
-					var towmesh = createTower(pos,"G"+putInd,towTypeName,towType,towerHei,putInd);
+					var towmesh = createTower(pos,"G"+putInd,towTypeName,towType,towerHei,0,putInd);
 					TowerGroup.add(towmesh);
 					scene.add(TowerGroup);
 					var tlabel = createSpritelabel(towerlist[m_end].Name,
@@ -4668,7 +4565,7 @@
 				"Base": 0,
 				"TowerHigh": towerHei,
 				"Status": Number(towType),
-				"InsulatorLength": 5.5,
+				"InsulatorLength": 4.5,
 				"ConnectLength": 0.0,
 				"InsulateP": "",
 				"InsulatePA": "X01",
@@ -4747,9 +4644,9 @@
 				inputId.value = "G" + towerlist_tabledata.length;
 
 				if (towerlist[1].Status != 0) {
-					var towMesh = tower2(towerlist[1].TowerHigh);
+					var towMesh = tower2(towerlist[1].TowerHigh,0);
 				} else {
-					var towMesh = tower1(towerlist[1].TowerHigh);
+					var towMesh = tower1(towerlist[1].TowerHigh,0);
 				}
 				towMesh.position.x = pos.x;towMesh.position.y = pos.y;towMesh.position.z = 0;
 				towMesh.name = "tower";
@@ -4791,7 +4688,7 @@
 					"Base": 0,
 					"TowerHigh": 0,
 					"Status": 0,
-					"InsulatorLength": 5.5,
+					"InsulatorLength": 4.5,
 					"ConnectLength": 0.0,
 					"InsulateP": "",
 					"InsulatePA": "X01",
@@ -4858,6 +4755,7 @@
 						temptowerlist.TowerType,
 						temptowerlist.Status,
 						temptowerlist.TowerHigh,
+						0,
 						insertInd  
 				);
 				TowerGroup.children.splice(insertInd,0,towMesh);
@@ -4871,7 +4769,7 @@
 						"Lh:"+towerlist[insertInd].Lh.toFixed(0)+"/Lv:"+towerlist[insertInd].Lv.toFixed(0)+
 						"/Kv:"+(towerlist[insertInd].Lv.toFixed(0)/towerlist[insertInd].Lh.toFixed(0)).toFixed(2),
 						towerlist[insertInd].TowerType+"-"+towerlist[insertInd].TowerHigh,
-						"#000000",150,0,tpos.x,tpos.y+towerlist[insertInd].TowerHigh/ydivision*Gridsize+5,0);
+						"#000000",150,0,tpos.x,tpos.y+(towerlist[insertInd].TowerHigh+towerlist[insertInd].Base)/ydivision*Gridsize+5,0);
 
 				TowerScriptGroup.children.splice(insertInd,0,insertlabel);
 
@@ -4963,10 +4861,10 @@
 					"Position": "",
 					"offset": 0,
 					"TowerType": towTypeName,
-					"Base": 0,
+					"Base": ttowerlist[movingInd].Base,
 					"TowerHigh": towerHei,
 					"Status": Number(towType),
-					"InsulatorLength": 5.5,
+					"InsulatorLength": 4.5,
 					"ConnectLength": 0.0,
 					"InsulateP": "",
 					"InsulatePA": "X01",
@@ -5041,9 +4939,9 @@
 					}
 				}
 				if (towerlist[1].Status != 0) {
-					var towMesh = tower2(towerHei);
+					var towMesh = tower2(towerHei,ttowerlist[movingInd].Base);
 				} else {
-					var towMesh = tower1(towerHei);
+					var towMesh = tower1(towerHei,ttowerlist[movingInd].Base);
 				}
 				towMesh.position.x = pos.x;towMesh.position.y = pos.y;towMesh.position.z = 0;
 				towMesh.name = "tower";
@@ -5068,6 +4966,7 @@
 					layer.getChildFrame('body',tpIndex).find("#dis")[0].value=towerlist[movingInd].Distance.toFixed(2);
 					layer.getChildFrame('body',tpIndex).find("#hei")[0].value=towerlist[movingInd].High.toFixed(2);
 					layer.getChildFrame('body',tpIndex).find("#gap")[0].value=towerlist[movingInd].offset;
+					layer.getChildFrame('body',tpIndex).find("#flow")[0].value=towerlist[movingInd].Base;
 					let St=layer.getChildFrame('body',tpIndex).find('input[type=radio]');
 					if(towerlist[movingInd].Status==0){$(St[0]).prop('checked',true);}
 
@@ -5108,6 +5007,7 @@
 					towerlist[movingInd].Distance = Number(layer.getChildFrame('body',tpIndex).find("#dis")[0].value);
 					towerlist[movingInd].High = Number(layer.getChildFrame('body',tpIndex).find("#hei")[0].value);
 					towerlist[movingInd].offset = Number(layer.getChildFrame('body',tpIndex).find("#gap")[0].value);
+					towerlist[movingInd].Base = Number(layer.getChildFrame('body',tpIndex).find("#flow")[0].value);
 					towerlist[movingInd].TowerType = layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 					towerlist[movingInd].Status = Number(layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val());
 					towerlist[movingInd].TowerHigh = Number(layer.getChildFrame('body',tpIndex).find("#towerheight").find("option:selected").val());
@@ -5122,6 +5022,7 @@
 							towerlist[movingInd].TowerType,
 							towerlist[movingInd].Status,
 							towerHei,
+							towerlist[movingInd].Base,
 							-1);
 					m_end = towerlist.length-1;
 
@@ -5130,7 +5031,7 @@
 							"Lh:"+towerlist[movingInd].Lh.toFixed(0)+"/Lv:"+towerlist[movingInd].Lv.toFixed(0)+
 							"/Kv:"+(towerlist[movingInd].Lv.toFixed(0)/towerlist[movingInd].Lh.toFixed(0)).toFixed(2),
 							towerlist[movingInd].TowerType+"-"+towerlist[movingInd].TowerHigh,
-							"#000000",150,0,tpos.x,tpos.y+towerlist[movingInd].TowerHigh/ydivision*Gridsize+5,0);
+							"#000000",150,0,tpos.x,tpos.y+(towerlist[movingInd].TowerHigh+towerlist[movingInd].Base)/ydivision*Gridsize+5,0);
 
 					if(movingInd!=0&&movingInd<towerlist.length-1){ //judge delete head or end
 						var leftCurve = DisplayFawCurve4(towerlist[movingInd-1],towerlist[movingInd],"fixwire");
@@ -5182,6 +5083,7 @@
 						towerlist[riseInd].TowerType,
 						towerlist[riseInd].Status,
 						tempTowerHei,
+						towerlist[riseInd].Base,
 						-1  //no need to push new tower to towerlist
 				);
 			}
@@ -5199,7 +5101,7 @@
 					"Lh:"+towerlist[riseInd].Lh.toFixed(0)+"/Lv:"+towerlist[riseInd].Lv.toFixed(0)+
 					"/Kv:"+(towerlist[riseInd].Lv.toFixed(0)/towerlist[riseInd].Lh.toFixed(0)).toFixed(2),
 					towerlist[riseInd].TowerType+"-"+towerlist[riseInd].TowerHigh,
-					"#000000",150,0,tpos.x,tpos.y+towerlist[riseInd].TowerHigh/ydivision*Gridsize+5,0);
+					"#000000",150,0,tpos.x,tpos.y+(towerlist[riseInd].TowerHigh+towerlist[riseInd].Base)/ydivision*Gridsize+5,0);
 
 			if(riseInd>0){
 				var leftCurve = DisplayFawCurve4(towerlist[riseInd-1],towerlist[riseInd],"fixwire");
@@ -5244,6 +5146,7 @@
 							towerlist[fallInd].TowerType,
 							towerlist[fallInd].Status,
 							tempTowerHei,
+							towerlist[fallInd].Base,
 							-1  //no need to push new tower to towerlist
 					);
 				}
@@ -5258,7 +5161,7 @@
 						"Lh:"+towerlist[fallInd].Lh.toFixed(0)+"/Lv:"+towerlist[fallInd].Lv.toFixed(0)+
 						"/Kv:"+(towerlist[fallInd].Lv.toFixed(0)/towerlist[fallInd].Lh.toFixed(0)).toFixed(2),
 						towerlist[fallInd].TowerType+"-"+towerlist[fallInd].TowerHigh,
-						"#000000",150,0,tpos.x,tpos.y+towerlist[fallInd].TowerHigh/ydivision*Gridsize+5,0);
+						"#000000",150,0,tpos.x,tpos.y+(towerlist[fallInd].TowerHigh+towerlist[fallInd].Base)/ydivision*Gridsize+5,0);
 
 
 
@@ -5303,6 +5206,7 @@
 			layer.getChildFrame('body',tpIndex).find("#dis")[0].value=towerlist[editInd].Distance.toFixed(2);
 			layer.getChildFrame('body',tpIndex).find("#hei")[0].value=towerlist[editInd].High.toFixed(2);
 			layer.getChildFrame('body',tpIndex).find("#gap")[0].value=towerlist[editInd].offset;
+			layer.getChildFrame('body',tpIndex).find("#flow")[0].value=towerlist[editInd].Base;
 			let St=layer.getChildFrame('body',tpIndex).find('input[type=radio]');
 			if(towerlist[editInd].Status==0){$(St[0]).prop('checked',true);}
 
@@ -5352,6 +5256,7 @@
 		towerlist[editInd].Distance = Number(layer.getChildFrame('body',tpIndex).find("#dis")[0].value);
 		towerlist[editInd].High = Number(layer.getChildFrame('body',tpIndex).find("#hei")[0].value);
 		towerlist[editInd].offset = Number(layer.getChildFrame('body',tpIndex).find("#gap")[0].value);
+		towerlist[editInd].Base = Number(layer.getChildFrame('body',tpIndex).find("#flow")[0].value);
 		towerlist[editInd].TowerType = layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 		towerlist[editInd].Status = Number(layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val());
 		towerlist[editInd].TowerHigh = Number(layer.getChildFrame('body',tpIndex).find("#towerheight").find("option:selected").val());
@@ -5366,6 +5271,7 @@
 			towerlist[editInd].TowerType,
 			towerlist[editInd].Status,
 			towerlist[editInd].TowerHigh,
+			towerlist[editInd].Base,
 			-1  //no need to push new tower to towerlist
 		);
 
@@ -5374,7 +5280,7 @@
 				"Lh:"+towerlist[editInd].Lh.toFixed(0)+"/Lv:"+towerlist[editInd].Lv.toFixed(0)+
 				"/Kv:"+(towerlist[editInd].Lv.toFixed(0)/towerlist[editInd].Lh.toFixed(0)).toFixed(2),
 				towerlist[editInd].TowerType+"-"+towerlist[editInd].TowerHigh,
-				"#000000",150,0,tpos.x,tpos.y+towerlist[editInd].TowerHigh/ydivision*Gridsize+5,0);
+				"#000000",150,0,tpos.x,tpos.y+(towerlist[editInd].TowerHigh+towerlist[editInd].Base)/ydivision*Gridsize+5,0);
 
 		//change displayfawcurve
 		console.log(FawCurveGroup);
@@ -5572,15 +5478,11 @@
 					// CrossPoint info to layer page
 					if(layer.getChildFrame('body',tpIndex).find("#shuxing")[0]!=undefined) {
 
-						if (cross[crossIndex].CrossPoint[j].y == 0) {
-							layer.getChildFrame('body', tpIndex).find("#shuxing")[0].value = 3;
-						} else {
-							layer.getChildFrame('body', tpIndex).find("#shuxing")[0].value = 1;
-						}
-						layer.getChildFrame('body', tpIndex).find("#leiju")[0].value = cross[crossIndex].CrossPoint[j].x;
-						layer.getChildFrame('body', tpIndex).find("#pianju")[0].value = cross[crossIndex].CrossPoint[j].y;
-						layer.getChildFrame('body', tpIndex).find("#gaocheng")[0].value = cross[crossIndex].CrossPoint[j].z;
-						layer.getChildFrame('body', tpIndex).find("#dimiangao")[0].value = cross[crossIndex].CrossPoint[j].z - cross[crossIndex].CrossPoint[j].towerHigh;
+						layer.getChildFrame('body', tpIndex).find("#shuxing")[0].value = cross[crossIndex].CrossPoint[j].c;
+						layer.getChildFrame('body', tpIndex).find("#leiju")[0].value = cross[crossIndex].CrossPoint[j].x.toFixed(2);
+						layer.getChildFrame('body', tpIndex).find("#pianju")[0].value = cross[crossIndex].CrossPoint[j].y.toFixed(2);
+						layer.getChildFrame('body', tpIndex).find("#gaocheng")[0].value = cross[crossIndex].CrossPoint[j].z.toFixed(2);
+						layer.getChildFrame('body', tpIndex).find("#dimiangao")[0].value = cross[crossIndex].CrossPoint[j].dz.toFixed(2);
 						layer.getChildFrame('body', tpIndex).find("#ganxing")[0].value = cross[crossIndex].CrossPoint[j].dc;
 						layer.getChildFrame('body', tpIndex).find("#crossIndex")[0].value =crossIndex;
 						layer.getChildFrame('body', tpIndex).find("#pointIndex")[0].value =j;
@@ -5767,8 +5669,8 @@
 				} ));     //跨越杆高 towerHigh 虚线
 					line2.computeLineDistances();  //for DashedMaterial
 					line2.name =  codeId;
-				let high = m_linetarget[j].point.y/20*ydivision+yMin+towerhigh;
-				let sumD = ((target[i].point.x/20) - parseInt((target[i].point.x/20)))*xdivision;
+				let high = m_linetarget[j].point.y/Gridsize*ydivision+yMin+towerhigh;
+				let sumD = ((target[i].point.x/Gridsize) - parseInt((target[i].point.x/Gridsize)))*xdivision;
 				var cross_notehigh = createSprite(high.toFixed(2),"#000000",10,20,target[i].point.x+5,mp.m_Frame[13]-mp.m_Frame[14],Math.PI/2);
 				var cross_notesumD = createSprite(sumD.toFixed(0),"#000000",20,20,target[i].point.x+5,mp.m_Frame[11]-mp.m_Frame[14]+10,Math.PI/2);
 				var cross_note = createSprite(target[i].object.name,"#000000",10,20,target[i].point.x+5,mp.m_Frame[12]-mp.m_Frame[14],Math.PI/2);
@@ -5856,15 +5758,19 @@
 					"y": 0,
 					"z": 0,
 					"dc": 0,
-					"towerHigh": 0
+					"towerHigh": 0,
+					"dz":0,
+					"c":1
 				};
 				temp.x = PointArray[3 * i] / Gridsize * xdivision + xMin;
 				temp.y = (ProjPointArray[3 * i + 1] - (mp.m_Frame[7] - mp.m_Frame[14])) / Gridsize * xdivision;
 				temp.z = PointArray[3 * i + 1] / Gridsize * ydivision + yMin;
 				if (temp.y == 0) {
 					temp.dc = codeId;
+					temp.c = 3;
 				}
 				temp.towerHigh = towerhigh;
+				temp.dz = PointArray[3 * i + 1] / Gridsize * ydivision + yMin-towerhigh;
 				CrossPoint.push(temp);
 			}
 			console.log("addCrossObj", addCrossObj);
@@ -5918,15 +5824,15 @@
 
 		for(let i=0;i<cross.length;i++){
 			for(let ii=0;ii<cross[i].CrossPoint.length;ii++){
-				MapCrossModify(i,ii,cross[i].CrossPoint[ii].x,cross[i].CrossPoint[ii].y,cross[i].CrossPoint[ii].z,
-						cross[i].CrossPoint[ii].z-cross[i].CrossPoint[ii].towerHigh,cross[i].CrossPoint[ii].dc);
+				MapCrossModify(i,ii,cross[i].CrossPoint[ii].c,cross[i].CrossPoint[ii].x,cross[i].CrossPoint[ii].y,cross[i].CrossPoint[ii].z,
+						cross[i].CrossPoint[ii].dz,cross[i].CrossPoint[ii].dc);
 			}
 		}
 
 	}
 
-	window.MapCrossModify = function(crossIndex,pointIndex,leiju,pianju,gaocheng,dimiangao,ganxing){ //from 0
-		console.log(crossIndex,pointIndex);console.log("find crossobject");
+	window.MapCrossModify = function(crossIndex,pointIndex,shuxing,leiju,pianju,gaocheng,dimiangao,ganxing){ //from 0
+
 		var sceneIndex;
 		for(let i=0;i<scene.children.length;i++){
 			var  obj = scene.children[i];
@@ -5938,7 +5844,7 @@
 				}
 			}
 		}
-		console.log(sceneIndex);
+
 		// modify the scene cause the original DSA didn't support
 		scene.children[sceneIndex].children[2].geometry.attributes.position.needsUpdate = true;
 		if(pianju!=0){
@@ -5960,7 +5866,7 @@
 			points.push( target );
 			points.push( m_linetarget);
 
-			console.log(target,m_linetarget);
+
 
 			const geometry = new THREE.BufferGeometry().setFromPoints( points );
 			const line = new THREE.Line( geometry, material );
@@ -5980,7 +5886,8 @@
 			line2.computeLineDistances();  //for DashedMaterial
 			line2.name =  ganxing;
 			let high = gaocheng;
-			let sumD = leiju;
+			let sumD = (leiju/xdivision-parseInt(leiju/xdivision))*xdivision;
+			console.log(high,sumD);
 			var cross_notehigh = createSprite(high.toFixed(2),"#000000",10,20,target.x+5,mp.m_Frame[13]-mp.m_Frame[14],Math.PI/2);
 			var cross_notesumD = createSprite(sumD.toFixed(0),"#000000",20,20,target.x+5,mp.m_Frame[11]-mp.m_Frame[14]+10,Math.PI/2);
 			var cross_note = createSprite(scene.children[sceneIndex].children[0].name,"#000000",10,20,target.x+5,mp.m_Frame[12]-mp.m_Frame[14],Math.PI/2);
@@ -5990,11 +5897,12 @@
 			circlegeo.vertices.push(new THREE.Vector3(m_linetarget.x,
 					(gaocheng-yMin)/ydivision*Gridsize,
 					m_linetarget.z));
-			var tex = new THREE.TextureLoader().load('./css/circle.bmp');
+			if(shuxing == 3)var tex = new THREE.TextureLoader().load('./css/circle.bmp');
+			else if(shuxing == 2||shuxing ==1) var tex = new THREE.TextureLoader().load('./css/solidCircle.bmp');
 			var pMater = new THREE.PointsMaterial({size:5,map:tex});
 			var cross_cir = new THREE.Points(circlegeo,pMater);
 
-			console.log(scene.children[sceneIndex],cross_cir);
+
 			scene.children[sceneIndex].children.splice(3+6*subIndex,0,cross_note);
 			scene.children[sceneIndex].children.splice(3+6*subIndex+1,0,cross_notehigh);
 			scene.children[sceneIndex].children.splice(3+6*subIndex+2,0,cross_notesumD);
@@ -6007,13 +5915,16 @@
 
 		console.log("modify scene result",scene.children[sceneIndex].children)
 		/*cross data modify*/
-		// cross[crossIndex].CrossPoint[pointIndex].dc = ganxing;
+		cross[crossIndex].CrossPoint[pointIndex].c = shuxing;
+		cross[crossIndex].CrossPoint[pointIndex].dc = ganxing;
 		cross[crossIndex].CrossPoint[pointIndex].towerHigh = gaocheng-dimiangao;
-		// cross[crossIndex].CrossPoint[pointIndex].x = leiju;
+		cross[crossIndex].CrossPoint[pointIndex].x = leiju;
 		cross[crossIndex].CrossPoint[pointIndex].y = pianju;
 		cross[crossIndex].CrossPoint[pointIndex].z = gaocheng;
+		cross[crossIndex].CrossPoint[pointIndex].dz = dimiangao;
 
 
+		console.log("Modify",cross);
 
 	}
 
@@ -6068,15 +5979,42 @@
 	function onKeyDown( event ) {
 
 		enableExpand = ( event.keyCode === 16 ) ? true : false;
+		if(enableExpand){
+			window.addEventListener( 'mousedown', ExpandMouseDown);
+			window.addEventListener( 'mouseup', ExpandMouseUp);
+			window.addEventListener( 'mousemove', ExpandMouseMove);
+		}
 
 	}
 
 	function onKeyUp() {
 
 		enableExpand = false;
-
+		window.removeEventListener( 'mousedown', ExpandMouseDown);
+		window.removeEventListener( 'mouseup', ExpandMouseUp);
+		window.removeEventListener( 'mousemove', ExpandMouseMove);
+		if(scene.children[scene.children.length-1].name == "border"){scene.remove(scene.children[scene.children.length-1]);}
+		document.body.style.cursor = "default";
 	}
 
+	function ExpandMouseMove (event){
+		var lt= expandvec ;
+		var rb= getIntersects(event);
+		if(scene.children[scene.children.length-1].name == "border"){scene.remove(scene.children[scene.children.length-1]);}
+		if(lt!=undefined&&rb!=undefined){
+			const points=[];
+			points.push(new THREE.Vector3(lt.x,lt.y,0));
+			points.push(new THREE.Vector3(rb.x,lt.y,0));
+			points.push(new THREE.Vector3(rb.x,rb.y,0));
+			points.push(new THREE.Vector3(lt.x,rb.y,0));
+			points.push(new THREE.Vector3(lt.x,lt.y,0));
+			const geo = new THREE.BufferGeometry().setFromPoints(points);
+			const bordermat = new THREE.LineBasicMaterial({color:0x0000ff});
+			const border = new THREE.Line(geo,bordermat);
+			border.name = "border";
+			scene.add(border);
+		}
+	}
 	function ExpandMouseUp (event){
 		if(enableExpand){
 			//if mainCanvas not null
@@ -6089,7 +6027,7 @@
 			cameraY = (lefttop.y+rightbot.y)/2;
 			camera.position.x = cameraX;
 			camera.position.x = cameraY;
-			sceneX = cameraX; sceneY = cameraY; cameraZ = (mouse.x-expandmouse.x)/2*cameraZ;
+			sceneX = cameraX; sceneY = cameraY; cameraZ = Math.abs((mouse.x-expandmouse.x)/2*cameraZ);  //cameraZ >0 avoid overturn
 			camera.position.set(cameraX, cameraY, cameraZ);
 			camera.up.set(0,1,0);
 			camera.lookAt(new THREE.Vector3(sceneX, sceneY, sceneZ));
@@ -6101,8 +6039,8 @@
 			labelRenderer.render(scene,camera);
 
 			document.body.style.cursor = "default";
-			expandvec = {};
-			expandmouse = {};
+			expandvec = undefined;
+			expandmouse = undefined;
 		}
 		// else{
 		// 	document.body.style.cursor = "default";
@@ -6136,8 +6074,9 @@
 		/*window expand function*/
 		window.addEventListener( 'keydown', onKeyDown );
 		window.addEventListener( 'keyup', onKeyUp );
-		window.addEventListener( 'mousedown', ExpandMouseDown);
-		window.addEventListener( 'mouseup', ExpandMouseUp);
+		// window.addEventListener( 'mousedown', ExpandMouseDown);
+		// window.addEventListener( 'mouseup', ExpandMouseUp);
+		// window.addEventListener( 'mousemove', ExpandMouseMove);
 
 		/* 事件监听 */
 		document.addEventListener('mousewheel', onDocumentMouseWheel, false);//兼容ie chrome
