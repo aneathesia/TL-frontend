@@ -80,10 +80,16 @@
     console.log(parent.document.getElementsByClassName("layui-layer-title")[0].innerHTML);
     $("#saveBtn").click(function (){
         var windowName = parent.document.getElementsByClassName("layui-layer-title")[0].innerHTML
-        console.log($("#editInd").val());
+        //console.log($("#editInd").val());
+        console.log($("#dis").val());
+        var leiju = Number($("#dis").val());
+        console.log(parent.GetCrossIndex(leiju));
         if(windowName=='修改杆塔信息'){
             var editInd = Number($("#editInd").val());
             parent.editTowerSave(editInd);
+        }
+        else{
+            if(parent.GetCrossIndex(leiju)!=-1){parent.editTowerSave(parent.GetCrossIndex(leiju))};
         }
     })
 

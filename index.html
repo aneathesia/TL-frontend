@@ -643,7 +643,6 @@
 					towerlist_tabledata[i].TowerHigh,
 					towerlist_tabledata[i].Base,
 					-1);
-			console.log(towerset);
 			TowerGroup.add(towerset);
 			scene.add(TowerGroup);
 			var tlabel = createSpritelabel(towerlist_tabledata[i].Name,
@@ -865,8 +864,6 @@
 				processData: false,
 			headers:{"token":localStorage.getItem("token")},
 				success: function (res) {
-					console.log("caculate cacu res");
-					console.log(res.m_jPile);
 					pile_tabledata=res.m_jPile;
 					//console.log(GridManager.getAjaxData(pile_tableId));
 					//need to caculate the secdist
@@ -888,7 +885,6 @@
 
 	$("#tb-pile-save").click(function (){
 		var form = new FormData();
-		console.log(pile_tabledata);
 		form.append("table",JSON.stringify(pile_tabledata));
 		form.append("ProjectName", prjName);
 		$.ajax({
@@ -900,7 +896,7 @@
 			processData: false,
 			headers:{"token":localStorage.getItem("token")},
 			success: function (res) {
-				console.log(res);
+				console.log(res); //  no content situation
 			}
 		})
 	})
@@ -1148,7 +1144,6 @@
 				maxmin: true,
 				content: './html/SectionMap.html',
 				success: function (layero, index) {
-					console.log(layero, index);
 					var body = layer.getChildFrame('body', index);
 					var inputList = body.find('input');     //取得子页面中input输入框
 					var dataLists = [15, 5];
@@ -1156,8 +1151,7 @@
 						body.find(inputList[j]).val(dataLists[j]);
 					}
 					var optionList = body.find('select');
-					console.log(optionList);
-					console.log(pile_tabledata);
+
 					for (let i = 0; i < pile_tabledata.length; i++) {
 						var newOption0 = new Option(pile_tabledata[i].name, i.toString());
 						var newOption1 = new Option(pile_tabledata[i].name, i.toString());
@@ -1170,21 +1164,16 @@
 						dataType:"json",
 						headers:{"token":localStorage.getItem("token")},
 						success: function(data){
-							console.log(data);
 							for (let i = 0; i < data.length; i++) {
 								var filename = data[i].name;
 								var suffix = filename.substring(filename.lastIndexOf('.')+1);
 								if(suffix=="EGX"||suffix=="tif"||suffix=="asc"){
 									var fileOption = new Option(data[i].name, i.toString());
-									console.log(fileOption);
 									optionList[0].options.add(fileOption);
 								}
 							}
 						}
 					})
-
-					console.log("SectionMapOption",optionList[0]);
-
 				},
 				yes: function (index, layero) {
 					console.log("yes function feedback" + layero + "" + index);
@@ -2637,6 +2626,8 @@
 		camera.position.set(cameraX, cameraY, cameraZ);
 		camera.up.set(0,1,0);
 		camera.lookAt(new THREE.Vector3(sceneX, sceneY, sceneZ));
+		const helper = new THREE.CameraHelper( camera );
+		scene.add( helper );
 
 	}
 	/* 渲染器 */
@@ -2936,8 +2927,6 @@
 	var dif = 0;
 	/* DEM绘制函数 */
 	window.drawDEM=function (DEM){
-		console.log(scene.children ,"drawscenechildren");
-		console.log(m_linegroup.children.length,"m_linegroup length");
 		if(m_linegroup.children.length!=0){
 
 			// for ( let i = 0; i < m_linegroup.children.length; i ++ ) {
@@ -2953,11 +2942,6 @@
 		if(r_linegroup.children.length!=0){r_linegroup.children.length = 0;}
 		if(l_linegroup.children.length!=0){l_linegroup.children.length = 0;}
 		if(DEM_pgroup.children.length!=0){DEM_pgroup.children.length = 0;}
-
-
-
-			console.log(m_linegroup.children.length,"after remove ");
-
 
 		yMin=DEM.MID[0].Section[0].z
 		for(let i=0;i<DEM.MID.length;i++){
@@ -3995,7 +3979,6 @@
 
 
 	window.createTower = function(pos,name,towTypeName,towType,towerHei,Base,added){ //added true from draw false from tabledata push new or not
-			console.log(pos,name,towTypeName,towType,towerHei,Base,added);
 			if(added>-1){
 				towerlist.splice(added,0,{
 					"Name" : name,
@@ -4059,7 +4042,6 @@
 			towMesh.position.z = 0;
 			towMesh.name = "fixTower";
 			towMesh.geometry.name = name;
-			console.log("Mesh",towMesh);
 			return towMesh;
 		}
 
@@ -4332,7 +4314,7 @@
 				}
 			}
 			var tempLine2 = turf.lineString(tempLine2Cor);
-			//close to turning point setting attach
+			//close to turning point setting attach , no didn't attach
 			for(let i=0;i<pile_tabledata.length;i++){
 				if(Math.abs(pile_tabledata[i].dist-xMin-intersects.x/Gridsize*xdivision)<20){  //attach pilelist point 
 					intersects.x  = (pile_tabledata[i].dist-xMin)/xdivision*Gridsize;
@@ -5304,23 +5286,33 @@
 
 		/*    鼠标缩放移动事件     */
 	function onDocumentMouseWheel(event) {
-			let factor = 60;
+
+			//let factor = 60;
 			//从鼠标位置转化为webgl屏幕坐标位置
 			mainCanvas = document.querySelector("#iframe_box canvas");
 			let glScreenX = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
 			let glScreenY = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
 			let vector = new THREE.Vector3(glScreenX, glScreenY, 0);
+			//获取当前显示框的场景宽度 控制缩放因子factor
+			let lt = new THREE.Vector3(-1,1,0);
+			let rb = new THREE.Vector3(1,-1,0);
+			lt.unproject(camera); //当前Z高度控制factor
+
 			//从屏幕向量转为3d空间向量
+
 			vector.unproject(camera);
-			let target = new THREE.Vector3(0, 0, 0);
+
 			//相机偏移量
-			vector.sub(camera.position).setLength(factor);
+			vector.sub(camera.position).setLength(Math.abs(lt.z/10));
+
 			if (event.deltaY < 0) {
 				camera.position.add(vector);
-				target.add(vector);
-			} else {
-				camera.position.sub( vector);
-				target.sub(vector);
+			}
+			else if (camera.far<(camera.position.z-vector.z)){
+				//beyond perspective
+			}
+			else {
+				camera.position.sub(vector);
 			}
 
 			cameraX = camera.position.x;
@@ -5342,14 +5334,23 @@
 	function onDocumentMouseMove(event) {
 			var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
 			var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
-			cameraX -= movementX * 0.5;
-			sceneX -= movementX * 0.5;
-			cameraY += movementY * 0.5;
-			sceneY += movementY * 0.5;
+
+
+		//获取当前显示框的场景宽度 控制缩放因子factor
+		let lt = new THREE.Vector3(-1,1,0);
+		let rb = new THREE.Vector3(1,-1,0);
+		lt.unproject(camera); rb.unproject(camera);//当前Z高度控制factor
+		//console.log((rb.x-lt.x),(rb.y-lt.y),mainCanvas.offsetHeight,mainCanvas.offsetWidth );
+
+			cameraX -= movementX ;
+			sceneX -= movementX ;
+			cameraY += movementY ;
+			sceneY += movementY ;
 			cameraZ = camera.position.z;
 
 			camera.position.set(cameraX, cameraY, cameraZ);
-			// camera.lookAt(sceneX, sceneY, sceneZ);
+			console.log(camera.position);
+			//camera.lookAt(sceneX, sceneY, sceneZ);
 			camera.updateProjectionMatrix();
 			renderer.render(scene, camera);
 			labelRenderer.render( scene, camera );
@@ -5463,7 +5464,7 @@
 						redpoint.name="redpoint";
 						redpoint.userData={"dem":redcross.children[0].name,"j":j}; //output offset y
 
-						console.log("selected CrossObject and index",redcross.children[0],j,cross);
+						//console.log("selected CrossObject and index",redcross.children[0],j,cross);
 						let crossIndex;
 						for(let ii = 0;ii<cross.length;ii++){
 							if(redcross.children[0].name == cross[ii].AttrName&&
@@ -5719,7 +5720,7 @@
 				}
 			}
 		}
-		console.log("renewPoint",renewp);   //renewp repeat;
+		//console.log("renewPoint",renewp);   //renewp repeat;
 		scene.children[scene.children.length-1].children[1].geometry.attributes.position.needsUpdate = true;
 		scene.children[scene.children.length-1].children[1].geometry.setFromPoints(renewp);
 		scene.children[scene.children.length-1].children[1].geometry.setDrawRange(0, renewp.length);
@@ -5792,11 +5793,8 @@
 	window.MapCrossDraw = function(cross,added){
 		//delete original
 		for(let i = 0 ;i<scene.children.length;i++){
-			if(scene.children[i].name == "crossObject"){scene.remove(scene.children[i]);i=i-1;console.log(scene.children[i]);}
+			if(scene.children[i].name == "crossObject"){scene.remove(scene.children[i]);i=i-1;}
 		}
-
-		console.log("afterdeleteCrossObject",scene);
-		console.log("cross",cross);
 		for(let i=0;i<cross.length;i++){
 			let crossPoint = [];
 			let crossAttrName;
@@ -5810,7 +5808,7 @@
 				}
 			}
 			crossAttrName = cross[i].AttrName;
-			console.log("GroundGroundCross",crossPoint);
+			//console.log("GroundGroundCross",crossPoint);
 			createGroundCross(crossPoint,crossAttrName);
 			//GroundVertice = crossPoint;
 			let towerhigh=0;
@@ -5822,12 +5820,12 @@
 			createCrossLabel(towerhigh,codeId,added);
 		}
 
-		for(let i=0;i<cross.length;i++){
-			for(let ii=0;ii<cross[i].CrossPoint.length;ii++){
-				MapCrossModify(i,ii,cross[i].CrossPoint[ii].c,cross[i].CrossPoint[ii].x,cross[i].CrossPoint[ii].y,cross[i].CrossPoint[ii].z,
-						cross[i].CrossPoint[ii].dz,cross[i].CrossPoint[ii].dc);
-			}
-		}
+		// for(let i=0;i<cross.length;i++){
+		// 	for(let ii=0;ii<cross[i].CrossPoint.length;ii++){
+		// 		MapCrossModify(i,ii,cross[i].CrossPoint[ii].c,cross[i].CrossPoint[ii].x,cross[i].CrossPoint[ii].y,cross[i].CrossPoint[ii].z,
+		// 				cross[i].CrossPoint[ii].dz,cross[i].CrossPoint[ii].dc);
+		// 	}
+		// }
 
 	}
 
@@ -5887,7 +5885,6 @@
 			line2.name =  ganxing;
 			let high = gaocheng;
 			let sumD = (leiju/xdivision-parseInt(leiju/xdivision))*xdivision;
-			console.log(high,sumD);
 			var cross_notehigh = createSprite(high.toFixed(2),"#000000",10,20,target.x+5,mp.m_Frame[13]-mp.m_Frame[14],Math.PI/2);
 			var cross_notesumD = createSprite(sumD.toFixed(0),"#000000",20,20,target.x+5,mp.m_Frame[11]-mp.m_Frame[14]+10,Math.PI/2);
 			var cross_note = createSprite(scene.children[sceneIndex].children[0].name,"#000000",10,20,target.x+5,mp.m_Frame[12]-mp.m_Frame[14],Math.PI/2);
@@ -5913,7 +5910,7 @@
 
 
 
-		console.log("modify scene result",scene.children[sceneIndex].children)
+		//console.log("modify scene result",scene.children[sceneIndex].children)
 		/*cross data modify*/
 		cross[crossIndex].CrossPoint[pointIndex].c = shuxing;
 		cross[crossIndex].CrossPoint[pointIndex].dc = ganxing;
@@ -5922,10 +5919,6 @@
 		cross[crossIndex].CrossPoint[pointIndex].y = pianju;
 		cross[crossIndex].CrossPoint[pointIndex].z = gaocheng;
 		cross[crossIndex].CrossPoint[pointIndex].dz = dimiangao;
-
-
-		console.log("Modify",cross);
-
 	}
 
 	window.bindTowerPlace = function(title,editInd){
@@ -5974,6 +5967,13 @@
 
 	window.TowerInfo = function(){
 		return prk.TOWER;
+	}
+
+	window.GetCrossIndex= function(leiju){
+		for(let i=0;i<towerlist.length;i++){
+			if(towerlist[i].Distance<(leiju+10)&&towerlist[i].Distance>(leiju-10)){return i;}
+		}
+		return -1;
 	}
 
 	function onKeyDown( event ) {
