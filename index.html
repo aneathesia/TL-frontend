@@ -56,7 +56,7 @@
 	@import url(./css/nativestyle.css);
 </style>
 <header class="Hui-header cl"> <a class="Hui-logo l" title="架空输电线路勘测设计一体化系统" href="#">架空输电线路勘测设计一体化系统</a>
-	<div style="float:right;margin-right: 2%;margin-top: 1%;">
+	<div style="float:right;margin-right: 2%;margin-top: 1%;display:none">
 		<li style="display: inline-block;"><a href="#"><label id="login" style="background: wheat">登录</label></a></li>
 		<li style="display: inline-block;"><a href="#"><label id="UserCenter" style="background: wheat">用户中心</label></a></li>
 	</div>
@@ -70,18 +70,18 @@
 			<dt><i class="Hui-iconfont">&#xe646;</i> 工程<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
 				<ul>
-					<li><a href="#"><label id="creatProject">新建工程</label></a></li>
-					<li><a href="#"><label id="creatMap">新建图幅</label></a></li>
-					<li><a href="#"><label id="fileManage">文件</label></a></li>
+					<li><a href="#" ><label id="creatProject" style="width:100%">新建工程</label></a></li>
+					<li><a href="#" ><label id="creatMap" style="width:100%">新建图幅</label></a></li>
+					<li><a href="#" ><label id="fileManage" style="width:100%">文件</label></a></li>
 				</ul>
 			</dd>
 		</dl>
 		<dl id="menu-restable">
-			<dt><i class="Hui-iconfont">&#xe618; </i><label id="resTable">成果表</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+			<dt><i class="Hui-iconfont">&#xe618; </i><label id="resTable" >成果表</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
 				<ul>
-					<li><a href="#"><label id="liPiletable">转角直线桩表</label></a></li>
-					<li><a href="#"><label id="liTowerlisttable">杆塔排位成果表</label></a></li>
+					<li><a href="#"><label id="liPiletable" style=" width:100%;">转角直线桩表</label></a></li>
+					<li><a href="#"><label id="liTowerlisttable" style="width:100%">杆塔排位成果表</label></a></li>
 				</ul>
 			</dd>
 		</dl>
@@ -89,13 +89,13 @@
 			<dt><i class="Hui-iconfont">&#xe681; </i><label id="param"> 参数</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
 				<ul>
-					<li><a href="#"><label id="designparameter">设计参数</label></a></li>
+					<li><a href="#"><label id="designparameter" style="width:100%">设计参数</label></a></li>
 				</ul>
 				<ul>
-					<li><a href="#"><label id="framepara">图框参数</label></a></li>
+					<li><a href="#"><label id="framepara" style="width:100%">图框参数</label></a></li>
 				</ul>
 				<ul>
-					<li><a href="#"><label id="drawingpara">图纸参数</label></a></li>
+					<li><a href="#"><label id="drawingpara" style="width:100%">图纸参数</label></a></li>
 				</ul>
 			</dd>
 		</dl>
@@ -103,8 +103,8 @@
 			<dt><i class="Hui-iconfont">&#xe645;</i> 输入输出<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
 				<ul>
-					<li><a href="#"><label id="inputDem">数字高程模型</label></a></li>
-					<li><a href="#"><label id="inputCorner">转角杆塔投影线</label></a></li>
+					<li><a href="#"><label id="inputDem" style="width:100%">数字高程模型</label></a></li>
+					<li><a href="#"><label id="inputCorner" style="width:100%">转角杆塔投影线</label></a></li>
 				</ul>
 			</dd>
 		</dl>
@@ -113,7 +113,7 @@
 			<dd>
 				<ul>
 <!--					<li><a href="#"><label id="create_Object">创建地物</label></a></li>-->
-					<li><a href="#"><label id="select_code">选择编码</label></a></li>
+					<li><a href="#"><label id="select_code" style="width:100%">选择编码</label></a></li>
 				</ul>
 			</dd>
 		</dl>
@@ -121,7 +121,7 @@
 			<dt><i class="Hui-iconfont">&#xe647;</i> 编辑<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
 				<ul>
-					<li><a href="#"><label id="editcross">修改节点</label></a></li>
+					<li><a href="#"><label id="editcross" style="width:100%">修改节点</label></a></li>
 				</ul>
 			</dd>
 		</dl>
@@ -129,14 +129,14 @@
 			<dt><i class="Hui-iconfont">&#xe647; </i><label id="hand"> 手工排位</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
 				<ul>
-					<li id="putTower"><a href="#"><label>放置杆塔</label></a></li>
-					<li id="deleteTower"><a href="#"><label>删除杆塔</label></a></li>
-					<li id="moveTower"><a href="#"><label>移动杆塔</label></a></li>
-					<li id="insertTower"><a href="#"><label>插入杆塔</label></a></li>
-					<li id="riseTower"><a href="#"><label>升高杆塔</label></a></li>
-					<li id="fallTower"><a href="#"><label>降低杆塔</label></a></li>
-					<li id="editTower"><a href="#"><label>修改排杆</label></a></li>
-					<li id="saveTower"><a href="#"><label>保存排杆</label></a></li>
+					<li id="putTower"><a href="#"><label style="width:100%">放置杆塔</label></a></li>
+					<li id="deleteTower"><a href="#"><label style="width:100%">删除杆塔</label></a></li>
+					<li id="moveTower"><a href="#"><label style="width:100%">移动杆塔</label></a></li>
+					<li id="insertTower"><a href="#"><label style="width:100%">插入杆塔</label></a></li>
+					<li id="riseTower"><a href="#"><label style="width:100%">升高杆塔</label></a></li>
+					<li id="fallTower"><a href="#"><label style="width:100%">降低杆塔</label></a></li>
+					<li id="editTower"><a href="#"><label style="width:100%">修改排杆</label></a></li>
+					<li id="saveTower"><a href="#"><label style="width:100%">保存排杆</label></a></li>
 				</ul>
 			</dd>
 		</dl>
@@ -144,8 +144,8 @@
 			<dt><i class="Hui-iconfont">&#xe646; </i><label id="saveAs"> 保存</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
 				<ul>
-					<li><a href="#"><label id="saveMap">保存Map</label></a></li>
-					<li><a href="#"><label id="savePrj">保存工程</label></a></li>
+					<li><a href="#"><label id="saveMap" style="width:100%">保存Map</label></a></li>
+					<li><a href="#"><label id="savePrj" style="width:100%">保存工程</label></a></li>
 				</ul>
 			</dd>
 		</dl>
@@ -154,7 +154,7 @@
 			<dd>
 				<ul>
 <!--					<li><a href="#"><label id="outputDXF">导出DXF</label></a></li>-->
-					<li><a href="#"><label id="outputORG">导出ORG</label></a></li>
+					<li><a href="#"><label id="outputORG" style="width:100%">导出ORG</label></a></li>
 				</ul>
 			</dd>
 		</dl>
@@ -234,12 +234,12 @@
 
 
 	<div class="operateBtn" style="display:inline-block;">
-		<p><button class="xbutton xround edit">追加</button></p>
-		<p><button class="xbutton xround edit">插入</button></p>
-		<p><button class="xbutton xround edit">删除</button></p>
-		<p><button class="xbutton xround edit">清空</button></p>
-		<p><button class="xbutton xround edit">上移</button></p>
-		<p><button class="xbutton xround edit">下移</button></p>
+		<p><button class="xbutton xround edit" id="AddPara">追加</button></p>
+		<p><button class="xbutton xround edit" id="InsertPara">插入</button></p>
+		<p><button class="xbutton xround edit" id="DeletePara">删除</button></p>
+		<p><button class="xbutton xround edit" id="ClearPara">清空</button></p>
+		<p><button class="xbutton xround edit" id="UpMove">上移</button></p>
+		<p><button class="xbutton xround edit" id="DownMove">下移</button></p>
 		<p><button class="xbutton xround" id="database" action="TL_BL.html">数据库</button></p>
 		<p><button class="xbutton xround" id="save">保存</button></p>
 		<p><button class="xbutton xround closeBtn">关闭</button></p>
@@ -302,7 +302,7 @@
 	var savedJson = {"DEM":"","GEO":"","pwf":"","prk":"","Lao":""};//保存json
 
 	/**           部分设计参数          **/
-	var voltageArr = ['110kV','220kV','330kV','500kV','直流500kV','750kV','直流800','1000kV'];
+	var voltageArr = ['110kV','220kV','330kV','500kV','直流500kV','750kV','直流800kV','1000kV'];
 	var circuitArr = ['单回路','双回路'];
 	var conductorArr = ['导线','地线','OPGW'];
 	var towerArr = ['直线塔','耐张塔','终端塔','龙门架'];
@@ -313,6 +313,84 @@
 	var insulateMateArr = ['','','','瓷质绝缘子'];
 	var columndataLeft = [{key: 'id', text: 'NO'}, {key: 'name', text: '型号/名称/图号'}];//表头
 	var columndataRight = [{key: 'name', text: '参数名称'}, {key: 'value', text: '参数数值'}];//表头
+	var conductorSample = [{'name':'导地线类型','value':'导线'},
+		{'name':'导地线截面积(mm²)','value':0},
+		{'name':'导地线直径','value':0},
+		{'name':'计算拉断力','value':0},
+		{'name':'单位长度质量(kg/m)','value':0},
+		{'name':'弹性系数(N/mm²)','value':0},
+		{'name':'膨胀系数/℃','value':0},
+		{'name':'导线分裂数','value':0}];
+	var weatherSample =[
+	{name: "平均气温", wd: 0, fs: 0, fb: 0},
+	{name: "最高气温", wd: 0, fs: 0, fb: 0},
+	{name: "最低气温", wd: 0, fs: 0, fb: 0},
+	{name: "最大风速", wd: 0, fs: 0, fb: 0},
+	{name: "最大覆冰", wd: 0, fs: 0, fb: 0},
+	{name: "安装情况", wd: 0, fs: 0, fb: 0},
+	{name: "操作情况", wd: 0, fs: 0, fb: 0},
+	{name: "大气有风", wd: 0, fs: 0, fb: 0},
+	{name: "大气无风", wd: 0, fs: 0, fb: 0},
+	{name: "最高线温", wd: 0, fs: 0, fb: 0},
+	{name: "检修工况", wd: 0, fs: 0, fb: 0},
+	{name: "事故工况", wd: 0, fs: 0, fb: 0}
+	];
+	var towerSample =[{'name':'杆塔类型','value':'直线塔'},
+		{'name':'最大档距','value':0},
+		{'name':'水平档距','value':0},
+		{'name':'垂直档距','value':0},
+		{'name':'起始呼高','value':0},
+		{'name':'级差增量','value':0},
+		{'name':'终止呼高','value':0},
+		{'name':'最小转角度数(°)','value':0},
+		{'name':'最大转角度数(°)','value':0},
+		{'name':'角度折算水平档距(m/°)','value':0},
+		{'name':'摇摆角kv值','value':0},
+		{'name':'大风工况摇摆角(°)','value':0},
+		{'name':'内过电压摇摆角','value':0},
+		{'name':'外过电压摇摆角','value':0},
+		{'name':'带点作业摇摆角','value':0},
+		{'name':'最大横担长度(m)','value':0},
+		{'name':'地面支架高度(m)','value':0},
+		{'name':'中上导线高差(m)','value':0},
+		{'name':'中下导线高差(m)','value':0},
+		{'name':'附加属性','value':0},
+		{'name':'最低塔正面根开','value':0},
+		{'name':'最低塔侧面根开','value':0},
+		{'name':'最高塔正面根开','value':0},
+		{'name':'最高塔侧面根开','value':0},
+		{'name':'杆塔分组号(1,2)','value':1},];
+	var sectionSample = [{'name':'起始桩号','value':''},
+		{'name':'起始累距','value':0},
+		{'name':'终点桩号','value':''},
+		{'name':'终点累距','value':0},
+		{'name':'气象区名称','value':''},
+		{'name':'导线型号','value':''},
+		{'name':'导线新线系数','value':0},
+		{'name':'导线安全系数','value':0},
+		{'name':'导线年平运行张力上限','value':0},
+		{'name':'地线型号','value':''},
+		{'name':'地线新线系数','value':0},
+		{'name':'地线安全系数','value':0},
+		{'name':'地线年平运行张力上限','value':0},
+		{'name':'设计回路','value':'单回路'}];
+
+	window.conductorName=[];
+	window.conductorset=[];
+	window.ridconductor = 0;
+
+	window.weatherName=[];
+	window.weatherset=[];
+	window.ridweather = 0;
+
+	var	SectionName = [];
+	var Sectionset = [];
+	var ridsection = 0;
+
+	var towerName=[];
+	var towerset=[];
+	var ridtower = 0;
+
 
 	let tpIndex;
 
@@ -329,7 +407,7 @@
 	let ttowerlist = Array;
 	let movingInd;
 
-//expand parameter
+	//expand parameter
 	let enableExpand = false;  	let expandvec; let expandmouse;
 
 	//ajax login token
@@ -781,42 +859,257 @@
 				}
 			})
 		}
-
-
-		// layer.open({
-		// 	type:2,
-		// 	title:'读数据库',
-		// 	resize :true,
-		// 	content:'./html/DatabaseInput.html',
-		// 	success:function (layero,index) {
-		// 		var body = layer.getChildFrame('body',index);
-		// 		body.find("#note").text("电线型号");
-		// 		$.ajax({
-		// 			url: BASEURL+"/tl/conductor/list", //提交的路径
-		// 			type: "get",
-		// 			//async: false,
-		// 			success: function (data){
-		// 				console.log(data);
-		// 				body.find("#DataSelect").empty();
-		// 				for (let i = 0;i<data.length;i++){
-		// 					var opt = document.createElement('option');
-		// 					opt.text = data[i].name;
-		// 					opt.value = i;
-		// 					body.find("#DataSelect").append(opt);
-		// 				}
-		//
-		// 			},
-		// 			error:function (error) {
-		// 				console.log(error);
-		// 			}
-		// 		})
-		// 	}
-		// })
 	})
+
 	$("#designparameter").click(function () {
 		document.removeEventListener('mousedown', onDocumentSelected);
+		//init prk parameter
+		for(let i = 0; i<prk.CONDUCTOR.length;i++){
+			conductorName.push([prk.CONDUCTOR[i].name]);
+		}
+		for(let i = 0;i<prk.CONDUCTOR.length;i++){
+			var conductor = [{'name':'导地线类型','value':'导线'},
+				{'name':'导地线截面积(mm²)','value':0},
+				{'name':'导地线直径','value':0},
+				{'name':'计算拉断力','value':0},
+				{'name':'单位长度质量(kg/m)','value':0},
+				{'name':'弹性系数(N/mm²)','value':0},
+				{'name':'膨胀系数/℃','value':0},
+				{'name':'导线分裂数','value':0}];
+			conductorset.push(conductor);
+			if(prk.CONDUCTOR[i].type === 0 )conductorset[i][0].value = "导线";
+			else conductorset[i][0].value = "地线";
+			conductorset[i][1].value = prk.CONDUCTOR[i].A;
+			conductorset[i][2].value = prk.CONDUCTOR[i].d;
+			conductorset[i][3].value = prk.CONDUCTOR[i].Tp;
+			conductorset[i][4].value = prk.CONDUCTOR[i].p1;
+			conductorset[i][5].value = prk.CONDUCTOR[i].E;
+			conductorset[i][6].value = prk.CONDUCTOR[i].a;
+			conductorset[i][7].value = prk.CONDUCTOR[i].num;
+		}
+
+
+		for(let i = 0; i<prk.WEATHER.length;i++){
+			weatherName.push([prk.WEATHER[i].name]);
+		}
+		for(let i = 0;i<prk.WEATHER.length;i++){
+			var weatemp  =  [];
+			for(let j = 0 ; j<prk.WEATHER[i].num;j++){
+				var row = {};
+				row.name = prk.WEATHER[i].TWI[j].name;
+				row.wd= prk.WEATHER[i].TWI[j].t;
+				row.fs= prk.WEATHER[i].TWI[j].v;
+				row.fb= prk.WEATHER[i].TWI[j].b;
+				weatemp.push(row);
+			}
+			weatherset.push(weatemp);
+		}
+
+		for(let i = 0; i<prk.TOWER.length;i++){
+			towerName.push([prk.TOWER[i].Name]);
+		}
+		for(let i = 0; i<prk.TOWER.length;i++){
+			var tow = [{'name':'杆塔类型','value':''},
+				{'name':'最大档距','value':0},
+				{'name':'水平档距','value':0},
+				{'name':'垂直档距','value':0},
+				{'name':'起始呼高','value':0},
+				{'name':'级差增量','value':0},
+				{'name':'终止呼高','value':0},
+				{'name':'最小转角度数(°)','value':0},
+				{'name':'最大转角度数(°)','value':0},
+				{'name':'角度折算水平档距(m/°)','value':0},
+				{'name':'摇摆角kv值','value':0},
+				{'name':'大风工况摇摆角(°)','value':0},
+				{'name':'内过电压摇摆角','value':0},
+				{'name':'外过电压摇摆角','value':0},
+				{'name':'带点作业摇摆角','value':0},
+				{'name':'最大横担长度(m)','value':0},
+				{'name':'地面支架高度(m)','value':0},
+				{'name':'中上导线高差(m)','value':0},
+				{'name':'中下导线高差(m)','value':0},
+				{'name':'附加属性','value':0},
+				{'name':'最低塔正面根开','value':0},
+				{'name':'最低塔侧面根开','value':0},
+				{'name':'最高塔正面根开','value':0},
+				{'name':'最高塔侧面根开','value':0},
+				{'name':'杆塔分组号(1,2)','value':1},];
+			towerset.push(tow);
+			towerset[i][0].value = towerArr[prk.TOWER[i].type];
+			towerset[i][1].value = prk.TOWER[i].MaxL;
+			towerset[i][2].value = prk.TOWER[i].LH;
+			towerset[i][3].value = prk.TOWER[i].LV;
+			towerset[i][4].value = prk.TOWER[i].StartHigh;
+			towerset[i][5].value = prk.TOWER[i].Dhigh;
+			towerset[i][6].value = prk.TOWER[i].EndHigh;
+			towerset[i][7].value = prk.TOWER[i].MinAngle;
+			towerset[i][8].value = prk.TOWER[i].MaxAngle;
+			towerset[i][9].value = prk.TOWER[i].Angle2LH;
+			towerset[i][10].value = prk.TOWER[i].KV;
+			towerset[i][11].value = prk.TOWER[i].sway.WindA;
+			towerset[i][12].value = prk.TOWER[i].sway.OperationA;
+			towerset[i][13].value = prk.TOWER[i].sway.AtomosphereA;
+			towerset[i][14].value = prk.TOWER[i].sway.ElecA;
+			towerset[i][15].value = prk.TOWER[i].Dist;
+			towerset[i][16].value = prk.TOWER[i].upToTop;
+			towerset[i][17].value = prk.TOWER[i].upToMid;
+			towerset[i][18].value = prk.TOWER[i].midToDown;
+			towerset[i][19].value = prk.TOWER[i].typeEx;
+			towerset[i][20].value = prk.TOWER[i].baseLw;
+			towerset[i][21].value = prk.TOWER[i].baseLl;
+			towerset[i][22].value = prk.TOWER[i].baseHw;
+			towerset[i][23].value = prk.TOWER[i].baseHl;
+			//towerset[i][24].value = prk.TOWER[i].Group;
+
+		}
+
 		$("#Paramtable").show();
 	})
+
+	$("#AddPara").click(function(){
+		if($("#rdaodixian").is(":visible")){
+			conductorName.push([""]);
+			conductorset.push(conductorSample);
+			ldaodixian.setData(conductorName);
+			ridconductor=conductorName.length-1;
+			rdaodixian.setData(conductorset[ridconductor]);
+			console.log(conductorName,conductorset,ridconductor);
+
+		};
+		if($("#rqixiang").is(":visible")){
+			weatherName.push([""]);
+			weatherset.push(weatherSample);
+			lqixiang.setData(weatherName);
+			ridweather = weatherName.length-1;
+			rqixiang.setData(weatherset[ridweather]);
+			console.log(weatherName,weatherset);
+		}
+		if($("#rtower").is(":visible")){
+			addrow(towerName,towerset,[""],towerSample,ridtower,ltower,rtower);
+		}
+	})
+
+	$("#InsertPara").click(function(){
+		if($("#rdaodixian").is(":visible")){
+			insertrow(conductorName,conductorset,[""],conductorSample,ridconductor,ldaodixian,rdaodixian);
+		};
+		if($("#rqixiang").is(":visible")){
+			insertrow(weatherName,weatherset,[""],weatherSample,ridweather,lqixiang,rqixiang);
+		}
+		if($("#rtower").is(":visible")){
+			insertrow(towerName,towerset,[""],towerSample,ridtower,ltower,rtower);
+		}
+	})
+
+	$("#DeletePara").click(function(){
+		if($("#rdaodixian").is(":visible")){
+			deleterow(conductorName,conductorset,ridconductor,ldaodixian,rdaodixian);
+		};
+		if($("#rqixiang").is(":visible")){
+			deleterow(weatherName,weatherset,ridweather,lqixiang,rqixiang);
+		}
+		if($("#rtower").is(":visible")){
+			deleterow(towerName,towerset,ridtower,ltower,rtower);
+		}
+	})
+
+	$("#ClearPara").click(function(){
+		if($("#rdaodixian").is(":visible")){
+			clearrow(conductorName,conductorset,[""],conductorSample,ridconductor,ldaodixian,rdaodixian);
+		};
+		if($("#rqixiang").is(":visible")){
+			clearrow(weatherName,weatherset,[""],weatherSample,ridweather,lqixiang,rqixiang);
+		}
+		if($("#rtower").is(":visible")){
+			clearrow(towerName,towerset,[""],towerSample,ridtower,ltower,rtower);
+		}
+	})
+
+	$("#UpMove").click(function(){
+		if($("#rdaodixian").is(":visible")){
+			if(ridconductor>0){
+				upmoverow(conductorName,conductorset,ridconductor,ldaodixian,rdaodixian);
+				ridconductor--;
+			}
+		};
+		if($("#rqixiang").is(":visible")){
+			if(ridweather>0){
+				upmoverow(weatherName,weatherset,ridweather,lqixiang,rqixiang);
+				ridweather--;
+			}
+		}
+		if($("#rtower").is(":visible")){
+			if(ridtower>0){
+				upmoverow(towerName,towerset,ridtower,ltower,rtower);
+				ridtower--;
+			}
+		}
+	})
+
+	$("#DownMove").click(function(){
+		if($("#rdaodixian").is(":visible")){
+			if(ridconductor<conductorName.length-1){
+				downmoverow(conductorName,conductorset,ridconductor,ldaodixian,rdaodixian);
+				ridconductor++;	
+			}
+		};
+		if($("#rqixiang").is(":visible")){
+			if(ridweather<weatherName.length-1){
+				downmoverow(weatherName,weatherset,ridweather,lqixiang,rqixiang);
+				ridweather++;
+			}
+		}
+		if($("#rtower").is(":visible")){
+			if(ridtower<towerName.length-1){
+				downmoverow(towerName,towerset,ridtower,ltower,rtower);
+				ridtower++;	
+			}
+		}
+	})
+
+	window.addrow=function(nameset,dataset,nameSample,dataSample,index,l,r){
+		nameset.push(nameSample);
+		dataset.push(dataSample);
+		index = nameset.length -1;
+		l.setData(nameset);r.setData(dataset[index]);
+	}
+	
+	function insertrow(nameset,dataset,nameSample,dataSample,index,l,r){
+		console.log(index);
+		nameset.splice(index,0,nameSample);
+		dataset.splice(index,0,dataSample);
+		l.setData(nameset);r.setData(dataset[index]);
+		index++
+		console.log(nameset,dataset);
+	}
+
+	function deleterow(nameset,dataset,index,l,r){
+		console.log(index);
+		nameset.splice(index,1);
+		dataset.splice(index,1);
+		l.setData(nameset);r.setData(dataset[index]);
+		index--;
+		console.log(nameset,dataset);
+	}
+
+	function clearrow(nameset,dataset,nameSample,dataSample,index,l,r){
+		console.log(index);
+		//nameset.splice(index,1,nameSample);
+		dataset.splice(index,1,dataSample);
+		l.setData(nameset);r.setData(dataset[index]);
+		console.log(nameset,dataset);
+	}
+	
+	function upmoverow(nameset,dataset,index,l,r){
+		l.setData(nameset);
+		r.setData(dataset[index-1]);
+	}
+
+	function downmoverow(nameset,dataset,index,l,r){
+		l.setData(nameset);
+		r.setData(dataset[index+1]);
+	}
+
     //prk database
 
 	$(".closeBtn").click(function () {
@@ -851,8 +1144,6 @@
 	$("#tb_pile_calc").click(function(){
 		var form = new FormData();
 		form.append("ProjectName", prjName);
-		console.log("begindata");
-		console.log(pile_tabledata);
 		form.append("table",JSON.stringify(pile_tabledata));
 		//console.log(pile_table.m_jPile);   //txt append jsondata
 		$.ajax({
@@ -1788,7 +2079,7 @@
 					}
 				});
 			}
-			console.log(obj.options.text);
+
 			if (x) {
 				if (obj.options.allowComments == true) {
 					items.push({ type:'line' });
@@ -1851,7 +2142,6 @@
 	}
 	//var customColumnCross = {}
 	function selectionActiveConductor (instance, x1, y1, x2, y2, origin) {
-		console.log("after",conductorset);
 		ridconductor = y1;
 		rdaodixian.setData(conductorset[y1]);
 	}
@@ -1887,7 +2177,7 @@
 
 
 	var lguicheng = jspreadsheet(document.getElementById('lguicheng'),{
-		contextMenu: menu,
+		contextMenu: function(obj,x,y,e){},
 		columns:[
 			{type:"text",title:"型号/名称/图号",width: 150, name: "No"}],
 		editable: false,
@@ -1916,13 +2206,13 @@
 			onbeforechange: beforeChangeEvent,
 			onafterchanges: Afterchangetcross
 		})
-	var ldaodixian = jspreadsheet(document.getElementById('ldaodixian'),{
-		contextMenu: menu,
+	window.ldaodixian = jspreadsheet(document.getElementById('ldaodixian'),{
+		contextMenu: function(obj,x,y,e){},
 		columns:[
 			{type:"text",title:"型号/名称/图号",width: 150, name: "conductor"}],
 		onselection: selectionActiveConductor
 	})
-	var rdaodixian = jspreadsheet(document.getElementById('rdaodixian'),{
+	window.rdaodixian = jspreadsheet(document.getElementById('rdaodixian'),{
 			contextMenu:function(obj,x,y,e){},
 			colAlignments:['left',''],  //Align
 			columns:[
@@ -1934,13 +2224,13 @@
 
 			// editable: false
 		})
-	var lqixiang = jspreadsheet(document.getElementById('lqixiang'),{
-		contextMenu: menu,
+	window.lqixiang = jspreadsheet(document.getElementById('lqixiang'),{
+		contextMenu: function(obj,x,y,e){},
 		columns:[
 			{type:"text",title:"型号/名称/图号",width: 150, name: "weather"}],
 		onselection: selectionActiveQixiang
 	})
-	var rqixiang = jspreadsheet(document.getElementById('rqixiang'),{
+	window.rqixiang = jspreadsheet(document.getElementById('rqixiang'),{
 		contextMenu:function(obj,x,y,e){},
 		colAlignments:['left',''],  //Align
 		columns:[
@@ -1955,7 +2245,7 @@
 		// editable: false
 })
 	var lfenduan = jspreadsheet(document.getElementById('lfenduan'),{
-			contextMenu: menu,
+			contextMenu: function(obj,x,y,e){},
 			columns:[
 				{type:"text",title:"型号/名称/图号",width: 150, name: "section"}],
 			// onselection: selectionActivefenduan
@@ -1971,7 +2261,7 @@
 			onafterchanges: AfterchangeSection
 		})
 	var ltower = jspreadsheet(document.getElementById('ltower'),{
-			contextMenu: menu,
+			contextMenu: function(obj,x,y,e){},
 			columns:[
 				{type:"text",title:"型号/名称/图号",width: 150, name: "towerCategory"}],
 			onselection: selectionActiveTower
@@ -2025,9 +2315,7 @@
 		// rguicheng2.setData(tcross);
 	})
 	$('#guicheng').click();
-	var conductorName=[];
-	var conductorset=[];
-	var ridconductor = 0;
+
 	$('#daodixian').click(function () {
 		ridconductor = 0;
 		if(conductorName.length ==0){
@@ -2071,9 +2359,7 @@
 		$('#rdaodixian,.jexcel_container .jexcel_content').show();
 
 	})
-	var weatherName=[];
-	var weatherset=[];
-	var ridweather = 0;
+
 	$('#qixiang').click(function(){
 		ridweather = 0;
 		if(weatherName.length == 0){
@@ -2101,15 +2387,11 @@
 			}
 		}
 
-		console.log("weatherset",weatherset);
 		rqixiang.setData(weatherset[0]);
-		console.log(weatherset[0]);
 		rqixiang.hideIndex();
 		$('#rqixiang,.jexcel_container .jexcel_content').show();
 	})
-	var	SectionName = [];
-	var Sectionset = [];
-	var ridsection = 0;
+
 	$('#fenduan').click(function(){
 		ridsection = 0;
 		if(SectionName.length==0){
@@ -2123,21 +2405,8 @@
 		$('#lfenduan,.jexcel_container .jexcel_content').show();
 		if(Sectionset.length==0){
 			for(let i = 0; i<prk.SECTION.length;i++){
-				var sec = [{'name':'起始桩号','value':''},
-					{'name':'起始累距','value':0},
-					{'name':'终点桩号','value':''},
-					{'name':'终点累距','value':0},
-					{'name':'气象区名称','value':''},
-					{'name':'导线型号','value':''},
-					{'name':'导线新线系数','value':0},
-					{'name':'导线安全系数','value':0},
-					{'name':'导线年平运行张力上限','value':0},
-					{'name':'地线型号','value':''},
-					{'name':'地线新线系数','value':0},
-					{'name':'地线安全系数','value':0},
-					{'name':'地线年平运行张力上限','value':0},
-					{'name':'设计回路','value':'单回路'}];
-				Sectionset.push(sec);
+
+				Sectionset.push(sectionSample);
 				Sectionset[i][0].value = prk.SECTION[i].starJ;
 				Sectionset[i][1].value = prk.SECTION[i].from;
 				Sectionset[i][2].value = prk.SECTION[i].endJ;
@@ -2160,9 +2429,7 @@
 		rfenduan.setData(Sectionset[0]);rfenduan.hideIndex();
 		$('#rfenduan,.jexcel_container .jexcel_content').show();
 	})
-	var towerName=[];
-	var towerset=[];
-	var ridtower = 0;
+
 	$('#gantashiyong').click(function(){
 		ridtower = 0;
 		if(towerName.length==0){
@@ -2279,19 +2546,29 @@
 			console.log(conductorName[i]);
 			prk.CONDUCTOR[i].name = conductorName[i][0];
 		}
+		prk.CONDUCTOR.splice(conductorName.length,prk.CONDUCTOR.length);
 		//weather
+
 		for(let i=0;i<weatherset.length;i++){
+			let tempwea = {'name':'','TWI':[]};
 			for (let j = 0; j < weatherset[i].length; j++) {
-				prk.WEATHER[i].TWI[j].name = weatherset[i][j].name;
-				prk.WEATHER[i].TWI[j].t = weatherset[i][j].wd;
-				prk.WEATHER[i].TWI[j].v = weatherset[i][j].fs;
-				prk.WEATHER[i].TWI[j].b = weatherset[i][j].fb;
+				let tempTWI = {"name":"","t":0,"v":0,"b":0};
+				tempTWI.name = weatherset[i][j].name;
+				tempTWI.t = weatherset[i][j].wd;
+				tempTWI.v = weatherset[i][j].fs;
+				tempTWI.b = weatherset[i][j].fb;
+				tempwea.TWI.push(tempTWI);
 			}
+			console.log(i,tempwea);
+			prk.WEATHER.splice(i,1,tempwea);
 		}
 		for(let i=0;i<weatherName.length;i++){
-			prk.WEATHER[i].name = weatherName[i][0];
-		}
 
+			prk.WEATHER[i].name = weatherName[i][0];
+
+			console.log(prk.WEATHER[i].name);
+		}
+		prk.WEATHER.splice(weatherName.length,prk.WEATHER.length);
 		//Section
 		for(let i=0;i<Sectionset.length;i++){
 			var temp = {"starJ":Sectionset[i][0].value,"from":Sectionset[i][1].value,
@@ -2328,6 +2605,7 @@
 		for (let i = 0; i < towerName.length; i++) {
 			prk.TOWER[i].Name = towerName[i][0];
 		}
+		prk.TOWER.splice(towerName.length,prk.TOWER.length);
 
 
 		console.log(prk);
@@ -2516,7 +2794,6 @@
 			processData: false,
 			headers:{"token":localStorage.getItem("token")},
 			success: function(pwfdata){
-				console.log(pwfdata);
 				towerlist = pwfdata.TOWERLIST;
 				towerlist_tabledata = towerlist;
 				m_start = 0;
@@ -2626,8 +2903,8 @@
 		camera.position.set(cameraX, cameraY, cameraZ);
 		camera.up.set(0,1,0);
 		camera.lookAt(new THREE.Vector3(sceneX, sceneY, sceneZ));
-		const helper = new THREE.CameraHelper( camera );
-		scene.add( helper );
+		// const helper = new THREE.CameraHelper( camera );
+		// scene.add( helper );
 
 	}
 	/* 渲染器 */
@@ -5148,7 +5425,7 @@
 
 
 
-				if(fallInd>0){
+				if(fallInd>0&&towerlist[fallInd-1].Distance!=undefined){
 					var leftCurve = DisplayFawCurve4(towerlist[fallInd-1],towerlist[fallInd],"fixwire");
 					FawCurveGroup.children[(fallInd-1)*3] = leftCurve[0];
 					FawCurveGroup.children[(fallInd-1)*3+1] = leftCurve[1];
@@ -6050,6 +6327,7 @@
 
 	function ExpandMouseDown (event){
 		if(enableExpand){
+			mainCanvas = document.querySelector("#iframe_box canvas");
 			document.body.style.cursor = "url(./css/window.ico) 9 9, default";
 			mouse.x = ((event.clientX - mainCanvas.getBoundingClientRect().left) / mainCanvas.offsetWidth) * 2 - 1;
 			mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top) / mainCanvas.offsetHeight) * 2 + 1;

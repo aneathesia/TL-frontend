@@ -30,27 +30,38 @@
 
 <script>
     let index = parent.layer.getFrameIndex(window.name);
-    var voltageHeader = ['Elc110kV','Elc220kV','Elc330kV','Elc500kV','Direct500kV','Elc750kV','Direct800','Elc1000kV'];
+    var towerHeader = ['直线塔','耐张塔','终端塔','龙门架'];
+    var voltageHeader = ['Elc110kV','Elc220kV','Elc330kV','Elc500kV','Direct500kV','Elc750kV','Direct800kV','Elc1000kV'];
     var Datatable = jspreadsheet(document.getElementById('DataContent'),{
         columns:[
-            {type:"text",title:"参数名称",width: 100, name: "name"},
-            {type:"text",title:"参数数值",width: 100, name: "value"}],
+            {type:"text",width: 100, name: "name"},
+            {type:"text",width: 100, name: "value"}],
         editable: false
     })
     Datatable.hideIndex();
 
-    var crossSample= [];
-    // var conductor = [{'name':'电线型号','value':''},
-    //     {'name':'截面积(mm²)','value':0},
-    //     {'name':'外径(mm)','value':0},
-    //     {'name':'重量kg/km','value':0},
-    //     {'name':'弹性系数(kg)','value':0},
-    //     {'name':'弹性系数(N)','value':0},
-    //     {'name':'线膨胀系数','value':0},
-    //     {'name':'断应力kgmm','value':0},
-    //     {'name':'拉断力N','value':0},
-    //     {'name':'导线1地线2','value':0},
-    //     {'name':'标称截面','value':''}];
+    var crossSample= [{'name': "01对居民地", 'value': 0},
+    {'name': "02对非居民地", 'value': 0},
+    {'name': "03对交通困难区", 'value': 0},
+    {'name': "04风偏对地净空距离", 'value': 0},
+    {'name': "05房屋垂直", 'value': 0},
+    {'name': "06房屋净空", 'value': 0},
+    {'name': "07树木垂直", 'value': 0},
+    {'name': "08树木净空", 'value': 0},
+    {'name': "09跨电力线", 'value': 0},
+    {'name': "10跨电杆顶点", 'value': 0},
+    {'name': "11跨通讯线", 'value': 0},
+    {'name': "12跨索道", 'value': 0},
+    {'name': "13特殊管道", 'value': 0},
+    {'name': "14等级路面", 'value': 0},
+    {'name': "15窄轨铁路", 'value': 0},
+    {'name': "16标准轨距铁路", 'value': 0},
+    {'name': "17电气轨铁路", 'value': 0},
+    {'name': "18通河洪水", 'value': 0},
+    {'name': "19通河桅顶", 'value': 0},
+    {'name': "20百年一遇洪水位", 'value': 0},
+    ];
+
     var conductorSample = [{'name':'导地线类型','value':'导线'},
         {'name':'导地线截面积(mm²)','value':0},
         {'name':'导地线直径','value':0},
@@ -59,15 +70,51 @@
         {'name':'弹性系数(N/mm²)','value':0},
         {'name':'膨胀系数/℃','value':0},
         {'name':'导线分裂数','value':0}];
-    var weatherSample=[];
-    var towerSample =[];
+    var weatherSample=[{'name':'平均气温','value':''},
+        {'name':'最高气温','value':''},
+        {'name':'最低气温','value':''},
+        {'name':'最大风速','value':''},
+        {'name':'最大覆冰','value':''},
+        {'name':'安装情况','value':''},
+        {'name':'操作情况','value':''},
+        {'name':'大气有风','value':''},
+        {'name':'大气无风','value':''},
+        {'name':'最高线温','value':''},
+        {'name':'检修工况','value':'0,0,0'},
+        {'name':'事故工况','value':'0,0,0'},
+    ];
+    var towerSample =[{'name':'杆塔类型','value':''},
+        {'name':'最大档距','value':0},
+        {'name':'水平档距','value':0},
+        {'name':'垂直档距','value':0},
+        {'name':'起始呼高','value':0},
+        {'name':'级差增量','value':0},
+        {'name':'终止呼高','value':0},
+        {'name':'最小转角度数(°)','value':0},
+        {'name':'最大转角度数(°)','value':0},
+        {'name':'角度折算水平档距(m/°)','value':0},
+        {'name':'摇摆角kv值','value':0},
+        {'name':'大风工况摇摆角(°)','value':0},
+        {'name':'内过电压摇摆角','value':0},
+        {'name':'外过电压摇摆角','value':0},
+        {'name':'带点作业摇摆角','value':0},
+        {'name':'最大横担长度(m)','value':0},
+        {'name':'地面支架高度(m)','value':0},
+        {'name':'中上导线高差(m)','value':0},
+        {'name':'中下导线高差(m)','value':0},
+        {'name':'附加属性','value':0},
+        {'name':'最低塔正面根开','value':0},
+        {'name':'最低塔侧面根开','value':0},
+        {'name':'最高塔正面根开','value':0},
+        {'name':'最高塔侧面根开','value':0},
+        {'name':'杆塔分组号(1,2)','value':1},];
 
 
     $("#DataSelect").change(function () {
         let res = $("#DataSelect").find("option:selected").text();
-        console.log(encodeURI(res));
+        // console.log(encodeURI(res));
         let noteContent = $("#note").text();
-        console.log("noteContent",noteContent);
+        // console.log("noteContent",noteContent);
         switch ($("#note").text()){
             //tcross
             case "交叉跨越":
@@ -79,12 +126,13 @@
                     type: "get",
                     //async: false,
                     success: function (data){
-                        crossSample =[];
+                        console.log(data);
                         for(let i=0;i<data.length;i++){
                             var temp = Object.values(data[i]);
-                            crossSample.push({'contabbr':temp[1],'voltage':temp[0]});
+                            if(typeof (temp[0])=="number")crossSample[i].value = temp[0];
+                            else crossSample[i].value = temp[1];
                         }
-                        console.log(crossSample);
+                        Datatable.setData(crossSample);
 
                     },
                     error:function (error) {
@@ -102,7 +150,17 @@
                     //async: false,
                     success: function (data){
                         console.log(data,data[0]);
+                        if(data[0].type ==1)conductorSample[0].value="导线";
+                        else conductorSample[0].value="地线";
+                        conductorSample[1].value=data[0].a;
+                        conductorSample[2].value=data[0].d;
+                        conductorSample[3].value=data[0].tpn;
+                        conductorSample[4].value=data[0].p1/1000;
+                        conductorSample[5].value=data[0].en;
+                        conductorSample[6].value=data[0].ac;
+                        conductorSample[7].value=1;
 
+                        Datatable.setData(conductorSample);
                     },
                     error:function (error) {
                         console.log(error);
@@ -119,18 +177,17 @@
                     //async: false,
                     success: function (data){
                         console.log(data,data[0]);
-                        weatherSample = [];
-                        for(let j = 0 ; j<data[0].length;j++){
-                            var row = {};
-                            var para = Object.values(data[0][j]).split(",");
-                            console.log(para);
-                            row.name = "";
-                            row.wd= para[0];
-                            row.fs= para[1];
-                            row.fb= para[2];
-                            weatherSample.push(row);
-                        }
-                        console.log(weatherSample);
+                        weatherSample[8].value = data[0].atomnwind;
+                        weatherSample[7].value = data[0].atomwind;
+                        weatherSample[0].value = data[0].averaget;
+                        weatherSample[5].value = data[0].installcond;
+                        weatherSample[4].value = data[0].maxice;
+                        weatherSample[9].value = data[0].maxlinet;
+                        weatherSample[1].value = data[0].maxt;
+                        weatherSample[3].value = data[0].maxwind;
+                        weatherSample[2].value = data[0].mint;
+                        weatherSample[6].value = data[0].operatecond;
+                        Datatable.setData(weatherSample);
                     },
                     error:function (error) {
                         console.log(error);
@@ -139,7 +196,7 @@
             }
             break;
             //tower
-            case "杆塔类型":
+            case "杆塔型号":
                 {
                 $.ajax({
                     url: BASEURL+"/tl/tower/Search?Name="+encodeURI(res), //提交的路径
@@ -147,7 +204,31 @@
                     //async: false,
                     success: function (data){
                         console.log(data,data[0]);
-
+                         towerSample[0].value = towerHeader[data[0].type];
+                         towerSample[1].value = data[0].maxl;
+                         towerSample[2].value = data[0].lh;
+                         towerSample[3].value = 0;
+                         towerSample[4].value = data[0].starthigh;
+                         towerSample[5].value = data[0].dhigh;
+                         towerSample[6].value = data[0].endhigh;
+                         towerSample[7].value = data[0].minangle;
+                         towerSample[8].value = data[0].maxangle;
+                         towerSample[9].value = data[0].angle2lh;
+                         towerSample[10].value = data[0].kv;
+                         towerSample[11].value = data[0].winda;
+                         towerSample[12].value = data[0].operationa;
+                         towerSample[13].value = data[0].atmospherea;
+                         towerSample[14].value = data[0].eleca;
+                         towerSample[15].value = data[0].dist;
+                         towerSample[16].value = data[0].uptotop;
+                         towerSample[17].value = data[0].uptomid;
+                         towerSample[18].value = data[0].midtodown;
+                         towerSample[19].value = data[0].typeex;
+                         towerSample[20].value = data[0].baselw;
+                         towerSample[21].value = data[0].basell;
+                         towerSample[22].value = data[0].basehw;
+                         towerSample[23].value = data[0].basehl;
+                         Datatable.setData(towerSample);
                     },
                     error:function (error) {
                         console.log(error);
@@ -163,6 +244,45 @@
     })
 
     function setData() {
+        let res = $("#DataSelect").find("option:selected").text();
+        let namearr = []; namearr.push(res);
+        switch ($("#note").text()){
+            //tcross
+            case "交叉跨越":
+            {
+
+            }
+                break;
+            //conductor
+            case "电线型号":
+            {
+                parent.addrow(parent.conductorName,parent.conductorset,namearr,conductorSample,parent.ridconductor,parent.ldaodixian,parent.rdaodixian);
+                exitSet();
+            }
+                break;
+            //weather
+            case "气象区":
+            {
+                let weatherInput=[];
+                for(let i = 0 ; i <weatherSample.length;i++){
+                    var temp = weatherSample[i].value.split(",");
+                    var temprow = {name:weatherSample[i].name,wd:Number(temp[0]),fs: Number(temp[1]),fb: Number(temp[2])};
+                    weatherInput.push(temprow);
+                }
+                console.log(weatherInput);
+                parent.addrow(parent.weatherName,parent.weatherset,namearr,weatherInput,parent.ridweather,parent.lqixiang,parent.rqixiang);
+                exitSet();
+            }
+                break;
+            //tower
+            case "杆塔型号":
+            {
+                //parent.addrow(towerName,towerset,res,towerSample,ridtower,ltower,rtower);
+            }
+                break;
+            default:
+                break;
+        }
 
     }
 
