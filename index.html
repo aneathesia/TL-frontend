@@ -42,7 +42,7 @@
 	<script type="text/javascript" src="./js/H-ui.admin.js"></script>
 	<script type="text/javascript" src="./js/movediv.js"></script>
 	<script type="text/javascript" src="./js/three.js"></script>
-	<script type="text/javascript" src="./js/three.module.js"></script>
+	<script type="text/javascript/module" src="./js/three.module.js"></script>
 	<script type="text/javascript" src="./js/gm.js"></script>
 	<script type="text/javascript" src="./config.js"></script>
 	<script src="./js/DragControls1.js"></script>
@@ -70,9 +70,11 @@
 			<dt><i class="Hui-iconfont">&#xe646;</i> 工程<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
 				<ul>
+					<li><a href="#" ><label id="fileManage" style="width:100%">文件管理</label></a></li>
 					<li><a href="#" ><label id="creatProject" style="width:100%">新建工程</label></a></li>
-					<li><a href="#" ><label id="creatMap" style="width:100%">新建图幅</label></a></li>
-					<li><a href="#" ><label id="fileManage" style="width:100%">文件</label></a></li>
+					<li><a href="#" ><label id="creatMap" style="width:100%">新建MAP</label></a></li>
+					<li><a href="#"><label id="saveMap" style="width:100%">保存Map</label></a></li>
+					<li><a href="#"><label id="savePrj" style="width:100%">保存工程</label></a></li>
 				</ul>
 			</dd>
 		</dl>
@@ -140,15 +142,15 @@
 				</ul>
 			</dd>
 		</dl>
-		<dl id="menu-savemap">
-			<dt><i class="Hui-iconfont">&#xe646; </i><label id="saveAs"> 保存</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-			<dd>
-				<ul>
-					<li><a href="#"><label id="saveMap" style="width:100%">保存Map</label></a></li>
-					<li><a href="#"><label id="savePrj" style="width:100%">保存工程</label></a></li>
-				</ul>
-			</dd>
-		</dl>
+<!--		<dl id="menu-savemap">-->
+<!--			<dt><i class="Hui-iconfont">&#xe646; </i><label id="saveAs"> 保存</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>-->
+<!--			<dd>-->
+<!--				<ul>-->
+<!--					<li><a href="#"><label id="saveMap" style="width:100%">保存Map</label></a></li>-->
+<!--					<li><a href="#"><label id="savePrj" style="width:100%">保存工程</label></a></li>-->
+<!--				</ul>-->
+<!--			</dd>-->
+<!--		</dl>-->
 		<dl id="menu-transOutput">
 			<dt><i class="Hui-iconfont">&#xe646; </i><label id="Output"> 导出</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
@@ -677,9 +679,12 @@
 	//window resize;
 	$("#piletable").hide();
 	$("#liPiletable").click(function () {
+		document.removeEventListener('mousewheel', onDocumentMouseWheel);
 		$("#piletable").show();
 	})
 	$("#closeTable").click(function () {
+		document.addEventListener('mousewheel', onDocumentMouseWheel, false);//兼容ie chrome
+		document.addEventListener('DOMMouseScroll', onDocumentMouseWheel, false);
 		$("#piletable").hide();
 	})
 
@@ -687,6 +692,7 @@
 	//window resize;
 	$("#towerlisttable").hide();
 	$("#liTowerlisttable").click(function () {
+		document.removeEventListener('mousewheel', onDocumentMouseWheel);
 		$("#towerlisttable").show();
 
 		//towerlist_tabledata=towerlist;
@@ -696,6 +702,8 @@
 
 	})
 	$("#towerlistcloseTable").click(function () {
+		document.addEventListener('mousewheel', onDocumentMouseWheel, false);//兼容ie chrome
+		document.addEventListener('DOMMouseScroll', onDocumentMouseWheel, false);
 		$("#towerlisttable").hide();
 	})
 
@@ -780,7 +788,6 @@
 						type: "get",
 						//async: false,
 						success: function (data){
-							console.log(data);
 							body.find("#DataSelect").empty();
 							for (let i = 0;i<data.length;i++){
 								var opt = document.createElement('option');
@@ -864,103 +871,109 @@
 	$("#designparameter").click(function () {
 		document.removeEventListener('mousedown', onDocumentSelected);
 		//init prk parameter
-		for(let i = 0; i<prk.CONDUCTOR.length;i++){
-			conductorName.push([prk.CONDUCTOR[i].name]);
-		}
-		for(let i = 0;i<prk.CONDUCTOR.length;i++){
-			var conductor = [{'name':'导地线类型','value':'导线'},
-				{'name':'导地线截面积(mm²)','value':0},
-				{'name':'导地线直径','value':0},
-				{'name':'计算拉断力','value':0},
-				{'name':'单位长度质量(kg/m)','value':0},
-				{'name':'弹性系数(N/mm²)','value':0},
-				{'name':'膨胀系数/℃','value':0},
-				{'name':'导线分裂数','value':0}];
-			conductorset.push(conductor);
-			if(prk.CONDUCTOR[i].type === 0 )conductorset[i][0].value = "导线";
-			else conductorset[i][0].value = "地线";
-			conductorset[i][1].value = prk.CONDUCTOR[i].A;
-			conductorset[i][2].value = prk.CONDUCTOR[i].d;
-			conductorset[i][3].value = prk.CONDUCTOR[i].Tp;
-			conductorset[i][4].value = prk.CONDUCTOR[i].p1;
-			conductorset[i][5].value = prk.CONDUCTOR[i].E;
-			conductorset[i][6].value = prk.CONDUCTOR[i].a;
-			conductorset[i][7].value = prk.CONDUCTOR[i].num;
-		}
 
-
-		for(let i = 0; i<prk.WEATHER.length;i++){
-			weatherName.push([prk.WEATHER[i].name]);
-		}
-		for(let i = 0;i<prk.WEATHER.length;i++){
-			var weatemp  =  [];
-			for(let j = 0 ; j<prk.WEATHER[i].num;j++){
-				var row = {};
-				row.name = prk.WEATHER[i].TWI[j].name;
-				row.wd= prk.WEATHER[i].TWI[j].t;
-				row.fs= prk.WEATHER[i].TWI[j].v;
-				row.fb= prk.WEATHER[i].TWI[j].b;
-				weatemp.push(row);
+		if(conductorset.length==0){
+			for(let i = 0; i<prk.CONDUCTOR.length;i++){
+				conductorName.push([prk.CONDUCTOR[i].name]);
 			}
-			weatherset.push(weatemp);
+			for(let i = 0;i<prk.CONDUCTOR.length;i++){
+				var conductor = [{'name':'导地线类型','value':'导线'},
+					{'name':'导地线截面积(mm²)','value':0},
+					{'name':'导地线直径','value':0},
+					{'name':'计算拉断力','value':0},
+					{'name':'单位长度质量(kg/m)','value':0},
+					{'name':'弹性系数(N/mm²)','value':0},
+					{'name':'膨胀系数/℃','value':0},
+					{'name':'导线分裂数','value':0}];
+				conductorset.push(conductor);
+				if(prk.CONDUCTOR[i].type === 0 )conductorset[i][0].value = "导线";
+				else conductorset[i][0].value = "地线";
+				conductorset[i][1].value = prk.CONDUCTOR[i].A;
+				conductorset[i][2].value = prk.CONDUCTOR[i].d;
+				conductorset[i][3].value = prk.CONDUCTOR[i].Tp;
+				conductorset[i][4].value = prk.CONDUCTOR[i].p1;
+				conductorset[i][5].value = prk.CONDUCTOR[i].E;
+				conductorset[i][6].value = prk.CONDUCTOR[i].a;
+				conductorset[i][7].value = prk.CONDUCTOR[i].num;
+			}
 		}
 
-		for(let i = 0; i<prk.TOWER.length;i++){
-			towerName.push([prk.TOWER[i].Name]);
+		if(weatherset.length == 0){
+			for(let i = 0; i<prk.WEATHER.length;i++){
+				weatherName.push([prk.WEATHER[i].name]);
+			}
+			for(let i = 0;i<prk.WEATHER.length;i++){
+				var weatemp  =  [];
+				for(let j = 0 ; j<prk.WEATHER[i].num;j++){
+					var row = {};
+					row.name = prk.WEATHER[i].TWI[j].name;
+					row.wd= prk.WEATHER[i].TWI[j].t;
+					row.fs= prk.WEATHER[i].TWI[j].v;
+					row.fb= prk.WEATHER[i].TWI[j].b;
+					weatemp.push(row);
+				}
+				weatherset.push(weatemp);
+			}
 		}
-		for(let i = 0; i<prk.TOWER.length;i++){
-			var tow = [{'name':'杆塔类型','value':''},
-				{'name':'最大档距','value':0},
-				{'name':'水平档距','value':0},
-				{'name':'垂直档距','value':0},
-				{'name':'起始呼高','value':0},
-				{'name':'级差增量','value':0},
-				{'name':'终止呼高','value':0},
-				{'name':'最小转角度数(°)','value':0},
-				{'name':'最大转角度数(°)','value':0},
-				{'name':'角度折算水平档距(m/°)','value':0},
-				{'name':'摇摆角kv值','value':0},
-				{'name':'大风工况摇摆角(°)','value':0},
-				{'name':'内过电压摇摆角','value':0},
-				{'name':'外过电压摇摆角','value':0},
-				{'name':'带点作业摇摆角','value':0},
-				{'name':'最大横担长度(m)','value':0},
-				{'name':'地面支架高度(m)','value':0},
-				{'name':'中上导线高差(m)','value':0},
-				{'name':'中下导线高差(m)','value':0},
-				{'name':'附加属性','value':0},
-				{'name':'最低塔正面根开','value':0},
-				{'name':'最低塔侧面根开','value':0},
-				{'name':'最高塔正面根开','value':0},
-				{'name':'最高塔侧面根开','value':0},
-				{'name':'杆塔分组号(1,2)','value':1},];
-			towerset.push(tow);
-			towerset[i][0].value = towerArr[prk.TOWER[i].type];
-			towerset[i][1].value = prk.TOWER[i].MaxL;
-			towerset[i][2].value = prk.TOWER[i].LH;
-			towerset[i][3].value = prk.TOWER[i].LV;
-			towerset[i][4].value = prk.TOWER[i].StartHigh;
-			towerset[i][5].value = prk.TOWER[i].Dhigh;
-			towerset[i][6].value = prk.TOWER[i].EndHigh;
-			towerset[i][7].value = prk.TOWER[i].MinAngle;
-			towerset[i][8].value = prk.TOWER[i].MaxAngle;
-			towerset[i][9].value = prk.TOWER[i].Angle2LH;
-			towerset[i][10].value = prk.TOWER[i].KV;
-			towerset[i][11].value = prk.TOWER[i].sway.WindA;
-			towerset[i][12].value = prk.TOWER[i].sway.OperationA;
-			towerset[i][13].value = prk.TOWER[i].sway.AtomosphereA;
-			towerset[i][14].value = prk.TOWER[i].sway.ElecA;
-			towerset[i][15].value = prk.TOWER[i].Dist;
-			towerset[i][16].value = prk.TOWER[i].upToTop;
-			towerset[i][17].value = prk.TOWER[i].upToMid;
-			towerset[i][18].value = prk.TOWER[i].midToDown;
-			towerset[i][19].value = prk.TOWER[i].typeEx;
-			towerset[i][20].value = prk.TOWER[i].baseLw;
-			towerset[i][21].value = prk.TOWER[i].baseLl;
-			towerset[i][22].value = prk.TOWER[i].baseHw;
-			towerset[i][23].value = prk.TOWER[i].baseHl;
-			//towerset[i][24].value = prk.TOWER[i].Group;
 
+		if(towerset.length==0){
+			for(let i = 0; i<prk.TOWER.length;i++){
+				towerName.push([prk.TOWER[i].Name]);
+			}
+			for(let i = 0; i<prk.TOWER.length;i++){
+				var tow = [{'name':'杆塔类型','value':''},
+					{'name':'最大档距','value':0},
+					{'name':'水平档距','value':0},
+					{'name':'垂直档距','value':0},
+					{'name':'起始呼高','value':0},
+					{'name':'级差增量','value':0},
+					{'name':'终止呼高','value':0},
+					{'name':'最小转角度数(°)','value':0},
+					{'name':'最大转角度数(°)','value':0},
+					{'name':'角度折算水平档距(m/°)','value':0},
+					{'name':'摇摆角kv值','value':0},
+					{'name':'大风工况摇摆角(°)','value':0},
+					{'name':'内过电压摇摆角','value':0},
+					{'name':'外过电压摇摆角','value':0},
+					{'name':'带点作业摇摆角','value':0},
+					{'name':'最大横担长度(m)','value':0},
+					{'name':'地面支架高度(m)','value':0},
+					{'name':'中上导线高差(m)','value':0},
+					{'name':'中下导线高差(m)','value':0},
+					{'name':'附加属性','value':0},
+					{'name':'最低塔正面根开','value':0},
+					{'name':'最低塔侧面根开','value':0},
+					{'name':'最高塔正面根开','value':0},
+					{'name':'最高塔侧面根开','value':0},
+					{'name':'杆塔分组号(1,2)','value':1},];
+				towerset.push(tow);
+				towerset[i][0].value = towerArr[prk.TOWER[i].type];
+				towerset[i][1].value = prk.TOWER[i].MaxL;
+				towerset[i][2].value = prk.TOWER[i].LH;
+				towerset[i][3].value = prk.TOWER[i].LV;
+				towerset[i][4].value = prk.TOWER[i].StartHigh;
+				towerset[i][5].value = prk.TOWER[i].Dhigh;
+				towerset[i][6].value = prk.TOWER[i].EndHigh;
+				towerset[i][7].value = prk.TOWER[i].MinAngle;
+				towerset[i][8].value = prk.TOWER[i].MaxAngle;
+				towerset[i][9].value = prk.TOWER[i].Angle2LH;
+				towerset[i][10].value = prk.TOWER[i].KV;
+				towerset[i][11].value = prk.TOWER[i].sway.WindA;
+				towerset[i][12].value = prk.TOWER[i].sway.OperationA;
+				towerset[i][13].value = prk.TOWER[i].sway.AtomosphereA;
+				towerset[i][14].value = prk.TOWER[i].sway.ElecA;
+				towerset[i][15].value = prk.TOWER[i].Dist;
+				towerset[i][16].value = prk.TOWER[i].upToTop;
+				towerset[i][17].value = prk.TOWER[i].upToMid;
+				towerset[i][18].value = prk.TOWER[i].midToDown;
+				towerset[i][19].value = prk.TOWER[i].typeEx;
+				towerset[i][20].value = prk.TOWER[i].baseLw;
+				towerset[i][21].value = prk.TOWER[i].baseLl;
+				towerset[i][22].value = prk.TOWER[i].baseHw;
+				towerset[i][23].value = prk.TOWER[i].baseHl;
+				//towerset[i][24].value = prk.TOWER[i].Group;
+
+			}
 		}
 
 		$("#Paramtable").show();
@@ -1084,20 +1097,15 @@
 	}
 
 	function deleterow(nameset,dataset,index,l,r){
-		console.log(index);
 		nameset.splice(index,1);
 		dataset.splice(index,1);
 		l.setData(nameset);r.setData(dataset[index]);
 		index--;
-		console.log(nameset,dataset);
 	}
 
 	function clearrow(nameset,dataset,nameSample,dataSample,index,l,r){
-		console.log(index);
-		//nameset.splice(index,1,nameSample);
 		dataset.splice(index,1,dataSample);
 		l.setData(nameset);r.setData(dataset[index]);
-		console.log(nameset,dataset);
 	}
 	
 	function upmoverow(nameset,dataset,index,l,r){
@@ -1306,7 +1314,6 @@
 				body.find('input').each(function () {
 					if($(this).attr("type")=="checkbox"){
 							if(drawintial[i]==1){
-								console.log(drawintial[i]);
 								$(this).prop("checked","true");
 							}
 							//else $(this).prop("checked","false");
@@ -1648,7 +1655,6 @@
 				var e = document.createElement('select'); //Define custom selection
 				e.style.visibility = 'visible'; //Show dropdown on select
 				e.id = "circuit";
-				console.log(e);
 
 				//Construct custom dropdown
 				var opt1 = document.createElement('option');
@@ -1662,7 +1668,6 @@
 
 
 				cell.appendChild(e);
-				console.log(cell);
 			}
 			// Focus on the element
 			element.focus();
@@ -1810,7 +1815,6 @@
 					var e = document.createElement('select'); //Define custom selection
 					e.style.visibility = 'visible'; //Show dropdown on select
 					e.id = "powerline";
-					console.log(e);
 
 					//Construct custom dropdown
 					for(let i=0;i<conductorName.length;i++){
@@ -1820,7 +1824,6 @@
 						e.append(opt);
 					}
 					cell.appendChild(e);
-					console.log(cell);
 				}
 				else if (testx1 == "1" && testy1 == "9") {
 
@@ -1828,7 +1831,6 @@
 					var e = document.createElement('select'); //Define custom selection
 					e.style.visibility = 'visible'; //Show dropdown on select
 					e.id = "groundline";
-					console.log(e);
 
 					//Construct custom dropdown
 					for(let i=0;i<conductorName.length;i++){
@@ -1838,7 +1840,6 @@
 						e.append(opt);
 					}
 					cell.appendChild(e);
-					console.log(cell);
 				}
 				// Focus on the element
 				element.focus();
@@ -2195,7 +2196,7 @@
 		onafterchanges: Afterchangeguicheng
 
 	})
-	var rguicheng2 = jspreadsheet(document.getElementById('rguicheng2'),{
+	window.rguicheng2 = jspreadsheet(document.getElementById('rguicheng2'),{
 			//data: data,
 			contextMenu:function(obj,x,y,e){},
 			colAlignments:['left',''],  //Align
@@ -2290,7 +2291,7 @@
 
 
 		var guicheng=[]
-	var tcross = []
+	window.tcross = []
 
 	$('#guicheng').click(function () {
 		rguicheng1.hideIndex();rguicheng2.hideIndex();
@@ -2352,9 +2353,7 @@
 				conductorset[i][7].value = prk.CONDUCTOR[i].num;
 			}
 		}
-		console.log("conductorset",conductorset);
 		rdaodixian.setData(conductorset[0]);
-		console.log(conductorset[0]);
 		rdaodixian.hideIndex();
 		$('#rdaodixian,.jexcel_container .jexcel_content').show();
 
@@ -2364,7 +2363,6 @@
 		ridweather = 0;
 		if(weatherName.length == 0){
 			for(let i = 0; i<prk.WEATHER.length;i++){
-				console.log(prk.WEATHER[0]);
 				weatherName.push([prk.WEATHER[i].name]);
 			}
 		}
@@ -2543,30 +2541,26 @@
 			prk.CONDUCTOR.splice(i,1,temp);
 		}
 		for (let i = 0; i < conductorName.length; i++) {
-			console.log(conductorName[i]);
 			prk.CONDUCTOR[i].name = conductorName[i][0];
 		}
 		prk.CONDUCTOR.splice(conductorName.length,prk.CONDUCTOR.length);
 		//weather
 
 		for(let i=0;i<weatherset.length;i++){
-			let tempwea = {'name':'','TWI':[]};
+			let tempwea = {'name':'','TWI':[],'num':12,'alfa':0.16,'h':20,'hs':15};
 			for (let j = 0; j < weatherset[i].length; j++) {
-				let tempTWI = {"name":"","t":0,"v":0,"b":0};
+				let tempTWI = {"name":"","t":0,"v":0,"b":0,"Fmx":0,"P1":0,
+					"P2":0,"P3":0,"P4":0,"P5":0,"P6":0,"P7":0,"angle":0};
 				tempTWI.name = weatherset[i][j].name;
 				tempTWI.t = weatherset[i][j].wd;
 				tempTWI.v = weatherset[i][j].fs;
 				tempTWI.b = weatherset[i][j].fb;
 				tempwea.TWI.push(tempTWI);
 			}
-			console.log(i,tempwea);
 			prk.WEATHER.splice(i,1,tempwea);
 		}
 		for(let i=0;i<weatherName.length;i++){
-
 			prk.WEATHER[i].name = weatherName[i][0];
-
-			console.log(prk.WEATHER[i].name);
 		}
 		prk.WEATHER.splice(weatherName.length,prk.WEATHER.length);
 		//Section
@@ -2577,7 +2571,7 @@
 				"pLineK":Sectionset[i][6].value,"pLineF":Sectionset[i][7].value,"pLineC":Sectionset[i][8].value,
 				"groundLine":Sectionset[i][9].value,
 				"gLineK":Sectionset[i][10].value,"gLineF":Sectionset[i][11].value,"gLineC":Sectionset[i][12].value,
-				"circuit":Sectionset[i][13].value,"name":""
+				"circuit":Sectionset[i][13].value,"name":"","gSAve":0,"gSMax":0,"pSAve":0,"pSMax":0
 			};
 
 			prk.SECTION.splice(i,1,temp);
@@ -2811,7 +2805,6 @@
 		prjName = ProjectName ;
 		MapFileName = FileName;
 		document.getElementById('span_id').innerHTML = prjName+"("+MapFileName+")";
-		console.log("SectionMapSave",filedata);
 		DEM= filedata.DEM;
 		mp = filedata.mp;
 		cross = filedata.cross;
@@ -2846,6 +2839,9 @@
 	var centerDem;//中心断面
 	var mainCanvas = document.querySelector("#iframe_box canvas");//画布
 	var DEM;
+
+	var PMat_Grey = new THREE.PointsMaterial({color:0x888888,size:2.0});
+	var PMat_Red = 	new THREE.PointsMaterial({color:0xff0000,size:2.0});
 
 	//线、气象条件初始默认值
 		var UseLine ={};var UseWeather = {};var section = {};
@@ -2944,7 +2940,7 @@
 		textObj.position.set(posx, posy , 0);
 		return textObj;
 	}
-		window.createSpritelabel= function(text1,text2,text3,color,x,y,posx,posy,rotate) {
+	window.createSpritelabel= function(text1,text2,text3,color,x,y,posx,posy,rotate) {
 			let canvas = document.createElement("canvas");
 			var ctx = canvas.getContext("2d");
 			ctx.strokeStyle = "red";
@@ -3009,7 +3005,6 @@
 		var bbox = new THREE.Box3().setFromObject(box)
 		cameraX = (bbox.max.x - bbox.min.x)/2;
 		cameraY = (bbox.max.y + bbox.min.y)/2;
-		console.log(cameraY);
 		sceneX = cameraX; sceneY = cameraY;
 		if (horSize >= verSize){cameraZ = (horSize - verSize)/2 + verSize + 120; }
 		if (horSize < verSize){cameraZ = (verSize - horSize)/2 + horSize + 120; }
@@ -3219,7 +3214,7 @@
 		if(r_linegroup.children.length!=0){r_linegroup.children.length = 0;}
 		if(l_linegroup.children.length!=0){l_linegroup.children.length = 0;}
 		if(DEM_pgroup.children.length!=0){DEM_pgroup.children.length = 0;}
-
+		if(DEM.MID.length == 0) return ;
 		yMin=DEM.MID[0].Section[0].z
 		for(let i=0;i<DEM.MID.length;i++){
 			for(let j=0;j<DEM.MID[i].Section.length;j++){
@@ -3253,7 +3248,7 @@
 		// horSize = xMax/xdivision*Gridsize;      //+add  border
 		// verSize = (yMax - yMin)/ydivision*Gridsize;  //+add  border
 
-		console.log(horSize,verSize,xdivision,ydivision,xMin,yMin,Gridsize,"frame");    //坐标系转换
+		// console.log(horSize,verSize,xdivision,ydivision,xMin,yMin,Gridsize,"frame");    //坐标系转换
 
 
 		// draw object group;
@@ -3262,7 +3257,6 @@
 		//m_line.length=DEM.MID.length;
 		if(DEM.MID.length>0){
 			var m_material = new THREE.LineBasicMaterial( { color: 0x000000 } );
-			var mp_material = new THREE.PointsMaterial({color:0x888888,size:2.0});
 			var m_line = new Array();
 			var m_points=new Array();
 			for(let i=0;i<DEM.MID.length;i++){
@@ -3271,7 +3265,7 @@
 					m_vertice.vertices.push(new THREE.Vector3((DEM.MID[i].Section[j].x - xMin)/ xdivision*Gridsize, (DEM.MID[i].Section[j].z - yMin)/ydivision*Gridsize, 0));
 				}
 				m_line[i]= new THREE.Line(m_vertice,m_material);m_line[i].name = "MID"+"-"+i.toString();
-				m_points[i] = new THREE.Points(m_vertice,mp_material);
+				m_points[i] = new THREE.Points(m_vertice,PMat_Grey);
 				m_points[i].visible=false;
 				m_linegroup.add(m_line[i]);
 				DEM_pgroup.add(m_points[i]);
@@ -3295,7 +3289,7 @@
 				l_line[i]= new THREE.Line(l_vertice,l_material);l_line[i].name = "LEFT"+"-"+i.toString();
 				l_line[i].computeLineDistances(); //for DashedMaterial
 				l_linegroup.add(l_line[i]);
-				l_points[i] = new THREE.Points(l_vertice,lp_material);
+				l_points[i] = new THREE.Points(l_vertice,PMat_Grey);
 				l_points[i].visible=false;
 				DEM_pgroup.add(l_points[i]);
 			}
@@ -3317,7 +3311,7 @@
 				r_line[i]= new THREE.Line(r_vertice,r_material);r_line[i].name = "RIGHT"+"-"+i.toString();
 				r_line[i].computeLineDistances(); //for DashedMaterial
 				r_linegroup.add(r_line[i]);
-				r_points[i] = new THREE.Points(r_vertice,rp_material);
+				r_points[i] = new THREE.Points(r_vertice,PMat_Grey);
 				r_points[i].visible=false;
 				DEM_pgroup.add(r_points[i]);
 			}
@@ -3328,6 +3322,11 @@
 
 	}
 	/* 转角投影线绘制函数 */
+	function ProjectLineGroundSymbol(x,y,z){
+		var sym = new THREE.Group();
+
+		return sym;
+	}
 	window.drawGeo= function (cornerCor){
 		for(let i = 0 ;i<scene.children.length;i++){
 			if(scene.children[i].name == "ProjectLine"){scene.remove(scene.children[i]);}
@@ -3536,7 +3535,6 @@
 			if(w<0) return false;
 			UseWeather = prk.WEATHER[w];
 
-			// console.log("whj the line",theLine,theWeather,section);
 			initializeData(UseWeather,UseLine,u,designLine);
 			return true;
 		}
@@ -4487,9 +4485,8 @@
 				var temppointsGeometry = new THREE.Geometry();
 				temppointsGeometry.vertices.push(tempintersects);
 
-				var pointsMaterial = new THREE.PointsMaterial({color:0xff0000, size: 3});
-				var points = new THREE.Points(pointsGeometry, pointsMaterial);
-				var temppoints = new THREE.Points(temppointsGeometry, pointsMaterial);
+				var points = new THREE.Points(pointsGeometry, PMat_Red);
+				var temppoints = new THREE.Points(temppointsGeometry, PMat_Red);
 				pointArray.push(temppoints);
 				//putInd++;
 
@@ -4784,8 +4781,6 @@
 			for (let i = 0; i < ttowerlist.length - 1; i++) {
 				if (intersects.x / Gridsize * xdivision + xMin- ttowerlist[i].Distance > 0 && intersects.x / Gridsize * xdivision + xMin - ttowerlist[i + 1].Distance < 0) {
 					insertInd = i + 1;
-					console.log("insertInd");
-					console.log(insertInd);
 					break;
 				}
 			}
@@ -4865,7 +4860,6 @@
 				"ElecDist": 6.0	// 电力线安全距离
 			});
 			towerlist.push(ttowerlist[insertInd]);
-			console.log("towerlist after insert", towerlist);
 				// createTowerTemp(pos,towTypeName,towType);
 				let disToPile = []
 				for (let i = 0; i < pile_tabledata.length; i++) {
@@ -4919,21 +4913,18 @@
 				}
 
 				towerlist = ttowerlist;
-			console.log("moveafterscene",scene,towerlist);
 		}
 	}
 	function TowerInsertDown(event) {
 //
 		if (event.button === 0){
 			if(insertReady) {
-				console.log("insertReady",towerlist,scene);
 				document.addEventListener('mousemove', TowerInsertMove, false);
 				insertReady = false;
 				ttowerlist = towerlist;
 
 			}
 			else{
-				console.log("insertReady",insertReady,towerlist,scene);
 				insertReady = true;
 				//add tower to list
 				//var temptowerlist = towerlist[0];  //don't use global variable assignments
@@ -5243,7 +5234,7 @@
 					for (let i = prk.TOWER[selectindex].StartHigh;i<=prk.TOWER[selectindex].EndHigh;i=i+prk.TOWER[selectindex].Dhigh){
 						layer.getChildFrame('body',tpIndex).find("#towerheight").append("<option value='"+i+"'>"+i+"</option>");
 					}
-					console.log(layer.getChildFrame('body',tpIndex).find("#towerheight"));
+					//console.log(layer.getChildFrame('body',tpIndex).find("#towerheight"));
 					//console.log(layer.getChildFrame('body',tpIndex).find("#TowerType option[text='"+towerlist[movingInd].TowerType+"']"));
 					layer.getChildFrame('body',tpIndex).find("#TowerType option:contains('"+towerlist[movingInd].TowerType+"')").attr("selected",true);
 					layer.getChildFrame('body',tpIndex).find("#towerheight").val(towerlist[movingInd].TowerHigh);
@@ -5259,7 +5250,6 @@
 
 				}
 				else{
-					console.log("movingReady",movingReady,towerlist,scene);
 					movingReady = true;
 					//add tower to list
 					towerlist[movingInd].Name = layer.getChildFrame('body',tpIndex).find("#towId")[0].value;
@@ -5562,8 +5552,7 @@
 	}
 
 		/*    鼠标缩放移动事件     */
-	function onDocumentMouseWheel(event) {
-
+	window.onDocumentMouseWheel= function(event) {
 			//let factor = 60;
 			//从鼠标位置转化为webgl屏幕坐标位置
 			mainCanvas = document.querySelector("#iframe_box canvas");
@@ -5595,6 +5584,9 @@
 			cameraX = camera.position.x;
 			cameraY = camera.position.y;
 			cameraZ = camera.position.z;
+
+			// PMat_Grey.size = cameraZ/10;
+			// PMat_Red.size = cameraZ/10;
 
 			camera.updateProjectionMatrix();
 			renderer.render(scene, camera);
@@ -5634,6 +5626,7 @@
 		}
 
 	function onDocumentMouseUp(event) {
+
 		document.removeEventListener('mousemove', onDocumentMouseMove);
 		document.removeEventListener('mouseup', onDocumentMouseUp);
 	}
@@ -5641,6 +5634,26 @@
 	let selectedObj = null;
 	let selectedPoint = null;
 
+	function setPointSize(cameraZ){
+
+		let pointSize;
+		// switch (true){
+		// 	case cameraZ>1000:
+		// 		pointSize =5;
+		// 		break;
+		// 	case cameraZ>100:
+		// 		pointSize = 3;
+		// 		break;
+		// 	case cameraZ>10:
+		// 		pointSize = 2;
+		// 		break;
+		// 	default:
+		// 		pointSize = 1;
+		// 		break;
+		// }
+		pointSize= cameraZ/10;
+		return pointSize;
+	}
 	window.onDocumentSelected= function(event) {
 		event.preventDefault();
 
@@ -5686,7 +5699,8 @@
 
 			if (res && res.object) {
 				selectedObj = res.object;
-				selectedObj.material = new THREE.LineBasicMaterial({color: 0xFF0011});
+				//selected line turned red
+				//selectedObj.material = new THREE.LineBasicMaterial({color: 0xFF0011});
 			}
 		}
 		//section redpoint caught
@@ -5699,8 +5713,7 @@
 					//create point;
 					var red = new THREE.Geometry();
 					red.vertices.push(new THREE.Vector3(DEM_pgroup.children[i].geometry.vertices[j].x,DEM_pgroup.children[i].geometry.vertices[j].y,0));
-					var redmaterial= new THREE.PointsMaterial({color:0xff0000,size:2.0});
-					var redpoint =new THREE.Points(red,redmaterial);
+					var redpoint =new THREE.Points(red,PMat_Red);
 					redpoint.name="redpoint";
 					redpoint.userData={"dem":selectedObj.name,"j":j};
 					scene.add(redpoint);
@@ -5732,12 +5745,10 @@
 							(Math.abs(target2[3*j]-coord_inter.x)<0.5&&Math.abs(target2[3*j+1]-coord_inter.y)<1)){
 						redcross.children[1].visible = true;
 						redcross.children[2].visible = true;
-
 						var red = new THREE.Geometry();
 						red.vertices.push(new THREE.Vector3(target2[3*j],target2[3*j+1],0));
 						red.vertices.push(new THREE.Vector3(target1[3*j],target1[3*j+1],0));
-						var redmaterial= new THREE.PointsMaterial({color:0xff0000,size:5.0});
-						var redpoint =new THREE.Points(red,redmaterial);
+						var redpoint =new THREE.Points(red,PMat_Red);
 						redpoint.name="redpoint";
 						redpoint.userData={"dem":redcross.children[0].name,"j":j}; //output offset y
 
@@ -5816,12 +5827,34 @@
 					break;
 				}
 			}
+
 			window.document.getElementById("footermsg").textContent = "		累距：" + (coord.x/Gridsize*xdivision+xMin).toFixed(2) + "	 高程: " + (coord.y/Gridsize*ydivision + yMin).toFixed(2);
-			if(redpoint!=undefined){window.document.getElementById("footermsg").textContent = redpoint.userData.dem + "第" + redpoint.userData.j + "点，" +
-					"坐标" + (redpoint.geometry.vertices[0].x/Gridsize*xdivision+xMin).toFixed(2) + "," + (redpoint.geometry.vertices[0].y/Gridsize*ydivision+yMin).toFixed(2)+
-					"		累距：" + (coord.x/Gridsize*xdivision+xMin).toFixed(2) + "	 高程: " + (coord.y/Gridsize*ydivision + yMin).toFixed(2) +
-					"			Δx:	" + ((coord.x - redpoint.geometry.vertices[0].x)/Gridsize*xdivision).toFixed(2) +
-					"	Δz:	" + ((coord.y - redpoint.geometry.vertices[0].y)/Gridsize*ydivision).toFixed(2);     // coordination convert
+			if(coord.y<(mp.m_Frame[9]-mp.m_Frame[14])){window.document.getElementById("footermsg").textContent =
+					"		累距：" + (coord.x/Gridsize*xdivision+xMin).toFixed(2) + "	 偏距: " + ((coord.y-(mp.m_Frame[7]-mp.m_Frame[14]))/Gridsize*xdivision).toFixed(2) // coordination convert
+			}
+			if(redpoint!=undefined){
+
+				let pointx= (redpoint.geometry.vertices[0].x/Gridsize*xdivision+xMin).toFixed(2);
+				//vertices[1]  = undefined
+				let pointy;
+				if(redpoint.geometry.vertices[1]!=undefined){pointy=((redpoint.geometry.vertices[1].y-(mp.m_Frame[7]-mp.m_Frame[14]))/Gridsize*xdivision).toFixed(2);}
+				let pointz=(redpoint.geometry.vertices[0].y/Gridsize*ydivision+yMin).toFixed(2);
+				let drawx=(coord.x/Gridsize*xdivision+xMin).toFixed(2);
+				let drawy=((coord.y-(mp.m_Frame[7]-mp.m_Frame[14]))/Gridsize*xdivision).toFixed(2);
+				let drawz=(coord.y/Gridsize*ydivision + yMin).toFixed(2);
+
+				window.document.getElementById("footermsg").textContent = redpoint.userData.dem + "第" + redpoint.userData.j + "点，" +
+					"坐标" + pointx + "," + pointz+
+					"		累距：" +drawx+ "	 高程: " + drawz +
+					"			Δx:	" + (drawx-pointx).toFixed(2)+
+					"	Δz:	" + (drawz-pointz).toFixed(2);     // coordination convert
+				if(coord.y<(mp.m_Frame[8]-mp.m_Frame[14])){
+					window.document.getElementById("footermsg").textContent = redpoint.userData.dem + "第" + redpoint.userData.j + "点，" +
+						"坐标" + pointx + "," + pointy + "," +pointz+
+						"		累距：" + drawx + "	 偏距: " + drawy+
+						"			Δx:	" + (drawx-pointx).toFixed(2)+
+						"	Δy:	" + (drawy-pointy).toFixed(2);
+				}
 			}
 		}
 	}
@@ -5889,10 +5922,10 @@
 		var Cross_geop = new THREE.BufferGeometry().setFromPoints( crossPoint );
 		var Cross_geosp = new THREE.BufferGeometry();
 		var Cross_mat = new THREE.LineBasicMaterial( { color: 0x0000ff } );
-		var Cross_matp = new THREE.PointsMaterial( { color: 0x888888,size:5 } );
+		//var Cross_matp = new THREE.PointsMaterial( { color: 0x888888,size:5 } );
 		var Cross_line = new THREE.Line(Cross_geo,Cross_mat);
-		var Cross_Point = new THREE.Points(Cross_geop,Cross_matp);
-		var Section_Point = new THREE.Points(Cross_geosp,Cross_matp);  //Section_Point
+		var Cross_Point = new THREE.Points(Cross_geop,PMat_Grey);
+		var Section_Point = new THREE.Points(Cross_geosp,PMat_Grey);  //Section_Point
 		Cross_line.name = crossAttrName;
 		let GroundGroup = new THREE.Group();
 		GroundGroup.name = "crossObject"
@@ -5904,18 +5937,42 @@
 		scene.add(GroundGroup);
 	}
 
+	function creatMark(rad,x,y,z,repeat){
+		const cirmark = new THREE.Group();
+		while(rad>0){
+			const cirgeo = new THREE.CircleGeometry( rad,32 ); cirgeo.vertices.shift();
+			cirgeo.translate(x,y,z);
+			const cirmat = new THREE.LineBasicMaterial( { color: 0x000000 } );
+			const cirline = new THREE.LineLoop( cirgeo,cirmat );
+			rad=rad-0.5;
+			cirmark.add(cirline);
+			if(!repeat) break;
+		}
+		return cirmark;
+	}
 	window.createCrossLabel = function (towerhigh,codeId,added){
 		var ray = new THREE.Raycaster();
 		ray.set(new THREE.Vector3(-10,mp.m_Frame[7]-mp.m_Frame[14],0),new THREE.Vector3(1,0,0));   //-90 need to be set as mp.m_Frame[]
 		ray.params = {
 			Mesh: {},
-			Line: { threshold: 1 },
+			Line: { threshold: 1},
 			LOD: {},
-			Points: { threshold: 0.1 },
+			Points: { threshold: 1 },
 			Sprite: {}
 		};
 		var renewp = [];  var secp=[]; var arr=[]
 		var target = ray.intersectObject(scene.children[scene.children.length-1].children[0]);   // children[0] line   children[1] points  children[2] section p
+
+		// target filter doubleside
+		for(let i = 0;i< target.length;i++){
+			if(Math.abs(target[i].point.y-(mp.m_Frame[7]-mp.m_Frame[14]))>0.1)
+			{target.splice(i,1);i--;}
+		}
+		if(target.length>1){
+			for(let i = 1;i< target.length;i++){
+				if((target[i].distance-target[0].distance)<0.1){target.splice(i,1);i--;}
+			}
+		}
 
 		// caculateDem intersect points and generate obj add to scene
 		for(let i=0 ;i<target.length;i++){
@@ -5954,20 +6011,37 @@
 				var cross_note = createSprite(target[i].object.name,"#000000",10,20,target[i].point.x+5,mp.m_Frame[12]-mp.m_Frame[14],Math.PI/2);
 
 				//cross label style add circle
-				var	circlegeo = new THREE.Geometry();
-				circlegeo.vertices.push(new THREE.Vector3(m_linetarget[j].point.x,
-							m_linetarget[j].point.y+towerhigh/ydivision*Gridsize,
-							m_linetarget[j].point.z));
-				var tex = new THREE.TextureLoader().load('./css/circle.bmp');
-				var pMater = new THREE.PointsMaterial({size:5,map:tex});
-				var cross_cir = new THREE.Points(circlegeo,pMater);
+				// var	circlegeo = new THREE.Geometry();
+				// circlegeo.vertices.push(new THREE.Vector3(m_linetarget[j].point.x,
+				// 			m_linetarget[j].point.y+towerhigh/ydivision*Gridsize,
+				// 			m_linetarget[j].point.z));
+				// var tex = new THREE.TextureLoader().load('./css/circle.bmp');
+				// var pMater = new THREE.PointsMaterial({size:5,map:tex});
+				// var cross_cir = new THREE.Points(circlegeo,pMater);
+
+				const cirmark = new THREE.Group(); let rad =2 ;
+				while(rad>0){
+				const cirgeo = new THREE.CircleGeometry( rad,32 ); cirgeo.vertices.shift();
+				cirgeo.translate(m_linetarget[j].point.x,
+						m_linetarget[j].point.y+towerhigh/ydivision*Gridsize,
+						m_linetarget[j].point.z);
+				const cirmat = new THREE.LineBasicMaterial( { color: 0x000000 } );
+				const cirline = new THREE.LineLoop( cirgeo,cirmat );
+				rad=rad-0.5;
+				cirmark.add(cirline);
+				}
+				const cirmarktest = creatMark(2,m_linetarget[j].point.x,
+						m_linetarget[j].point.y+towerhigh/ydivision*Gridsize,
+						m_linetarget[j].point.z,false)
+
+
 
 				scene.children[scene.children.length-1].add(cross_note);
 				scene.children[scene.children.length-1].add(cross_notehigh);
 				scene.children[scene.children.length-1].add(cross_notesumD);
 				scene.children[scene.children.length-1].add(line);
 				scene.children[scene.children.length-1].add(line2);
-				scene.children[scene.children.length-1].add(cross_cir);
+				scene.children[scene.children.length-1].add(cirmarktest);
 				}
 			}
 		}
@@ -5987,12 +6061,11 @@
 			renewp.pop();
 		}
 
-		let flag= 0;
 		for (let i = 0; i < target.length; i++) {
-			for (let j = flag; j < renewp.length-1; j++) {
-				if((renewp[j].y-target[i].point.y)*(renewp[j+1].y-target[i].point.y)<0){
+			for (let j = 0; j < renewp.length-1; j++) {
+				if((renewp[j].y-target[i].point.y)*(renewp[j+1].y-target[i].point.y)<0
+				&&(renewp[j].x-target[i].point.x)*(renewp[j+1].x-target[i].point.x)<0){
 					renewp.splice(j+1,0,target[i].point);
-					flag=j+2;
 					break;
 				}
 			}
@@ -6096,13 +6169,16 @@
 			}
 			createCrossLabel(towerhigh,codeId,added);
 		}
-
-		// for(let i=0;i<cross.length;i++){
-		// 	for(let ii=0;ii<cross[i].CrossPoint.length;ii++){
-		// 		MapCrossModify(i,ii,cross[i].CrossPoint[ii].c,cross[i].CrossPoint[ii].x,cross[i].CrossPoint[ii].y,cross[i].CrossPoint[ii].z,
-		// 				cross[i].CrossPoint[ii].dz,cross[i].CrossPoint[ii].dc);
-		// 	}
-		// }
+		console.log(scene);
+		//each crosspoint modify
+		for(let i=0;i<cross.length;i++){
+			//console.log("cross i",cross[i]);
+			for(let ii=0;ii<cross[i].CrossPoint.length;ii++){
+				//console.log("cross i,Point ii",i,ii);
+				MapCrossModify(i,ii,cross[i].CrossPoint[ii].c,cross[i].CrossPoint[ii].x,cross[i].CrossPoint[ii].y,cross[i].CrossPoint[ii].z,
+						cross[i].CrossPoint[ii].dz,cross[i].CrossPoint[ii].dc);
+			}
+		}
 
 	}
 
@@ -6113,13 +6189,14 @@
 			var  obj = scene.children[i];
 			if(obj.name == "crossObject"){
 				var coordx = (obj.children[1].geometry.attributes.position.array[3*pointIndex])/Gridsize*xdivision+xMin;
+				//console.log("coordx",obj.children[1].geometry.attributes.position,coordx,leiju);
 				if(Math.abs(coordx-leiju)<1){
 					sceneIndex = i;
 					break;
 				}
 			}
 		}
-
+		if(sceneIndex==undefined||scene.children[sceneIndex]==undefined) {console.log('skip point',crossIndex,pointIndex,cross[crossIndex]); return;};
 		// modify the scene cause the original DSA didn't support
 		scene.children[sceneIndex].children[2].geometry.attributes.position.needsUpdate = true;
 		if(pianju!=0){
@@ -6167,14 +6244,13 @@
 			var cross_note = createSprite(scene.children[sceneIndex].children[0].name,"#000000",10,20,target.x+5,mp.m_Frame[12]-mp.m_Frame[14],Math.PI/2);
 
 			//cross label style add circle
-			var	circlegeo = new THREE.Geometry();
-			circlegeo.vertices.push(new THREE.Vector3(m_linetarget.x,
+			let repeat = false;
+			if(shuxing == 3) repeat = false ;
+			else if(shuxing == 2||shuxing ==1) repeat = true;
+
+			var cross_cir = creatMark(2,m_linetarget.x,
 					(gaocheng-yMin)/ydivision*Gridsize,
-					m_linetarget.z));
-			if(shuxing == 3)var tex = new THREE.TextureLoader().load('./css/circle.bmp');
-			else if(shuxing == 2||shuxing ==1) var tex = new THREE.TextureLoader().load('./css/solidCircle.bmp');
-			var pMater = new THREE.PointsMaterial({size:5,map:tex});
-			var cross_cir = new THREE.Points(circlegeo,pMater);
+					m_linetarget.z,repeat);
 
 
 			scene.children[sceneIndex].children.splice(3+6*subIndex,0,cross_note);

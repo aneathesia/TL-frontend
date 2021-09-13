@@ -120,13 +120,11 @@
             case "交叉跨越":
                 {
                     var sel = this.value;
-                    console.log($("#DataSelect").get(0).selectedIndex);
                 $.ajax({
                     url: BASEURL+"/tl/tcross/"+voltageHeader[sel], //提交的路径
                     type: "get",
                     //async: false,
                     success: function (data){
-                        console.log(data);
                         for(let i=0;i<data.length;i++){
                             var temp = Object.values(data[i]);
                             if(typeof (temp[0])=="number")crossSample[i].value = temp[0];
@@ -250,7 +248,13 @@
             //tcross
             case "交叉跨越":
             {
-
+                var tcrossInput = [];
+                for(let i=0;i<crossSample.length;i++){
+                    tcrossInput.push({'contabbr':crossSample[i].name,'voltage':crossSample[i].value});
+                }
+                parent.rguicheng2.setData(tcrossInput);
+                parent.tcross = tcrossInput;
+                exitSet();
             }
                 break;
             //conductor
