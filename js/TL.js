@@ -52,3 +52,34 @@ function limit(arr, num){
     var index = newArr.indexOf(Math.min.apply(null, newArr));
     return arr[index];
 }
+
+function Line2Geo(pilelist,towerlist){
+    console.log(pilelist,towerlist,pilelist[0].dist,towerlist[0].Distance);
+    let pileInd = 0;let towInd = 0;
+    let plen = pilelist.length; let tlen = towerlist.length;
+    while(towInd<tlen){
+        for(let i = pileInd; i<plen;i++){
+            if(Math.abs(towerlist[towInd].Distance-pilelist[i].dist)<0.005) {
+                // piledata  index ++  break
+              var res = {towInd:towInd,x:pilelist[i].x,y:pilelist[i].y};
+              pileInd = i;
+              towInd++;
+              console.log(res);
+              break;
+            }
+            if(towerlist[towInd].Distance<pilelist[i].dist){
+                pileInd = i-1 ;
+                var rate=(towerlist[towInd].Distance-pilelist[pileInd].dist)/(pilelist[pileInd+1].dist-pilelist[pileInd].dist);
+                var dx = pilelist[pileInd+1].x-pilelist[pileInd].x;
+                var dy = pilelist[pileInd+1].y-pilelist[pileInd].y;
+                var res = {towInd:towInd,x:pilelist[pileInd].x+dx*rate,y:pilelist[pileInd].y+dy*rate}
+                console.log("pilecoord",pilelist[pileInd],pilelist[pileInd+1]);
+                console.log(towerlist[towInd].Distance-pilelist[pileInd].dist,pilelist[pileInd+1].dist-pilelist[pileInd].dist,
+                    dx,dy)
+                console.log(res);
+                towInd++;
+                break;
+            }
+        }
+    }
+}

@@ -101,21 +101,22 @@
 				</ul>
 			</dd>
 		</dl>
-		<dl id="menu-input">
-			<dt><i class="Hui-iconfont">&#xe645;</i> 输入输出<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-			<dd>
-				<ul>
-					<li><a href="#"><label id="inputDem" style="width:100%">数字高程模型</label></a></li>
-					<li><a href="#"><label id="inputCorner" style="width:100%">转角杆塔投影线</label></a></li>
-				</ul>
-			</dd>
-		</dl>
+<!--		<dl id="menu-input">-->
+<!--			<dt><i class="Hui-iconfont">&#xe645;</i> 输入输出<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>-->
+<!--			<dd>-->
+<!--				<ul>-->
+
+<!--				</ul>-->
+<!--			</dd>-->
+<!--		</dl>-->
 		<dl id="menu-createObject">
 			<dt><i class="Hui-iconfont">&#xe645;</i> 创建<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
 			<dd>
 				<ul>
 <!--					<li><a href="#"><label id="create_Object">创建地物</label></a></li>-->
-					<li><a href="#"><label id="select_code" style="width:100%">选择编码</label></a></li>
+					<li><a href="#"><label id="inputDem" style="width:100%">断面线</label></a></li>
+					<li><a href="#"><label id="inputCorner" style="width:100%">桩位投影线</label></a></li>
+					<li><a href="#"><label id="select_code" style="width:100%">交叉跨域</label></a></li>
 				</ul>
 			</dd>
 		</dl>
@@ -411,10 +412,84 @@
 
 	//expand parameter
 	let enableExpand = false;  	let expandvec; let expandmouse;
+	// mouseMove parameter
+	let mousevec; let mousetarget;
+
 
 	//ajax login token
 	let token;
 
+	// Msg Exchange
+	let MsgSource; let MsgOrigin;
+	window.addEventListener('message',function(event) {
+		if(event.origin !== 'http://localhost:63342') {console.log("no support");return;}
+		console.log(event.data);
+		// prj load
+		var ProjectName = event.data.projectName;
+		var FileName = event.data.projFiles[0];
+		var suffix = FileName.substring(FileName.lastIndexOf('.')+1);
+		var MapName = FileName.substring(0,FileName.lastIndexOf('.'));
+
+		let formPRJ = new FormData();
+		formPRJ.append("FileName", FileName);
+		formPRJ.append("ProjectName", ProjectName);
+		$.ajax({
+			url: BASEURL+"/ReadfileToJson", //提交的路径
+			type: "post",       //提交方式
+			data: formPRJ,    //提交的数据
+			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+			processData: false,
+			headers:{"token":localStorage.getItem("token")},
+			success: function(data){
+				console.log("openfile return data",data);
+				//打开工程文件
+				if(suffix == "PRJ"){
+
+					parent.OpenPRJ(data,ProjectName);
+				}
+			},
+			error: function (errorMsg) {
+				alert(errorMsg);
+			}
+		})
+
+		//map load
+		var ProjectName = event.data.projectName;
+		var FileName = event.data.maps[0].name;
+		var suffix = FileName.substring(FileName.lastIndexOf('.')+1);
+		var MapName = FileName.substring(0,FileName.lastIndexOf('.'));
+
+		let form = new FormData();
+		form.append("FileName", FileName);
+		form.append("ProjectName", ProjectName);
+		$.ajax({
+			url: BASEURL+"/ReadfileToJson", //提交的路径
+			type: "post",       //提交方式
+			data: form,    //提交的数据
+			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+			processData: false,
+			headers:{"token":localStorage.getItem("token")},
+			success: function(data){
+				console.log("openfile return data",data);
+				//打开工程文件
+				if(suffix == "PRJ"){
+
+					parent.OpenPRJ(data,ProjectName);
+				}
+				//打开map
+				if(suffix == "MAP"){
+					parent.OpenMap(data,ProjectName,MapName);
+				}
+			},
+			error: function (errorMsg) {
+				alert(errorMsg);
+			}
+		})
+
+
+		MsgSource = event.source; MsgOrigin = event.origin
+		MsgSource.postMessage('holla back youngin!',MsgOrigin);
+	},false);
 
 	//login register
 	$("#login").click(function(){
@@ -1288,6 +1363,7 @@
 
 	$("#drawingpara").click(function(){
 
+
 		let drawintial = [];
 		drawintial.push(mp.m_Volumns);	drawintial.push(mp.m_MapWidth);	drawintial.push(mp.m_suffixlength);
 		drawintial.push(mp.m_From);	drawintial.push(mp.m_To);	drawintial.push(mp.m_To-mp.m_From);
@@ -1352,6 +1428,7 @@
 	}
 
 	$("#framepara").click(function(){
+
 		layer.open({
 			type:2,
 			title:'图框参数',
@@ -1549,6 +1626,8 @@
 		// 发送ajax请求
 		xhr.send()
 	}
+
+
 	//新建工程
 	{
 	/* 新建工程 */
@@ -2647,7 +2726,7 @@
 				headers:{"token":localStorage.getItem("token")},
 				success: function (data) {
 					console.log(data);
-					alert("保存成功！");
+					//alert("保存成功！");
 				},
 				error: function (errorMsg) {
 					alert(errorMsg);
@@ -4699,6 +4778,8 @@
 				alert(errorMsg);
 			}
 		});
+		Line2Geo(pile_tabledata,towerlist);
+		MsgSource.postMessage({'towerlist':towerlist},MsgOrigin);
 	})
 
 	//删除杆塔
@@ -5585,8 +5666,11 @@
 			cameraY = camera.position.y;
 			cameraZ = camera.position.z;
 
-			// PMat_Grey.size = cameraZ/10;
-			// PMat_Red.size = cameraZ/10;
+			sceneX = cameraX;
+			sceneY = cameraY;
+
+			PMat_Grey.size = cameraZ/50;
+			PMat_Red.size = cameraZ/50;
 
 			camera.updateProjectionMatrix();
 			renderer.render(scene, camera);
@@ -5596,37 +5680,53 @@
 	function onDocumentMouseDown(event) {
 			if (event.button != 1) return;
 			event.preventDefault();
+			mainCanvas = document.querySelector("#iframe_box canvas");
+			mouse.x = ((event.clientX - mainCanvas.getBoundingClientRect().left) / mainCanvas.offsetWidth) * 2 - 1;
+			mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top) / mainCanvas.offsetHeight) * 2 + 1;
+			mousevec = getIntersects(event);
 			document.addEventListener('mousemove', onDocumentMouseMove, false);
 			document.addEventListener('mouseup', onDocumentMouseUp, false);
 		}
 
 	function onDocumentMouseMove(event) {
-			var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-			var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
-
-
-		//获取当前显示框的场景宽度 控制缩放因子factor
-		let lt = new THREE.Vector3(-1,1,0);
-		let rb = new THREE.Vector3(1,-1,0);
-		lt.unproject(camera); rb.unproject(camera);//当前Z高度控制factor
-		//console.log((rb.x-lt.x),(rb.y-lt.y),mainCanvas.offsetHeight,mainCanvas.offsetWidth );
-
-			cameraX -= movementX ;
-			sceneX -= movementX ;
-			cameraY += movementY ;
-			sceneY += movementY ;
-			cameraZ = camera.position.z;
-
-			camera.position.set(cameraX, cameraY, cameraZ);
-			console.log(camera.position);
-			//camera.lookAt(sceneX, sceneY, sceneZ);
-			camera.updateProjectionMatrix();
-			renderer.render(scene, camera);
-			labelRenderer.render( scene, camera );
+		// mainCanvas = document.querySelector("#iframe_box canvas");
+		// mouse.x = ((event.clientX - mainCanvas.getBoundingClientRect().left) / mainCanvas.offsetWidth) * 2 - 1;
+		// mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top) / mainCanvas.offsetHeight) * 2 + 1;
+		// mousetarget = getIntersects(event);
+		// console.log(mousetarget);
+		//
+		// 	cameraX += (mousetarget.x-mousevec.x);
+		// 	sceneX += (mousetarget.x-mousevec.x);
+		// 	cameraY +=(mousetarget.y-mousevec.y);
+		// 	sceneY += (mousetarget.y-mousevec.y);
+		// 	cameraZ = camera.position.z;
+		// mousevec= mousetarget;
+		// 	camera.position.set(cameraX, cameraY, cameraZ);
+		// 	//console.log(camera.position);
+		// 	camera.lookAt(sceneX, sceneY, sceneZ);
+		// 	camera.updateProjectionMatrix();
+		// 	renderer.render(scene, camera);
+		// 	labelRenderer.render( scene, camera );
 		}
 
 	function onDocumentMouseUp(event) {
+		mainCanvas = document.querySelector("#iframe_box canvas");
+		mouse.x = ((event.clientX - mainCanvas.getBoundingClientRect().left) / mainCanvas.offsetWidth) * 2 - 1;
+		mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top) / mainCanvas.offsetHeight) * 2 + 1;
+		mousetarget = getIntersects(event);
 
+		cameraX -= (mousetarget.x-mousevec.x);
+		sceneX -= (mousetarget.x-mousevec.x);
+		cameraY -= (mousetarget.y-mousevec.y);
+		sceneY -= (mousetarget.y-mousevec.y);
+		mousevec= mousetarget;
+		camera.position.set(cameraX, cameraY, cameraZ);
+		//console.log(camera.position);
+		camera.up.set(0,1,0);
+		camera.lookAt(sceneX, sceneY, sceneZ);
+		camera.updateProjectionMatrix();
+		renderer.render(scene, camera);
+		labelRenderer.render( scene, camera );
 		document.removeEventListener('mousemove', onDocumentMouseMove);
 		document.removeEventListener('mouseup', onDocumentMouseUp);
 	}
@@ -6349,6 +6449,23 @@
 		if(scene.children[scene.children.length-1].name == "border"){scene.remove(scene.children[scene.children.length-1]);}
 		document.body.style.cursor = "default";
 	}
+	function ExpandMouseDown (event){
+			if(enableExpand){
+				mainCanvas = document.querySelector("#iframe_box canvas");
+				document.body.style.cursor = "url(./css/window.ico) 9 9, default";
+				mouse.x = ((event.clientX - mainCanvas.getBoundingClientRect().left) / mainCanvas.offsetWidth) * 2 - 1;
+				mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top) / mainCanvas.offsetHeight) * 2 + 1;
+				expandvec = getIntersects(event);
+				expandmouse = new THREE.Vector3(mouse.x,mouse.y,0);
+
+			}
+			// else{
+			// 	expandvec = {};
+			// 	expandmouse = {};
+			// 	document.body.style.cursor = "default";
+			// }
+
+	}
 
 	function ExpandMouseMove (event){
 		var lt= expandvec ;
@@ -6401,22 +6518,7 @@
 	}
 
 
-	function ExpandMouseDown (event){
-		if(enableExpand){
-			mainCanvas = document.querySelector("#iframe_box canvas");
-			document.body.style.cursor = "url(./css/window.ico) 9 9, default";
-			mouse.x = ((event.clientX - mainCanvas.getBoundingClientRect().left) / mainCanvas.offsetWidth) * 2 - 1;
-			mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top) / mainCanvas.offsetHeight) * 2 + 1;
-			expandvec = getIntersects(event);
-			expandmouse = new THREE.Vector3(mouse.x,mouse.y,0);
 
-		}
-		// else{
-		// 	expandvec = {};
-		// 	expandmouse = {};
-		// 	document.body.style.cursor = "default";
-		// }
-	}
 
 	/* 初始化 */
 	function init() {
@@ -6589,4 +6691,6 @@
 	})();
 
 	}
+
+
 </script>
