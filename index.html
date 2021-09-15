@@ -302,7 +302,7 @@
 	var towerlist = [];//塔组
 	var m_start,m_end;  //4.8
 	var wirelist = [];//导线组
-	var savedJson = {"DEM":"","GEO":"","pwf":"","prk":"","Lao":""};//保存json
+
 
 	/**           部分设计参数          **/
 	var voltageArr = ['110kV','220kV','330kV','500kV','直流500kV','750kV','直流800kV','1000kV'];
@@ -422,74 +422,108 @@
 	// Msg Exchange
 	let MsgSource; let MsgOrigin;
 	window.addEventListener('message',function(event) {
-		if(event.origin !== 'http://localhost:63342') {console.log("no support");return;}
+		if(event.origin !== domain) {console.log("no support");return;}
 		console.log(event.data);
-		// prj load
+
 		var ProjectName = event.data.projectName;
-		var FileName = event.data.projFiles[0];
-		var suffix = FileName.substring(FileName.lastIndexOf('.')+1);
-		var MapName = FileName.substring(0,FileName.lastIndexOf('.'));
+		var MapName = event.data.maps[0].name;
+		var ProjectId = event.data.projectId;
+		var PolyLine = event.data.polyline;
 
-		let formPRJ = new FormData();
-		formPRJ.append("FileName", FileName);
-		formPRJ.append("ProjectName", ProjectName);
-		$.ajax({
-			url: BASEURL+"/ReadfileToJson", //提交的路径
-			type: "post",       //提交方式
-			data: formPRJ,    //提交的数据
-			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-			processData: false,
-			headers:{"token":localStorage.getItem("token")},
-			success: function(data){
-				console.log("openfile return data",data);
-				//打开工程文件
-				if(suffix == "PRJ"){
+		console.log(ProjectId,ProjectName,PolyLine,MapName);
 
-					parent.OpenPRJ(data,ProjectName);
-				}
-			},
-			error: function (errorMsg) {
-				alert(errorMsg);
-			}
-		})
-
-		//map load
-		var ProjectName = event.data.projectName;
-		var FileName = event.data.maps[0].name;
-		var suffix = FileName.substring(FileName.lastIndexOf('.')+1);
-		var MapName = FileName.substring(0,FileName.lastIndexOf('.'));
-
-		let form = new FormData();
-		form.append("FileName", FileName);
-		form.append("ProjectName", ProjectName);
-		$.ajax({
-			url: BASEURL+"/ReadfileToJson", //提交的路径
-			type: "post",       //提交方式
-			data: form,    //提交的数据
-			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-			processData: false,
-			headers:{"token":localStorage.getItem("token")},
-			success: function(data){
-				console.log("openfile return data",data);
-				//打开工程文件
-				if(suffix == "PRJ"){
-
-					parent.OpenPRJ(data,ProjectName);
-				}
-				//打开map
-				if(suffix == "MAP"){
-					parent.OpenMap(data,ProjectName,MapName);
-				}
-			},
-			error: function (errorMsg) {
-				alert(errorMsg);
-			}
-		})
-
+		autoCreateNew(ProjectId,ProjectName,PolyLine,MapName);
 
 		MsgSource = event.source; MsgOrigin = event.origin
 		MsgSource.postMessage('holla back youngin!',MsgOrigin);
 	},false);
+	function autoCreateNew(projId,projName,polyline,mapName){
+		//PRJ PRK
+		prjName = projName;
+		document.getElementById('span_id').innerHTML = prjName;
+		$.ajax({
+			url: BASEURL+"/CreateProject", //提交的路径
+			type: "post",       //提交方式
+			data: {"ProjectName":projName,"ProjectId":projId},    //提交的数据
+			dataType:"json",
+			headers:{"token":localStorage.getItem("token")},
+			//填充prk设计参数表格
+			success: function (data) {
+				console.log("createproject",data);
+
+				let json = data.prk;
+				lao = data.Lao;
+				blankmp = data.Map.mp;
+				mp = data.Map.mp;
+				DEM=data.Map.DEM;
+				cross=data.Map.cross;
+				prk = data.prk;
+			},
+			error: function (errorMsg) {
+				//alert(errorMsg);
+			}
+		});
+		//pile_table data
+		pile_tabledata = polyline;
+		console.log(pile_tableId);
+		GridManager.setAjaxData(pile_tableId,{"data":pile_tabledata});
+		GridManager.refreshGrid(pile_tableId);
+
+		//MAP
+		MapFileName = mapName.substring(0,mapName.lastIndexOf('.'));
+		document.getElementById('span_id').innerHTML = prjName+"("+MapFileName+")";
+		$.ajax({
+			url: BASEURL+"/CreateMap", //提交的路径
+			type: "post",       //提交方式
+			data:  {"ProjectName":projName},    //提交的数据
+			dataType:"json",
+			//填充prk设计参数表格
+			headers:{"token":localStorage.getItem("token")},
+			success: function (data) {
+				mp = data.mp;
+				console.log("createMapFrameblank",mp);
+				//yMin = 100; ydivision= 10; xdivision =100; verSize = 220;horSize =300; Gridsize =10;    //先设大小   再按distance/length 比例尺绘制
+				ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =mp.m_Grid;
+				horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
+				xMin = mp.m_From;
+
+				mainCanvas = document.querySelector("#iframe_box canvas");
+				initContent();
+			},
+			error: function (errorMsg) {
+				//alert(errorMsg);
+			}
+		});
+
+		// let Map = {
+		// 	"mp":mp,
+		// 	"DEM":DEM,
+		// 	"cross":cross
+		// };
+		// var demgeoCal = {
+		// 	"ProjectName":projName,
+		// 	"MapFileName":mapName,
+		// 	"JsonMap":JSON.stringify(Map)
+		// }
+		// console.log(Map);
+		// $.ajax({
+		// 	url: BASEURL+"/MapSaveObj", //提交的路径
+		// 	type: "post",       //提交方式
+		// 	data: demgeoCal,    //提交的数据
+		// 	//dataType:"json",
+		// 	headers:{"token":localStorage.getItem("token")},
+		// 	success: function (data) {
+		// 		console.log(data);
+		// 	},
+		// 	error: function (errorMsg) {
+		// 		//alert(errorMsg);
+		// 		console.log(errorMsg);
+		// 	}
+		// });
+
+	}
+
+
 
 	//login register
 	$("#login").click(function(){
@@ -639,10 +673,7 @@
 							content:'删除所选塔杆',
 							//line:true,
 							onClick:function (){
-								console.log("right button checklist");
-
 								var del_tower=GridManager.getCheckedData(towerlist_tableId); //checkedtower need to delete former list
-								console.log(del_tower);
 								for(let i=0;i<del_tower.length;i++){
 									for(let j=0;j<towerlist_tabledata.length;j++){
 										if(del_tower[i].Name==towerlist_tabledata[j].Name){
@@ -650,17 +681,12 @@
 										}
 									}
 								}
-								console.log("tabledelete",towerlist);
-								console.log(towerlist_tabledata);
 								TowerGroup.children.length = 0;
 								TowerScriptGroup.children.length = 0;
 								FawCurveGroup.children.length = 0 ;
 								TowerDraw(towerlist_tabledata);
 								towerlist = towerlist_tabledata;
-								console.log(towerlist);
 
-								console.log("tabledata changed");
-								console.log(towerlist_tabledata);
 								for(let i=0;i<towerlist_tabledata.length;i++){
 									if(towerlist_tabledata[i].offset>0)towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position+"+"+towerlist_tabledata[i].offset.toString();
 									else if(towerlist_tabledata[i].offset==0)towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position.toString();//
@@ -756,6 +782,7 @@
 	$("#liPiletable").click(function () {
 		document.removeEventListener('mousewheel', onDocumentMouseWheel);
 		$("#piletable").show();
+		GridManager.refreshGrid(pile_tableId);
 	})
 	$("#closeTable").click(function () {
 		document.addEventListener('mousewheel', onDocumentMouseWheel, false);//兼容ie chrome
@@ -1322,8 +1349,6 @@
 			processData: false,
 			headers:{"token":localStorage.getItem("token")},
 			success: function (res) {
-				console.log("calc pwf finsh");
-				console.log(res);
 				towerlist_tabledata = res.TOWERLIST;
 				console.log("res.TOWERLIST",res.TOWERLIST);
 				for(let i=0;i<res.TOWERLIST.length;i++){
@@ -1422,8 +1447,8 @@
 		drawDEM(DEM);
 		MapCrossDraw(cross,false);  //cross added
 		TowerDraw(towerlist_tabledata);
-		drawGeo(pile_tabledata);
 		window.initContent();
+		drawGeo(pile_tabledata);
 		console.log(scene.children);
 	}
 
@@ -1466,9 +1491,7 @@
 			content:'./html/selectCode.html',
 			shade:0,
 			success:function (layero,index) {
-				console.log(layero,index);
 				var body = layer.getChildFrame('body',index);
-				console.log(body);
 		},
 
 			resizing:function(layero){
@@ -1627,9 +1650,6 @@
 		xhr.send()
 	}
 
-
-	//新建工程
-	{
 	/* 新建工程 */
 	$('#creatProject').click(function(){
 
@@ -1649,10 +1669,7 @@
 				//填充prk设计参数表格
 				success: function (data) {
 					console.log("createproject",data);
-
-					let json = data.prk;
 					lao = data.Lao;
-					savedJson.Lao = lao;
 					blankmp = data.Map.mp;
 					mp = data.Map.mp;
 					prk = data.prk;
@@ -2357,17 +2374,6 @@
 			onafterchanges: AfterchangeTower
 		})
 
-	// var rtowerpara = jspreadsheet(document.getElementById('rtowerpara'),{
-	// 	contextMenu:function(obj,x,y,e){},
-	// 	colAlignments:['left',''],  //Align
-	// 	columns:[
-	// 		{type:"text",title:"参数名称",width: 150, name: "name",readOnly:true},
-	// 		{type:"text",title:"参数数值",width: 150, name: "value",editor:customColumnTower}],
-	// 	// editable: false
-	// 	onbeforechange: beforeChangeEventTower,
-	// 	onafterchanges: AfterchangeTower
-	// })
-
 
 		var guicheng=[]
 	window.tcross = []
@@ -2706,6 +2712,9 @@
 				}
 			});
 		})
+
+
+
 
 	$('#savePrj').click(function () {
 			$("#saveTower").click();
@@ -3401,9 +3410,34 @@
 
 	}
 	/* 转角投影线绘制函数 */
-	function ProjectLineGroundSymbol(x,y,z){
-		var sym = new THREE.Group();
+	function ProjectLineGroundSymbol(x,y,z,angle){
+		var symMaterial = new THREE.LineBasicMaterial({color:0xff0000});
+		const sym = new THREE.Group();
+		//square
+		const square = new THREE.Geometry();
+		square.vertices.push(new THREE.Vector3(x-1,y+1,z));
+		square.vertices.push(new THREE.Vector3(x+1,y+1,z));
+		square.vertices.push(new THREE.Vector3(x+1,y-1,z));
+		square.vertices.push(new THREE.Vector3(x-1,y-1,z));
+		const sqsym = new THREE.LineLoop(square,symMaterial);
+		//direction line
+		var dirLine = new THREE.Geometry();
+		var scriptsym = new THREE.Sprite();
+		if(angle>0){
+			dirLine.vertices.push(new THREE.Vector3(x,y,z));dirLine.vertices.push(new THREE.Vector3(x+4,y+2,z));dirLine.vertices.push(new THREE.Vector3(x+3,y+2,z));
+			scriptsym = createSprite("左"+Math.abs(angle.toFixed(2)),"#ff0000",180,80,x,y,0);
+		}
+		else if(angle<0){
+			dirLine.vertices.push(new THREE.Vector3(x,y,z));dirLine.vertices.push(new THREE.Vector3(x+4,y-2,z));dirLine.vertices.push(new THREE.Vector3(x+3,y-2,z));
+			scriptsym = createSprite("右"+Math.abs(angle.toFixed(2)),"#ff0000",180,80,x,y,0);
+		}
+		else{}
+		let linesym =  new THREE.Line(dirLine,symMaterial);
+		//script
 
+		sym.add(sqsym);
+		sym.add(linesym);
+		sym.add(scriptsym);
 		return sym;
 	}
 	window.drawGeo= function (cornerCor){
@@ -3420,7 +3454,9 @@
 				cornerGeo.vertices.push(new THREE.Vector3((cornerCor[i].dist-xMin)/xdivision*Gridsize,mp.m_Frame[9]-mp.m_Frame[14],0));
 				var cornerLine = new THREE.Line(cornerGeo,cornerMaterial);cornerLine.name = "cornerLine-"+i.toString();
 				// console.log(cornerLine);
+				const gsym = ProjectLineGroundSymbol((cornerCor[i].dist-xMin)/xdivision*Gridsize,mp.m_Frame[7]-mp.m_Frame[14],0,cornerCor[i].angle)
 				GeoGroup.add(cornerLine);
+				GeoGroup.add(gsym);
 			}
 		}
 		scene.add(GeoGroup);
@@ -4758,7 +4794,6 @@
 	//保存排杆
 	$("#saveTower").click(function () {
 		var towerpwf = {"TOWERLIST":towerlist};
-		savedJson.pwf = towerpwf;
 		var pwfStr = JSON.stringify(towerpwf);
 		var formData = new FormData();
 		formData.append("pwf",pwfStr);
@@ -6690,7 +6725,7 @@
 		animate();
 	})();
 
-	}
+
 
 
 </script>
