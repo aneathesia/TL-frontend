@@ -423,7 +423,7 @@
 	// Msg Exchange
 	let MsgSource; let MsgOrigin;
 	window.addEventListener('message',function(event) {
-		if(event.origin !== domain) {console.log("no support");return;}
+		//if(event.origin !== domain) {console.log("no support");return;}
 		console.log(event.data);
 
 		prjName = event.data.projectName;
@@ -436,69 +436,106 @@
 
 		autoCreateNew(projId,prjName,pile_tabledata,MapFileName);
 
+		document.getElementById('span_id').innerHTML = prjName+"("+MapFileName+")";
 		MsgSource = event.source; MsgOrigin = event.origin
 		MsgSource.postMessage('holla back youngin!',MsgOrigin);
 	},false);
-	function checkTLexist(ProjectId,ProjectName,MapName){
 
-
-	}
 	function autoCreateNew(projId,projName,polyline,mapName){
 		// check the map prj exist;
-		var stat = checkTLexist(projId,projName,mapName);
-		console.log("stat",stat);
-		return;
+		// var stat = checkTLexist(projId,projName,mapName);
+		// console.log("stat",stat);
+		// return;
 
-
-		//PRJ PRK
-		document.getElementById('span_id').innerHTML = projName;
+		let mapform = new FormData();
+		mapform.append("FileName", mapName+".MAP");
+		mapform.append("ProjectId", projId);
 		$.ajax({
-			url: BASEURL+"/CreateProject", //提交的路径
+			url: BASEURL+"/ReadfileToJson", //提交的路径
 			type: "post",       //提交方式
-			data: {"ProjectName":projName,"ProjectId":projId},    //提交的数据
-			dataType:"json",
+			data: mapform,    //提交的数据
+			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+			processData: false,
 			headers:{"token":localStorage.getItem("token")},
-			//填充prk设计参数表格
-			success: function (data) {
-				console.log("createproject",data);
+			success: function(data){
+				console.log("AutoMap",data);
+				if(data==""){
+					//MAP
+					console.log("not exist MAP create new");
+					$.ajax({
+						url: BASEURL+"/CreateMap", //提交的路径
+						type: "post",       //提交方式
+						data:  {"ProjectName":projName,"ProjectId":projId},    //提交的数据
+						dataType:"json",
+						//填充prk设计参数表格
+						headers:{"token":localStorage.getItem("token")},
+						success: function (data) {
+							mp = data.mp;
+							console.log("createMapFrameblank",mp);
+							//yMin = 100; ydivision= 10; xdivision =100; verSize = 220;horSize =300; Gridsize =10;    //先设大小   再按distance/length 比例尺绘制
+							ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =mp.m_Grid;
+							horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
+							xMin = mp.m_From;
 
-				let json = data.prk;
-				lao = data.Lao;
-				blankmp = data.Map.mp;
-				mp = data.Map.mp;
-				DEM=data.Map.DEM;
-				cross=data.Map.cross;
-				prk = data.prk;
+							mainCanvas = document.querySelector("#iframe_box canvas");
+							initContent();
+						},
+						error: function (errorMsg) {
+							//alert(errorMsg);
+						}
+					});
+				}
+				else OpenMap(data,projId,mapName);
 			},
 			error: function (errorMsg) {
-				//alert(errorMsg);
+				alert(errorMsg);
 			}
-		});
+		})
 
-		//MAP
-		document.getElementById('span_id').innerHTML = projName+"("+mapName+")";
+		let prjform = new FormData();
+		prjform.append("FileName", projName+".PRJ");
+		prjform.append("ProjectId", projId);
 		$.ajax({
-			url: BASEURL+"/CreateMap", //提交的路径
+			url: BASEURL+"/ReadfileToJson", //提交的路径
 			type: "post",       //提交方式
-			data:  {"ProjectName":projName,"ProjectId":projId},    //提交的数据
-			dataType:"json",
-			//填充prk设计参数表格
+			data: prjform,    //提交的数据
+			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+			processData: false,
 			headers:{"token":localStorage.getItem("token")},
-			success: function (data) {
-				mp = data.mp;
-				console.log("createMapFrameblank",mp);
-				//yMin = 100; ydivision= 10; xdivision =100; verSize = 220;horSize =300; Gridsize =10;    //先设大小   再按distance/length 比例尺绘制
-				ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =mp.m_Grid;
-				horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
-				xMin = mp.m_From;
+			success: function(data){
+				console.log("Auto PRJ",data);
+				if(data==""){
+					console.log("not exist PRJ create new");
+					//PRJ PRK
+					$.ajax({
+						url: BASEURL+"/CreateProject", //提交的路径
+						type: "post",       //提交方式
+						data: {"ProjectName":projName,"ProjectId":projId},    //提交的数据
+						dataType:"json",
+						headers:{"token":localStorage.getItem("token")},
+						//填充prk设计参数表格
+						success: function (data) {
+							console.log("createproject",data);
 
-				mainCanvas = document.querySelector("#iframe_box canvas");
-				initContent();
+							let json = data.prk;
+							lao = data.Lao;
+							blankmp = data.Map.mp;
+							mp = data.Map.mp;
+							DEM=data.Map.DEM;
+							cross=data.Map.cross;
+							prk = data.prk;
+						},
+						error: function (errorMsg) {
+							//alert(errorMsg);
+						}
+					});
+				}
+				else OpenPRJ(data,projId,projName);
 			},
 			error: function (errorMsg) {
-				//alert(errorMsg);
+				alert(errorMsg);
 			}
-		});
+		})
 
 	}
 
@@ -760,7 +797,9 @@
 	$("#liPiletable").click(function () {
 		document.removeEventListener('mousewheel', onDocumentMouseWheel);
 		$("#piletable").show();
+		$("#tb_pile_calc").click();
 		GridManager.refreshGrid(pile_tableId);
+
 	})
 	$("#closeTable").click(function () {
 		document.addEventListener('mousewheel', onDocumentMouseWheel, false);//兼容ie chrome
@@ -1634,30 +1673,17 @@
 		xhr.send()
 	}
 
-	function GenerateId(){
-		let Id=0;
-		$.ajax({
-			url: BASEURL+"/directory/%20", //提交的路径
-			type: "get",       //提交方式
-			headers:{"token":localStorage.getItem("token")},
-			success: function(data){
-				console.log(data);
-			}
-		})
 
-		return Id;
-	}
 
 	/* 新建工程 */
 	$('#creatProject').click(function(){
-
-
 		//初始化数据参数
 		//xxxx
+		projId = prompt("请输入新建工程Id","");
 		prjName = prompt("请输入新建工程名称","");
 		if(prjName){
 			document.getElementById('span_id').innerHTML = prjName;
-			projId= GenerateId();
+			console.log(projId);
 			$.ajax({
 				url: BASEURL+"/CreateProject", //提交的路径
 				type: "post",       //提交方式

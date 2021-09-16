@@ -25,6 +25,7 @@
     <button class="layui-layer-btn " style="width: 50px;" id="filesetUpload">上传</button>
     <button class="layui-layer-btn" style="width: 50px;" id="OpenTLfile">打开</button>
     <button class="layui-layer-btn" style="width: 50px;" id="downloadTLfile">下载</button>
+    <button class="layui-layer-btn" style="width: 50px;" id="deleteTLfile">删除</button>
 </div>
 <script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="../config.js"></script>
@@ -50,6 +51,29 @@
         console.log($("#Projectset").find("option:selected").text(),$("#fileset").find("option:selected").text());
         $("#fileset").find("option:selected").text()
         parent.download($("#Projectset").find("option:selected").text(),$("#fileset").find("option:selected").text());
+    })
+
+    $("#deleteTLfile").click(function (){
+        var ProjectId=$("#Projectset").find("option:selected").text();
+        var FileName=$("#fileset").find("option:selected").text();
+        let form = new FormData();
+        form.append("FileName", FileName);
+        form.append("ProjectId", ProjectId);
+        $.ajax({
+            url: BASEURL+"/deletefile", //提交的路径
+            type: "post",       //提交方式
+            data: form,    //提交的数据
+            contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+            processData: false,
+            headers:{"token":localStorage.getItem("token")},
+            success: function(msg){
+                console.log(msg);
+                showfile();
+            },
+            error: function (errorMsg) {
+                alert(errorMsg);
+            }
+        })
     })
     $("#filesetUpload").click(function (){
         var xhr,ot,oloaded;
@@ -111,6 +135,7 @@
                 if(suffix == "MAP"){
                     var MapName = FileName.substring(0,FileName.lastIndexOf('.'));
                     console.log("Open MAP file",ProjectId,MapName)
+                    if(data=="") {alert(MapName+" not exist");return;}
                     parent.OpenMap(data,ProjectId,MapName);
                 }
             },
