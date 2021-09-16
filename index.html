@@ -288,8 +288,9 @@
 
 	//系统设置
 	var prjName;//新建工程名
+	var projId;
 	var MapFileName;
-	var prjNameJSON = {};
+	var prjNameId = {};
 	let prk = {};//prk
 	let lao = {};
 	var data = [];
@@ -425,22 +426,32 @@
 		if(event.origin !== domain) {console.log("no support");return;}
 		console.log(event.data);
 
-		var ProjectName = event.data.projectName;
-		var MapName = event.data.maps[0].name;
-		var ProjectId = event.data.projectId;
-		var PolyLine = event.data.polyline;
+		prjName = event.data.projectName;
+		var mapName = event.data.maps[0].name;
+		MapFileName = mapName.substring(0,mapName.lastIndexOf('.'));
+		projId =Number(event.data.projectId);
+		pile_tabledata = event.data.polyline;
 
-		console.log(ProjectId,ProjectName,PolyLine,MapName);
+		console.log(projId,prjName,MapFileName);
 
-		autoCreateNew(ProjectId,ProjectName,PolyLine,MapName);
+		autoCreateNew(projId,prjName,pile_tabledata,MapFileName);
 
 		MsgSource = event.source; MsgOrigin = event.origin
 		MsgSource.postMessage('holla back youngin!',MsgOrigin);
 	},false);
+	function checkTLexist(ProjectId,ProjectName,MapName){
+
+
+	}
 	function autoCreateNew(projId,projName,polyline,mapName){
+		// check the map prj exist;
+		var stat = checkTLexist(projId,projName,mapName);
+		console.log("stat",stat);
+		return;
+
+
 		//PRJ PRK
-		prjName = projName;
-		document.getElementById('span_id').innerHTML = prjName;
+		document.getElementById('span_id').innerHTML = projName;
 		$.ajax({
 			url: BASEURL+"/CreateProject", //提交的路径
 			type: "post",       //提交方式
@@ -463,19 +474,13 @@
 				//alert(errorMsg);
 			}
 		});
-		//pile_table data
-		pile_tabledata = polyline;
-		console.log(pile_tableId);
-		GridManager.setAjaxData(pile_tableId,{"data":pile_tabledata});
-		GridManager.refreshGrid(pile_tableId);
 
 		//MAP
-		MapFileName = mapName.substring(0,mapName.lastIndexOf('.'));
-		document.getElementById('span_id').innerHTML = prjName+"("+MapFileName+")";
+		document.getElementById('span_id').innerHTML = projName+"("+mapName+")";
 		$.ajax({
 			url: BASEURL+"/CreateMap", //提交的路径
 			type: "post",       //提交方式
-			data:  {"ProjectName":projName},    //提交的数据
+			data:  {"ProjectName":projName,"ProjectId":projId},    //提交的数据
 			dataType:"json",
 			//填充prk设计参数表格
 			headers:{"token":localStorage.getItem("token")},
@@ -494,32 +499,6 @@
 				//alert(errorMsg);
 			}
 		});
-
-		// let Map = {
-		// 	"mp":mp,
-		// 	"DEM":DEM,
-		// 	"cross":cross
-		// };
-		// var demgeoCal = {
-		// 	"ProjectName":projName,
-		// 	"MapFileName":mapName,
-		// 	"JsonMap":JSON.stringify(Map)
-		// }
-		// console.log(Map);
-		// $.ajax({
-		// 	url: BASEURL+"/MapSaveObj", //提交的路径
-		// 	type: "post",       //提交方式
-		// 	data: demgeoCal,    //提交的数据
-		// 	//dataType:"json",
-		// 	headers:{"token":localStorage.getItem("token")},
-		// 	success: function (data) {
-		// 		console.log(data);
-		// 	},
-		// 	error: function (errorMsg) {
-		// 		//alert(errorMsg);
-		// 		console.log(errorMsg);
-		// 	}
-		// });
 
 	}
 
@@ -564,10 +543,10 @@
 	}
 
 	//pilelist table init
-	{
+
 	var pile_tabledata=[];
 	var pile_tableId=document.getElementById("mpile_table");
-	var tb_pile=new GridManager(pile_tableId,{
+	pile_tableId.GM({
 		gridManagerName: 'TL-piletable',
 				ajaxData: {"data":pile_tabledata},
 				ajaxType: 'POST',
@@ -635,9 +614,9 @@
 		},
 			function(){}
 	);
-	}
+
 	// towerlist table init
-	{
+
 		var towerlist_tabledata=[];
 
 		towerlist_tabledata=towerlist;  //table data format different with towerlist_tabledata parameters default
@@ -773,7 +752,6 @@
 				},
 				function(){}
 		);
-	}
 
 	//pile table
 	//$("#piletable").draggable();
@@ -1165,7 +1143,7 @@
 		if($("#rdaodixian").is(":visible")){
 			if(ridconductor<conductorName.length-1){
 				downmoverow(conductorName,conductorset,ridconductor,ldaodixian,rdaodixian);
-				ridconductor++;	
+				ridconductor++;
 			}
 		};
 		if($("#rqixiang").is(":visible")){
@@ -1177,7 +1155,7 @@
 		if($("#rtower").is(":visible")){
 			if(ridtower<towerName.length-1){
 				downmoverow(towerName,towerset,ridtower,ltower,rtower);
-				ridtower++;	
+				ridtower++;
 			}
 		}
 	})
@@ -1188,7 +1166,7 @@
 		index = nameset.length -1;
 		l.setData(nameset);r.setData(dataset[index]);
 	}
-	
+
 	function insertrow(nameset,dataset,nameSample,dataSample,index,l,r){
 		console.log(index);
 		nameset.splice(index,0,nameSample);
@@ -1209,7 +1187,7 @@
 		dataset.splice(index,1,dataSample);
 		l.setData(nameset);r.setData(dataset[index]);
 	}
-	
+
 	function upmoverow(nameset,dataset,index,l,r){
 		l.setData(nameset);
 		r.setData(dataset[index-1]);
@@ -1234,7 +1212,8 @@
 		var form = new FormData(); // FormData 对象
 		form.append("file", fileObj); // 文件对象
 		form.append("ProjectName", prjName);//控制路径
-		console.log("ProjectName",prjName);
+		form.append("ProjectId", projId);
+		console.log("ProjectName",prjName,projId);
 		$.ajax({
 			url: BASEURL+"/txtToJson", //提交的路径
 			type: "post",       //提交方式
@@ -1254,6 +1233,7 @@
 	$("#tb_pile_calc").click(function(){
 		var form = new FormData();
 		form.append("ProjectName", prjName);
+		form.append("ProjectId", projId);
 		form.append("table",JSON.stringify(pile_tabledata));
 		//console.log(pile_table.m_jPile);   //txt append jsondata
 		$.ajax({
@@ -1288,6 +1268,7 @@
 		var form = new FormData();
 		form.append("table",JSON.stringify(pile_tabledata));
 		form.append("ProjectName", prjName);
+		form.append("ProjectId", projId);
 		$.ajax({
 			url: BASEURL+"/JsonTotxtfile", //提交的路径
 			type: "post",       //提交方式
@@ -1305,6 +1286,7 @@
 	window.towerlistCalc = function(){
 		var form = new FormData();
 		form.append("ProjectName",prjName);
+		form.append("ProjectId",projId);
 		console.log("begindata");
 		console.log("towerlistTabledata",towerlist_tabledata);
 		console.log("towerlist",towerlist);
@@ -1369,6 +1351,7 @@
 	$("#outputORG").click(function(){
 		var form = new FormData();
 		form.append("ProjectName",prjName);
+		form.append("ProjectId",projId);
 		form.append("MapFile",(MapFileName+".MAP").toString());
 		form.append("PwfFile",(prjName+".PWF").toString());
 		$.ajax({
@@ -1557,7 +1540,7 @@
 						optionList[2].options.add(newOption1);
 					}
 					$.ajax({
-						url: BASEURL+"/directory/" + prjName, //提交的路径
+						url: BASEURL+"/directory/" + projId, //提交的路径
 						type: "get",       //提交方式
 						dataType:"json",
 						headers:{"token":localStorage.getItem("token")},
@@ -1587,6 +1570,7 @@
 		var formData = new FormData();
 		formData.append("SectionInfo",JSON.stringify(transobj)); //transobj get from sonPage SectionMap.html
 		formData.append("ProjectName", prjName);
+		formData.append("ProjectId", projId);
 		$.ajax({
 			url: BASEURL+"/SectionMapSave", //提交的路径
 			type: "post",       //提交方式
@@ -1619,9 +1603,9 @@
 		drawGeo(pile_tabledata);
 	}
 
-	window.download = function(ProjectName,FileName) {
-		console.log("download Name",ProjectName,FileName);
-		var url = BASEURL+'/Pathdownload/Project='+ProjectName+'&filename=' + FileName;
+	window.download = function(ProjectId,FileName) {
+		console.log("download Name",ProjectId,FileName);
+		var url = BASEURL+'/Pathdownload/Project='+ProjectId+'&filename=' + FileName;
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', url, true);        // 也可以使用POST方式，根据接口
 		xhr.setRequestHeader("token",localStorage.getItem("token"));
@@ -1650,6 +1634,20 @@
 		xhr.send()
 	}
 
+	function GenerateId(){
+		let Id=0;
+		$.ajax({
+			url: BASEURL+"/directory/%20", //提交的路径
+			type: "get",       //提交方式
+			headers:{"token":localStorage.getItem("token")},
+			success: function(data){
+				console.log(data);
+			}
+		})
+
+		return Id;
+	}
+
 	/* 新建工程 */
 	$('#creatProject').click(function(){
 
@@ -1659,11 +1657,11 @@
 		prjName = prompt("请输入新建工程名称","");
 		if(prjName){
 			document.getElementById('span_id').innerHTML = prjName;
-			prjNameJSON = {"ProjectName":prjName};
+			projId= GenerateId();
 			$.ajax({
 				url: BASEURL+"/CreateProject", //提交的路径
 				type: "post",       //提交方式
-				data: prjNameJSON,    //提交的数据
+				data: {"ProjectName":prjName,"ProjectId":projId},    //提交的数据
 				dataType:"json",
 				headers:{"token":localStorage.getItem("token")},
 				//填充prk设计参数表格
@@ -2693,7 +2691,7 @@
 		var prkinfo = new FormData();
 			prkinfo.append("prk",JSON.stringify(prk));
 			prkinfo.append("ProjectName",prjName);
-			console.log("prkInfo",prkinfo);
+			prkinfo.append("ProjectId",projId);
 			$.ajax({
 				url: BASEURL+"/prksave", //提交的路径
 				type: "post",       //提交方式
@@ -2717,14 +2715,13 @@
 
 
 	$('#savePrj').click(function () {
-			$("#saveTower").click();
-			$("#saveMap").click();
 			var prjformData = new FormData();
 			prjformData.append("prk",JSON.stringify(prk));
 			prjformData.append("lao",JSON.stringify(lao));
 			prjformData.append("PointFile","table.txt");
 			prjformData.append("DemFile","");
 			prjformData.append("ProjectName", prjName);
+			prjformData.append("ProjectId", projId);
 			$.ajax({
 				url: BASEURL+"/projectsave", //提交的路径
 				type: "post",       //提交方式
@@ -2741,6 +2738,9 @@
 					alert(errorMsg);
 				}
 			});
+
+			$("#saveMap").click();
+			$("#saveTower").click();
 		})
 
 	$('#saveMap').click(function () {
@@ -2752,6 +2752,7 @@
 			};
 			var demgeoCal = {
 				"ProjectName":prjName,
+				"ProjectId":projId,
 				"MapFileName":(MapFileName+".MAP").toString(),
 				"JsonMap":JSON.stringify(Map)
 			}
@@ -2780,11 +2781,11 @@
 			//input empty map
 			scene.children.length = 0;
 			console.log(scene);
-			prjNameJSON = {"ProjectName":prjName};
+			prjNameId = {"ProjectName":prjName,"ProjectId":projId};
 			$.ajax({
 				url: BASEURL+"/CreateMap", //提交的路径
 				type: "post",       //提交方式
-				data: prjNameJSON,    //提交的数据
+				data: prjNameId,    //提交的数据
 				dataType:"json",
 				//填充prk设计参数表格
 				headers:{"token":localStorage.getItem("token")},
@@ -2837,17 +2838,16 @@
 	})
 
 
-	window.OpenPRJ = function (filedata,ProjectName){   //readfileToJson SIMPLE may cover original
-		prjName  = ProjectName;
+	window.OpenPRJ = function (filedata,ProjectId,ProjectName){   //readfileToJson SIMPLE may cover original
+		prjName  = ProjectName;projId = ProjectId;
 		document.getElementById('span_id').innerHTML = prjName;
+		console.log("OpenPRJ",prjName,projId);
 		pile_tabledata = filedata.m_jPile;
-		GridManager.setAjaxData(pile_tableId,{"data":pile_tabledata});
-		$("#liPiletable").click();
-		$("#tb_pile_calc").click();
 		//Read PRK
 		let prkform = new FormData();
-		prkform.append("FileName", ProjectName+".PRK");
-		prkform.append("ProjectName", ProjectName);
+		prkform.append("FileName", prjName+".PRK");
+		prkform.append("ProjectName", prjName);
+		prkform.append("ProjectId", projId);
 		$.ajax({
 			url: BASEURL+"/ReadfileToJson", //提交的路径
 			type: "post",       //提交方式
@@ -2866,8 +2866,9 @@
 		})
 		//读取PWF
 		let pwfform = new FormData();
-		pwfform.append("FileName", ProjectName+".PWF");
-		pwfform.append("ProjectName", ProjectName);
+		pwfform.append("FileName", prjName+".PWF");
+		pwfform.append("ProjectName", prjName);
+		pwfform.append("ProjectId", projId);
 		$.ajax({
 			url: BASEURL+"/ReadfileToJson", //提交的路径
 			type: "post",       //提交方式
@@ -2889,9 +2890,9 @@
 		// $("#tb-towerlist-calc").click();
 	}
 
-	window.OpenMap = function (filedata,ProjectName,FileName){
-		prjName = ProjectName ;
-		MapFileName = FileName;
+	window.OpenMap = function (filedata,ProjectId,MapName){
+		// judge ProjectId relate to ProjectName
+		MapFileName =MapName;
 		document.getElementById('span_id').innerHTML = prjName+"("+MapFileName+")";
 		DEM= filedata.DEM;
 		mp = filedata.mp;
@@ -4798,6 +4799,7 @@
 		var formData = new FormData();
 		formData.append("pwf",pwfStr);
 		formData.append("ProjectName", prjName);
+		formData.append("ProjectId", projId);
 		$.ajax({
 			url: BASEURL+"/pwfsave", //提交的路径
 			type: "post",       //提交方式
