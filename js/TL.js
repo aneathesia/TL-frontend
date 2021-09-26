@@ -54,6 +54,7 @@ function limit(arr, num){
 }
 //transform coordination to Geographic system
 function Line2Geo(pilelist,towerlist){
+    console.log(towerlist.length);
     let pileInd = 0;let towInd = 0;
     let plen = pilelist.length; let tlen = towerlist.length;
     while(towInd<tlen){

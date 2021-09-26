@@ -466,20 +466,25 @@
 		// console.log("stat",stat);
 		// return;
 
+
 		console.log("auto create map name");console.log(projid,projname,mapname);
 		createPRJ(projid,projname);
 
 		createMAP(projid,projname,mapname);
 
-		$("#liPiletable").click();
 
-		GridManager.setAjaxData(pile_tableId,{"data":polyline});
-		GridManager.setAjaxData(pile_tableId,{"data":polyline});
+		// console.log("ready to paint tl",towerlist);
+		// TowerDraw(towerlist);
+
+
+
+		// GridManager.setAjaxData(pile_tableId,{"data":polyline});
+		// GridManager.setAjaxData(pile_tableId,{"data":polyline});
 
 	}
 
 
-	/* 新建工程 */
+	/* 工程 */
 	$('#creatProject').click(function(){
 		//初始化数据参数
 		//xxxx
@@ -620,6 +625,8 @@
 							DEM=data.Map.DEM;
 							cross=data.Map.cross;
 							prk = data.prk;
+
+							pilecalc();
 						},
 						error: function (errorMsg) {
 							//alert(errorMsg);
@@ -635,6 +642,8 @@
 	}
 
 	function createMAP(projid,projname,projmap){
+
+		scene.children.length =0;
 		let mapform = new FormData();
 		mapform.append("FileName", projmap+".MAP");
 		mapform.append("ProjectId", projid);
@@ -720,10 +729,12 @@
 			processData: false,
 			headers:{"token":localStorage.getItem("token")},
 			success: function(pwfdata){
+				if(!pwfdata){console.log("PWF not exist create new");return;}
 				towerlist = pwfdata.TOWERLIST;
 				towerlist_tabledata = towerlist;
 				m_start = 0;
 				m_end = towerlist.length-1;
+				TowerDraw(towerlist);
 			},
 			error: function (errorMsg) {
 				alert(errorMsg);
@@ -817,7 +828,6 @@
 
 										GridManager.refreshGrid(pile_tableId);
 										console.log("exchanged data x y ");
-										console.log(pile_tabledata);
 									}
 
 								});
@@ -1010,7 +1020,9 @@
 	$("#piletable").hide();
 	$("#liPiletable").click(function () {
 		document.removeEventListener('mousewheel', onDocumentMouseWheel);
-		$("#piletable").show();
+		$("#piletable").show(function(){
+			pilecalc();
+		});
 		// $("#tb_pile_calc").click();
 		// GridManager.refreshGrid(pile_tableId);
 
@@ -1026,13 +1038,10 @@
 	$("#towerlisttable").hide();
 	$("#liTowerlisttable").click(function () {
 		document.removeEventListener('mousewheel', onDocumentMouseWheel);
-		$("#towerlisttable").show();
-
-		//towerlist_tabledata=towerlist;
-		towerlistCalc();
-
-		GridManager.refreshGrid(towerlist_tableId);
-
+		$("#towerlisttable").show(function(){
+			towerlistCalc();
+			GridManager.refreshGrid(towerlist_tableId);
+		});
 	})
 	$("#towerlistcloseTable").click(function () {
 		document.addEventListener('mousewheel', onDocumentMouseWheel, false);//兼容ie chrome
@@ -1483,40 +1492,43 @@
 
 	})
 
-	$("#tb_pile_calc").click(function(){
+	function pilecalc(){
 		var form = new FormData();
 		form.append("ProjectName", prjName);
 		form.append("ProjectId", projId);
 		form.append("table",JSON.stringify(pile_tabledata));
 		//console.log(pile_table.m_jPile);   //txt append jsondata
 		$.ajax({
-				url: BASEURL+"/tbCalc", //提交的路径
-				type: "post",       //提交方式
-				data: form,    //提交的数据
-				// dataType:"json",
-				contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-				processData: false,
+			url: BASEURL+"/tbCalc", //提交的路径
+			type: "post",       //提交方式
+			data: form,    //提交的数据
+			// dataType:"json",
+			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+			processData: false,
 			headers:{"token":localStorage.getItem("token")},
-				success: function (res) {
-					console.log("m_jPile",res.m_jPile);
-					pile_tabledata=res.m_jPile;
-					//console.log(GridManager.getAjaxData(pile_tableId));
-					//need to caculate the secdist
-					for(let i=0;i<pile_tabledata.length;i++)
-					{
-						var temp;
-						temp=pile_tabledata[i].x;
-						pile_tabledata[i].x=pile_tabledata[i].y;
-						pile_tabledata[i].y=temp;
-					}   //系统坐标大地坐标相反对换
+			success: function (res) {
+				pile_tabledata=res.m_jPile;
+				//console.log(GridManager.getAjaxData(pile_tableId));
+				//need to caculate the secdist
+				for(let i=0;i<pile_tabledata.length;i++)
+				{
+					var temp;
+					temp=pile_tabledata[i].x;
+					pile_tabledata[i].x=pile_tabledata[i].y;
+					pile_tabledata[i].y=temp;
+				}   //系统坐标大地坐标相反对换
 
-					if(pile_tabledata.length>0){pile_tabledata[0].secdist=0;}
-					for(let i=1;i<pile_tabledata.length;i++){
-						pile_tabledata[i].secdist=pile_tabledata[i].dist-pile_tabledata[i-1].dist;
-					}
-					GridManager.setAjaxData(pile_tableId,{"data":pile_tabledata});
+				if(pile_tabledata.length>0){pile_tabledata[0].secdist=0;}
+				for(let i=1;i<pile_tabledata.length;i++){
+					pile_tabledata[i].secdist=pile_tabledata[i].dist-pile_tabledata[i-1].dist;
 				}
+				GridManager.setAjaxData(pile_tableId,{"data":pile_tabledata});
+			}
 		})
+	}
+
+	$("#tb_pile_calc").click(function(){
+		pilecalc();
 	})
 
 	$("#tb-pile-save").click(function (){
@@ -4677,7 +4689,7 @@
 					console.log("set tower");
 					console.log(towerlist);
 					towerlist_tabledata=towerlist;
-					GridManager.refreshGrid(towerlist_tableId);
+					//GridManager.refreshGrid(towerlist_tableId);
 
 					var inputId =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
 					inputId.value = "G" + putInd;
