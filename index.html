@@ -37,7 +37,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
 	<script src="https://cdn.bootcss.com/FileSaver.js/2014-11-29/FileSaver.js"></script>
 	<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
-	<script type="text/javascript" src="lib/layer/1.9.3/layer.js"></script>
+	<script type="text/javascript" src="lib/layui/layui.js"></script>
 	<script type="text/javascript" src="./js/H-ui.js"></script>
 	<script type="text/javascript" src="./js/H-ui.admin.js"></script>
 	<script type="text/javascript" src="./js/movediv.js"></script>
@@ -419,6 +419,8 @@
 
 	//ajax login token
 	let token;
+	//ajax beforeSend and complete  loading;
+
 
 	// Msg Exchange
 	function getQueryVariable(variable) {
@@ -468,7 +470,7 @@
 
 
 		console.log("auto create map name");console.log(projid,projname,mapname);
-		createPRJ(projid,projname);
+		createPRJ(projid,projname,polyline);
 
 		createMAP(projid,projname,mapname);
 
@@ -490,11 +492,12 @@
 		//xxxx
 		projId = prompt("请输入新建工程Id","");
 		prjName = prompt("请输入新建工程名称","");
-		if(projId!=undefined&&prjName!=undefined)createPRJ(projId,prjName);
+		if(projId!=undefined&&prjName!=undefined)createPRJ(projId,prjName,[]);
 
 	})
 
 	$('#savePrj').click(function () {
+		var loadInd = layer.load(2);
 		var prjformData = new FormData();
 		prjformData.append("prk",JSON.stringify(prk));
 		prjformData.append("lao",JSON.stringify(lao));
@@ -521,6 +524,7 @@
 
 		$("#saveMap").click();
 		$("#saveTower").click();
+		layer.close(loadInd);
 		window.opener.postMessage({type: 'save', payload: {'tlProjData':msgtlProjData,'results':towerlist}},MsgOrigin);
 
 	})
@@ -540,13 +544,20 @@
 		}
 		console.log(Map);
 		$.ajax({
+			loadIndex:-1,
 			url: BASEURL+"/MapSaveObj", //提交的路径
 			type: "post",       //提交方式
 			data: demgeoCal,    //提交的数据
 			//dataType:"json",
 			headers:{"token":localStorage.getItem("token")},
+			beforeSend:function(){
+				this.loadIndex = layer.load(2);
+			},
 			success: function (data) {
 				console.log(data);
+			},
+			complete:function(){
+				layer.close(this.loadIndex);
 			},
 			error: function (errorMsg) {
 				//alert(errorMsg);
@@ -569,22 +580,35 @@
 			type:2,
 			title:'工程文件',
 			maxmin:true,
-			area: ['300px', '250px'],
+			area: ['330px', '400px'],
 			content:'./html/ProjectManage.html',
 			shade:0,
+			resize:true,
 			success:function (layero,index) {
 				var body = layer.getChildFrame('body',index);
 				let optionList;
 				optionList =  body.find("select");
 				$.ajax({
-					url: BASEURL+"/directory/%20", //提交的路径
+					loadIndex:-1,
+					url: BASEURL+"/directory/all", //提交的路径
 					type: "get",       //提交方式
 					headers:{"token":localStorage.getItem("token")},
+					beforeSend:function(){
+						console.log("message send before");
+						this.loadIndex = layer.load(2);
+						console.log(this.loadIndex);
+					},
 					success: function(data){
+						console.log(data);
 						for (let i = 0; i < data.length; i++) {
-							var fileOption = new Option(data[i].name, i.toString());
+							var fileOption = new Option(data[i].ProjectName,data[i].ProjectId);
 							optionList[0].options.add(fileOption);
 						}
+					},
+					complete:function(){
+
+						console.log('send complete',this.loadIndex);
+						layer.close(this.loadIndex);
 					}
 				})
 
@@ -592,7 +616,7 @@
 		})
 	})
 
-	function createPRJ(projid,projname){
+	function createPRJ(projid,projname,polyline){
 		//verify prj exist
 		let prjform = new FormData();
 		prjform.append("FileName", projname+".PRJ");
@@ -626,14 +650,14 @@
 							cross=data.Map.cross;
 							prk = data.prk;
 
-							pilecalc();
+							pilecalc(polyline);
 						},
 						error: function (errorMsg) {
 							//alert(errorMsg);
 						}
 					});
 				}
-				else {console.log("PRJ exist");OpenPRJ(data,projid,projname);}
+				else {console.log("PRJ exist");OpenPRJ(polyline,projid,projname);}
 			},
 			error: function (errorMsg) {
 				alert(errorMsg);
@@ -691,10 +715,12 @@
 	}
 
 	window.OpenPRJ = function (filedata,ProjectId,ProjectName){   //readfileToJson SIMPLE may cover original
+
 		prjName  = ProjectName;projId = ProjectId;
 		document.getElementById('span_id').innerHTML = prjName;
 		console.log("OpenPRJ",prjName,projId);
-		pile_tabledata = filedata.m_jPile;
+		pile_tabledata = filedata //filedata.m_jPile;
+		pilecalc(pile_tabledata);
 		//Read PRK
 		let prkform = new FormData();
 		prkform.append("FileName", prjName+".PRK");
@@ -746,6 +772,7 @@
 
 	window.OpenMap = function (filedata,ProjectId,MapName){
 		// judge ProjectId relate to ProjectName
+		var loadInd=layer.load(2);
 		MapFileName =MapName;
 		document.getElementById('span_id').innerHTML = prjName+"("+MapFileName+")";
 		DEM= filedata.DEM;
@@ -761,6 +788,7 @@
 		TowerDraw(towerlist_tabledata);
 		window.initContent();
 		//drawGeo(pile_tabledata);
+		layer.close(loadInd);
 	}
 
 
@@ -1015,13 +1043,13 @@
 		);
 
 	//pile table
-	//$("#piletable").draggable();
+	$("#piletable").draggable();
 	//window resize;
 	$("#piletable").hide();
 	$("#liPiletable").click(function () {
 		document.removeEventListener('mousewheel', onDocumentMouseWheel);
 		$("#piletable").show(function(){
-			pilecalc();
+			pilecalc(pile_tabledata);
 		});
 		// $("#tb_pile_calc").click();
 		// GridManager.refreshGrid(pile_tableId);
@@ -1033,7 +1061,7 @@
 		$("#piletable").hide();
 	})
 
-	//$("#towerlisttable").draggable();
+	$("#towerlisttable").draggable();
 	//window resize;
 	$("#towerlisttable").hide();
 	$("#liTowerlisttable").click(function () {
@@ -1492,11 +1520,11 @@
 
 	})
 
-	function pilecalc(){
+	function pilecalc(polyline){
 		var form = new FormData();
 		form.append("ProjectName", prjName);
 		form.append("ProjectId", projId);
-		form.append("table",JSON.stringify(pile_tabledata));
+		form.append("table",JSON.stringify(polyline));
 		//console.log(pile_table.m_jPile);   //txt append jsondata
 		$.ajax({
 			url: BASEURL+"/tbCalc", //提交的路径
@@ -1528,7 +1556,7 @@
 	}
 
 	$("#tb_pile_calc").click(function(){
-		pilecalc();
+		pilecalc(pile_tabledata);
 	})
 
 	$("#tb-pile-save").click(function (){
@@ -1834,6 +1862,7 @@
 	})
 
 	window.GetSecDem= function(transobj){
+		let loadInd = layer.load(2);
 		var formData = new FormData();
 		formData.append("SectionInfo",JSON.stringify(transobj)); //transobj get from sonPage SectionMap.html
 		formData.append("ProjectName", prjName);
@@ -1868,6 +1897,7 @@
 		TowerDraw(towerlist_tabledata);
 		window.initContent();
 		drawGeo(pile_tabledata);
+		layer.close(loadInd);
 	}
 
 	window.download = function(ProjectId,FileName) {
@@ -4824,6 +4854,7 @@
 		formData.append("ProjectName", prjName);
 		formData.append("ProjectId", projId);
 		$.ajax({
+			loadIndex:-1,
 			url: BASEURL+"/pwfsave", //提交的路径
 			type: "post",       //提交方式
 			data: formData,    //提交的数据
@@ -4831,8 +4862,14 @@
 			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
 			processData: false,
 			headers:{"token":localStorage.getItem("token")},
+			beforeSend:function(){
+				this.loadIndex = layer.load(2);
+			},
 			success: function (data) {
 				console.log(data);
+			},
+			complete:function(){
+				layer.close(this.loadIndex);
 			},
 			error: function (errorMsg) {
 				alert(errorMsg);
@@ -5988,6 +6025,7 @@
 				}
 			}
 
+			if(mp) return;
 			window.document.getElementById("footermsg").textContent = "		累距：" + (coord.x/Gridsize*xdivision+xMin).toFixed(2) + "	 高程: " + (coord.y/Gridsize*ydivision + yMin).toFixed(2);
 			if(coord.y<(mp.m_Frame[9]-mp.m_Frame[14])){window.document.getElementById("footermsg").textContent =
 					"		累距：" + (coord.x/Gridsize*xdivision+xMin).toFixed(2) + "	 偏距: " + ((coord.y-(mp.m_Frame[7]-mp.m_Frame[14]))/Gridsize*xdivision).toFixed(2) // coordination convert

@@ -5,22 +5,23 @@
     <title>工程</title>
 </head>
 <body>
-<div class="layui-form-item" style="float: left;margin: 5px">
+<div class="layui-form-item" style="margin: 5px">
     <label class="layui-form-label">选择工程</label>
     <div class="layui-input-block">
-        <select id ="Projectset" style="width:100px" size="5" onchange="showfile()">
+        <select id ="Projectset" style="width:100%;height: 40%" size="5" onchange="showfile()">
         </select>
     </div>
 
 </div>
-<div class="layui-form-item"  style="float: left;margin: 5px">
+<div class="layui-form-item"  style="margin: 5px">
     <label class="layui-form-label">文件</label>
     <div class="layui-input-block">
-        <select id ="fileset" style="width: 125px" size="5">
+        <select id ="fileset" style="width: 100%;height: 40%" size="5">
         </select>
     </div>
 </div>
 <input type="file" style="float: left;margin: 5px" id="file">
+<progress id="progressBar" value="0" max="100" style="width: 300px;visibility: hidden" ></progress>
 <div class="layui-layer-btn" style="float: bottom;float:right;margin-bottom: 2%" >
     <button class="layui-layer-btn " style="width: 50px;" id="filesetUpload">上传</button>
     <button class="layui-layer-btn" style="width: 50px;" id="OpenTLfile">打开</button>
@@ -28,11 +29,12 @@
     <button class="layui-layer-btn" style="width: 50px;" id="deleteTLfile">删除</button>
 </div>
 <script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
+
 <script type="text/javascript" src="../config.js"></script>
 <script>
     let filedata;
     function showfile(){
-        var ProjectId = $("#Projectset").find("option:selected").text();
+        var ProjectId = $("#Projectset").find("option:selected").val();
         $("#fileset").empty();  //清空
         $.ajax({
             url: BASEURL+"/directory/"+ProjectId, //提交的路径
@@ -48,13 +50,13 @@
         })
     }
     $("#downloadTLfile").click(function (){
-        console.log($("#Projectset").find("option:selected").text(),$("#fileset").find("option:selected").text());
+        console.log($("#Projectset").find("option:selected").val(),$("#fileset").find("option:selected").text());
         $("#fileset").find("option:selected").text()
-        parent.download($("#Projectset").find("option:selected").text(),$("#fileset").find("option:selected").text());
+        parent.download($("#Projectset").find("option:selected").val(),$("#fileset").find("option:selected").text());
     })
 
     $("#deleteTLfile").click(function (){
-        var ProjectId=$("#Projectset").find("option:selected").text();
+        var ProjectId=$("#Projectset").find("option:selected").val();
         var FileName=$("#fileset").find("option:selected").text();
         let form = new FormData();
         form.append("FileName", FileName);
@@ -78,7 +80,7 @@
     $("#filesetUpload").click(function (){
         var xhr,ot,oloaded;
         var fileObj = document.getElementById("file").files[0]; // js 获取文件对象
-        var ProjectId = $("#Projectset").find("option:selected").text();
+        var ProjectId = $("#Projectset").find("option:selected").val();
         console.log("uploadPath",ProjectId);
         if(ProjectId===""){alert("选择工程"); return false}
         else{
@@ -94,7 +96,7 @@
             xhr.onload = uploadcomplete; //请求完成
             xhr.onerror =  uploadfailed; //请求失败
 
-            //xhr.upload.onprogress =progressFunction;//【上传进度调用方法实现】
+            xhr.upload.onprogress =progressFunction;//【上传进度调用方法实现】
             xhr.upload.onloadstart = function(){//上传开始执行方法
                 ot = new Date().getTime();   //设置上传开始时间
                 oloaded = 0;//设置上传开始时，以上传的文件大小为0
@@ -104,11 +106,21 @@
 
 
     })
-    function uploadcomplete(evt) { showfile();alert("成功上传！");}//上传成功响应
+    function uploadcomplete(evt) { document.getElementById("progressBar").style.visibility = 'hidden';showfile();}//上传成功响应
     function uploadfailed(evt) {alert("上传失败！");}//上传失败响应
+    function progressFunction(event){
+        var progressBar = document.getElementById("progressBar");
+        progressBar.style.visibility = 'visible';
+
+        console.log(progressBar);
+        if(event.lengthComputable) {
+            progressBar.max = event.total;
+            progressBar.value = event.loaded;
+        }
+    }
 
     $("#OpenTLfile").click(function (){
-        var ProjectId = $("#Projectset").find("option:selected").text();
+        var ProjectId = $("#Projectset").find("option:selected").val();
         var FileName = $("#fileset").find("option:selected").text();
         var suffix = FileName.substring(FileName.lastIndexOf('.')+1);
 
@@ -117,12 +129,17 @@
         form.append("FileName", FileName);
         form.append("ProjectId", ProjectId);
         $.ajax({
+
             url: BASEURL+"/ReadfileToJson", //提交的路径
             type: "post",       //提交方式
             data: form,    //提交的数据
             contentType: false, // 告诉jQuery不要去设置Content-Type请求头
             processData: false,
             headers:{"token":localStorage.getItem("token")},
+            // beforeSend: function(){
+            //     this.loadIndex = layer.load(1,{shade:[0.1,'#fff']});
+            //     console.log(this.loadIndex);
+            // },
             success: function(data){
                 console.log("openfile return data",data);
                 //打开工程文件
@@ -138,6 +155,7 @@
                     if(data=="") {alert(MapName+" not exist");return;}
                     parent.OpenMap(data,ProjectId,MapName);
                 }
+
             },
             error: function (errorMsg) {
                 alert(errorMsg);
