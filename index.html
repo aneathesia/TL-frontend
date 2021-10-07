@@ -525,7 +525,7 @@
 		$("#saveMap").click();
 		$("#saveTower").click();
 		layer.close(loadInd);
-		window.opener.postMessage({type: 'save', payload: {'tlProjData':msgtlProjData,'results':towerlist}},MsgOrigin);
+		window.opener.postMessage({type: 'save', payload: {'tlProjData': {'projectId':projId,'projName':prjName,'maps':MapFileName},'results':towerlist}},MsgOrigin);
 
 	})
 
@@ -576,11 +576,15 @@
 	})
 	/* 文件 */
 	$("#fileManage").click(function () {
+		InitFiLeManager(projId,prjName);
+	})
+
+	function InitFiLeManager(projid,projname){
 		layer.open({
 			type:2,
 			title:'工程文件',
 			maxmin:true,
-			area: ['330px', '400px'],
+			area: ['330px', '300px'],
 			content:'./html/ProjectManage.html',
 			shade:0,
 			resize:true,
@@ -588,33 +592,25 @@
 				var body = layer.getChildFrame('body',index);
 				let optionList;
 				optionList =  body.find("select");
+				//prjName = "测试工程1" ; projId = "test9";
+				optionList[0].options.add(new Option(prjName,projId));
+				optionList[0].options[0].selected = "selected";
+				optionList[1].options.length = 0;  //清空
 				$.ajax({
-					loadIndex:-1,
-					url: BASEURL+"/directory/all", //提交的路径
+					url: BASEURL+"/directory/"+projId, //提交的路径
 					type: "get",       //提交方式
+					dataType:"json",
 					headers:{"token":localStorage.getItem("token")},
-					beforeSend:function(){
-						console.log("message send before");
-						this.loadIndex = layer.load(2);
-						console.log(this.loadIndex);
-					},
 					success: function(data){
-						console.log(data);
 						for (let i = 0; i < data.length; i++) {
-							var fileOption = new Option(data[i].ProjectName,data[i].ProjectId);
-							optionList[0].options.add(fileOption);
+							var fileOption = new Option(data[i].name, i.toString());
+							optionList[1].options.add(fileOption);
 						}
-					},
-					complete:function(){
-
-						console.log('send complete',this.loadIndex);
-						layer.close(this.loadIndex);
 					}
 				})
-
 			}
 		})
-	})
+	}
 
 	function createPRJ(projid,projname,polyline){
 		//verify prj exist
@@ -1535,6 +1531,7 @@
 			processData: false,
 			headers:{"token":localStorage.getItem("token")},
 			success: function (res) {
+				console.log("res calc",res);
 				pile_tabledata=res.m_jPile;
 				//console.log(GridManager.getAjaxData(pile_tableId));
 				//need to caculate the secdist
