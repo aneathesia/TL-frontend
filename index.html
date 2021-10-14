@@ -189,7 +189,7 @@
 
 			<button class="xbutton xround"  style="margin-left:5px;">		<input type="file" id ="tb_pile_input" accept=".txt"> </button>
 			<button class="xbutton xround" id="tb_pile_calc" style="text-align-last: right">计算</button>
-			<button class="xbutton xround" id="tb-pile-save" style="text-align-last: right">保存</button>
+			<button class="xbutton xround" id="tb-pile-save" style="text-align-last: right;display: none">保存</button>
 			<button class="xbutton xround close_btn" id="closeTable"style="text-align-last: right">关闭</button>
 
 	</div>
@@ -290,6 +290,7 @@
 	var prjName;//新建工程名
 	var projId;
 	var MapFileName;
+	let demFile;
 	var prjNameId = {};
 	let prk = {};//prk
 	let lao = {};
@@ -449,6 +450,7 @@
 		MapFileName = msgtlProjData.maps;
 		projId =msgtlProjData.projectId;
 		pile_tabledata = msgtlProjData.polyline;
+		demFile = msgtlProjData.demid+"."+msgtlProjData.fileExt;
 
 
 		console.log(projId,prjName,MapFileName);
@@ -1508,7 +1510,7 @@
 			processData: false,
 			headers:{"token":localStorage.getItem("token")},
 			success: function (res) {
-				console.log(res);
+				console.log("txtToJson",res);
 				pile_tabledata =res;
 				GridManager.setAjaxData(pile_tableId,{"data":pile_tabledata});
 			}
@@ -1517,10 +1519,11 @@
 	})
 
 	function pilecalc(polyline){
+		console.log("polyline",polyline);
 		var form = new FormData();
 		form.append("ProjectName", prjName);
 		form.append("ProjectId", projId);
-		form.append("table",JSON.stringify(polyline));
+		form.append("pilelist",JSON.stringify({"pilelist":polyline}));
 		//console.log(pile_table.m_jPile);   //txt append jsondata
 		$.ajax({
 			url: BASEURL+"/tbCalc", //提交的路径
@@ -1535,13 +1538,6 @@
 				pile_tabledata=res.m_jPile;
 				//console.log(GridManager.getAjaxData(pile_tableId));
 				//need to caculate the secdist
-				for(let i=0;i<pile_tabledata.length;i++)
-				{
-					var temp;
-					temp=pile_tabledata[i].x;
-					pile_tabledata[i].x=pile_tabledata[i].y;
-					pile_tabledata[i].y=temp;
-				}   //系统坐标大地坐标相反对换
 
 				if(pile_tabledata.length>0){pile_tabledata[0].secdist=0;}
 				for(let i=1;i<pile_tabledata.length;i++){
@@ -1555,25 +1551,25 @@
 	$("#tb_pile_calc").click(function(){
 		pilecalc(pile_tabledata);
 	})
-
-	$("#tb-pile-save").click(function (){
-		var form = new FormData();
-		form.append("table",JSON.stringify(pile_tabledata));
-		form.append("ProjectName", prjName);
-		form.append("ProjectId", projId);
-		$.ajax({
-			url: BASEURL+"/JsonTotxtfile", //提交的路径
-			type: "post",       //提交方式
-			data: form,    //提交的数据
-			// dataType:"json",
-			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-			processData: false,
-			headers:{"token":localStorage.getItem("token")},
-			success: function (res) {
-				console.log(res); //  no content situation
-			}
-		})
-	})
+	/*deprecated*/
+	// $("#tb-pile-save").click(function (){
+	// 	var form = new FormData();
+	// 	form.append("pilelist",JSON.stringify(pile_tabledata));
+	// 	form.append("ProjectName", prjName);
+	// 	form.append("ProjectId", projId);
+	// 	$.ajax({
+	// 		url: BASEURL+"/JsonTotxtfile", //提交的路径
+	// 		type: "post",       //提交方式
+	// 		data: form,    //提交的数据
+	// 		// dataType:"json",
+	// 		contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+	// 		processData: false,
+	// 		headers:{"token":localStorage.getItem("token")},
+	// 		success: function (res) {
+	// 			console.log(res); //  no content situation
+	// 		}
+	// 	})
+	// })
 
 	window.towerlistCalc = function(){
 		var form = new FormData();
@@ -1736,9 +1732,7 @@
 			maxmin:true,
 			content:'./html/framepara.html',
 			success:function (layero,index) {
-				console.log(layero,index);
 				var body = layer.getChildFrame('body',index);
-				console.log(body);
 				var inputList = body.find('input');
 				for (var j = 0; j < inputList.length-1; j++) {			//把父页面的数据放到子页面的input框中
 					body.find(inputList[j]).val(mp.m_Frame[14-j]-mp.m_Frame[14-j-1]);
@@ -1828,25 +1822,26 @@
 					for (let i = 0; i < pile_tabledata.length; i++) {
 						var newOption0 = new Option(pile_tabledata[i].name, i.toString());
 						var newOption1 = new Option(pile_tabledata[i].name, i.toString());
-						optionList[1].options.add(newOption0);
-						optionList[2].options.add(newOption1);
+						optionList[0].options.add(newOption0);
+						optionList[1].options.add(newOption1);
 					}
-					$.ajax({
-						url: BASEURL+"/directory/" + projId, //提交的路径
-						type: "get",       //提交方式
-						dataType:"json",
-						headers:{"token":localStorage.getItem("token")},
-						success: function(data){
-							for (let i = 0; i < data.length; i++) {
-								var filename = data[i].name;
-								var suffix = filename.substring(filename.lastIndexOf('.')+1);
-								if(suffix=="EGX"||suffix=="tif"||suffix=="asc"){
-									var fileOption = new Option(data[i].name, i.toString());
-									optionList[0].options.add(fileOption);
-								}
-							}
-						}
-					})
+					// $.ajax({
+					// 	url: BASEURL+"/directory/DEM" , //提交的路径
+					// 	type: "get",       //提交方式
+					// 	dataType:"json",
+					// 	headers:{"token":localStorage.getItem("token")},
+					// 	success: function(data){
+					// 		console.log(data);
+					// 		// for (let i = 0; i < data.length; i++) {
+					// 		// 	var filename = data[i].name;
+					// 		// 	var suffix = filename.substring(filename.lastIndexOf('.')+1);
+					// 		// 	if(suffix=="EGX"||suffix=="tif"||suffix=="asc"){
+					// 		// 		var fileOption = new Option(data[i].name, i.toString());
+					// 		// 		optionList[0].options.add(fileOption);
+					// 		// 	}
+					// 		// }
+					// 	}
+					// })
 				},
 				yes: function (index, layero) {
 					console.log("yes function feedback" + layero + "" + index);
@@ -1864,6 +1859,9 @@
 		formData.append("SectionInfo",JSON.stringify(transobj)); //transobj get from sonPage SectionMap.html
 		formData.append("ProjectName", prjName);
 		formData.append("ProjectId", projId);
+		formData.append("pilelist",JSON.stringify({"pilelist":pile_tabledata}));
+		formData.append("demFile",demFile);
+		console.log(demFile);
 		$.ajax({
 			url: BASEURL+"/SectionMapSave", //提交的路径
 			type: "post",       //提交方式
@@ -6022,7 +6020,6 @@
 				}
 			}
 
-			if(mp) return;
 			window.document.getElementById("footermsg").textContent = "		累距：" + (coord.x/Gridsize*xdivision+xMin).toFixed(2) + "	 高程: " + (coord.y/Gridsize*ydivision + yMin).toFixed(2);
 			if(coord.y<(mp.m_Frame[9]-mp.m_Frame[14])){window.document.getElementById("footermsg").textContent =
 					"		累距：" + (coord.x/Gridsize*xdivision+xMin).toFixed(2) + "	 偏距: " + ((coord.y-(mp.m_Frame[7]-mp.m_Frame[14]))/Gridsize*xdivision).toFixed(2) // coordination convert

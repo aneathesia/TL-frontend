@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button onclick="myFunction()"> send message  </button>
+<input type="file" id = "ossfile">
+<button onclick="ossupload()"> osstest  </button>
+</body>
+<script type="text/javascript" src="./config.js"></script>
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+<script>
+    const domain = 'http://localhost:63342';
+    var parorigin = encodeURIComponent('http://localhost:63342/TL-frontend/Message.html');
+    var myPopup = window.open('http://localhost:63342/TL-frontend/index.html?origin='+parorigin,'myWindow');
+    const pile  =
+        [
+            {
+                "name": "J0",
+                "y": 12484236.64,
+                "x": 2669219.96,
+                "z": 0
+            },
+            {
+                "name": "J1",
+                "y": 12483854.45,
+                "x": 2668608.46,
+                "z": 0
+            },
+            {
+                "name": "J2",
+                "y": 12483472.26,
+                "x": 2667996.96,
+                "z": 0
+            },
+            {
+                "name": "J3",
+                "y": 12483166.52,
+                "x": 2667309.03,
+                "z": 0
+            },
+            {
+                "name": "J4",
+                "y": 12482784.33,
+                "x": 2666697.53,
+                "z": 0
+            },
+            {
+                "name": "J5",
+                "y": 12482478.58,
+                "x": 2666086.04,
+                "z": 0
+            },
+            {
+                "name": "J6",
+                "y": 12482172.84,
+                "x": 2665321.67,
+                "z": 0
+            },
+            {
+                "name": "J7",
+                "y": 12481408.47,
+                "x": 2664022.24,
+                "z": 0
+            },
+            {
+                "name": "J8",
+                "y": 12481026.28,
+                "x": 2663563.62,
+                "z": 0
+            },
+            {
+                "name": "J9",
+                "y": 12480261.91,
+                "x": 2662875.68,
+                "z": 0
+            },
+            {
+                "name": "J10",
+                "y": 12479573.98,
+                "x": 2662264.19,
+                "z": 0
+            },
+            {
+                "name": "J11",
+                "y": 12478962.48,
+                "x": 2661958.44,
+                "z": 0
+            },
+            {
+                "name": "J12",
+                "y": 12477968.8,
+                "x": 2662034.88,
+                "z": 0
+            },
+            {
+                "name": "J13",
+                "y": 12476210.75,
+                "x": 2661423.38,
+                "z": 0
+            },
+            {
+                "name": "J14",
+                "y": 12475828.56,
+                "x": 2660888.32,
+                "z": 0
+            }
+        ]
+
+
+
+        // "projectId": "9e1b72e0-20f8-11ec-af08-636b1966c8ba",
+        // "projectName": "杆塔排位2",
+
+    const tlProjData={
+        projectId : 'test1014',
+        projectName : '测试工程1',
+        // maps:'',
+        polyline: pile,
+        projFiles:[],
+        demid:"a7246b30-2b07-11ec-bca9-c92e04fc7a85",
+        fileExt:"tif"
+    }
+    const tlmsg = {type:'Data',payload:tlProjData}
+
+    //周期性的发送消息
+    // setInterval(function(){
+    //     var message = 'Hello!  The time is: ' + (new Date().getTime());
+    //     console.log('blog.local:  sending message:  ' + message);
+    //     //send the message and target URI
+    //     myPopup.postMessage(message,domain);
+    // },6000);
+    function myFunction(){
+        console.log('blog.local:  sending message:  ' ,tlmsg);
+        //send the message and target URI
+        myPopup.postMessage(tlmsg,domain);
+        //12731342.607406447,3550399.0716042966
+        // var res = webMercator2lonlat(12731595,3550300);
+        // console.log(res);
+    }
+
+    //监听消息反馈
+    window.addEventListener('message',function(event) {
+        if(event.origin !== domain) return;
+        console.log('received response:  ',event.data);
+    },false);
+
+    function webMercator2lonlat(x,y){
+        var lonlat = [];
+        var lon = x/20037508.34*180; //经度
+        var lat = y/20037508.34*180; //纬度
+        lat= 180/Math.PI*(2*Math.atan(Math.exp(lat*Math.PI/180))-Math.PI/2);
+        lonlat[0] = lon;
+        lonlat[1] = lat;
+        return (lonlat);
+    }
+    function callback(){
+        fileObj = window.document.getElementById("ossfile").files[0]; // js 获取文件对象
+        console.log(fileObj);
+        var form = new FormData(); // FormData 对象
+        form.append("file", fileObj); // 文件对象
+
+    }
+    function ossupload(callback) {
+
+        let OSSurl = "https://tl-oss-bucket.oss-cn-chengdu.aliyuncs.com/tl/circuit_pattern.png";
+        let DemId = "test";
+        $.ajax({
+            url: BASEURL+"/OSS/download", //提交的路径
+            type: "get",       //提交方式
+                //提交的数据
+            data:{"url":OSSurl,"DemId":DemId},
+            contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+            processData: false,
+            headers:{"token":localStorage.getItem("token")},
+            success: function (res) {
+                console.log(res);
+            }
+        });
+    }
+
+
+
+</script>
+</html>
