@@ -6,15 +6,13 @@
 </head>
 <body>
 <button onclick="myFunction()"> send message  </button>
-<input type="file" id = "ossfile">
-<button onclick="ossupload()"> osstest  </button>
 </body>
 <script type="text/javascript" src="./config.js"></script>
 <script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
 <script>
-    const domain = 'http://localhost:63342';
+    const domain = 'http://8.131.249.48:8193';
     var parorigin = encodeURIComponent('http://localhost:63342/TL-frontend/Message.html');
-    var myPopup = window.open('http://localhost:63342/TL-frontend/index.html?origin='+parorigin,'myWindow');
+    var myPopup = window.open('http://8.131.249.48:8193/index.html?origin='+parorigin,'myWindow');
     const pile  =
         [
             {
@@ -156,31 +154,6 @@
         lonlat[1] = lat;
         return (lonlat);
     }
-    function callback(){
-        fileObj = window.document.getElementById("ossfile").files[0]; // js 获取文件对象
-        console.log(fileObj);
-        var form = new FormData(); // FormData 对象
-        form.append("file", fileObj); // 文件对象
-
-    }
-    function ossupload(callback) {
-
-        let OSSurl = "https://tl-oss-bucket.oss-cn-chengdu.aliyuncs.com/tl/circuit_pattern.png";
-        let DemId = "test";
-        $.ajax({
-            url: BASEURL+"/OSS/download", //提交的路径
-            type: "get",       //提交方式
-                //提交的数据
-            data:{"url":OSSurl,"DemId":DemId},
-            contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-            processData: false,
-            headers:{"token":localStorage.getItem("token")},
-            success: function (res) {
-                console.log(res);
-            }
-        });
-    }
-
 
 
 </script>
