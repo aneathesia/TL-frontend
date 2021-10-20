@@ -6,14 +6,6 @@
 </head>
 <body>
 <form class="layui-form" action="">
-<!--    <div class="layui-form-item">-->
-<!--        <label class="layui-form-label">DEM文件</label>-->
-<!--        <div class="layui-input-block">-->
-<!--            <select id ="demfilelist" style="width:100px">-->
-<!--            </select>-->
-<!--        </div>-->
-
-<!--    </div>-->
 
         <div class="layui-form-item" style="display: inline-block">
             <label class="layui-form-label">起始桩位</label>
@@ -80,8 +72,6 @@
         }
         var transobj={"start":$("#beginOp").find("option:selected").text(),
             "end":$("#endOp").find("option:selected").text(),
-            // "demFile":$("#demfilelist").find("option:selected").text(),
-            // "pointFile":"table.txt",  //中转文件 PRJ没有txt输入时计算步骤会产生此文件生成sectionMap可用
             "width":$("input[name=borderdist]").val().toString(),
             "step":$("input[name=sampledist]").val().toString(),
             "sectionType":$("#sectypeOp").find("option:selected").val().toString(),
