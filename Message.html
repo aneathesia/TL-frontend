@@ -12,7 +12,7 @@
 <script>
     const domain = 'http://8.131.249.48:8193';
     var parorigin = encodeURIComponent('http://localhost:63342/TL-frontend/Message.html');
-    var myPopup = window.open('http://8.131.249.48:8193/index.html?origin='+parorigin,'myWindow');
+    var myPopup ;
     const pile  =
         [
             {
@@ -113,7 +113,7 @@
         // "projectName": "杆塔排位2",
 
     const tlProjData={
-        projectId : 'test1014',
+        projectId : "9e1b72e0-20f8-11ec-af08-636b1966c8bc",
         projectName : '测试工程1',
         // maps:'',
         polyline: pile,
@@ -133,7 +133,8 @@
     function myFunction(){
         console.log('blog.local:  sending message:  ' ,tlmsg);
         //send the message and target URI
-        myPopup.postMessage(tlmsg,domain);
+        myPopup = window.open('http://8.131.249.48:8193/index.html?origin='+parorigin,'myWindow');
+        //myPopup.postMessage(tlmsg,domain);
         //12731342.607406447,3550399.0716042966
         // var res = webMercator2lonlat(12731595,3550300);
         // console.log(res);
@@ -143,6 +144,7 @@
     window.addEventListener('message',function(event) {
         if(event.origin !== domain) return;
         console.log('received response:  ',event.data);
+        if(event.data.type =="ready") { myPopup.postMessage(tlmsg,domain);}
     },false);
 
     function webMercator2lonlat(x,y){

@@ -443,7 +443,6 @@
 	})
 
 	window.addEventListener('message',function(event) {
-		//if(event.origin !== domain) {console.log("no support");return;}
 		console.log(event.data.payload);
 		msgtlProjData = event.data.payload;
 		prjName = msgtlProjData.projectName;
@@ -616,6 +615,7 @@
 
 	function createPRJ(projid,projname,polyline){
 		//verify prj exist
+		debugger;
 		let prjform = new FormData();
 		prjform.append("FileName", projname+".PRJ");
 		prjform.append("ProjectId", projid);
@@ -764,8 +764,6 @@
 				alert(errorMsg);
 			}
 		})
-		// $("#liTowerlisttable").click();
-		// $("#tb-towerlist-calc").click();
 	}
 
 	window.OpenMap = function (filedata,ProjectId,MapName){
@@ -781,10 +779,10 @@
 		ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =mp.m_Grid;
 		horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
 		xMin = mp.m_From;
+		window.initContent();
 		drawDEM(DEM);
 		MapCrossDraw(cross,false);  //cross added
 		TowerDraw(towerlist_tabledata);
-		window.initContent();
 		//drawGeo(pile_tabledata);
 		layer.close(loadInd);
 	}
@@ -1543,7 +1541,7 @@
 				for(let i=1;i<pile_tabledata.length;i++){
 					pile_tabledata[i].secdist=pile_tabledata[i].dist-pile_tabledata[i-1].dist;
 				}
-				GridManager.setAjaxData(pile_tableId,{"data":pile_tabledata});
+				GridManager.setAjaxData(pile_tableId,{"data":pile_tabledata});  //GM.js
 			}
 		})
 	}
@@ -4615,8 +4613,6 @@
 
 		tempintersects = intersects;
 		if (event.button == 0 ){
-
-			debugger;
 			if (!window_mouse){
 				document.addEventListener("mousemove",TowerSetMove,false);
 				window_mouse = true;//避免事件重复添加
@@ -4669,8 +4665,6 @@
 
 				console.log("addtower",putInd,pos.x/Gridsize*xdivision,towerlist)
 				if(putInd==0||pos.x/Gridsize*xdivision>towerlist[putInd-1].Distance){  //防止向前
-					console.log("posx",pos.x);
-					debugger;
 					let towTypeName=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 					let towType =layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val();
 					console.log("beforetowmesh");console.log(scene.children.length);console.log(scene);
