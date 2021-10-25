@@ -1,2 +1,2 @@
-var BASEURL = "http://192.168.205.66:8181";
+var BASEURL = "http://8.131.249.48:8192";
 
