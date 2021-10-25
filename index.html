@@ -409,7 +409,7 @@
 	TowerGroup.name = "fixTowerGroup";
 	let FawCurveGroup = new THREE.Group();
 	FawCurveGroup.name = "fixCurveGroup";
-	let ttowerlist = Array;
+	let ttowerlist = new Array();
 	let movingInd;
 
 	//expand parameter
@@ -614,8 +614,6 @@
 	}
 
 	function createPRJ(projid,projname,polyline){
-		//verify prj exist
-		debugger;
 		let prjform = new FormData();
 		prjform.append("FileName", projname+".PRJ");
 		prjform.append("ProjectId", projid);
@@ -1081,7 +1079,7 @@
 			if(scene.children[i].name == "TowerScriptLabel"){scene.children[i].children.length=0;}
 			if(scene.children[i].name == "fixCurveGroup"){scene.children[i].children.length=0;}
 		}
-
+		if(towerlist_tabledata == undefined) {alert("PWF文件异常");return;}  //PWF文件出错
 		m_end = towerlist_tabledata.length - 1;
 
 		for (let i = 0; i <  towerlist_tabledata.length; i++) {
@@ -4668,8 +4666,8 @@
 				if(putInd==0||pos.x/Gridsize*xdivision>towerlist[putInd-1].Distance){  //防止向前
 					let towTypeName=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 					let towType =layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val();
-					console.log("beforetowmesh");console.log(scene.children.length);console.log(scene);
-					var towmesh = createTower(pos,"G"+putInd,towTypeName,towType,towerHei,0,putInd);
+					let towBase = Number(layer.getChildFrame('body',tpIndex).find("#flow")[0].value);
+					var towmesh = createTower(pos,"G"+putInd,towTypeName,towType,towerHei,towBase,putInd);
 					TowerGroup.add(towmesh);
 					scene.add(TowerGroup);
 					var tlabel = createSpritelabel(towerlist[m_end].Name,
@@ -5085,6 +5083,7 @@
 				towMesh.name = "tower";
 				scene.add(towMesh);
 				m_end = towerlist.length-1;
+				console.log(towerlist);
 				ComputeHugeHigh();
 
 				for(let i = 0;i<m_end;i++){
@@ -5219,19 +5218,20 @@
 				
 				console.log("Insertafter");
 				console.log(scene,towerlist);
-
+				ttowerlist = [];
 				document.querySelector("#iframe_box").removeEventListener("mousemove",TowerInsertMove);
 			}
 		}
 		if (event.button == 2){
 			clearTempTow();
 			clearTempTow();
-
+			console.log(towerlist);
 			scene.remove(scene.getObjectByName('tower'));
 			document.querySelector("#iframe_box").removeEventListener("mousemove",TowerInsertMove);
 			document.querySelector("#iframe_box").removeEventListener("mousedown",TowerInsertDown);
 			document.body.style.cursor = "default";
-			console.log("rightbuttondown",scene);
+			if(ttowerlist.length>0)towerlist = ttowerlist; insertReady = true;
+			console.log("tt rightbuttondown",ttowerlist);
 		}
 	}
 	//移动杆塔
@@ -5490,7 +5490,9 @@
 			scene.remove(scene.getObjectByName('tower'));
 			document.querySelector("#iframe_box").removeEventListener("mousemove",TowerMovingMove);
 			document.querySelector("#iframe_box").removeEventListener("mousedown",TowerMovingDown);
-			console.log("rightbuttondown",scene);
+			movingReady = true ;
+			console.log("rightbuttondown  moving  tt",towerlist,ttowerlist);
+
 		}
 	}
 	//升高杆塔
@@ -6647,8 +6649,15 @@
 		/*鼠标放置杆塔*/
 		$("#putTower").click(function () {
 			bindTowerPlace('前进方向排杆');
-			document.body.style.cursor = "url(./css/add.ico) 9 9, default";
+
 			clearTempTow();
+			var clickEvent=new MouseEvent('click',
+					{
+						button: 2
+					}
+			);
+			console.log(clickEvent);
+			TowerInsertDown(clickEvent);
 			document.querySelector("#iframe_box").removeEventListener('mousedown', towerDelete);
 			document.querySelector("#iframe_box").removeEventListener('mousedown', riseTower);
 			document.querySelector("#iframe_box").removeEventListener('mousedown', fallTower);
@@ -6657,15 +6666,14 @@
 			document.querySelector("#iframe_box").removeEventListener('mousemove', TowerMovingMove);
 			document.querySelector("#iframe_box").removeEventListener('mousedown', TowerInsertDown);
 			document.querySelector("#iframe_box").removeEventListener('mousemove', TowerInsertMove);
+			//insertReady =  true ; movingReady = true;
+			document.body.style.cursor = "url(./css/add.ico) 9 9, default";
 			document.querySelector("#iframe_box").addEventListener('mousemove', TowerSetMove, false);
 			document.querySelector("#iframe_box").addEventListener('mousedown', TowerSetDown, false);
-
 		})
 		/*鼠标删除杆塔*/
 		$("#deleteTower").click(function () {
 			clearTempTow();
-
-
 			document.querySelector("#iframe_box").removeEventListener('mousedown', riseTower);
 			document.querySelector("#iframe_box").removeEventListener('mousedown', fallTower);
 			document.querySelector("#iframe_box").removeEventListener('mousedown', editTower);
@@ -6780,8 +6788,8 @@
 			createGroundCross(GroundVertice,groundobj.name);
 
 			//add Listener
-			document.querySelector("#iframe_box").addEventListener('mousedown', window.createGroundObj, false);
-			document.querySelector("#iframe_box").addEventListener('mousemove', window.trackGroundObj, false);
+			document.addEventListener('mousedown', window.createGroundObj, false);
+			document.addEventListener('mousemove', window.trackGroundObj, false);
 
 			// create CrossObjGroup  store the information about the Cross_line; ?
 
