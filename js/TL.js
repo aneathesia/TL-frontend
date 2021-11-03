@@ -84,3 +84,50 @@ function Line2Geo(pilelist,towerlist){
         }
     }
 }
+
+//  point =  {"x": 1 , "y":1, "z":1}
+function WebMercatorToSumDHigh(point,pilelist){
+    //point in section
+    let MapCoord={x:0,y:0};
+    let len = pilelist.length-1; let index = 0;
+    for(let i = 0 ; i < len-1 ; i++) {
+        if(point.x>pilelist[i]&&point.x<pilelist[i+1]) {
+            index=i;break;
+            MapCoord.x +=Math.sqrt(Math.pow((pilelist[index+1].x-pilelist[index].x),2)+Math.pow((pilelist[index+1].y-pilelist[index].y),2));
+        }
+    }
+    /* point x  y   pilelist[index] x y  pilelist[index+1] x y
+     ∆y = │AXo＋BYo＋C│／√（A²＋B²）∆x =
+     cos∠a=[(x2-x1)(x3-x1)+(y2-y1)(y3-y1)]/|ab||ac|
+     */
+    dy =  patch_line_point(point.x,point.y,pilelist[index].x,pilelist[index].y,pilelist[index+1].x,pilelist[index+1].y);
+    dx =  Math.sqrt(Math.pow((point.x-pilelist[index].x),2)+Math.pow((pilelist[index].y-point.y),2)- dy*dy);
+    MapCoord.x += dx ; MapCoord.y = dy;  // dy  left right
+    return MapCoord;
+}
+
+function patch_line_point( x , y , line_x1 ,line_y1 , line_x2 ,line_y2 ) {
+    let x1 = line_x1, y1 = line_y1, x2 = line_x2, y2 = line_y2, x3 = x, y3 = y;
+    let px = x2 - x1;
+    let py = y2 - y1;
+    let som = px * px + py * py;
+    let dist = ((y1 - y3)* px + (x3 - x1)  * py )/ Math.sqrt(som);
+    return dist;
+}
+
+function SysCrossTransToMap(cross,pilelist){
+    let MapCrossObject = {};
+    MapCrossObject.CrossPoint = [];
+    MapCrossObject.PointCount = cross.PointCount;
+    for(let i = 0; i < cross.PointCount ; i++){
+        MapCrossObject.CrossPoint.push(WebMercatorToSumDHigh(cross.CrossPoint[i],pilelist));
+    }
+    for(let i = 0; i < cross.PointCount ; i++){
+        MapCrossObject.CrossPoint[i].c=1;
+        MapCrossObject.CrossPoint[i].dc=0;
+        MapCrossObject.CrossPoint[i].dz=0;
+        MapCrossObject.CrossPoint[i].z=0;
+        MapCrossObject.CrossPoint[i].towerHigh=0;
+    }
+    return MapCrossObject;
+}

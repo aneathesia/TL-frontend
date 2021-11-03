@@ -779,11 +779,42 @@
 		ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =mp.m_Grid;
 		horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
 		xMin = mp.m_From;
+		//cross from mSystem new add
+		let point = [{x:2669000,y:12484080},{x:2669000,y:12484200}];
+		// point.x =2669000;
+		// point.y =12484500；
+		let templateCross = {
+			"Attr":105,
+			"AttrName":"0105:220KV",
+			"AttrEx":0,
+			"CrossPoint":[],
+			"PointCount":0
+		}
+		let Syscross = {CrossPoint:point,PointCount:2};
+		let res = SysCrossTransToMap(Syscross,pile_tabledata);
+		templateCross.CrossPoint = res.CrossPoint;
+		templateCross.PointCount = res.PointCount;
+		//CrossPoint = [Vector3(x,y,z)]
+		console.log(templateCross);
+		//cross.push(templateCross);
+		console.log("add template",templateCross);
+		let tempCross = [];
+		for(let i = 0;i<templateCross.PointCount;i++){
+			tempCross.push(new THREE.Vector3(templateCross.CrossPoint[i].x,templateCross.CrossPoint[i].y,0));
+		}
+		console.log("tempCross",tempCross);
+
+		//MapCrossDraw(templateCross,true);
+
 		window.initContent();
 		drawDEM(DEM);
 		MapCrossDraw(cross,false);  //cross added
 		TowerDraw(towerlist_tabledata);
 		//drawGeo(pile_tabledata);
+
+	// 进入之前已经完成了添加中间穿越点的位置信息
+		createGroundCross(tempCross,templateCross.AttrName);
+		createCrossLabel(0,templateCross.Attr,true);
 		layer.close(loadInd);
 	}
 
@@ -5570,7 +5601,8 @@
 			console.log("output scene");console.log(scene);
 			//find towerlist index and change this
 
-			towerlist[riseInd].TowerHigh = tempTowerHei
+			towerlist[riseInd].TowerHigh = tempTowerHei;
+			m_end = towerlist.length-1;
 			console.log(m_end);
 
 			ComputeHugeHigh(towerlist);
@@ -5631,7 +5663,8 @@
 				//find towerlist index and change this
 
 
-				towerlist[fallInd].TowerHigh = tempTowerHei
+				towerlist[fallInd].TowerHigh = tempTowerHei;
+				m_end = towerlist.length-1;
 				console.log(m_end);
 
 				ComputeHugeHigh(towerlist);
@@ -6166,6 +6199,7 @@
 		}
 
 	window.createGroundCross = function (crossPoint,crossAttrName){
+		console.log("format",crossPoint);
 		var Cross_geo = new THREE.BufferGeometry().setFromPoints( crossPoint );
 		var Cross_geop = new THREE.BufferGeometry().setFromPoints( crossPoint );
 		var Cross_geosp = new THREE.BufferGeometry();
@@ -6183,6 +6217,7 @@
 		GroundGroup.children[1].visible = false;
 		GroundGroup.children[2].visible = false;  //unvisible
 		scene.add(GroundGroup);
+		console.log("addscene",scene);
 	}
 
 	function creatMark(rad,x,y,z,repeat){
@@ -6418,14 +6453,14 @@
 			createCrossLabel(towerhigh,codeId,added);
 		}
 		//each crosspoint modify
-		for(let i=0;i<cross.length;i++){
-			//console.log("cross i",cross[i]);
-			for(let ii=0;ii<cross[i].CrossPoint.length;ii++){
-				//console.log("cross i,Point ii",i,ii);
-				MapCrossModify(i,ii,cross[i].CrossPoint[ii].c,cross[i].CrossPoint[ii].x,cross[i].CrossPoint[ii].y,cross[i].CrossPoint[ii].z,
-						cross[i].CrossPoint[ii].dz,cross[i].CrossPoint[ii].dc);
-			}
-		}
+		// for(let i=0;i<cross.length;i++){
+		// 	//console.log("cross i",cross[i]);
+		// 	for(let ii=0;ii<cross[i].CrossPoint.length;ii++){
+		// 		//console.log("cross i,Point ii",i,ii);
+		// 		MapCrossModify(i,ii,cross[i].CrossPoint[ii].c,cross[i].CrossPoint[ii].x,cross[i].CrossPoint[ii].y,cross[i].CrossPoint[ii].z,
+		// 				cross[i].CrossPoint[ii].dz,cross[i].CrossPoint[ii].dc);
+		// 	}
+		// }
 
 	}
 
