@@ -107,6 +107,37 @@
             }
         ]
 
+    let point = [{x:2669000,y:12484080},{x:2669000,y:12484200}];
+    let point2 = [{x:2669050,y:12484080},{x:2668920,y:12484150}];
+    // point.x =2669000;
+    // point.y =12484500；
+
+    let templateCross = {
+        "Attr":105,
+        "AttrName":"0105:220KV",
+        "AttrEx":0,
+        "CrossPoint":point,
+        "PointCount":2
+    }
+    let templateCross2 = {
+        "Attr":103,
+        "AttrName":"0103:35KV",
+        "AttrEx":0,
+        "CrossPoint":point2,
+        "PointCount":2
+    }
+    let  CrossArray  = [];
+    // CrossArray.push(templateCross);
+    CrossArray.push(templateCross2);
+
+    console.log(CrossArray);
+
+    //let Syscross = {CrossPoint:point,PointCount:2};
+    // //let res = SysCrossTransToMap(Syscross,pile_tabledata);
+    // templateCross.CrossPoint = res.CrossPoint;
+    // templateCross.PointCount = res.PointCount;
+    // let Syscross = {CrossPoint:point,PointCount:2};
+
 
 
         // "projectId": "9e1b72e0-20f8-11ec-af08-636b1966c8ba",
@@ -115,7 +146,8 @@
     const tlProjData={
         projectId : "9e1b72e0-20f8-11ec-af08-636b1966c8bc",
         projectName : '测试工程1',
-        // maps:'',
+        //maps:'test',
+        cross:CrossArray,
         polyline: pile,
         projFiles:[],
         demid:"a7246b30-2b07-11ec-bca9-c92e04fc7a85",

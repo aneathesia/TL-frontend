@@ -5,6 +5,25 @@ Array.prototype.findindexOf = function(val) {
     }
     return -1;
 };
+
+Array.prototype.unique=function(){
+
+    var arr=[];//新建一个临时数组
+
+    for(var i=0;i<this.length;i++){//遍历当前数组
+        console.log(i,this[i]);
+        let flag = new Boolean(true);
+        for (let j = 0 ;j<arr.length;j++){
+            if(Math.abs(arr[j].CrossPoint[0].x - this[i].CrossPoint[0].x)<0.01){
+                flag=false;console.log(flag);break;
+            }
+        }
+        if(flag)arr.push(this[i]);
+    }
+
+    console.log(arr);
+    return arr;
+};
 function TowerPRKIndex (prk,val){
     for (let i = 0; i < prk.TOWER.length; i++) {
         if(prk.TOWER[i].Name == val){return i;break;}
@@ -129,5 +148,34 @@ function SysCrossTransToMap(cross,pilelist){
         MapCrossObject.CrossPoint[i].z=0;
         MapCrossObject.CrossPoint[i].towerHigh=0;
     }
-    return MapCrossObject;
+    cross.CrossPoint = MapCrossObject.CrossPoint ;
+    cross.PointCount = MapCrossObject.PointCount ;
+    return cross;
+}
+
+function CrossAddCrossPoint(cross){
+    let len = cross.CrossPoint.length;
+    for(let i = 0 ;i<len-1 ; i++){
+        if(cross.CrossPoint[i].y*cross.CrossPoint[i+1].y<0){
+            let addCross = {c:1,dc:0,dz:0,towerHigh:0,x:0,y:0,z:0};
+            addCross.c=1;
+            addCross.dc=0;
+            addCross.dz=0;
+            addCross.towerHigh = 0;
+            addCross.x= CaculateXZeroY(cross.CrossPoint[i].x,cross.CrossPoint[i].y,cross.CrossPoint[i+1].x,cross.CrossPoint[i+1].y);
+            addCross.y = 0;
+            addCross.z=0;
+            cross.CrossPoint.splice(i,0,addCross);
+            cross.PointCount++;
+           console.log( CaculateXZeroY(cross.CrossPoint[i].x,cross.CrossPoint[i].y,cross.CrossPoint[i+1].y,cross.CrossPoint[i+1].y) );
+        }
+    }
+    return  cross;
+}
+
+function CaculateXZeroY(x1,y1,x2,y2){
+    let resX = 0;
+    console.log(x1,y1,x2,y2);
+    resX = -y1*(x2-x1)/(y2-y1)+x1;
+    return resX;
 }

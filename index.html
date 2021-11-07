@@ -453,6 +453,16 @@
 		pile_tabledata = msgtlProjData.polyline;
 		demFile = msgtlProjData.demid+"."+msgtlProjData.fileExt;
 
+		//caculate cross coordination and set crossPoint
+		for(let i = 0;i<msgtlProjData.cross.length;i++) {
+			console.log("msg.cross", msgtlProjData.cross[i]);
+			let res = SysCrossTransToMap(msgtlProjData.cross[i], pile_tabledata);
+			msgtlProjData.cross[i] = res;
+			console.log("PointRes", msgtlProjData.cross[i]);
+			msgtlProjData.cross[i] = CrossAddCrossPoint(msgtlProjData.cross[i]);
+
+			console.log("crossAfter", msgtlProjData.cross[i]);
+		}
 
 		console.log(projId,prjName,MapFileName);
 		//return;
@@ -779,42 +789,20 @@
 		ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =mp.m_Grid;
 		horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
 		xMin = mp.m_From;
-		//cross from mSystem new add
-		let point = [{x:2669000,y:12484080},{x:2669000,y:12484200}];
-		// point.x =2669000;
-		// point.y =12484500；
-		let templateCross = {
-			"Attr":105,
-			"AttrName":"0105:220KV",
-			"AttrEx":0,
-			"CrossPoint":[],
-			"PointCount":0
-		}
-		let Syscross = {CrossPoint:point,PointCount:2};
-		let res = SysCrossTransToMap(Syscross,pile_tabledata);
-		templateCross.CrossPoint = res.CrossPoint;
-		templateCross.PointCount = res.PointCount;
-		//CrossPoint = [Vector3(x,y,z)]
-		console.log(templateCross);
-		//cross.push(templateCross);
-		console.log("add template",templateCross);
-		let tempCross = [];
-		for(let i = 0;i<templateCross.PointCount;i++){
-			tempCross.push(new THREE.Vector3(templateCross.CrossPoint[i].x,templateCross.CrossPoint[i].y,0));
-		}
-		console.log("tempCross",tempCross);
-
-		//MapCrossDraw(templateCross,true);
-
 		window.initContent();
 		drawDEM(DEM);
+		console.log("addCrossFromMainSystem",msgtlProjData.cross);
+		for(let i= 0;i<msgtlProjData.cross.length;i++)cross.push(msgtlProjData.cross[i]);
+		cross = cross.unique();
+		console.log("addFromMainSys",cross);
 		MapCrossDraw(cross,false);  //cross added
 		TowerDraw(towerlist_tabledata);
 		//drawGeo(pile_tabledata);
 
 	// 进入之前已经完成了添加中间穿越点的位置信息
-		createGroundCross(tempCross,templateCross.AttrName);
-		createCrossLabel(0,templateCross.Attr,true);
+		//GroundVertice = tempCross;
+		// createGroundCross(tempCross,templateCross.AttrName);
+		// createCrossLabel(0,templateCross.Attr,true);
 		layer.close(loadInd);
 	}
 
@@ -1917,6 +1905,9 @@
 		horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
 		xMin = mp.m_From;
 		drawDEM(DEM);
+		console.log("addCrossFromMainSystem",msgtlProjData.cross);
+		for(let i= 0;i<msgtlProjData.cross.length;i++)cross.push(msgtlProjData.cross[i]);
+		console.log("addFromMainSysRes",cross);
 		MapCrossDraw(cross,false);  //cross added
 		TowerDraw(towerlist_tabledata);
 		window.initContent();
@@ -6199,7 +6190,6 @@
 		}
 
 	window.createGroundCross = function (crossPoint,crossAttrName){
-		console.log("format",crossPoint);
 		var Cross_geo = new THREE.BufferGeometry().setFromPoints( crossPoint );
 		var Cross_geop = new THREE.BufferGeometry().setFromPoints( crossPoint );
 		var Cross_geosp = new THREE.BufferGeometry();
@@ -6217,7 +6207,6 @@
 		GroundGroup.children[1].visible = false;
 		GroundGroup.children[2].visible = false;  //unvisible
 		scene.add(GroundGroup);
-		console.log("addscene",scene);
 	}
 
 	function creatMark(rad,x,y,z,repeat){
