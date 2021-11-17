@@ -105,20 +105,17 @@ function Line2Geo(pilelist,towerlist){
 }
 
 //  point =  {"x": 1 , "y":1, "z":1}
-function WebMercatorToSumDHigh(point,pilelist){
+function WebMercatorToSumDHigh(point,pilelist,index){
     //point in section
     let MapCoord={x:0,y:0};
-    let len = pilelist.length-1; let index = 0;
-    for(let i = 0 ; i < len-1 ; i++) {
-        if(point.x>pilelist[i]&&point.x<pilelist[i+1]) {
-            index=i;break;
-            MapCoord.x +=Math.sqrt(Math.pow((pilelist[index+1].x-pilelist[index].x),2)+Math.pow((pilelist[index+1].y-pilelist[index].y),2));
-        }
+    for(let i = 0 ; i < index ; i++) {
+        MapCoord.x +=Math.sqrt(Math.pow((pilelist[i+1].x-pilelist[i].x),2)+Math.pow((pilelist[i+1].y-pilelist[i].y),2));
     }
     /* point x  y   pilelist[index] x y  pilelist[index+1] x y
      ∆y = │AXo＋BYo＋C│／√（A²＋B²）∆x =
      cos∠a=[(x2-x1)(x3-x1)+(y2-y1)(y3-y1)]/|ab||ac|
      */
+    console.log(index);
     dy =  patch_line_point(point.x,point.y,pilelist[index].x,pilelist[index].y,pilelist[index+1].x,pilelist[index+1].y);
     dx =  Math.sqrt(Math.pow((point.x-pilelist[index].x),2)+Math.pow((pilelist[index].y-point.y),2)- dy*dy);
     MapCoord.x += dx ; MapCoord.y = dy;  // dy  left right
@@ -138,8 +135,10 @@ function SysCrossTransToMap(cross,pilelist){
     let MapCrossObject = {};
     MapCrossObject.CrossPoint = [];
     MapCrossObject.PointCount = cross.PointCount;
+    let pileIndex = CrosspileIndex(cross,pilelist);
     for(let i = 0; i < cross.PointCount ; i++){
-        MapCrossObject.CrossPoint.push(WebMercatorToSumDHigh(cross.CrossPoint[i],pilelist));
+        console.log("pilecrossIndex",pileIndex);
+        MapCrossObject.CrossPoint.push(WebMercatorToSumDHigh(cross.CrossPoint[i],pilelist,pileIndex));
     }
     for(let i = 0; i < cross.PointCount ; i++){
         MapCrossObject.CrossPoint[i].c=1;
@@ -151,6 +150,33 @@ function SysCrossTransToMap(cross,pilelist){
     cross.CrossPoint = MapCrossObject.CrossPoint ;
     cross.PointCount = MapCrossObject.PointCount ;
     return cross;
+}
+
+function CrosspileIndex(cross,pilelist){
+    //找到第一跨越分段
+    for(let i = 0 ; i < cross.CrossPoint.length-1;i++){
+        for(let j = 0;j<pilelist.length-1;j++){
+            //line  cross ab   pile section cd
+            let b = is_xiangjiao(cross.CrossPoint[i],cross.CrossPoint[i+1],pilelist[j],pilelist[j+1]);
+            // let l1 = patch_line_point(cross.CrossPoint[i].x,cross.CrossPoint[i].y,pilelist[j].x,pilelist[j].y,pilelist[j+1].x,pilelist[j+1].y);
+            // let l2 = patch_line_point(cross.CrossPoint[i+1].x,cross.CrossPoint[i+1].y,pilelist[j].x,pilelist[j].y,pilelist[j+1].x,pilelist[j+1].y);
+            // let l3 = patch_line_point(pilelist[j].x,pilelist[j].y,cross.CrossPoint[i].x,cross.CrossPoint[i].y,cross.CrossPoint[i+1].x,cross.CrossPoint[i+1].y);
+            // let l4 = patch_line_point(pilelist[j+1].x,pilelist[j+1].y,cross.CrossPoint[i].x,cross.CrossPoint[i].y,cross.CrossPoint[i+1].x,cross.CrossPoint[i+1].y);
+            console.log("CrossPile index",b);
+            if(b==true) return j;
+        }
+    }
+    return 0;
+}
+
+function is_xiangjiao(a, b, c, d) {
+    if(Math.max(c.x,d.x)<Math.min(a.x,b.x)||Math.max(a.x,b.x)<Math.min(c.x,d.x)||Math.max(c.y,d.y)<Math.min(a.y,b.y)||Math.max(a.y,b.y)<Math.min(c.y,d.y))
+        return false;
+    if(((d.x-a.x)*(d.y-c.y)-(d.y-a.y)*(d.x-c.x))*((d.x-b.x)*(d.y-c.y)-(d.y-b.y)*(d.x-c.x))>0.000000001)
+        return false;
+    if(((c.x-a.x)*(b.y-a.y)-(c.y-a.y)*(b.x-a.x))*((d.x-a.x)*(b.y-a.y)-(d.y-a.y)*(b.x-a.x))>0.000000001)
+        return false;
+    return true;
 }
 
 function CrossAddCrossPoint(cross){
