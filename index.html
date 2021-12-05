@@ -27,11 +27,11 @@
     <script>DD_belatedPNG.fix('*');</script>
     <![endif]-->
 
-	<script src="https://bossanova.uk/jspreadsheet/v4/jexcel.js"></script>
-	<link rel="stylesheet" href="https://bossanova.uk/jspreadsheet/v4/jexcel.css" type="text/css" />
+	<script type="text/javascript" src="./js/jexcel.js"></script>
+	<link rel="stylesheet" href="./css/jexcel.css" type="text/css" />
 
-	<script src="https://jsuites.net/v4/jsuites.js"></script>
-	<link rel="stylesheet" href="https://jsuites.net/v4/jsuites.css" type="text/css" />
+	<script type="text/javascript" src="./js/jsuites.js"></script>
+	<link rel="stylesheet" href="./css/jsuites.css" type="text/css" />
 
 
 	<script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
@@ -589,10 +589,10 @@
 	})
 	/* 文件 */
 	$("#fileManage").click(function () {
-		InitFiLeManager(projId,prjName);
+		InitFileManager(projId,prjName);
 	})
 
-	function InitFiLeManager(projid,projname){
+	function InitFileManager(projid,projname){
 		layer.open({
 			type:2,
 			title:'工程文件',
@@ -665,7 +665,7 @@
 						}
 					});
 				}
-				else {console.log("PRJ exist");OpenPRJ(polyline,projid,projname);}
+				else {console.log("PRJ exist",data,polyline);OpenPRJ(data.m_jPile,projid,projname);}
 			},
 			error: function (errorMsg) {
 				alert(errorMsg);
@@ -791,10 +791,13 @@
 		xMin = mp.m_From;
 		window.initContent();
 		drawDEM(DEM);
-		console.log("addCrossFromMainSystem",msgtlProjData.cross);
-		for(let i= 0;i<msgtlProjData.cross.length;i++)cross.push(msgtlProjData.cross[i]);
-		cross = cross.unique();
-		console.log("addFromMainSys",cross);
+		// console.log("addCrossFromMainSystem",msgtlProjData.cross);
+		// msgtlProjData.cross = crossfillZ(msgtlProjData.cross,DEM.MID);
+		// console.log("crossfillz",msgtlProjData.cross);
+		// for(let i= 0;i<msgtlProjData.cross.length;i++)cross.push(msgtlProjData.cross[i]);
+		// cross = cross.unique();
+		// console.log("addFromMainSys",cross);
+
 		MapCrossDraw(cross,false);  //cross added
 		TowerDraw(towerlist_tabledata);
 		//drawGeo(pile_tabledata);
@@ -1806,7 +1809,6 @@
 			shade:0,
 			success:function (layero,index) {
 				tpIndex = index;
-				console.log(layero,index);
 				var body = layer.getChildFrame('body',index);
 				console.log(body);
 			},
@@ -1906,8 +1908,12 @@
 		xMin = mp.m_From;
 		drawDEM(DEM);
 		console.log("addCrossFromMainSystem",msgtlProjData.cross);
+		msgtlProjData.cross = crossfillZ(msgtlProjData.cross,DEM.MID);
+		console.log("crossfillz",msgtlProjData.cross);
+		msgtlProjData.cross = CatenaryCrossHeight(msgtlProjData.cross);
 		for(let i= 0;i<msgtlProjData.cross.length;i++)cross.push(msgtlProjData.cross[i]);
 		console.log("addFromMainSysRes",cross);
+		cross = cross.unique();
 		MapCrossDraw(cross,false);  //cross added
 		TowerDraw(towerlist_tabledata);
 		window.initContent();
@@ -3476,6 +3482,8 @@
 
 		scene.add(DEM_pgroup);
 
+
+
 	}
 	/* 转角投影线绘制函数 */
 	function ProjectLineGroundSymbol(x,y,z,angle){
@@ -3532,6 +3540,7 @@
 
 	$('#inputCorner').click(function () {
 		/* 转角投影线绘制 */
+		pile_tabledata = pilelistfillZ(pile_tabledata,DEM.MID);
 		for(let i=0;i<scene.children.length;i++){
 			if(scene.children[i].name ==="ProjectLine"){
 			scene.remove(scene.children[i]);
@@ -3539,7 +3548,7 @@
 			return true;
 			}
 		}
-		 drawGeo(pile_tabledata);
+		drawGeo(pile_tabledata);
 		console.log("ProjectLineadd",scene);
 	})
 
@@ -6024,13 +6033,15 @@
 						redpoint.name="redpoint";
 						redpoint.userData={"dem":redcross.children[0].name,"j":j}; //output offset y
 
-						//console.log("selected CrossObject and index",redcross.children[0],j,cross);
 						let crossIndex;
 						for(let ii = 0;ii<cross.length;ii++){
+							console.log("crossPosition",redcross.children[1].geometry.attributes.position.array[0]/Gridsize*xdivision+xMin,
+									cross[ii].CrossPoint[0].x);
 							if(redcross.children[0].name == cross[ii].AttrName&&
 									redcross.children[1].geometry.attributes.position.array[0]/Gridsize*xdivision+xMin-
 									cross[ii].CrossPoint[0].x<1){
 								crossIndex = ii;
+								console.log("crossIndex",crossIndex);
 								break;
 							}
 						}
@@ -6038,6 +6049,7 @@
 						scene.add(redpoint);
 					// CrossPoint info to layer page
 					if(layer.getChildFrame('body',tpIndex).find("#shuxing")[0]!=undefined) {
+						console.log("edit cross",cross,crossIndex);
 
 						layer.getChildFrame('body', tpIndex).find("#shuxing")[0].value = cross[crossIndex].CrossPoint[j].c;
 						layer.getChildFrame('body', tpIndex).find("#leiju")[0].value = cross[crossIndex].CrossPoint[j].x.toFixed(2);

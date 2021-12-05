@@ -145,7 +145,7 @@ function SysCrossTransToMap(cross,pilelist){
         MapCrossObject.CrossPoint[i].dc=0;
         MapCrossObject.CrossPoint[i].dz=0;
         MapCrossObject.CrossPoint[i].z=0;
-        MapCrossObject.CrossPoint[i].towerHigh=0;
+        MapCrossObject.CrossPoint[i].towerHigh=cross.CrossPoint[i].towerHigh;
     }
     cross.CrossPoint = MapCrossObject.CrossPoint ;
     cross.PointCount = MapCrossObject.PointCount ;
@@ -183,20 +183,36 @@ function CrossAddCrossPoint(cross){
     let len = cross.CrossPoint.length;
     for(let i = 0 ;i<len-1 ; i++){
         if(cross.CrossPoint[i].y*cross.CrossPoint[i+1].y<0){
-            let addCross = {c:1,dc:0,dz:0,towerHigh:0,x:0,y:0,z:0};
-            addCross.c=1;
-            addCross.dc=0;
+            let addCross = {c:3,dc:0,dz:0,towerHigh:0,x:0,y:0,z:0};
+            addCross.c=3;
+            addCross.dc=2001;
             addCross.dz=0;
             addCross.towerHigh = 0;
             addCross.x= CaculateXZeroY(cross.CrossPoint[i].x,cross.CrossPoint[i].y,cross.CrossPoint[i+1].x,cross.CrossPoint[i+1].y);
             addCross.y = 0;
             addCross.z=0;
-            cross.CrossPoint.splice(i,0,addCross);
+            cross.CrossPoint.splice(i+1,0,addCross);
             cross.PointCount++;
-           console.log( CaculateXZeroY(cross.CrossPoint[i].x,cross.CrossPoint[i].y,cross.CrossPoint[i+1].y,cross.CrossPoint[i+1].y) );
         }
     }
     return  cross;
+}
+
+function CatenaryCrossHeight(cross){
+    for(let i  =  0 ; i < cross.length; i++){
+        for(let j = 0 ;j<cross[i].PointCount; j++){
+            if(cross[i].CrossPoint[j].y == 0){
+                console.log("j-1,j,j+1",cross[i].CrossPoint[j-1],cross[i].CrossPoint[j],cross[i].CrossPoint[j+1]);
+                // caculate height
+                cross[i].CrossPoint[j].towerHigh = CaculateCurveHeight(cross[i].CrossPoint[j-1].x,cross[i].CrossPoint[j-1].y,
+                    cross[i].CrossPoint[j-1].dz,cross[i].CrossPoint[j-1].z,cross[i].CrossPoint[j+1].x,cross[i].CrossPoint[j+1].y,
+                    cross[i].CrossPoint[j+1].dz,cross[i].CrossPoint[j+1].z,cross[i].CrossPoint[j].x,cross[i].CrossPoint[j].y,cross[i].CrossPoint[j].dz);
+                cross[i].CrossPoint[j].z= cross[i].CrossPoint[j].dz + cross[i].CrossPoint[j].towerHigh;
+            }
+        }
+    }
+    console.log("CatenaryCrossHeight");
+    return cross;
 }
 
 function CaculateXZeroY(x1,y1,x2,y2){
@@ -204,4 +220,65 @@ function CaculateXZeroY(x1,y1,x2,y2){
     console.log(x1,y1,x2,y2);
     resX = -y1*(x2-x1)/(y2-y1)+x1;
     return resX;
+}
+
+function pilelistfillZ(pilelist,MID){
+    let len = MID.length;
+    if(MID == undefined) return pilelist;
+    else {
+        for(let i =0;i<len;i++){
+            pilelist[i].z = MID[i].Section[0].z;
+        }
+    }
+    let len2 = MID[len-1].Section.length;
+    pilelist[len].z = MID[len-1].Section[len2-1].z;
+    // last corner not fill z;
+    return pilelist
+}
+
+function crossfillZ(cross,MID){
+    let clen = cross.length;let mlen = MID.length;
+    if(MID == undefined||mlen==0) return cross;
+
+    for(let i= 0;i<clen;i++) {
+        for(let p=0;p<cross[i].PointCount;p++){
+            cross[i].CrossPoint[p] = crossz(cross[i].CrossPoint[p],MID)
+        }
+    }
+    return cross;
+}
+
+function crossz(point,MID){
+    let mlen = MID.length;
+    let flag= -1;
+    for(let i = 0;i<mlen-1;i++){
+
+        if(point.x<MID[i].Section[0].x) {flag=i-1;console.log("flag",flag); break;}
+    }
+    if(flag==-1){flag = mlen -1 };
+    let l = 0,r = MID[flag].Section.length; // Section index
+    while(l < r)
+    {
+        let m = l + r >> 1;
+        if(MID[flag].Section[m].x < point.x) {l = m + 1;}
+        else r = m;
+    }
+    //fill data dz 断面高  z 节点高度
+    point.dz = (MID[flag].Section[l].z - MID[flag].Section[l-1].z)*(point.x - MID[flag].Section[l-1].x)/
+    (MID[flag].Section[l].x - MID[flag].Section[l-1].x)+MID[flag].Section[l-1].z;
+    point.z = point.dz +point.towerHigh;
+    return point;
+}
+
+function CaculateCurveHeight(x1,y1,dmz1,z1,x2,y2,dmz2,z2,crossx,crossy,crossz) {
+  //caculate zO
+    let dz= z2-z1;
+    let dl1 = Math.sqrt((x1-crossx)*(x1-crossx)+(y1-crossy)*(y1-crossy));
+    let dl2 = Math.sqrt((x2-crossx)*(x2-crossx)+(y2-crossy)*(y2-crossy));
+    let h0 =z1+dz*dl1/(dl1+dl2);
+    let l1 = Math.sqrt((x1-crossx)*(x1-crossx)+(y1-crossy)*(y1-crossy)+(z1-h0)*(z1-h0));
+    let l2 = Math.sqrt((x2-crossx)*(x2-crossx)+(y2-crossy)*(y2-crossy)+(z2-h0)*(z2-h0));
+    let k = 0.00002;
+    let f = sinh(k*l1)*sinh(k*l2)/k;
+    return h0-f-crossz; // remain height h0-f-dmz
 }
