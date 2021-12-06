@@ -11,17 +11,14 @@ Array.prototype.unique=function(){
     var arr=[];//新建一个临时数组
 
     for(var i=0;i<this.length;i++){//遍历当前数组
-        console.log(i,this[i]);
         let flag = new Boolean(true);
         for (let j = 0 ;j<arr.length;j++){
             if(Math.abs(arr[j].CrossPoint[0].x - this[i].CrossPoint[0].x)<0.01){
-                flag=false;console.log(flag);break;
+                flag=false;break;
             }
         }
         if(flag)arr.push(this[i]);
     }
-
-    console.log(arr);
     return arr;
 };
 function TowerPRKIndex (prk,val){
@@ -73,7 +70,6 @@ function limit(arr, num){
 }
 //transform coordination to Geographic system
 function Line2Geo(pilelist,towerlist){
-    console.log(towerlist.length);
     let pileInd = 0;let towInd = 0;
     let plen = pilelist.length; let tlen = towerlist.length;
     while(towInd<tlen){
@@ -115,7 +111,6 @@ function WebMercatorToSumDHigh(point,pilelist,index){
      ∆y = │AXo＋BYo＋C│／√（A²＋B²）∆x =
      cos∠a=[(x2-x1)(x3-x1)+(y2-y1)(y3-y1)]/|ab||ac|
      */
-    console.log(index);
     dy =  patch_line_point(point.x,point.y,pilelist[index].x,pilelist[index].y,pilelist[index+1].x,pilelist[index+1].y);
     dx =  Math.sqrt(Math.pow((point.x-pilelist[index].x),2)+Math.pow((pilelist[index].y-point.y),2)- dy*dy);
     MapCoord.x += dx ; MapCoord.y = dy;  // dy  left right
@@ -162,7 +157,6 @@ function CrosspileIndex(cross,pilelist){
             // let l2 = patch_line_point(cross.CrossPoint[i+1].x,cross.CrossPoint[i+1].y,pilelist[j].x,pilelist[j].y,pilelist[j+1].x,pilelist[j+1].y);
             // let l3 = patch_line_point(pilelist[j].x,pilelist[j].y,cross.CrossPoint[i].x,cross.CrossPoint[i].y,cross.CrossPoint[i+1].x,cross.CrossPoint[i+1].y);
             // let l4 = patch_line_point(pilelist[j+1].x,pilelist[j+1].y,cross.CrossPoint[i].x,cross.CrossPoint[i].y,cross.CrossPoint[i+1].x,cross.CrossPoint[i+1].y);
-            console.log("CrossPile index",b);
             if(b==true) return j;
         }
     }
@@ -202,7 +196,6 @@ function CatenaryCrossHeight(cross){
     for(let i  =  0 ; i < cross.length; i++){
         for(let j = 0 ;j<cross[i].PointCount; j++){
             if(cross[i].CrossPoint[j].y == 0){
-                console.log("j-1,j,j+1",cross[i].CrossPoint[j-1],cross[i].CrossPoint[j],cross[i].CrossPoint[j+1]);
                 // caculate height
                 cross[i].CrossPoint[j].towerHigh = CaculateCurveHeight(cross[i].CrossPoint[j-1].x,cross[i].CrossPoint[j-1].y,
                     cross[i].CrossPoint[j-1].dz,cross[i].CrossPoint[j-1].z,cross[i].CrossPoint[j+1].x,cross[i].CrossPoint[j+1].y,
@@ -211,13 +204,11 @@ function CatenaryCrossHeight(cross){
             }
         }
     }
-    console.log("CatenaryCrossHeight");
     return cross;
 }
 
 function CaculateXZeroY(x1,y1,x2,y2){
     let resX = 0;
-    console.log(x1,y1,x2,y2);
     resX = -y1*(x2-x1)/(y2-y1)+x1;
     return resX;
 }

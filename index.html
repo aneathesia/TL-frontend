@@ -458,10 +458,7 @@
 			console.log("msg.cross", msgtlProjData.cross[i]);
 			let res = SysCrossTransToMap(msgtlProjData.cross[i], pile_tabledata);
 			msgtlProjData.cross[i] = res;
-			console.log("PointRes", msgtlProjData.cross[i]);
 			msgtlProjData.cross[i] = CrossAddCrossPoint(msgtlProjData.cross[i]);
-
-			console.log("crossAfter", msgtlProjData.cross[i]);
 		}
 
 		console.log(projId,prjName,MapFileName);
@@ -484,7 +481,6 @@
 
 		console.log("auto create map name");console.log(projid,projname,mapname);
 		createPRJ(projid,projname,polyline);
-
 		createMAP(projid,projname,mapname);
 
 
@@ -742,7 +738,7 @@
 			processData: false,
 			headers:{"token":localStorage.getItem("token")},
 			success: function(prkdata){
-				console.log(prkdata);
+				console.log("PRK-Data",prkdata);
 				prk = prkdata;
 
 			},
@@ -789,8 +785,9 @@
 		ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =mp.m_Grid;
 		horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
 		xMin = mp.m_From;
-		window.initContent();
+
 		drawDEM(DEM);
+		window.initContent();
 		// console.log("addCrossFromMainSystem",msgtlProjData.cross);
 		// msgtlProjData.cross = crossfillZ(msgtlProjData.cross,DEM.MID);
 		// console.log("crossfillz",msgtlProjData.cross);
@@ -1909,7 +1906,6 @@
 		drawDEM(DEM);
 		console.log("addCrossFromMainSystem",msgtlProjData.cross);
 		msgtlProjData.cross = crossfillZ(msgtlProjData.cross,DEM.MID);
-		console.log("crossfillz",msgtlProjData.cross);
 		msgtlProjData.cross = CatenaryCrossHeight(msgtlProjData.cross);
 		for(let i= 0;i<msgtlProjData.cross.length;i++)cross.push(msgtlProjData.cross[i]);
 		console.log("addFromMainSysRes",cross);
@@ -6259,8 +6255,10 @@
 		}
 
 		// caculateDem intersect points and generate obj add to scene
+
 		for(let i=0 ;i<target.length;i++){
 			var sectionRay = new THREE.Raycaster();
+			//let labelray = new THREE.Vector3(target[i].point.x,target[i].point.y,target[i].point.z);
 			sectionRay.set(target[i].point,new THREE.Vector3(0,1,0));
 			var m_linetarget = sectionRay.intersectObject(m_linegroup,true);
 			for(let j=0;j<m_linetarget.length;j++){
@@ -6454,14 +6452,14 @@
 			createCrossLabel(towerhigh,codeId,added);
 		}
 		//each crosspoint modify
-		// for(let i=0;i<cross.length;i++){
-		// 	//console.log("cross i",cross[i]);
-		// 	for(let ii=0;ii<cross[i].CrossPoint.length;ii++){
-		// 		//console.log("cross i,Point ii",i,ii);
-		// 		MapCrossModify(i,ii,cross[i].CrossPoint[ii].c,cross[i].CrossPoint[ii].x,cross[i].CrossPoint[ii].y,cross[i].CrossPoint[ii].z,
-		// 				cross[i].CrossPoint[ii].dz,cross[i].CrossPoint[ii].dc);
-		// 	}
-		// }
+		for(let i=0;i<cross.length;i++){
+			//console.log("cross i",cross[i]);
+			for(let ii=0;ii<cross[i].CrossPoint.length;ii++){
+				//console.log("cross i,Point ii",i,ii);
+				MapCrossModify(i,ii,cross[i].CrossPoint[ii].c,cross[i].CrossPoint[ii].x,cross[i].CrossPoint[ii].y,cross[i].CrossPoint[ii].z,
+						cross[i].CrossPoint[ii].dz,cross[i].CrossPoint[ii].dc);
+			}
+		}
 
 	}
 
