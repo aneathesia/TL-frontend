@@ -55,7 +55,7 @@
 <style>
 	@import url(./css/nativestyle.css);
 </style>
-<header class="Hui-header cl"> <a class="Hui-logo l" title="架空输电线路勘测设计一体化系统" href="#">架空输电线路勘测设计一体化系统</a>
+<header class="Hui-header cl" style="background-color: #006865">
 	<div style="float:right;margin-right: 2%;margin-top: 1%;display:none">
 		<li style="display: inline-block;"><a href="#"><label id="login" style="background: wheat">登录</label></a></li>
 		<li style="display: inline-block;"><a href="#"><label id="UserCenter" style="background: wheat">用户中心</label></a></li>
@@ -1669,7 +1669,7 @@
 			headers:{"token":localStorage.getItem("token")},
 			success: function () {
 				//download file
-				download(prjName,MapFileName+".ORG");
+				download(projId,MapFileName+".ORG");
 			}
 		})
 	})
@@ -1879,7 +1879,7 @@
 		formData.append("demFile",demFile);
 		console.log(demFile);
 		$.ajax({
-			url: BASEURL+"/SectionMapSave", //提交的路径
+			url: BASEURL+"/GEOCaculate", //提交的路径
 			type: "post",       //提交方式
 			data: formData,    //提交的数据
 			dataType:"json",
@@ -5764,7 +5764,7 @@
 		towerlist[editInd].High = Number(layer.getChildFrame('body',tpIndex).find("#hei")[0].value);
 		towerlist[editInd].offset = Number(layer.getChildFrame('body',tpIndex).find("#gap")[0].value);
 		towerlist[editInd].Base = Number(layer.getChildFrame('body',tpIndex).find("#flow")[0].value);
-		towerlist[editInd].TowerType = layer.getChiµldFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
+		towerlist[editInd].TowerType = layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 		towerlist[editInd].Status = Number(layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val());
 		towerlist[editInd].TowerHigh = Number(layer.getChildFrame('body',tpIndex).find("#towerheight").find("option:selected").val());
 		var tpos={};

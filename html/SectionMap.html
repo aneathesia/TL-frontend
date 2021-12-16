@@ -10,8 +10,7 @@
         <div class="layui-form-item" style="display: inline-block">
             <label class="layui-form-label">起始桩位</label>
             <div class="layui-input-block">
-                <select name="Begin" lay-verify="required" id="beginOp" >
-
+                <select name="Begin" lay-verify="required" id="beginOp">
                 </select>
             </div>
         </div>
@@ -43,8 +42,8 @@
         <label class="layui-form-label">断面线设置</label>
         <div class="layui-input-block">
             <select name="sectype" lay-verify="required" id="sectypeOp">
-                <option value=""></option>
-                <option value="0">三线断面</option>
+<!--                <option value=""></option>-->
+                <option value="0" selected>三线断面</option>
                 <option value="1">中心断面</option>
             </select>
         </div>
@@ -78,6 +77,7 @@
         };
         console.log("JSON"+JSON.stringify(transobj));
         parent.GetSecDem(transobj);  //将子窗口的参数传递给父窗口
+
         parent.layer.close(index);
     }
 
