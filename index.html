@@ -1879,7 +1879,7 @@
 		formData.append("demFile",demFile);
 		console.log(demFile);
 		$.ajax({
-			url: BASEURL+"/GEOCaculate", //提交的路径
+			url: BASEURL+"/DEMRange", //提交的路径
 			type: "post",       //提交方式
 			data: formData,    //提交的数据
 			dataType:"json",
@@ -1889,31 +1889,51 @@
 			processData: false,
 			headers:{"token":localStorage.getItem("token")},
 			success: function (data) {
-				console.log("SectionMapSave",data);
-				DEM= data.DEM;
-				mp = data.mp;
-				cross = data.cross;
+				if($.isEmptyObject(data)){
+					console.log("createSuccess");
+					$.ajax({
+						url: BASEURL+"/GEOCaculate", //提交的路径
+						type: "post",       //提交方式
+						data: formData,    //提交的数据
+						dataType:"json",
+						async: false,
+						cache: false,
+						contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+						processData: false,
+						headers:{"token":localStorage.getItem("token")},
+						success: function (data) {
+							console.log("SectionMapSave",data);
+							DEM= data.DEM;
+							mp = data.mp;
+							cross = data.cross;
+						},
+						error: function (errorMsg) {
+							//	alert(errorMsg);
+						}
+					});
+					console.log("DEM,mp,cross updata",DEM,mp,cross);
+					//$("#drawingpara").click();
+					ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =mp.m_Grid;
+					horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
+					xMin = mp.m_From;
+					drawDEM(DEM);
+					console.log("addCrossFromMainSystem",msgtlProjData.cross);
+					msgtlProjData.cross = crossfillZ(msgtlProjData.cross,DEM.MID);
+					msgtlProjData.cross = CatenaryCrossHeight(msgtlProjData.cross);
+					for(let i= 0;i<msgtlProjData.cross.length;i++)cross.push(msgtlProjData.cross[i]);
+					console.log("addFromMainSysRes",cross);
+					cross = cross.unique();
+					MapCrossDraw(cross,false);  //cross added
+					TowerDraw(towerlist_tabledata);
+					window.initContent();
+					drawGeo(pile_tabledata);
+				}
+				else {console.log(data);alert(JSON.stringify(data)); return;}
 			},
 			error: function (errorMsg) {
-			//	alert(errorMsg);
+				//	alert(errorMsg);
 			}
 		});
-		console.log("DEM,mp,cross updata",DEM,mp,cross);
-		//$("#drawingpara").click();
-		ydivision=mp.m_HScale*mp.m_Grid/mp.m_CScale; xdivision = mp.m_DScale*mp.m_Grid/mp.m_CScale;Gridsize =mp.m_Grid;
-		horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
-		xMin = mp.m_From;
-		drawDEM(DEM);
-		console.log("addCrossFromMainSystem",msgtlProjData.cross);
-		msgtlProjData.cross = crossfillZ(msgtlProjData.cross,DEM.MID);
-		msgtlProjData.cross = CatenaryCrossHeight(msgtlProjData.cross);
-		for(let i= 0;i<msgtlProjData.cross.length;i++)cross.push(msgtlProjData.cross[i]);
-		console.log("addFromMainSysRes",cross);
-		cross = cross.unique();
-		MapCrossDraw(cross,false);  //cross added
-		TowerDraw(towerlist_tabledata);
-		window.initContent();
-		drawGeo(pile_tabledata);
 		layer.close(loadInd);
 	}
 
