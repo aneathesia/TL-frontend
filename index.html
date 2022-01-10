@@ -229,6 +229,7 @@
 	<div id = "lqixiang" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
 	<div id = "lfenduan" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
 	<div id = "ltower" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
+	<div id = "linsulate" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
 
 <!--	<div id = "lefttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>-->
 <!--	<div id = "lefttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>-->
@@ -254,6 +255,7 @@
 	<div id = "rqixiang" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
 	<div id = "rfenduan" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
 	<div id = "rtower" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
+	<div id = "rinsulate" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
 <!--	<div id = "rtowerpara" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
 <!--	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
 <!--	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
@@ -379,6 +381,24 @@
 		{'name':'地线安全系数','value':0},
 		{'name':'地线年平运行张力上限','value':0},
 		{'name':'设计回路','value':'单回路'}];
+	var insulateSample = [{'name':'绝缘子串类型','value':'导线耐张串'},
+		{'name':'单联双联','value':'单联'},
+		{'name':'每联片数','value':0},
+		{'name':'无冰串重(kg)','value':0},
+		{'name':'单片覆冰(kg)','value':0},
+		{'name':'等效串长(m)','value':0},
+		{'name':'单片受风面积(m^2)','value':0},
+		{'name':'金具受风折算系数','value':0},
+		{'name':'绝缘子常年荷载安全系数','value':0},
+		{'name':'绝缘子最大荷载安全系数','value':0},
+		{'name':'绝缘子断线工况安全系数','value':0},
+		{'name':'绝缘子破坏荷载(kN)','value':0},
+		{'name':'金具最大荷载安全系数','value':0},
+		{'name':'金具断线工况安全系数','value':0},
+		{'name':'金具破坏荷载(kN)','value':0},
+		{'name':'V型串夹角(°)','value':0},
+		{'name':'污秽区使用条件','value':0},
+		{'name':'绝缘子材料','value':0}];
 
 	window.conductorName=[];
 	window.conductorset=[];
@@ -395,6 +415,10 @@
 	var towerName=[];
 	var towerset=[];
 	var ridtower = 0;
+
+	window.InsulateName=[];
+	window.Insulateset=[];
+	window.ridinsulate = 0;
 
 
 	let tpIndex;
@@ -1568,25 +1592,6 @@
 	$("#tb_pile_calc").click(function(){
 		pilecalc(pile_tabledata);
 	})
-	/*deprecated*/
-	// $("#tb-pile-save").click(function (){
-	// 	var form = new FormData();
-	// 	form.append("pilelist",JSON.stringify(pile_tabledata));
-	// 	form.append("ProjectName", prjName);
-	// 	form.append("ProjectId", projId);
-	// 	$.ajax({
-	// 		url: BASEURL+"/JsonTotxtfile", //提交的路径
-	// 		type: "post",       //提交方式
-	// 		data: form,    //提交的数据
-	// 		// dataType:"json",
-	// 		contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-	// 		processData: false,
-	// 		headers:{"token":localStorage.getItem("token")},
-	// 		success: function (res) {
-	// 			console.log(res); //  no content situation
-	// 		}
-	// 	})
-	// })
 
 	window.towerlistCalc = function(){
 		var form = new FormData();
@@ -2373,6 +2378,11 @@
 			return Number(value);
 		}
 	}
+	function beforeChangeEventInsulate(instance, cell, x, y, value){
+		if(y!=0){
+			return Number(value);
+		}
+	}
 
 	function menu(obj, x, y, e) {
 		var items = [];
@@ -2536,6 +2546,10 @@
 		ridtower =y1;
 		rtower.setData(towerset[y1]);
 	}
+	function selectionActiveInsulate(instance, x1, y1, x2, y2, origin) {
+		ridtower =y1;
+		rtower.setData(towerset[y1]);
+	}
 	function Afterchangeguicheng(){
 		guicheng = rguicheng1.getJson();
 	}
@@ -2553,6 +2567,9 @@
 		Sectionset[ridsection]= rfenduan.getJson();
 	}
 	function AfterchangeTower(){
+		towerset[ridtower]= rtower.getJson();
+	}
+	function AfterchangeInsulate(){
 		towerset[ridtower]= rtower.getJson();
 	}
 
@@ -2659,6 +2676,23 @@
 			onbeforechange: beforeChangeEventTower,
 			onafterchanges: AfterchangeTower
 		})
+	window.linsulate = jspreadsheet(document.getElementById('linsulate'),{
+		contextMenu: function(obj,x,y,e){},
+		columns:[
+			{type:"text",title:"型号/名称/图号",width: 150, name: "InsulateCategory"}],
+		onselection: selectionActiveInsulate
+	})
+	window.rinsulate = jspreadsheet(document.getElementById('rinsulate'),{
+		contextMenu:function(obj,x,y,e){},
+		colAlignments:['left',''],  //Align
+		columns:[
+			{type:"text",title:"参数名称",width: 150, name: "name",readOnly:true},
+			{type:"text",title:"参数数值",width: 150, name: "value",editor:customColumnTower}],
+		// editable: false
+		onbeforechange: beforeChangeEventInsulate,
+		onafterchanges: AfterchangeInsulate
+	})
+
 
 
 		var guicheng=[]
@@ -2870,7 +2904,14 @@
 		$('#rtower,.jexcel_container .jexcel_content').show();
 	})
 	// $('#gantatacai')
-	// $('#jueyuancan')
+	$('#jueyuancan').click(function(){
+		ridinsulate = 0;
+		if(SectionName.length==0){
+			for(let i = 0; i<prk.INSULATE.length;i++){
+				InsulateName.push([prk.INSULATE[i].name]);
+			}
+		}
+	})
 	// $('#jueyuancai')
 	// $('#jiedican')
 	// $('#jiedicai')
