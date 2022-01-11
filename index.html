@@ -216,7 +216,7 @@
 		<p><button class="xbutton xround" id="fenduan">分段设置</button></p>
 		<p><button class="xbutton xround" id="gantashiyong">杆塔使用参数</button></p>
 		<p><button class="xbutton xround" id="gantatacai" disabled="disabled">杆塔塔材基础</button></p>
-		<p><button class="xbutton xround" id="jueyuancan" disabled="disabled">绝缘子串参数</button></p>
+		<p><button class="xbutton xround" id="jueyuancan">绝缘子串参数</button></p>
 		<p><button class="xbutton xround" id="jueyuancai" disabled="disabled">绝缘子串材料</button></p>
 		<p><button class="xbutton xround" id="jiedican" disabled="disabled">接地装置参数</button></p>
 		<p><button class="xbutton xround" id="jiedicai" disabled="disabled">接地装置材料</button></p>
@@ -416,8 +416,8 @@
 	var towerset=[];
 	var ridtower = 0;
 
-	window.InsulateName=[];
-	window.Insulateset=[];
+	window.insulateName=[];
+	window.insulateset=[];
 	window.ridinsulate = 0;
 
 
@@ -2350,6 +2350,86 @@
 				}
 			}
 		}
+	var customColumnInsulate = {
+
+		// Methods
+		closeEditor : function(cell, save) {
+			var testx1 =  cell.getAttribute('data-x'); //Get data-x value from cell
+			var testy1 =  cell.getAttribute('data-y'); //Get data-y value from cell
+
+
+			//Find cell that will use custom dropdown based on data-x and data-y
+			if (testx1 == "1" && testy1 == "0") {
+				var e = document.getElementById("insulateArr"); //Define custom selection
+				var value = e.options[e.selectedIndex].text; //Define value of custom cell
+				//e.style.visibility = 'hidden'; //Hide dropdown after select
+				//e.parent.removeChild("localselct");
+			}
+
+			else {
+				var value = cell.children[0].value; //Define value of non-custom cell in same column
+			}
+
+			cell.innerHTML = value; //Set value of cell
+
+			return value; //Return value
+
+		},
+		openEditor : function(cell) {
+			var testx1 =  cell.getAttribute('data-x'); //Get data-x value from cell
+			var testy1 =  cell.getAttribute('data-y'); //Get data-y value from cell
+
+			// Create input
+			var element = document.createElement('input');
+			element.value = cell.innerHTML;
+			// Update cell
+			cell.classList.add('editor');
+			cell.innerHTML = '';
+			cell.appendChild(element);
+
+
+			//Find cell that will use custom dropdown based on data-x and data-y
+			if (testx1 == "1" && testy1 == "0") {
+
+				element.style.display = "none";
+				var e = document.createElement('select'); //Define custom selection
+				e.style.visibility = 'visible'; //Show dropdown on select
+				e.id = "insulateArr";
+				console.log(e);
+
+				//Construct custom dropdown
+				for(let i=0;i<towerArr.length;i++){
+					var opt = document.createElement('option');
+					opt.text = insulateArr[i];
+					opt.value = i;
+					e.append(opt);
+				}
+				cell.appendChild(e);
+				console.log(cell);
+			}
+
+
+			// Focus on the element
+			element.focus();
+
+		},
+		getValue : function(cell) {
+			return cell.innerHTML;
+		},
+		setValue : function(cell, value, save) {
+
+			var testx =  cell.getAttribute('data-x'); //Get data-x value from cell
+			var testy =  cell.getAttribute('data-y'); //Get data-y value from cell
+			if (testx == "1" && testy == "0") {
+				var e = document.getElementById("insulateArr");
+				var value = e.options[e.selectedIndex].text;
+				return value;
+			}
+			else {
+				cell.innerHTML = value;
+			}
+		}
+	}
 
 	function beforeChangeEventConductor(instance, cell, x, y, value){
 		if(y!=0){
@@ -2547,8 +2627,8 @@
 		rtower.setData(towerset[y1]);
 	}
 	function selectionActiveInsulate(instance, x1, y1, x2, y2, origin) {
-		ridtower =y1;
-		rtower.setData(towerset[y1]);
+		ridinsulate =y1;
+		rinsulate.setData(insulateset[y1]);
 	}
 	function Afterchangeguicheng(){
 		guicheng = rguicheng1.getJson();
@@ -2570,7 +2650,7 @@
 		towerset[ridtower]= rtower.getJson();
 	}
 	function AfterchangeInsulate(){
-		towerset[ridtower]= rtower.getJson();
+		insulateset[ridinsulate]= rinsulate.getJson();
 	}
 
 
@@ -2687,7 +2767,7 @@
 		colAlignments:['left',''],  //Align
 		columns:[
 			{type:"text",title:"参数名称",width: 150, name: "name",readOnly:true},
-			{type:"text",title:"参数数值",width: 150, name: "value",editor:customColumnTower}],
+			{type:"text",title:"参数数值",width: 150, name: "value",editor:customColumnInsulate}],
 		// editable: false
 		onbeforechange: beforeChangeEventInsulate,
 		onafterchanges: AfterchangeInsulate
@@ -2906,11 +2986,57 @@
 	// $('#gantatacai')
 	$('#jueyuancan').click(function(){
 		ridinsulate = 0;
-		if(SectionName.length==0){
+		if(insulateName.length==0){
 			for(let i = 0; i<prk.INSULATE.length;i++){
-				InsulateName.push([prk.INSULATE[i].name]);
+				insulateName.push([prk.INSULATE[i].name]);
 			}
 		}
+		$(".jexcel_content").hide();
+		linsulate.setData(insulateName);
+		if(insulateset.length==0){
+			for(let i = 0; i<prk.INSULATE.length;i++){
+				let insulatetemp  = [{'name':'绝缘子串类型','value':'导线耐张串'},
+					{'name':'单联双联','value':'单联'},
+					{'name':'每联片数','value':0},
+					{'name':'无冰串重(kg)','value':0},
+					{'name':'单片覆冰(kg)','value':0},
+					{'name':'等效串长(m)','value':0},
+					{'name':'单片受风面积(m^2)','value':0},
+					{'name':'金具受风折算系数','value':0},
+					{'name':'绝缘子常年荷载安全系数','value':0},
+					{'name':'绝缘子最大荷载安全系数','value':0},
+					{'name':'绝缘子断线工况安全系数','value':0},
+					{'name':'绝缘子破坏荷载(kN)','value':0},
+					{'name':'金具最大荷载安全系数','value':0},
+					{'name':'金具断线工况安全系数','value':0},
+					{'name':'金具破坏荷载(kN)','value':0},
+					{'name':'V型串夹角(°)','value':0},
+					{'name':'污秽区使用条件','value':0},
+					{'name':'绝缘子材料','value':0}];
+				insulateset.push(insulatetemp);
+				insulateset[i][0].value = insulateArr[prk.INSULATE[i].type];
+				insulateset[i][1].value = prk.INSULATE[i].Join;
+				insulateset[i][2].value = prk.INSULATE[i].Num;
+				insulateset[i][3].value = prk.INSULATE[i].Weight;
+				insulateset[i][4].value = prk.INSULATE[i].IceWeight;
+				insulateset[i][5].value = prk.INSULATE[i].Length;
+				insulateset[i][6].value = prk.INSULATE[i].area;
+				insulateset[i][7].value = prk.INSULATE[i].k;
+				insulateset[i][8].value = prk.INSULATE[i].avergeK;
+				insulateset[i][9].value = prk.INSULATE[i].maxK;
+				insulateset[i][10].value = prk.INSULATE[i].lineBrokeK;
+				insulateset[i][11].value = prk.INSULATE[i].Strength;
+				insulateset[i][12].value = prk.INSULATE[i].jjmaxK;
+				insulateset[i][13].value = prk.INSULATE[i].jjlineBrokeK;
+				insulateset[i][14].value = prk.INSULATE[i].jjStrength;
+				insulateset[i][15].value = prk.INSULATE[i].angleV;
+				insulateset[i][16].value = prk.INSULATE[i].dirtyTpye;
+				insulateset[i][17].value = prk.INSULATE[i].metrialTpye;
+			}
+		}
+		$('#linsulate,.jexcel_container .jexcel_content').show();
+		rinsulate.setData(insulateset[0]);rinsulate.hideIndex();
+		$('#rinsulate,.jexcel_container .jexcel_content').show();
 	})
 	// $('#jueyuancai')
 	// $('#jiedican')
@@ -2990,7 +3116,8 @@
 		for (let i = 0; i < SectionName.length; i++) {
 			prk.SECTION[i].name = SectionName[i][0];
 		}
-		//
+
+		//tower
 		for(let i=0;i<towerset.length;i++){
 			var ttype=0;
 			for(let ii=0;ii<towerArr.length;ii++){
@@ -3012,8 +3139,28 @@
 		}
 		prk.TOWER.splice(towerName.length,prk.TOWER.length);
 
+		//Insulate
+		for(let i=0;i<insulateset.length;i++){
+			var ttype=0;
+			for(let ii=0;ii<insulateArr.length;ii++){
+				if(insulateArr[ii] == insulateset[i][0].value){ ttype = ii; break;}
+			}
+			var temp = {"type":ttype,"Join":insulateset[i][1].value,"Num":insulateset[i][2].value,
+				"Weight":insulateset[i][3].value,"IceWeight":insulateset[i][4].value,"Length":insulateset[i][5].value,
+				"area":insulateset[i][6].value,"k":insulateset[i][7].value,"avergeK":insulateset[i][8].value,
+				"maxK":insulateset[i][9].value,"lineBrokeK":insulateset[i][10].value,"Strength":insulateset[i][11].value,
+				"jjmaxK":insulateset[i][12].value,"jjlineBrokeK":insulateset[i][13].value,"jjStrength":insulateset[i][14].value,
+				"angleV":insulateset[i][15].value,"dirtTpye":insulateset[i][16].value,"metrialTpye":insulateset[i][17].value
+			};
 
-		console.log(prk);
+			prk.INSULATE.splice(i,1,temp);
+		}
+		for (let i = 0; i < insulateName.length; i++) {
+			prk.INSULATE[i].name = insulateName[i][0];
+		}
+		prk.INSULATE.splice(insulateName.length,prk.INSULATE.length);
+
+		console.log("saveprk",prk);
 
 
 		var prkinfo = new FormData();
