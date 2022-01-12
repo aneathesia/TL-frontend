@@ -381,20 +381,20 @@
 		{'name':'地线安全系数','value':0},
 		{'name':'地线年平运行张力上限','value':0},
 		{'name':'设计回路','value':'单回路'}];
-	var insulateSample = [{'name':'绝缘子串类型','value':'导线耐张串'},
-		{'name':'单联双联','value':'单联'},
-		{'name':'每联片数','value':0},
+	var insulateSample = [{'name':'绝缘子串类型','value':'导线悬垂串'},
+		{'name':'单联双联','value':1},
+		{'name':'每联片数','value':1},
 		{'name':'无冰串重(kg)','value':0},
-		{'name':'单片覆冰(kg)','value':0},
-		{'name':'等效串长(m)','value':0},
-		{'name':'单片受风面积(m^2)','value':0},
-		{'name':'金具受风折算系数','value':0},
-		{'name':'绝缘子常年荷载安全系数','value':0},
-		{'name':'绝缘子最大荷载安全系数','value':0},
-		{'name':'绝缘子断线工况安全系数','value':0},
+		{'name':'单片覆冰(kg)','value':3},
+		{'name':'等效串长(m)','value':5.5},
+		{'name':'单片受风面积(m^2)','value':0.03},
+		{'name':'金具受风折算系数','value':1.1},
+		{'name':'绝缘子常年荷载安全系数','value':4.0},
+		{'name':'绝缘子最大荷载安全系数','value':2.7},
+		{'name':'绝缘子断线工况安全系数','value':1.8},
 		{'name':'绝缘子破坏荷载(kN)','value':0},
-		{'name':'金具最大荷载安全系数','value':0},
-		{'name':'金具断线工况安全系数','value':0},
+		{'name':'金具最大荷载安全系数','value':2.5},
+		{'name':'金具断线工况安全系数','value':1.5},
 		{'name':'金具破坏荷载(kN)','value':0},
 		{'name':'V型串夹角(°)','value':0},
 		{'name':'污秽区使用条件','value':0},
@@ -1138,8 +1138,8 @@
 					towerlist_tabledata[i].TowerHigh,
 					towerlist_tabledata[i].Base,
 					-1,
-					4.5,
-					"X01");
+					towerlist_tabledata[i].InsulatorLength,
+					towerlist_tabledata[i].InsulatorPA);
 			TowerGroup.add(towerset);
 			scene.add(TowerGroup);
 			var tlabel = createSpritelabel(towerlist_tabledata[i].Name,
@@ -1411,6 +1411,9 @@
 		if($("#rtower").is(":visible")){
 			addrow(towerName,towerset,[""],towerSample,ridtower,ltower,rtower);
 		}
+		if($("#rinsulate").is(":visible")){
+			addrow(insulateName,insulateset,[""],insulateSample,ridinsulate,linsulate,rinsulate);
+		}
 	})
 
 	$("#InsertPara").click(function(){
@@ -1422,6 +1425,9 @@
 		}
 		if($("#rtower").is(":visible")){
 			insertrow(towerName,towerset,[""],towerSample,ridtower,ltower,rtower);
+		}
+		if($("#rinsulate").is(":visible")){
+			insertrow(insulateName,insulateset,[""],insulateSample,ridinsulate,linsulate,rinsulate);
 		}
 	})
 
@@ -1435,6 +1441,10 @@
 		if($("#rtower").is(":visible")){
 			deleterow(towerName,towerset,ridtower,ltower,rtower);
 		}
+		if($("#rinsulate").is(":visible")){
+			console.log("deleteRow insulate");
+			deleterow(insulateName,insulateset,ridinsulate,linsulate,rinsulate);
+		}
 	})
 
 	$("#ClearPara").click(function(){
@@ -1446,6 +1456,9 @@
 		}
 		if($("#rtower").is(":visible")){
 			clearrow(towerName,towerset,[""],towerSample,ridtower,ltower,rtower);
+		}
+		if($("#rinsulate").is(":visible")){
+			clearrow(insulateName,insulateset,[""],insulateSample,ridinsulate,linsulate,rinsulate);
 		}
 	})
 
@@ -1468,6 +1481,12 @@
 				ridtower--;
 			}
 		}
+		if($("#rinsulate").is(":visible")){
+			if(ridinsulate>0){
+				upmoverow(insulateName,insulateset,ridinsulate,linsulate,rinsulate);
+				ridinsulate--;
+			}
+		}
 	})
 
 	$("#DownMove").click(function(){
@@ -1487,6 +1506,13 @@
 			if(ridtower<towerName.length-1){
 				downmoverow(towerName,towerset,ridtower,ltower,rtower);
 				ridtower++;
+			}
+		}
+		if($("#rinsulate").is(":visible")){
+			console.log(ridinsulate);
+			if(ridinsulate<insulateName.length-1){
+				downmoverow(insulateName,insulateset,ridinsulate,linsulate,rinsulate);
+				ridinsulate++;
 			}
 		}
 	})
@@ -3310,10 +3336,10 @@
 	window.createSpritelabel= function(text1,text2,text3,color,x,y,posx,posy,rotate) {
 			let canvas = document.createElement("canvas");
 			var ctx = canvas.getContext("2d");
-			ctx.strokeStyle = "red";
-			ctx.moveTo(x,y);
-			ctx.lineTo(x,y+100);
-			ctx.stroke();
+			// ctx.strokeStyle = "red";
+			// ctx.moveTo(x,y);
+			// ctx.lineTo(x,y+100);
+			// ctx.stroke();
 
 			ctx.fillStyle = color;
 			ctx.font = "22px Arial";
