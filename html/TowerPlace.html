@@ -32,6 +32,13 @@
             差距 <input style="width: 22%;" type="text" id="gap" name="gap" value="0" placeholder="">
         </p>
         <p >高程 <input style="width: 35%;" type="text" id="hei" name="hei" value="0.00" placeholder="">
+        <p>
+        绝缘串长度（m） <input style="width: 22%;" type="text" id="Insulatorlen" name="Insulatorlen" value="0" disabled = true placeholder="">
+        </p>
+        <p >导串
+            <select  id="InsulatorName" name="InsulatorName" style="width: 35%;">
+            </select>
+        </p>
         <p class="confirm" style="text-align-last: right;" >
             <input type="button" id="saveBtn" name="saveBtn" value="保存">
             <input type="button" id="closeBtn" name="closeBtn" value="关闭">
@@ -40,6 +47,7 @@
     </form>
 <script>
     let tower = parent.TowerInfo();
+    let Insulator = parent.InsulatorInfo();
     $('input[type=radio][name=towType]').change(function (){
         //
         for (let i = 0;i<$('input[type=radio]').size();i++){
@@ -74,6 +82,13 @@
         console.log(startHigh,endHigh,dHigh);
         for (let i = startHigh;i<=endHigh;i=i+dHigh)
         $("#towerheight").append("<option value='"+i+"'>"+i+"</option>");
+    })
+    $("#InsulatorName").change(function (){
+        for(let i = 0;i<Insulator.length;i++){
+            if(Insulator[i].name ==  $("#InsulatorName option:selected").text()) {
+                $("#Insulatorlen")[0].value = Insulator[i].Length;
+            }
+        }
     })
 
     console.log(parent.document.getElementsByClassName("layui-layer-title")[0].innerHTML);

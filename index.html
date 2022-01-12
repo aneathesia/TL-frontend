@@ -1137,7 +1137,9 @@
 					towerlist_tabledata[i].Status,
 					towerlist_tabledata[i].TowerHigh,
 					towerlist_tabledata[i].Base,
-					-1);
+					-1,
+					4.5,
+					"X01");
 			TowerGroup.add(towerset);
 			scene.add(TowerGroup);
 			var tlabel = createSpritelabel(towerlist_tabledata[i].Name,
@@ -2405,7 +2407,6 @@
 					e.append(opt);
 				}
 				cell.appendChild(e);
-				console.log(cell);
 			}
 
 
@@ -3158,7 +3159,7 @@
 		for (let i = 0; i < insulateName.length; i++) {
 			prk.INSULATE[i].name = insulateName[i][0];
 		}
-		prk.INSULATE.splice(insulateName.length,prk.INSULATE.length);
+		prk.INSULATE.splice(insulateName.length,prk.INSULATE.length); //delete extra part
 
 		console.log("saveprk",prk);
 
@@ -4164,7 +4165,8 @@
 				insulateName =t2.InsulatePA;
 			else if(t2.InsulatePB!="")
 				insulateName =t2.InsulatePB;
-			let indexIsolate = FindInsulate(insulateName);
+			let indexIsolate = FindInsulate(insulateName);   //set one Insulate
+
 			if(indexIsolate !=-1)
 			{
 				m_length = prk.INSULATE[indexIsolate].Length;
@@ -4607,15 +4609,15 @@
 
 	/* 创建杆塔函数 */
 	var towerLineWid = 0.5;
-	window.tower1 = function(towerHei,Base) {  //4.5 InsulateLength
+	window.tower1 = function(towerHei,Base,InsulatorLen) {  //4.5 InsulateLength
 			let scale = 1 / ydivision * Gridsize;
 			let tower = new THREE.Shape();
 			tower.moveTo(-0.5,0);
 			tower.lineTo(0.5,0);tower.lineTo(0.5,towerLineWid);tower.lineTo(0.25,towerLineWid);
-			tower.lineTo(0.25,towerHei-4.5-towerLineWid);tower.lineTo(1,towerHei-4.5-towerLineWid);
-			tower.lineTo(1,towerHei-4.5);tower.lineTo(0.25,towerHei-4.5);tower.lineTo(0.25,towerHei);
-			tower.lineTo(-0.25,towerHei);tower.lineTo(-0.25,towerHei-4.5);tower.lineTo(-1,towerHei-4.5);
-			tower.lineTo(-1,towerHei-4.5-towerLineWid);tower.lineTo(-0.25,towerHei-4.5-towerLineWid);
+			tower.lineTo(0.25,towerHei-InsulatorLen-towerLineWid);tower.lineTo(1,towerHei-InsulatorLen-towerLineWid);
+			tower.lineTo(1,towerHei-InsulatorLen);tower.lineTo(0.25,towerHei-InsulatorLen);tower.lineTo(0.25,towerHei);
+			tower.lineTo(-0.25,towerHei);tower.lineTo(-0.25,towerHei-InsulatorLen);tower.lineTo(-1,towerHei-InsulatorLen);
+			tower.lineTo(-1,towerHei-InsulatorLen-towerLineWid);tower.lineTo(-0.25,towerHei-InsulatorLen-towerLineWid);
 			tower.lineTo(-0.25,towerLineWid);tower.lineTo(-0.5,towerLineWid);
 			tower.lineTo(-0.5,0);
 			let towerGroup = new THREE.ShapeGeometry(tower);
@@ -4649,7 +4651,7 @@
 	}
 
 
-	window.createTower = function(pos,name,towTypeName,towType,towerHei,Base,added){ //added true from draw false from tabledata push new or not
+	window.createTower = function(pos,name,towTypeName,towType,towerHei,Base,added,Insulatorlen,InsulatorName){ //added true from draw false from tabledata push new or not
 			if(added>-1){
 				towerlist.splice(added,0,{
 					"Name" : name,
@@ -4661,12 +4663,12 @@
 					"Base": Base,
 					"TowerHigh" : towerHei,
 					"Status" : Number(towType),
-					"InsulatorLength": 4.5,
+					"InsulatorLength":Insulatorlen,
 					"ConnectLength": 0.0,
 					"InsulateP": "",
-					"InsulatePA": "X01",
+					"InsulatePA": InsulatorName,
 					"InsulatePANum": -1,
-					"InsulatePB": "X01",
+					"InsulatePB": InsulatorName,
 					"InsulatePBNum": -1,
 					"InsulatePC": "",
 					"InsulatePCNum": 0,
@@ -4707,7 +4709,7 @@
 			}
 
 			if(towType!=0){var towMesh = tower2(towerHei,Base);}
-			else {var towMesh = tower1(towerHei,Base);}
+			else {var towMesh = tower1(towerHei,Base,Insulatorlen);}
 			towMesh.position.x = pos.x;
 			towMesh.position.y = pos.y;
 			towMesh.position.z = 0;
@@ -4716,7 +4718,7 @@
 			return towMesh;
 		}
 
-	function createTowerTemp(pos,towTypeName,towType){
+	function createTowerTemp(pos,towTypeName,towType,Insulatorlen,InsulatorName){
 			towerlist.push({
 				"Name" : "G",
 				"Distance" : pos.x/Gridsize*xdivision+xMin,
@@ -4727,12 +4729,12 @@
 				"Base": 0,
 				"TowerHigh" : towerHei,
 				"Status" : Number(towType),
-				"InsulatorLength": 4.5,
+				"InsulatorLength": Insulatorlen,
 				"ConnectLength": 0.0,
 				"InsulateP": "",
-				"InsulatePA": "X01",
+				"InsulatePA": InsulatorName,
 				"InsulatePANum": -1,
-				"InsulatePB": "X01",
+				"InsulatePB": InsulatorName,
 				"InsulatePBNum": -1,
 				"InsulatePC": "",
 				"InsulatePCNum": 0,
@@ -4768,7 +4770,7 @@
 				"ElecDist" : 6.0	// 电力线安全距离
 			});
 		if(towType!=0){var towMesh = tower2(towerlist[towerlist.length-1].TowerHigh,towerlist[towerlist.length-1].Base);}
-		else {var towMesh = tower1(towerlist[towerlist.length-1].TowerHigh,towerlist[towerlist.length-1].Base);}
+		else {var towMesh = tower1(towerlist[towerlist.length-1].TowerHigh,towerlist[towerlist.length-1].Base,Insulatorlen);}
 		towMesh.position.x = pos.x;
 		towMesh.position.y = pos.y;
 		towMesh.position.z = 0;
@@ -4904,7 +4906,9 @@
 					let towTypeName=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 					let towType =layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val();
 					let towBase = Number(layer.getChildFrame('body',tpIndex).find("#flow")[0].value);
-					var towmesh = createTower(pos,"G"+putInd,towTypeName,towType,towerHei,towBase,putInd);
+					let InsulatorTypeName=layer.getChildFrame('body',tpIndex).find("#InsulatorName").find("option:selected").text();
+					let Insulatorlen = Number(layer.getChildFrame('body',tpIndex).find("#Insulatorlen")[0].value);
+					var towmesh = createTower(pos,"G"+putInd,towTypeName,towType,towerHei,towBase,putInd,Insulatorlen,InsulatorTypeName);
 					TowerGroup.add(towmesh);
 					scene.add(TowerGroup);
 					var tlabel = createSpritelabel(towerlist[m_end].Name,
@@ -5015,6 +5019,8 @@
 			let towTypeName=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 			let towType =layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val();  //towType  Status
 			let towTypeIndex=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").val();
+			let InsulatorTypeName=layer.getChildFrame('body',tpIndex).find("#InsulatorName").find("option:selected").text();
+			let Insulatorlen = Number(layer.getChildFrame('body',tpIndex).find("#Insulatorlen")[0].value);
 			if(towTypeIndex == undefined ) return;
 			towerStartHei = prk.TOWER[towTypeIndex].StartHigh;
 			towerEndHei = prk.TOWER[towTypeIndex].EndHigh;
@@ -5026,7 +5032,7 @@
 			}
 			towerHei = limit(towerHeiArray,coorDif);
 
-			createTowerTemp(pos,towTypeName,towType);
+			createTowerTemp(pos,towTypeName,towType,Insulatorlen,InsulatorTypeName);
 			let disToPile = []
 			for (let i = 0; i < pile_tabledata.length; i++) {
 				disToPile.push({"name": pile_tabledata[i].name,
@@ -5213,6 +5219,9 @@
 				let towTypeName=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 				let towType =layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val();  //towType  Status
 				let towTypeIndex=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").val();
+				let towBase=Number(layer.getChildFrame('body',tpIndex).find("#flow")[0].value);
+				let InsulatorTypeName=layer.getChildFrame('body',tpIndex).find("#InsulatorName").find("option:selected").text();
+				let Insulatorlen = Number(layer.getChildFrame('body',tpIndex).find("#Insulatorlen")[0].value);
 				towerStartHei = prk.TOWER[towTypeIndex].StartHigh;
 				towerEndHei = prk.TOWER[towTypeIndex].EndHigh;
 				towerHeiDif = towerEndHei - towerStartHei;
@@ -5222,59 +5231,7 @@
 					towerHeiArray[i] = towerStartHei + i * towerHeiInDif;
 				}
 				towerHei = limit(towerHeiArray,coorDif);
-			// towerlist = [];//exchange towerlist and temptowerlist
-			// towerlist.push(ttowerlist[insertInd - 1]);
-			// towerlist.push({
-			// 	"Name": "G" + ttowerlist.length,
-			// 	"Distance": pos.x / Gridsize * xdivision + xMin,
-			// 	"High": pos.y / Gridsize * ydivision + yMin,
-			// 	"Position": "",
-			// 	"offset": 0,
-			// 	"TowerType": towTypeName,
-			// 	"Base": 0,
-			// 	"TowerHigh": towerHei,
-			// 	"Status": Number(towType),
-			// 	"InsulatorLength": 4.5,
-			// 	"ConnectLength": 0.0,
-			// 	"InsulateP": "",
-			// 	"InsulatePA": "X01",
-			// 	"InsulatePANum": -1,
-			// 	"InsulatePB": "X01",
-			// 	"InsulatePBNum": -1,
-			// 	"InsulatePC": "",
-			// 	"InsulatePCNum": 0,
-			// 	"hugeHigh": 0,
-			// 	"hugeGround": 0,		// 地线悬挂点高程
-			// 	"Lk": 0,
-			// 	"L": 0,
-			// 	"cosa": 1,
-			// 	"bInsular": false,
-			// 	"constant": 0,
-			// 	"u": 1,
-			// 	"kPline": 0,			//导线大号侧k值系数
-			// 	"kGround": 0,		//地线大号侧K值系数
-			// 	"kWind": 0,			//大风条件前视档k值系数
-			// 	"kMaxT": 0,			//70度高温k值系数
-			// 	"constMaxT": 0,
-			// 	"Lh": 0,				// 水平档距
-			// 	"Lh1": 0,			// 小号侧垂直档距
-			// 	"Lh2": 0,			// 大号侧垂直档距
-			// 	"Lv": 0,				// 垂直档距
-			// 	"Lv1": 0,			// 小号侧水平档距
-			// 	"Lv2": 0,			// 大号侧水平档距
-			// 	"lvMinTemp": 0,//最低气温垂直档距
-			// 	"lvMaxTemp": 0,//最高气温垂直档距
-			// 	"lvMaxIce": 0,//最大覆冰垂直档距
-			// 	"lvMaxWind": 0,//最大风垂直档距
-			// 	"displayKType": 0,	//k值类型，0为最大弧垂 1为最高线温
-			// 	"displayGround": 0,		//显示地线
-			// 	"displayPower": 1,		//显示导线
-			// 	"displaySafe": 1,	//显示导线对地
-			// 	"displayCross": 1,		//显示导线跨越
-			// 	"LandDist": 8.5,		// 对地安全距离
-			// 	"ElecDist": 6.0	// 电力线安全距离
-			// });
-			// towerlist.push(ttowerlist[insertInd]);
+
 
 			temptowerlistInsert = [] ;
 			temptowerlistInsert.push(towerlist[insertInd - 1]);
@@ -5285,15 +5242,15 @@
 				"Position": "",
 				"offset": 0,
 				"TowerType": towTypeName,
-				"Base": 0,
+				"Base": towBase,
 				"TowerHigh": towerHei,
 				"Status": Number(towType),
-				"InsulatorLength": 4.5,
+				"InsulatorLength": Insulatorlen,
 				"ConnectLength": 0.0,
 				"InsulateP": "",
-				"InsulatePA": "X01",
+				"InsulatePA": InsulatorTypeName,
 				"InsulatePANum": -1,
-				"InsulatePB": "X01",
+				"InsulatePB": InsulatorTypeName,
 				"InsulatePBNum": -1,
 				"InsulatePC": "",
 				"InsulatePCNum": 0,
@@ -5366,9 +5323,9 @@
 				inputId.value = "G" + towerlist_tabledata.length;
 
 				if (temptowerlistInsert[1].Status != 0) {
-					var towMesh = tower2(temptowerlistInsert[1].TowerHigh,0);
+					var towMesh = tower2(temptowerlistInsert[1].TowerHigh,temptowerlistInsert[1].Base);
 				} else {
-					var towMesh = tower1(temptowerlistInsert[1].TowerHigh,0);
+					var towMesh = tower1(temptowerlistInsert[1].TowerHigh,temptowerlistInsert[1].Base,temptowerlistInsert[1].InsulatorLength);
 				}
 				towMesh.position.x = pos.x;towMesh.position.y = pos.y;towMesh.position.z = 0;
 				towMesh.name = "tower";
@@ -5451,6 +5408,9 @@
 				temptowerlist.TowerType = layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 				temptowerlist.Status = Number(layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val());
 				temptowerlist.TowerHigh = Number(layer.getChildFrame('body',tpIndex).find("#towerheight").find("option:selected").val());
+				temptowerlist.InsulatorPA=layer.getChildFrame('body',tpIndex).find("#InsulatorName").find("option:selected").text();
+				temptowerlist.InsulatorPB=layer.getChildFrame('body',tpIndex).find("#InsulatorName").find("option:selected").text();
+				temptowerlist.InsulatorLength = Number(layer.getChildFrame('body',tpIndex).find("#Insulatorlen")[0].value);
 				console.log(temptowerlist,temptowerlist.Distance);
 				var tpos={};
 				tpos.x = (temptowerlist.Distance-xMin)/xdivision*Gridsize;
@@ -5472,7 +5432,9 @@
 						temptowerlist.Status,
 						temptowerlist.TowerHigh,
 						0,
-						insertInd  
+						insertInd ,
+						temptowerlist.InsulatorLength,
+						temptowerlist.InsulatorPA
 				);
 				TowerGroup.children.splice(insertInd,0,towMesh);
 				towerlist[insertInd].offset =  temptowerlist.offset;
@@ -5558,6 +5520,8 @@
 				let towTypeName=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 				let towType =layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val();  //towType  Status
 				let towTypeIndex=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").val();
+				let InsulatorTypeName=layer.getChildFrame('body',tpIndex).find("#InsulatorName").find("option:selected").text();
+				let Insulatorlen = Number(layer.getChildFrame('body',tpIndex).find("#Insulatorlen")[0].value);
 				towerStartHei = prk.TOWER[towTypeIndex].StartHigh;
 				towerEndHei = prk.TOWER[towTypeIndex].EndHigh;
 				towerHeiDif = towerEndHei - towerStartHei;
@@ -5579,12 +5543,12 @@
 					"Base": towerlist[movingInd].Base,
 					"TowerHigh": towerHei,
 					"Status": Number(towType),
-					"InsulatorLength": 4.5,
+					"InsulatorLength": Insulatorlen,
 					"ConnectLength": 0.0,
 					"InsulateP": "",
-					"InsulatePA": "X01",
+					"InsulatePA": InsulatorTypeName,
 					"InsulatePANum": -1,
-					"InsulatePB": "X01",
+					"InsulatePB": InsulatorTypeName,
 					"InsulatePBNum": -1,
 					"InsulatePC": "",
 					"InsulatePCNum": 0,
@@ -5656,7 +5620,7 @@
 				if (temptowerlistMoving[1].Status != 0) {
 					var towMesh = tower2(towerHei,temptowerlistMoving[1].Base);
 				} else {
-					var towMesh = tower1(towerHei,temptowerlistMoving[1].Base);
+					var towMesh = tower1(towerHei,temptowerlistMoving[1].Base,temptowerlistMoving[1].InsulatorLength);
 				}
 				towMesh.position.x = pos.x;towMesh.position.y = pos.y;towMesh.position.z = 0;
 				towMesh.name = "tower";
@@ -5680,6 +5644,15 @@
 				layer.getChildFrame('body',tpIndex).find("#hei")[0].value=towerlist[movingInd].High.toFixed(2);
 				layer.getChildFrame('body',tpIndex).find("#gap")[0].value=towerlist[movingInd].offset;
 				layer.getChildFrame('body',tpIndex).find("#flow")[0].value=towerlist[movingInd].Base;
+				layer.getChildFrame('body',tpIndex).find("#InsulatorName").empty();
+				if(prk.INSULATE!=undefined){
+					for (let i = 0; i < prk.INSULATE.length; i++) {
+						if(prk.INSULATE[i].type==0){layer.getChildFrame('body',tpIndex).find("#InsulatorName").append("<option value='"+i+"'>"+prk.INSULATE[i].name+"</option>")};
+					}
+				}
+				console.log(towerlist[movingInd].InsulatePA);
+				layer.getChildFrame('body',tpIndex).find("#InsulatorName option:contains('"+towerlist[movingInd].InsulatePA+"')").attr("selected",true);
+				layer.getChildFrame('body',tpIndex).find("#Insulatorlen")[0].value=towerlist[movingInd].InsulatorLength;
 				let St=layer.getChildFrame('body',tpIndex).find('input[type=radio]');
 				if(towerlist[movingInd].Status==0){$(St[0]).prop('checked',true);}
 
@@ -5722,6 +5695,9 @@
 				towerlist[movingInd].TowerType = layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 				towerlist[movingInd].Status = Number(layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val());
 				towerlist[movingInd].TowerHigh = Number(layer.getChildFrame('body',tpIndex).find("#towerheight").find("option:selected").val());
+				towerlist[movingInd].InsulatorPA=layer.getChildFrame('body',tpIndex).find("#InsulatorName").find("option:selected").text();
+				towerlist[movingInd].InsulatorPB=layer.getChildFrame('body',tpIndex).find("#InsulatorName").find("option:selected").text();
+				towerlist[movingInd].InsulatorLength = Number(layer.getChildFrame('body',tpIndex).find("#Insulatorlen")[0].value);
 				console.log(towerlist[movingInd]);
 				console.log("towerlist after moving", towerlist);
 				var tpos = {};
@@ -5734,7 +5710,10 @@
 						towerlist[movingInd].Status,
 						towerHei,
 						towerlist[movingInd].Base,
-						-1);
+						-1,
+						towerlist[movingInd].InsulatorLength,
+						towerlist[movingInd].InsulatorPA
+				);
 				m_end = towerlist.length-1;
 
 				ComputeHugeHigh(towerlist);
@@ -5797,7 +5776,9 @@
 						towerlist[riseInd].Status,
 						tempTowerHei,
 						towerlist[riseInd].Base,
-						-1  //no need to push new tower to towerlist
+						-1,
+						towerlist[riseInd].InsulatorLength,
+						towerlist[riseInd].InsulatePA
 				);
 			}
 			//TowerScriptGroup.children[riseInd]=createSpritelabel();
@@ -5861,7 +5842,9 @@
 							towerlist[fallInd].Status,
 							tempTowerHei,
 							towerlist[fallInd].Base,
-							-1  //no need to push new tower to towerlist
+							-1,
+							towerlist[fallInd].InsulatorLength,
+							towerlist[fallInd].InsulatePA
 					);
 				}
 				//find towerlist index and change this
@@ -5922,6 +5905,15 @@
 			layer.getChildFrame('body',tpIndex).find("#hei")[0].value=towerlist[editInd].High.toFixed(2);
 			layer.getChildFrame('body',tpIndex).find("#gap")[0].value=towerlist[editInd].offset;
 			layer.getChildFrame('body',tpIndex).find("#flow")[0].value=towerlist[editInd].Base;
+			layer.getChildFrame('body',tpIndex).find("#InsulatorName").empty();
+			if(prk.INSULATE!=undefined){
+				for (let i = 0; i < prk.INSULATE.length; i++) {
+					if(prk.INSULATE[i].type==0){layer.getChildFrame('body',tpIndex).find("#InsulatorName").append("<option value='"+i+"'>"+prk.INSULATE[i].name+"</option>")};
+				}
+			}
+			console.log(towerlist[editInd].InsulatePA);
+			layer.getChildFrame('body',tpIndex).find("#InsulatorName option:contains('"+towerlist[editInd].InsulatePA+"')").attr("selected",true);
+			layer.getChildFrame('body',tpIndex).find("#Insulatorlen")[0].value=towerlist[editInd].InsulatorLength;
 			let St=layer.getChildFrame('body',tpIndex).find('input[type=radio]');
 			if(towerlist[editInd].Status==0){$(St[0]).prop('checked',true);}
 
@@ -5975,6 +5967,9 @@
 		towerlist[editInd].TowerType = layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 		towerlist[editInd].Status = Number(layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val());
 		towerlist[editInd].TowerHigh = Number(layer.getChildFrame('body',tpIndex).find("#towerheight").find("option:selected").val());
+		towerlist[editInd].InsulatorPA=layer.getChildFrame('body',tpIndex).find("#InsulatorName").find("option:selected").text();
+		towerlist[editInd].InsulatorPB=layer.getChildFrame('body',tpIndex).find("#InsulatorName").find("option:selected").text();
+		towerlist[editInd].InsulatorLength = Number(layer.getChildFrame('body',tpIndex).find("#Insulatorlen")[0].value);
 		var tpos={};
 		tpos.x = (towerlist[editInd].Distance-xMin)/xdivision*Gridsize;
 		tpos.y = (towerlist[editInd].High - yMin)/ydivision*Gridsize;
@@ -5987,7 +5982,9 @@
 			towerlist[editInd].Status,
 			towerlist[editInd].TowerHigh,
 			towerlist[editInd].Base,
-			-1  //no need to push new tower to towerlist
+			-1,
+			towerlist[editInd].InsulatorLength,
+			towerlist[editInd].InsulatorPA
 		);
 
 		ComputeHugeHigh(towerlist);
@@ -6770,7 +6767,7 @@
 			layer.open({
 				type:2,
 				title: title,
-				area:['250px','340px'],
+				area:['250px','400px'],
 				offset: ['200px', '200px'],
 				maxmin:true,
 				shadeClose:false,
@@ -6800,7 +6797,17 @@
 					for (let i = prk.TOWER[selectindex].StartHigh;i<=prk.TOWER[selectindex].EndHigh;i=i+prk.TOWER[selectindex].Dhigh){
 						body.find("#towerheight").append("<option value='"+i+"'>"+i+"</option>");
 					}
-					console.log(title);
+
+					//Insulator parameter
+					layer.getChildFrame('body',tpIndex).find("#InsulatorName").empty();
+					if(prk.INSULATE!=undefined){
+						for (let i = 0; i < prk.INSULATE.length; i++) {
+							if(prk.INSULATE[i].type==0){body.find("#InsulatorName").append("<option value='"+i+"'>"+prk.INSULATE[i].name+"</option>")};
+						}
+					}
+					var insulateindex = body.find("#InsulatorName option:selected")[0].value;
+					console.log("insulateindex ",insulateindex);
+					layer.getChildFrame('body',tpIndex).find("#Insulatorlen")[0].value = prk.INSULATE[insulateindex].Length;
 				}
 			})
 		}
@@ -6809,6 +6816,9 @@
 
 	window.TowerInfo = function(){
 		return prk.TOWER;
+	}
+	window.InsulatorInfo = function(){
+		return prk.INSULATE;
 	}
 
 	window.GetCrossIndex= function(leiju){
