@@ -52,236 +52,249 @@
 	<title>架空输电线路勘测设计一体化系统</title>
 </head>
 <body class="mainbody">
-<style>
-	@import url(./css/nativestyle.css);
-</style>
-<header class="Hui-header cl" style="background-color: #006865">
-	<div style="float:right;margin-right: 2%;margin-top: 1%;display:none">
-		<li style="display: inline-block;"><a href="#"><label id="login" style="background: wheat">登录</label></a></li>
-		<li style="display: inline-block;"><a href="#"><label id="UserCenter" style="background: wheat">用户中心</label></a></li>
-	</div>
+	<style>
+		@import url(./css/nativestyle.css);
+	</style>
+	<header class="Hui-header cl" style="background-color: #006865">
+		<div style="float:right;margin-right: 2%;margin-top: 1%;display:none">
+			<li style="display: inline-block;"><a href="#"><label id="login" style="background: wheat">登录</label></a></li>
+			<li style="display: inline-block;"><a href="#"><label id="UserCenter" style="background: wheat">用户中心</label></a></li>
+		</div>
 
-	<a aria-hidden="false" class="Hui-nav-toggle" href="#"></a>
-</header>
-<aside class="Hui-aside">
-	<input runat="server" id="divScrollValue" type="hidden" value="" />
-	<div class="menu_dropdown bk_2">
-		<dl id="menu-newmap">
-			<dt><i class="Hui-iconfont">&#xe646;</i> 工程<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-			<dd>
-				<ul>
-					<li><a href="#" ><label id="fileManage" style="width:100%">文件管理</label></a></li>
-					<li><a href="#" ><label id="creatProject" style="width:100%">新建工程</label></a></li>
-					<li><a href="#" ><label id="creatMap" style="width:100%">新建MAP</label></a></li>
-					<li><a href="#"><label id="saveMap" style="width:100%">保存Map</label></a></li>
-					<li><a href="#"><label id="savePrj" style="width:100%">保存工程</label></a></li>
-				</ul>
-			</dd>
-		</dl>
-		<dl id="menu-restable">
-			<dt><i class="Hui-iconfont">&#xe618; </i><label id="resTable" >成果表</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-			<dd>
-				<ul>
-					<li><a href="#"><label id="liPiletable" style=" width:100%;">转角直线桩表</label></a></li>
-					<li><a href="#"><label id="liTowerlisttable" style="width:100%">杆塔排位成果表</label></a></li>
-				</ul>
-			</dd>
-		</dl>
-		<dl id="menu-parameter">
-			<dt><i class="Hui-iconfont">&#xe681; </i><label id="param"> 参数</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-			<dd>
-				<ul>
-					<li><a href="#"><label id="designparameter" style="width:100%">设计参数</label></a></li>
-				</ul>
-				<ul>
-					<li><a href="#"><label id="framepara" style="width:100%">图框参数</label></a></li>
-				</ul>
-				<ul>
-					<li><a href="#"><label id="drawingpara" style="width:100%">图纸参数</label></a></li>
-				</ul>
-			</dd>
-		</dl>
-<!--		<dl id="menu-input">-->
-<!--			<dt><i class="Hui-iconfont">&#xe645;</i> 输入输出<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>-->
-<!--			<dd>-->
-<!--				<ul>-->
+		<a aria-hidden="false" class="Hui-nav-toggle" href="#"></a>
+	</header>
+	<aside class="Hui-aside">
+		<input runat="server" id="divScrollValue" type="hidden" value="" />
+		<div class="menu_dropdown bk_2">
+			<dl id="menu-newmap">
+				<dt><i class="Hui-iconfont">&#xe646;</i> 工程<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+				<dd>
+					<ul>
+						<li><a href="#" ><label id="fileManage" style="width:100%">文件管理</label></a></li>
+						<li><a href="#" ><label id="creatProject" style="width:100%">新建工程</label></a></li>
+						<li><a href="#" ><label id="creatMap" style="width:100%">新建MAP</label></a></li>
+						<li><a href="#"><label id="saveMap" style="width:100%">保存Map</label></a></li>
+						<li><a href="#"><label id="savePrj" style="width:100%">保存工程</label></a></li>
+					</ul>
+				</dd>
+			</dl>
+			<dl id="menu-restable">
+				<dt><i class="Hui-iconfont">&#xe618; </i><label id="resTable" >成果表</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+				<dd>
+					<ul>
+						<li><a href="#"><label id="liPiletable" style=" width:100%;">转角直线桩表</label></a></li>
+						<li><a href="#"><label id="liTowerlisttable" style="width:100%">杆塔排位成果表</label></a></li>
+					</ul>
+				</dd>
+			</dl>
+			<dl id="menu-parameter">
+				<dt><i class="Hui-iconfont">&#xe681; </i><label id="param"> 参数</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+				<dd>
+					<ul>
+						<li><a href="#"><label id="designparameter" style="width:100%">设计参数</label></a></li>
+					</ul>
+					<ul>
+						<li><a href="#"><label id="framepara" style="width:100%">图框参数</label></a></li>
+					</ul>
+					<ul>
+						<li><a href="#"><label id="drawingpara" style="width:100%">图纸参数</label></a></li>
+					</ul>
+				</dd>
+			</dl>
+	<!--		<dl id="menu-input">-->
+	<!--			<dt><i class="Hui-iconfont">&#xe645;</i> 输入输出<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>-->
+	<!--			<dd>-->
+	<!--				<ul>-->
 
-<!--				</ul>-->
-<!--			</dd>-->
-<!--		</dl>-->
-		<dl id="menu-createObject">
-			<dt><i class="Hui-iconfont">&#xe645;</i> 创建<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-			<dd>
-				<ul>
-<!--					<li><a href="#"><label id="create_Object">创建地物</label></a></li>-->
-					<li><a href="#"><label id="inputDem" style="width:100%">断面线</label></a></li>
-					<li><a href="#"><label id="inputCorner" style="width:100%">桩位投影线</label></a></li>
-					<li><a href="#"><label id="select_code" style="width:100%">交叉跨域</label></a></li>
-				</ul>
-			</dd>
-		</dl>
-		<dl id="menu-editObject">
-			<dt><i class="Hui-iconfont">&#xe647;</i> 编辑<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-			<dd>
-				<ul>
-					<li><a href="#"><label id="editcross" style="width:100%">修改节点</label></a></li>
-				</ul>
-			</dd>
-		</dl>
-		<dl id="menu-manualrank">
-			<dt><i class="Hui-iconfont">&#xe647; </i><label id="hand"> 手工排位</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-			<dd>
-				<ul>
-					<li id="putTower"><a href="#"><label style="width:100%">放置杆塔</label></a></li>
-					<li id="deleteTower"><a href="#"><label style="width:100%">删除杆塔</label></a></li>
-					<li id="moveTower"><a href="#"><label style="width:100%">移动杆塔</label></a></li>
-					<li id="insertTower"><a href="#"><label style="width:100%">插入杆塔</label></a></li>
-					<li id="riseTower"><a href="#"><label style="width:100%">升高杆塔</label></a></li>
-					<li id="fallTower"><a href="#"><label style="width:100%">降低杆塔</label></a></li>
-					<li id="editTower"><a href="#"><label style="width:100%">修改排杆</label></a></li>
-					<li id="saveTower"><a href="#"><label style="width:100%">保存排杆</label></a></li>
-				</ul>
-			</dd>
-		</dl>
-<!--		<dl id="menu-savemap">-->
-<!--			<dt><i class="Hui-iconfont">&#xe646; </i><label id="saveAs"> 保存</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>-->
-<!--			<dd>-->
-<!--				<ul>-->
-<!--					<li><a href="#"><label id="saveMap" style="width:100%">保存Map</label></a></li>-->
-<!--					<li><a href="#"><label id="savePrj" style="width:100%">保存工程</label></a></li>-->
-<!--				</ul>-->
-<!--			</dd>-->
-<!--		</dl>-->
-		<dl id="menu-transOutput">
-			<dt><i class="Hui-iconfont">&#xe646; </i><label id="Output"> 导出</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-			<dd>
-				<ul>
-<!--					<li><a href="#"><label id="outputDXF">导出DXF</label></a></li>-->
-					<li><a href="#"><label id="outputORG" style="width:100%">导出ORG</label></a></li>
-				</ul>
-			</dd>
-		</dl>
+	<!--				</ul>-->
+	<!--			</dd>-->
+	<!--		</dl>-->
+			<dl id="menu-createObject">
+				<dt><i class="Hui-iconfont">&#xe645;</i> 创建<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+				<dd>
+					<ul>
+	<!--					<li><a href="#"><label id="create_Object">创建地物</label></a></li>-->
+						<li><a href="#"><label id="inputDem" style="width:100%">断面线</label></a></li>
+						<li><a href="#"><label id="inputCorner" style="width:100%">桩位投影线</label></a></li>
+						<li><a href="#"><label id="select_code" style="width:100%">交叉跨域</label></a></li>
+					</ul>
+				</dd>
+			</dl>
+			<dl id="menu-editObject">
+				<dt><i class="Hui-iconfont">&#xe647;</i> 编辑<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+				<dd>
+					<ul>
+						<li><a href="#"><label id="editcross" style="width:100%">修改节点</label></a></li>
+					</ul>
+				</dd>
+			</dl>
+			<dl id="menu-manualrank">
+				<dt><i class="Hui-iconfont">&#xe647; </i><label id="hand"> 手工排位</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+				<dd>
+					<ul>
+						<li id="putTower"><a href="#"><label style="width:100%">放置杆塔</label></a></li>
+						<li id="deleteTower"><a href="#"><label style="width:100%">删除杆塔</label></a></li>
+						<li id="moveTower"><a href="#"><label style="width:100%">移动杆塔</label></a></li>
+						<li id="insertTower"><a href="#"><label style="width:100%">插入杆塔</label></a></li>
+						<li id="riseTower"><a href="#"><label style="width:100%">升高杆塔</label></a></li>
+						<li id="fallTower"><a href="#"><label style="width:100%">降低杆塔</label></a></li>
+						<li id="editTower"><a href="#"><label style="width:100%">修改排杆</label></a></li>
+						<li id="saveTower"><a href="#"><label style="width:100%">保存排杆</label></a></li>
+					</ul>
+				</dd>
+			</dl>
+	<!--		<dl id="menu-savemap">-->
+	<!--			<dt><i class="Hui-iconfont">&#xe646; </i><label id="saveAs"> 保存</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>-->
+	<!--			<dd>-->
+	<!--				<ul>-->
+	<!--					<li><a href="#"><label id="saveMap" style="width:100%">保存Map</label></a></li>-->
+	<!--					<li><a href="#"><label id="savePrj" style="width:100%">保存工程</label></a></li>-->
+	<!--				</ul>-->
+	<!--			</dd>-->
+	<!--		</dl>-->
+			<dl id="menu-transOutput">
+				<dt><i class="Hui-iconfont">&#xe646; </i><label id="Output"> 导出</label><i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+				<dd>
+					<ul>
+	<!--					<li><a href="#"><label id="outputDXF">导出DXF</label></a></li>-->
+						<li><a href="#"><label id="outputORG" style="width:100%">导出ORG</label></a></li>
+					</ul>
+				</dd>
+			</dl>
 
-		<div style="display: none">
-			<label>打开本地json文件: <input type="file" style="display:inline-block" id="jsonfile" name="myjsonfile" accept=".json"/>
-				<input type="button" style="display:inline-block" id="openjsonfile" onclick="window.upjsonfile()" value="打开" /></label>
-			<label>打开本地prj文件: <input type="file" style="display:inline-block" id="TLfile" name="myTLfile" accept="./PRJ"/>
-				<input type="button" style="display:inline-block" id="openTLfile" onclick="window.upprjfile()" value="打开" /></label>
-			<label>打开本地map文件: <input type="file" style="display:inline-block" id="TLmapfile" name="myTLmapfile" accept=".MAP"/>
-				<input type="button" style="display:inline-block" id="openTLmapfile" onclick="window.upmapfile()" value="打开" /></label>
-			<label>打开本地pwf文件: <input type="file" style="display:inline-block" id="TLpwffile" name="myTLpwffile" accept=".PWF"/>
-				<input type="button" style="display:inline-block" id="openTLpwffile" onclick="window.uppwffile()" value="打开" /></label>
-			<label>打开本地prk文件: <input type="file" style="display:inline-block" id="TLprkfile" name="myTLprkfile" accept=".PRK"/>
-				<input type="button" style="display:inline-block" id="openTLprkfile" onclick="window.upprkfile()" value="打开" /></label>
+			<div style="display: none">
+				<label>打开本地json文件: <input type="file" style="display:inline-block" id="jsonfile" name="myjsonfile" accept=".json"/>
+					<input type="button" style="display:inline-block" id="openjsonfile" onclick="window.upjsonfile()" value="打开" /></label>
+				<label>打开本地prj文件: <input type="file" style="display:inline-block" id="TLfile" name="myTLfile" accept="./PRJ"/>
+					<input type="button" style="display:inline-block" id="openTLfile" onclick="window.upprjfile()" value="打开" /></label>
+				<label>打开本地map文件: <input type="file" style="display:inline-block" id="TLmapfile" name="myTLmapfile" accept=".MAP"/>
+					<input type="button" style="display:inline-block" id="openTLmapfile" onclick="window.upmapfile()" value="打开" /></label>
+				<label>打开本地pwf文件: <input type="file" style="display:inline-block" id="TLpwffile" name="myTLpwffile" accept=".PWF"/>
+					<input type="button" style="display:inline-block" id="openTLpwffile" onclick="window.uppwffile()" value="打开" /></label>
+				<label>打开本地prk文件: <input type="file" style="display:inline-block" id="TLprkfile" name="myTLprkfile" accept=".PRK"/>
+					<input type="button" style="display:inline-block" id="openTLprkfile" onclick="window.upprkfile()" value="打开" /></label>
+			</div>
+		</div>
+	</aside>
+
+	<div class ="designParam" id="piletable" style="height: 400px;" hidden>
+		<div>
+			<h4 style="margin-left: 2%;" id="piletable_title">转角直线表</h4>
+		</div>
+	<!--	<div id = "pile_table_res" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>-->
+		<table id="mpile_table"></table>
+		<div class="line" style="outline-color: #1b1b1b;line-height: 5px;">-----</div>
+		<div style="display: inline;">
+			<!--		<button class="input-file" id="opentxt">文件上传</button>-->
+
+				<button class="xbutton xround"  style="margin-left:5px;">		<input type="file" id ="tb_pile_input" accept=".txt"> </button>
+				<button class="xbutton xround" id="tb_pile_calc" style="text-align-last: right">计算</button>
+				<button class="xbutton xround" id="tb-pile-save" style="text-align-last: right;display: none">保存</button>
+				<button class="xbutton xround close_btn" id="closeTable"style="text-align-last: right">关闭</button>
+
 		</div>
 	</div>
-</aside>
 
-<div class ="designParam" id="piletable" style="height: 400px;" hidden>
-	<div>
-		<h4 style="margin-left: 2%;" id="piletable_title">转角直线表</h4>
-	</div>
-
-	<table id="mpile_table"></table>
-	<div class="line" style="outline-color: #1b1b1b;line-height: 5px;">-----</div>
-	<div style="display: inline;">
-		<!--		<button class="input-file" id="opentxt">文件上传</button>-->
-
-			<button class="xbutton xround"  style="margin-left:5px;">		<input type="file" id ="tb_pile_input" accept=".txt"> </button>
-			<button class="xbutton xround" id="tb_pile_calc" style="text-align-last: right">计算</button>
-			<button class="xbutton xround" id="tb-pile-save" style="text-align-last: right;display: none">保存</button>
-			<button class="xbutton xround close_btn" id="closeTable"style="text-align-last: right">关闭</button>
-
-	</div>
-</div>
-<div class ="designParam" id="towerlisttable" style="height: 400px;" hidden>
-	<div>
-		<h4 style="margin-left: 2%;" id="towerlisttable_title">杆塔排位成果表</h4>
-	</div>
-	<table id="towerlist_table"></table>
-	<div style="text-align-last:right">
-		<button class="xbutton xround" id="tb-towerlist-calc" style="text-align-last: right" onclick="towerlistCalc()">重算</button>
-		<button class="xbutton xround close_btn" id="towerlistcloseTable"style="text-align-last: right">关闭</button>
-	</div>
-</div>
-
-<div class="designParam" id="Paramtable" hidden>
-	<div class = "designParamtitle">
-		<h2 id="h2title">详细设计参数</h2>
-	</div>
-	<div class="paramBtn" style="display:inline-block;width: 19%" >
-		<p><button class="xbutton xround" id="guicheng">规程要求设置</button></p>
-		<p><button class="xbutton xround" id="daodixian">导地线参数</button></p>
-		<p><button class="xbutton xround" id="qixiang">气象条件</button></p>
-		<p><button class="xbutton xround" id="fenduan">分段设置</button></p>
-		<p><button class="xbutton xround" id="gantashiyong">杆塔使用参数</button></p>
-		<p><button class="xbutton xround" id="gantatacai" disabled="disabled">杆塔塔材基础</button></p>
-		<p><button class="xbutton xround" id="jueyuancan">绝缘子串参数</button></p>
-		<p><button class="xbutton xround" id="jueyuancai" disabled="disabled">绝缘子串材料</button></p>
-		<p><button class="xbutton xround" id="jiedican" disabled="disabled">接地装置参数</button></p>
-		<p><button class="xbutton xround" id="jiedicai" disabled="disabled">接地装置材料</button></p>
-		<p><button class="xbutton xround" id="fangzhenchui" disabled="disabled">防震锤 参数</button></p>
-		<p><button class="xbutton xround" id="youhua" disabled="disabled">优化排位参数</button></p>
-	</div>
-
-	<div id = "lguicheng" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
-	<div id = "ldaodixian" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
-	<div id = "lqixiang" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
-	<div id = "lfenduan" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
-	<div id = "ltower" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
-	<div id = "linsulate" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
-
-<!--	<div id = "lefttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>-->
-<!--	<div id = "lefttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>-->
-<!--	<div id = "lefttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>-->
-<!--	<div id = "lefttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>-->
-
-
-	<div class="operateBtn" style="display:inline-block;">
-		<p><button class="xbutton xround edit" id="AddPara">追加</button></p>
-		<p><button class="xbutton xround edit" id="InsertPara">插入</button></p>
-		<p><button class="xbutton xround edit" id="DeletePara">删除</button></p>
-		<p><button class="xbutton xround edit" id="ClearPara">清空</button></p>
-		<p><button class="xbutton xround edit" id="UpMove">上移</button></p>
-		<p><button class="xbutton xround edit" id="DownMove">下移</button></p>
-		<p><button class="xbutton xround" id="database" action="TL_BL.html">数据库</button></p>
-		<p><button class="xbutton xround" id="save">保存</button></p>
-		<p><button class="xbutton xround closeBtn">关闭</button></p>
-	</div>
-
-	<div id = "rguicheng1" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>
-	<div id = "rguicheng2" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>
-	<div id = "rdaodixian" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>
-	<div id = "rqixiang" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
-	<div id = "rfenduan" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
-	<div id = "rtower" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
-	<div id = "rinsulate" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
-<!--	<div id = "rtowerpara" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
-<!--	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
-<!--	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
-<!--	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
-
-
-</div>
-<div class="dislpayArrow"><a class="pngfix" href="javascript:void(0);" onClick="displaynavbar(this)"></a></div>
-<section class="Hui-article-box">
-	<div id="Hui-tabNav" class="Hui-tabNav">
-		<div class="Hui-tabNav-wp">
-			<ul id="min_title_list" class="acrossTab cl">
-				<li class="active"><span title="工作区" id="span_id"> 工作区</span><em></em></li>
-			</ul>
+	<div class ="designParam" id="mpiletable" ; hidden>
+		<div>
+			<h4 style="margin-left: 20px;" id="mpiletable_title">转角直线表</h4>
 		</div>
-		<div class="Hui-tabNav-more btn-group"><a id="js-tabNav-prev" class="btn radius btn-default size-S" href="javascript:;"><i class="Hui-iconfont">&#xe6d4;</i></a><a id="js-tabNav-next" class="btn radius btn-default size-S" href="javascript:;"><i class="Hui-iconfont">&#xe6d7;</i></a></div>
-	</div>
-	<div id="iframe_box" class="Hui-article">
-	</div>
-	<footer id="footermsg" class="footer mt-20" style="z-index: 100;position: fixed;bottom: 0;height: 50px">
-		<div class="container-fluid">
-
+		<div style="overflow: auto;height: 200px;">
+		<div id = "pile_table_res" class="jexcel_content" style="background: white;padding:3px;"></div>
 		</div>
-	</footer>
-</section>
+		<div class="line" style="outline-color: #1b1b1b;line-height: 5px;">-----</div>
+	</div>
 
+	<div class ="designParam" id="towerlisttable" style="height: 400px;" hidden>
+		<div>
+			<h4 style="margin-left:20px;" id="towerlisttable_title">杆塔排位成果表</h4>
+		</div>
+		<div id = "towerlist_table_res" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
+		<table id="towerlist_table"></table>
+		<div style="text-align-last:right">
+			<button class="xbutton xround" id="tb-towerlist-calc" style="text-align-last: right" onclick="towerlistCalc()">重算</button>
+			<button class="xbutton xround close_btn" id="towerlistcloseTable"style="text-align-last: right">关闭</button>
+		</div>
+	</div>
+
+	<div class="designParam" id="Paramtable" hidden>
+		<div class = "designParamtitle">
+			<h2 id="h2title">详细设计参数</h2>
+		</div>
+		<div class="paramBtn" style="display:inline-block;width: 19%" >
+			<p><button class="xbutton xround" id="guicheng">规程要求设置</button></p>
+			<p><button class="xbutton xround" id="daodixian">导地线参数</button></p>
+			<p><button class="xbutton xround" id="qixiang">气象条件</button></p>
+			<p><button class="xbutton xround" id="fenduan">分段设置</button></p>
+			<p><button class="xbutton xround" id="gantashiyong">杆塔使用参数</button></p>
+			<p><button class="xbutton xround" id="gantatacai" disabled="disabled">杆塔塔材基础</button></p>
+			<p><button class="xbutton xround" id="jueyuancan">绝缘子串参数</button></p>
+			<p><button class="xbutton xround" id="jueyuancai" disabled="disabled">绝缘子串材料</button></p>
+			<p><button class="xbutton xround" id="jiedican" disabled="disabled">接地装置参数</button></p>
+			<p><button class="xbutton xround" id="jiedicai" disabled="disabled">接地装置材料</button></p>
+			<p><button class="xbutton xround" id="fangzhenchui" disabled="disabled">防震锤 参数</button></p>
+			<p><button class="xbutton xround" id="youhua" disabled="disabled">优化排位参数</button></p>
+		</div>
+
+		<div id = "lguicheng" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
+		<div id = "ldaodixian" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
+		<div id = "lqixiang" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
+		<div id = "lfenduan" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
+		<div id = "ltower" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
+		<div id = "linsulate" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
+
+	<!--	<div id = "lefttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>-->
+	<!--	<div id = "lefttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>-->
+	<!--	<div id = "lefttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>-->
+	<!--	<div id = "lefttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>-->
+
+
+		<div class="operateBtn" style="display:inline-block;">
+			<p><button class="xbutton xround edit" id="AddPara">追加</button></p>
+			<p><button class="xbutton xround edit" id="InsertPara">插入</button></p>
+			<p><button class="xbutton xround edit" id="DeletePara">删除</button></p>
+			<p><button class="xbutton xround edit" id="ClearPara">清空</button></p>
+			<p><button class="xbutton xround edit" id="UpMove">上移</button></p>
+			<p><button class="xbutton xround edit" id="DownMove">下移</button></p>
+			<p><button class="xbutton xround" id="database" action="TL_BL.html">数据库</button></p>
+			<p><button class="xbutton xround" id="save">保存</button></p>
+			<p><button class="xbutton xround closeBtn">关闭</button></p>
+		</div>
+
+		<div id = "rguicheng1" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>
+		<div id = "rguicheng2" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>
+		<div id = "rdaodixian" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>
+		<div id = "rqixiang" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
+		<div id = "rfenduan" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
+		<div id = "rtower" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
+		<div id = "rinsulate" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
+	<!--	<div id = "rtowerpara" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
+	<!--	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
+	<!--	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
+	<!--	<div id = "righttable" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px"></div>-->
+
+
+	</div>
+
+	<div class="dislpayArrow"><a class="pngfix" href="javascript:void(0);" onClick="displaynavbar(this)"></a></div>
+	<section class="Hui-article-box">
+		<div id="Hui-tabNav" class="Hui-tabNav">
+			<div class="Hui-tabNav-wp">
+				<ul id="min_title_list" class="acrossTab cl">
+					<li class="active"><span title="工作区" id="span_id"> 工作区</span><em></em></li>
+				</ul>
+			</div>
+			<div class="Hui-tabNav-more btn-group"><a id="js-tabNav-prev" class="btn radius btn-default size-S" href="javascript:;"><i class="Hui-iconfont">&#xe6d4;</i></a><a id="js-tabNav-next" class="btn radius btn-default size-S" href="javascript:;"><i class="Hui-iconfont">&#xe6d7;</i></a></div>
+		</div>
+		<div id="iframe_box" class="Hui-article">
+		</div>
+		<footer id="footermsg" class="footer mt-20" style="z-index: 100;position: fixed;bottom: 0;height: 50px">
+			<div class="container-fluid">
+
+			</div>
+		</footer>
+	</section>
+</body>
 
 <!--<script type=“module” src="./js/DragControls.js"></script>-->
 
@@ -1081,15 +1094,53 @@
 				function(){}
 		);
 
+
+	// table init with jexcel
+	data = [
+		['Mazda', 2001, 2000],
+		['Pegeout', 2010, 5000],
+		['Honda Fit', 2009, 3000],
+		['Honda CRV', 2010, 6000],
+	];
+	var pile_table_res = jspreadsheet(document.getElementById("pile_table_res"),{
+
+		data:[[]],
+		columns:[
+			{type:"text",title:"杆位名称", width: 80,name: "name"},
+			{type:"Numeric",title:"累距", width: 80,name: "dist"},
+			{type:"Numeric",title:"高程",  width: 80,name: "z"},
+			{type:"Numeric",title:"距离",  width: 80,name: "secdist"},
+			{type:"Numeric",title:"大地x坐标",  width: 80,name: "x"},
+			{type:"Numeric",title:"大地y坐标",  width: 80,name: "y"},
+			{type:"Numeric",title:"转角",  width: 80,name: "angle"},
+			{type:"Numeric",title:"点位误差",  width: 80,name: "my"},
+			{type:"Numeric",title:"航测断面误差",  width: 80,name: "error"},
+		]
+
+	});
+
+
+	$("#mpiletable,h2").draggable({ addClasses: false });
+	$("#piletable,h2").draggable({ addClasses: false });
+
+
 	//pile table
-	$("#piletable").draggable();
+	// $("#piletable").draggable();
 	//window resize;
 	$("#piletable").hide();
 	$("#liPiletable").click(function () {
 		document.removeEventListener('mousewheel', onDocumentMouseWheel);
+		document.removeEventListener('mousemove', createGroundObj);
+		document.removeEventListener('mousedown', trackGroundObj);
+		document.removeEventListener('mousedown', onDocumentSelected);
+		document.removeEventListener('mousemove', onDocumentMsg);
 		$("#piletable").show(function(){
 			pilecalc(pile_tabledata);
 		});
+		$("#mpiletable").show(function(){
+			$('#pile_table_res,.jexcel_container .jexcel_content').show();
+		});
+		//$('#pile_table_res,.jexcel_container .jexcel_content').show();
 		// $("#tb_pile_calc").click();
 		// GridManager.refreshGrid(pile_tableId);
 
