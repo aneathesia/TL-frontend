@@ -124,7 +124,6 @@
 .designParam{
     /*width: 800px;*/
     /*height: 365px;*/
-    width: 50%;
     left: 20%;
     top: 20%;
     position: relative;
@@ -133,8 +132,8 @@
     border: groove;
     border-width: thin;
     background-color: #F0F0F0;
-    resize: both;
-    overflow: auto;
+    /*resize: both;*/
+    /*overflow: auto;*/
 }
 
 .resTable{

@@ -182,11 +182,11 @@
 		<div id = "dragdiv"  ondragend="dragEndHandle(event)" draggable="true" onmousedown="onmousedownHandle(event)"   >
 			<h4 style="margin-left: 20px;" id="mpiletable_title" >转角直线表</h4>
 		</div>
-		<div style="overflow: auto;height: 200px;">
+		<div style="overflow: auto;resize: both;margin-right: 5px">
 		<div id = "pile_table_res" class="jexcel_content" style="background: white;padding:3px;"></div>
 		</div>
 		<div class="line" style="outline-color: #1b1b1b;line-height: 5px;">-----</div>
-		<div style="display: inline;">
+		<div style="bottom:5px">
 			<!--		<button class="input-file" id="opentxt">文件上传</button>-->
 
 			<button class="xbutton xround"  style="margin-left:5px;">		<input type="file" id ="tb_pile_input" accept=".txt"> </button>
@@ -210,7 +210,7 @@
 		</div>
 	</div>
 
-	<div class="designParam" id="Paramtable" hidden>
+	<div class="designParam" id="Paramtable" style="width: 800px;height:400px;" draggable="true" hidden>
 		<div class = "designParamtitle">
 			<h2 id="h2title">详细设计参数</h2>
 		</div>
@@ -880,8 +880,6 @@
 	//pilelist table init
 
 	var pile_tabledata=[];
-	var pile_tableId=document.getElementById("mpile_table");
-
 
 	// towerlist table init
 
@@ -1022,13 +1020,7 @@
 		);
 
 
-	// table init with jexcel
-	data = [
-		['Mazda', 2001, 2000],
-		['Pegeout', 2010, 5000],
-		['Honda Fit', 2009, 3000],
-		['Honda CRV', 2010, 6000],
-	];
+	// piletable init with jexcel
 	var pile_table_res = jspreadsheet(document.getElementById("pile_table_res"),{
 
 		data:[[]],
@@ -1042,22 +1034,128 @@
 			{type:"Numeric",title:"转角",  width: 80,name: "angle"},
 			{type:"Numeric",title:"点位误差",  width: 80,name: "my"},
 			{type:"Numeric",title:"航测断面误差",  width: 80,name: "error"},
-		]
+		],
+
+		onbeforechange:beforeChangeEventPiletable,
+		onafterchanges:Afterchangepile,
+		contextMenu:pilerightbutton,
 
 	});
+	function Afterchangepile(){
+		pile_tabledata = pile_table_res.getJson();
+	}
+	function beforeChangeEventPiletable(instance, cell, x, y, value){
+		if(x!=0){
+		console.log(pile_tabledata);
+			return Number(value);
+		}
+	}
+	function pilerightbutton(obj,x,y,e){
+		var items = [];
+
+		if (y == null) {
+			// Insert a new column
+			if (obj.options.allowInsertColumn == true) {
+				items.push({
+					title:obj.options.text.insertANewColumnBefore,
+					onclick:function() {
+						obj.insertColumn(1, parseInt(x), 1);
+					}
+				});
+			}
+
+			if (obj.options.allowInsertColumn == true) {
+				items.push({
+					title:obj.options.text.insertANewColumnAfter,
+					onclick:function() {
+						obj.insertColumn(1, parseInt(x), 0);
+					}
+				});
+			}
+
+			// Delete a column
+			if (obj.options.allowDeleteColumn == true) {
+				items.push({
+					title:obj.options.text.deleteSelectedColumns,
+					onclick:function() {
+						obj.deleteColumn(obj.getSelectedColumns().length ? undefined : parseInt(x));
+					}
+				});
+			}
+
+			// Rename column
+			if (obj.options.allowRenameColumn == true) {
+				items.push({
+					title:obj.options.text.renameThisColumn,
+					onclick:function() {
+						obj.setHeader(x);
+					}
+				});
+			}
+
+			// Sorting
+			if (obj.options.columnSorting == true) {
+				// Line
+				items.push({ type:'line' });
+
+				items.push({
+					title:obj.options.text.orderAscending,
+					onclick:function() {
+						obj.orderBy(x, 0);
+					}
+				});
+				items.push({
+					title:obj.options.text.orderDescending,
+					onclick:function() {
+						obj.orderBy(x, 1);
+					}
+				});
+			}
+		} else {
+			// Insert new row
+			if (obj.options.allowInsertRow == true) {
+				items.push({
+					title:'在前插入一行',
+					onclick:function() {
+						obj.insertRow(1, parseInt(y), 1);
+					}
+				});
+
+				items.push({
+					title:'在后插入一行',
+					onclick:function() {
+						obj.insertRow(1, parseInt(y));
+					}
+				});
+			}
+			items.push({
+				title:'交换X Y',
+				onclick:function() {
+					for(let i = 0; i <pile_tabledata.length;i++){
+						var temp;temp = pile_tabledata[i].x; pile_tabledata[i].x = pile_tabledata[i].y; pile_tabledata[i].y= temp;
+					}
+					pile_table_res.setData(pile_tabledata);
+
+				}
+			});
+			if (obj.options.allowDeleteRow == true) {
+				items.push({
+					title:'删去选中行',
+					onclick:function() {
+						obj.deleteRow(obj.getSelectedRows().length ? undefined : parseInt(y));
+					}
+				});
+			}
 
 
-	// $("#dragdiv").draggable({ addClasses: false });
-	// //var moveh = $("#dragdiv")
-	// window.movep = function(evt){
-	// 	//console.log(evt.movementX,evt.movementY);
-	// 	console.log(evt.mousemove());
-	// 	console.log($("#dragdiv").offsetParent());
-	// 	$('#mpiletable').css({'left':'100px','top':'100'});
-	// 	console.log(document.getElementById("mpiletable")[0]);
-	// 	//document.getElementById("mpiletable").ondrag(evt);
-	// }
-	//
+		}
+
+		return items;
+	}
+
+
+
+	// piletable layout
 	const box = document.getElementById("mpiletable");
 	let  x;let  y ;
 	// 兼容IE和火狐谷歌等的写法
@@ -1114,11 +1212,6 @@
 	}
 
 
-
-
-	//pile table
-	// $("#piletable").draggable();
-	//window resize;
 	$("#piletable").hide();
 	$("#liPiletable").click(function () {
 		document.removeEventListener('mousewheel', onDocumentMouseWheel);
@@ -1132,8 +1225,6 @@
 		});
 		//$('#pile_table_res,.jexcel_container .jexcel_content').show();
 		// $("#tb_pile_calc").click();
-		// GridManager.refreshGrid(pile_tableId);
-
 	})
 	$("#closeTable").click(function () {
 		document.addEventListener('mousewheel', onDocumentMouseWheel, false);//兼容ie chrome
@@ -1622,7 +1713,7 @@
 			success: function (res) {
 				console.log("txtToJson",res);
 				pile_tabledata =res;
-				//GridManager.setAjaxData(pile_tableId,{"data":pile_tabledata});
+				pile_table_res.setData(pile_tabledata);
 			}
 		});
 
@@ -1653,7 +1744,7 @@
 				for(let i=1;i<pile_tabledata.length;i++){
 					pile_tabledata[i].secdist=pile_tabledata[i].dist-pile_tabledata[i-1].dist;
 				}
-				//GridManager.setAjaxData(pile_tableId,{"data":pile_tabledata});  //GM.js
+				pile_table_res.setData(pile_tabledata);
 			}
 		})
 	}
