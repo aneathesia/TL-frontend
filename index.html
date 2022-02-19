@@ -177,32 +177,24 @@
 		</div>
 	</aside>
 
-	<div class ="designParam" id="piletable" style="height: 400px;" hidden>
-		<div>
-			<h4 style="margin-left: 2%;" id="piletable_title">转角直线表</h4>
-		</div>
-	<!--	<div id = "pile_table_res" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>-->
-		<table id="mpile_table"></table>
-		<div class="line" style="outline-color: #1b1b1b;line-height: 5px;">-----</div>
-		<div style="display: inline;">
-			<!--		<button class="input-file" id="opentxt">文件上传</button>-->
-
-				<button class="xbutton xround"  style="margin-left:5px;">		<input type="file" id ="tb_pile_input" accept=".txt"> </button>
-				<button class="xbutton xround" id="tb_pile_calc" style="text-align-last: right">计算</button>
-				<button class="xbutton xround" id="tb-pile-save" style="text-align-last: right;display: none">保存</button>
-				<button class="xbutton xround close_btn" id="closeTable"style="text-align-last: right">关闭</button>
-
-		</div>
-	</div>
 
 	<div class ="designParam" id="mpiletable" ; hidden>
-		<div id = "dragdiv"  ondragend="dragEndHandle(event)" draggable="true" onmousedown="onmousedownHandle(event)"  >
+		<div id = "dragdiv"  ondragend="dragEndHandle(event)" draggable="true" onmousedown="onmousedownHandle(event)"   >
 			<h4 style="margin-left: 20px;" id="mpiletable_title" >转角直线表</h4>
 		</div>
 		<div style="overflow: auto;height: 200px;">
 		<div id = "pile_table_res" class="jexcel_content" style="background: white;padding:3px;"></div>
 		</div>
 		<div class="line" style="outline-color: #1b1b1b;line-height: 5px;">-----</div>
+		<div style="display: inline;">
+			<!--		<button class="input-file" id="opentxt">文件上传</button>-->
+
+			<button class="xbutton xround"  style="margin-left:5px;">		<input type="file" id ="tb_pile_input" accept=".txt"> </button>
+			<button class="xbutton xround" id="tb_pile_calc" style="text-align-last: right">计算</button>
+			<button class="xbutton xround" id="tb-pile-save" style="text-align-last: right;display: none">保存</button>
+			<button class="xbutton xround close_btn" id="closeTable"style="text-align-last: right">关闭</button>
+
+		</div>
 		<span class="layui-layer-resize"></span>
 	</div>
 
@@ -889,73 +881,7 @@
 
 	var pile_tabledata=[];
 	var pile_tableId=document.getElementById("mpile_table");
-	pile_tableId.GM({
-		gridManagerName: 'TL-piletable',
-				ajaxData: {"data":pile_tabledata},
-				ajaxType: 'POST',
-				//supportMenu: true,// 默认为true
-							menuHandler: list => {
-								list.unshift({
-									content: '交换X Y',
-									//line: true,
-									onClick: function(){
-										for(let i=0;i<pile_tabledata.length;i++)
-										{
-											var temp;
-											temp=pile_tabledata[i].x;
-											pile_tabledata[i].x=pile_tabledata[i].y;
-											pile_tabledata[i].y=temp;
-										}
 
-										GridManager.refreshGrid(pile_tableId);
-										console.log("exchanged data x y ");
-									}
-
-								});
-								// list.unshift({
-								// 	content:'test right click button',
-								// 	//line:true,
-								// 	onClick:function (){alert("test finish")}
-								// });
-								return list;
-							},
-			columnData: [
-				{
-					key: 'name',
-					text: '杆位名称'
-				},{
-					key: 'dist',
-					text: '累距'
-				},{
-					key: 'z',
-					text: '高程'
-				},{
-					key: 'secdist',
-					text: '距离'
-				},{
-					key: 'x',
-					text: '大地x坐标'
-				},{
-					key: 'y',
-					text: '大地y坐标'
-				}
-				,{
-					key: 'angle',
-					text: '转角'
-				}
-				,{
-					key: 'my',
-					text: '点位误差'
-				}
-				,{
-					key: 'error',
-					text: '航测断面较差'
-				}
-			],
-
-		},
-			function(){}
-	);
 
 	// towerlist table init
 
@@ -1155,7 +1081,8 @@
 		console.log(e.clientX,x,y,boxMarginLeft,boxMarginTop);
 		console.log("dragend boxleft,top",box.style.left,box.style.top);
 	}
-	window.dragstartHandle = function (e) {
+
+	window.draggingHandle = function (e) {
 		// 原因其实是定位和margin作用会叠加在一起。
 		// 如果使用的是定位那么还要减去margin否者位置不准，原因是定位其实是准的但是如果元素本身有margin，加上了元素本身的margin这些就会错位
 		// 所以最终偏移量是：鼠标指针位置相对于当前窗口的 x或y 坐标 - 鼠标相对于触发事件对象的位置 - 拖拽盒子的marginLeft或marginTop
@@ -1173,24 +1100,6 @@
 		// 	dragEndHandle(e);
 		// }
 	}
-
-	// window.draggingHandle = function (e) {
-	// 	// 原因其实是定位和margin作用会叠加在一起。
-	// 	// 如果使用的是定位那么还要减去margin否者位置不准，原因是定位其实是准的但是如果元素本身有margin，加上了元素本身的margin这些就会错位
-	// 	// 所以最终偏移量是：鼠标指针位置相对于当前窗口的 x或y 坐标 - 鼠标相对于触发事件对象的位置 - 拖拽盒子的marginLeft或marginTop
-	// 	e.target.style.left = e.clientX - x - boxMarginLeft + 'px'
-	// 	e.target.style.top = e.clientY - y  - boxMarginTop + 'px'
-	// 	console.log(e.clientX,x,y,boxMarginLeft,boxMarginTop);
-	// 	console.log(" dragging e left,top",box.style.left,box.style.top);
-	// 	box.style.left = e.clientX - x - boxMarginLeft + 'px'
-	// 	box.style.top = e.clientY - y  - boxMarginTop + 'px'
-	// 	console.log(e.clientX,x,y,boxMarginLeft,boxMarginTop);
-	// 	console.log(" dragging boxleft,top",box.style.left,box.style.top);
-	//
-	// 	// else{
-	// 	// 	dragEndHandle(e);
-	// 	// }
-	// }
 
 	window.onmousedownHandle = function (e) {
 		// e.offsetX 鼠标指针位置相对于触发事件的对象的 x 坐标。
@@ -1217,9 +1126,7 @@
 		document.removeEventListener('mousedown', trackGroundObj);
 		document.removeEventListener('mousedown', onDocumentSelected);
 		document.removeEventListener('mousemove', onDocumentMsg);
-		$("#piletable").show(function(){
-			pilecalc(pile_tabledata);
-		});
+
 		$("#mpiletable").show(function(){
 			$('#pile_table_res,.jexcel_container .jexcel_content').show();
 		});
@@ -1231,7 +1138,7 @@
 	$("#closeTable").click(function () {
 		document.addEventListener('mousewheel', onDocumentMouseWheel, false);//兼容ie chrome
 		document.addEventListener('DOMMouseScroll', onDocumentMouseWheel, false);
-		$("#piletable").hide();
+		$("#mpiletable").hide();
 	})
 
 	$("#towerlisttable").draggable();
@@ -1715,7 +1622,7 @@
 			success: function (res) {
 				console.log("txtToJson",res);
 				pile_tabledata =res;
-				GridManager.setAjaxData(pile_tableId,{"data":pile_tabledata});
+				//GridManager.setAjaxData(pile_tableId,{"data":pile_tabledata});
 			}
 		});
 
@@ -1746,7 +1653,7 @@
 				for(let i=1;i<pile_tabledata.length;i++){
 					pile_tabledata[i].secdist=pile_tabledata[i].dist-pile_tabledata[i-1].dist;
 				}
-				GridManager.setAjaxData(pile_tableId,{"data":pile_tabledata});  //GM.js
+				//GridManager.setAjaxData(pile_tableId,{"data":pile_tabledata});  //GM.js
 			}
 		})
 	}
