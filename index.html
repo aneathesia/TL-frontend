@@ -196,13 +196,14 @@
 	</div>
 
 	<div class ="designParam" id="mpiletable" ; hidden>
-		<div>
-			<h4 style="margin-left: 20px;" id="mpiletable_title">转角直线表</h4>
+		<div id = "dragdiv"  ondragend="dragEndHandle(event)" draggable="true" onmousedown="onmousedownHandle(event)"  >
+			<h4 style="margin-left: 20px;" id="mpiletable_title" >转角直线表</h4>
 		</div>
 		<div style="overflow: auto;height: 200px;">
 		<div id = "pile_table_res" class="jexcel_content" style="background: white;padding:3px;"></div>
 		</div>
 		<div class="line" style="outline-color: #1b1b1b;line-height: 5px;">-----</div>
+		<span class="layui-layer-resize"></span>
 	</div>
 
 	<div class ="designParam" id="towerlisttable" style="height: 400px;" hidden>
@@ -1120,8 +1121,90 @@
 	});
 
 
-	$("#mpiletable,h2").draggable({ addClasses: false });
-	$("#piletable,h2").draggable({ addClasses: false });
+	// $("#dragdiv").draggable({ addClasses: false });
+	// //var moveh = $("#dragdiv")
+	// window.movep = function(evt){
+	// 	//console.log(evt.movementX,evt.movementY);
+	// 	console.log(evt.mousemove());
+	// 	console.log($("#dragdiv").offsetParent());
+	// 	$('#mpiletable').css({'left':'100px','top':'100'});
+	// 	console.log(document.getElementById("mpiletable")[0]);
+	// 	//document.getElementById("mpiletable").ondrag(evt);
+	// }
+	//
+	const box = document.getElementById("mpiletable");
+	let  x;let  y ;
+	// 兼容IE和火狐谷歌等的写法
+	if (window.getComputedStyle) {
+		// getComputedStyle方法只可读能获取到所有样式，获取到的值带单位而style可读可写但是只能获取到行内样式，获取到的值为数值不带单位
+		// 参数一：必填，要获取样式的元素，参数二：可选，伪类元素，当不查询伪类元素的时候可以忽略或者传入 null。
+		var computedStyle = getComputedStyle(box, null);
+	} else {
+		var computedStyle = box.currentStyle;//兼容IE的写法
+	}
+	const boxMarginTop = parseInt(computedStyle.marginTop)
+	const boxMarginLeft = parseInt(computedStyle.marginLeft)
+	// 拖拽结束
+	window.dragEndHandle = function (e) {
+		// 原因其实是定位和margin作用会叠加在一起。
+		// 如果使用的是定位那么还要减去margin否者位置不准，原因是定位其实是准的但是如果元素本身有margin，加上了元素本身的margin这些就会错位
+		// 所以最终偏移量是：鼠标指针位置相对于当前窗口的 x或y 坐标 - 鼠标相对于触发事件对象的位置 - 拖拽盒子的marginLeft或marginTop
+		//e.preventDefault();
+		box.style.left = e.clientX - x - boxMarginLeft + 'px'
+		box.style.top = e.clientY - y  - boxMarginTop + 'px'
+		console.log(e.clientX,x,y,boxMarginLeft,boxMarginTop);
+		console.log("dragend boxleft,top",box.style.left,box.style.top);
+	}
+	window.dragstartHandle = function (e) {
+		// 原因其实是定位和margin作用会叠加在一起。
+		// 如果使用的是定位那么还要减去margin否者位置不准，原因是定位其实是准的但是如果元素本身有margin，加上了元素本身的margin这些就会错位
+		// 所以最终偏移量是：鼠标指针位置相对于当前窗口的 x或y 坐标 - 鼠标相对于触发事件对象的位置 - 拖拽盒子的marginLeft或marginTop
+		// e.preventDefault();
+		e.target.style.left = e.clientX - x - boxMarginLeft + 'px'
+		e.target.style.top = e.clientY - y  - boxMarginTop + 'px'
+		console.log(e.clientX,x,y,boxMarginLeft,boxMarginTop);
+		console.log(" dragging e left,top",box.style.left,box.style.top);
+		box.style.left = e.clientX - x - boxMarginLeft + 'px'
+		box.style.top = e.clientY - y  - boxMarginTop + 'px'
+		console.log(e.clientX,x,y,boxMarginLeft,boxMarginTop);
+		console.log(" dragging boxleft,top",box.style.left,box.style.top);
+
+		// else{
+		// 	dragEndHandle(e);
+		// }
+	}
+
+	// window.draggingHandle = function (e) {
+	// 	// 原因其实是定位和margin作用会叠加在一起。
+	// 	// 如果使用的是定位那么还要减去margin否者位置不准，原因是定位其实是准的但是如果元素本身有margin，加上了元素本身的margin这些就会错位
+	// 	// 所以最终偏移量是：鼠标指针位置相对于当前窗口的 x或y 坐标 - 鼠标相对于触发事件对象的位置 - 拖拽盒子的marginLeft或marginTop
+	// 	e.target.style.left = e.clientX - x - boxMarginLeft + 'px'
+	// 	e.target.style.top = e.clientY - y  - boxMarginTop + 'px'
+	// 	console.log(e.clientX,x,y,boxMarginLeft,boxMarginTop);
+	// 	console.log(" dragging e left,top",box.style.left,box.style.top);
+	// 	box.style.left = e.clientX - x - boxMarginLeft + 'px'
+	// 	box.style.top = e.clientY - y  - boxMarginTop + 'px'
+	// 	console.log(e.clientX,x,y,boxMarginLeft,boxMarginTop);
+	// 	console.log(" dragging boxleft,top",box.style.left,box.style.top);
+	//
+	// 	// else{
+	// 	// 	dragEndHandle(e);
+	// 	// }
+	// }
+
+	window.onmousedownHandle = function (e) {
+		// e.offsetX 鼠标指针位置相对于触发事件的对象的 x 坐标。
+		// e.offsetY 鼠标指针位置相对于触发事件的对象的 y 坐标。
+		// e.clientX 鼠标指针位置相对于当前窗口的 x 坐标
+		// offsetParent 离元素最近的一个有定位的祖先盒子，如果没有祖先定位盒子则默认位body
+		// box.offsetTop box这元素到offsetParent的顶部(外边框)的距离
+		// 获取鼠标相对于触发事件对象的位置
+		y = e.clientY - box.offsetTop;
+		x = e.clientX - box.offsetLeft;
+		console.log("x,y",x,y);
+	}
+
+
 
 
 	//pile table
@@ -3268,7 +3351,7 @@
 	/* 预设格网参数 */
 	var verSize = 160;var horSize = 300; var ydivision=mp.m_HScale*mp.m_Grid/1000; var xdivision = mp.m_DScale*mp.m_Grid/1000;var Gridsize = mp.m_Grid;
 	var width,dis,gridHor,gridVer;
-	var x = new Array();var y = new Array();
+	//var x = new Array();var y = new Array();
 	var leftX = new Array();var leftY = new Array();
 	var rightX = new Array();var rightY = new Array();
 	var yMin = 100;var yMax = verSize;var xMax = 0; var xMin =0 ;
