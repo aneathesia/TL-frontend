@@ -179,10 +179,10 @@
 
 
 	<div class ="designParam" id="mpiletable" ; hidden>
-		<div id = "dragdiv"  ondragend="dragEndHandle(event)" draggable="true" onmousedown="onmousedownHandle(event)"   >
+		<div>
 			<h4 style="margin-left: 20px;" id="mpiletable_title" >转角直线表</h4>
 		</div>
-		<div style="overflow: auto;resize: both;margin-right: 5px">
+		<div style="overflow: auto;resize: both;margin-right: 5px;width: 500px;">
 		<div id = "pile_table_res" class="jexcel_content" style="background: white;padding:3px;"></div>
 		</div>
 		<div class="line" style="outline-color: #1b1b1b;line-height: 5px;">-----</div>
@@ -198,19 +198,22 @@
 		<span class="layui-layer-resize"></span>
 	</div>
 
-	<div class ="designParam" id="towerlisttable" style="height: 400px;" hidden>
-		<div>
+	<div class ="designParam" id="towerlisttable"  hidden>
+		<div id = "dragdi"  ondragend="dragEndHandle(event)" draggable="true" onmousedown="onmousedownHandle(event)">
 			<h4 style="margin-left:20px;" id="towerlisttable_title">杆塔排位成果表</h4>
 		</div>
-		<div id = "towerlist_table_res" class="jexcel_content" style="overflow-y: auto;height:88%;background: white;padding:3px;"></div>
-		<table id="towerlist_table"></table>
-		<div style="text-align-last:right">
+		<div style="overflow: auto;resize: both;margin-right: 5px;">
+		<div id = "towerlist_table_res" class="jexcel_content" style="background: white;padding:3px;"></div>
+		</div>
+<!--		//<table id="towerlist_table"></table>-->
+		<div style="text-align-last:right;bottom: 5px">
 			<button class="xbutton xround" id="tb-towerlist-calc" style="text-align-last: right" onclick="towerlistCalc()">重算</button>
 			<button class="xbutton xround close_btn" id="towerlistcloseTable"style="text-align-last: right">关闭</button>
 		</div>
+		<span class="layui-layer-resize"></span>
 	</div>
 
-	<div class="designParam" id="Paramtable" style="width: 800px;height:400px;" draggable="true" hidden>
+	<div class="designParam" id="Paramtable" style="width: 800px;height:400px;"  hidden>
 		<div class = "designParamtitle">
 			<h2 id="h2title">详细设计参数</h2>
 		</div>
@@ -886,144 +889,12 @@
 		var towerlist_tabledata=[];
 
 		towerlist_tabledata=towerlist;  //table data format different with towerlist_tabledata parameters default
-		var towerlist_tableId=document.getElementById("towerlist_table");
-		var tb_towerlist=new GridManager(towerlist_tableId,{
-					gridManagerName: 'TL-towerlisttable',
-					ajaxData: {"data":towerlist_tabledata},
-					ajaxType: 'POST',
-					menuHandler: list => {
-						list.unshift({
-							content: '重排塔杆编号',
-							//line: true,
-							onClick: function(){
-								var head =prompt("首字母","G");
-								var fid=prompt("起始编号","0");
-								for(let i=0;i<towerlist_tabledata.length;i++)
-								{
-									console.log(fid-"0"+i);
-									towerlist_tabledata[i].Name=head.toString()+(fid-"0"+i).toString();
-									towerlist[i].Name=head.toString()+(fid-"0"+i).toString();
-
-								}
-								console.log(towerlist_tabledata);
-								towerlistCalc();
-								GridManager.setAjaxData(towerlist_tableId,{"data":towerlist_tabledata});
-								GridManager.refreshGrid(towerlist_tableId);
-								console.log("reset name");
-								console.log(towerlist_tabledata);
-							}
-
-						});
-						list.unshift({
-							content:'删除所选塔杆',
-							//line:true,
-							onClick:function (){
-								var del_tower=GridManager.getCheckedData(towerlist_tableId); //checkedtower need to delete former list
-								for(let i=0;i<del_tower.length;i++){
-									for(let j=0;j<towerlist_tabledata.length;j++){
-										if(del_tower[i].Name==towerlist_tabledata[j].Name){
-											towerlist_tabledata.splice(j,1);
-										}
-									}
-								}
-								TowerGroup.children.length = 0;
-								TowerScriptGroup.children.length = 0;
-								FawCurveGroup.children.length = 0 ;
-								TowerDraw(towerlist_tabledata);
-								towerlist = towerlist_tabledata;
-
-								for(let i=0;i<towerlist_tabledata.length;i++){
-									if(towerlist_tabledata[i].offset>0)towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position+"+"+towerlist_tabledata[i].offset.toString();
-									else if(towerlist_tabledata[i].offset==0)towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position.toString();//
-									else towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position+towerlist_tabledata[i].offset.toString();
-								}
-								GridManager.setAjaxData(towerlist_tableId,{"data":towerlist_tabledata});
-								GridManager.refreshGrid(towerlist_tableId);
-								del_tower=GridManager.setCheckedData(towerlist_tableId,[]);
-							}
-						});
-						list.unshift({
-							content:'重算杆塔位置',
-							//line:true,
-							onClick:function (){alert("recalc towerlist finish")} //什么情况下会重算杆塔位置
-						});
-						return list;
-					},
-					columnData: [
-						{
-							key: 'Name',
-							text: '杆号'
-						},{
-							key: 'Distance',
-							text: '累距'
-						},{
-							key: 'High',
-							text: '桩位高程'
-						},{
-							key: 'l2',
-							text: '前侧档距'
-						},{
-							key: 'PosOffset',
-							text: '杆塔位置',
-						},{
-							key: 'TowerType',
-							text: '杆型'
-						}
-						,{
-							key: 'TowerHigh',
-							text: '塔高'
-						}
-						,{
-							key: 'Base',
-							text: '降基'
-						}
-						,{
-							key: 'Angle',
-							text: '转角数'
-						}
-						,{
-							key: 'Lh',
-							text: '水平档距'
-						}
-						,{
-							key: 'Lv',
-							text: '垂直档距'
-						}
-						,{
-							key: 'InsulatorLength',
-							text: '导线串长'
-						}
-						,{
-							key: 'LandDist',
-							text: '前侧对地距离'
-						}
-						,{
-							key: 'ElecDist',
-							text: '前侧跨越距离'
-						}
-						,{
-							key: 'Lk',
-							text: '前侧代表档距'
-						}
-						,{
-							key: 'kPline',  //kPline/1.0*1E5
-							text: '前侧模板k值'
-						}
-						,{
-							key: 'u',
-							text: '前侧放松系数'
-						}
-
-					],
-				},
-				function(){}
-		);
 
 
 	// piletable init with jexcel
 	var pile_table_res = jspreadsheet(document.getElementById("pile_table_res"),{
 
-		data:[[]],
+		data:pile_tabledata,
 		columns:[
 			{type:"text",title:"杆位名称", width: 80,name: "name"},
 			{type:"Numeric",title:"累距", width: 80,name: "dist"},
@@ -1211,6 +1082,44 @@
 		console.log("x,y",x,y);
 	}
 
+	//towerlist table res with jexcel
+	var towerlist_table_res = jspreadsheet(document.getElementById("towerlist_table_res"),{
+
+		data:towerlist_tabledata,
+		columns:[
+			{type:"text",title:"杆号", width: 80,name: "Name"},
+			{type:"Numeric",title:"累距", width: 80,name: "Distance"},
+			{type:"Numeric",title:"桩位高程",  width: 80,name: "High"},
+			{type:"Numeric",title:"前侧档距",  width: 80,name: "l2"},
+			{type:"Numeric",title:"杆塔位置",  width: 80,name: "PosOffset"},
+			{type:"Numeric",title:"杆塔类型",  width: 80,name: "TowerType"},
+			{type:"Numeric",title:"降基",  width: 80,name: "Base"},
+			{type:"Numeric",title:"转角数",  width: 80,name: "Angle"},
+			{type:"Numeric",title:"水平档距",  width: 80,name: "lh"},
+			{type:"Numeric",title:"垂直档距",  width: 80,name: "lv"},
+			{type:"Numeric",title:"导线串长",  width: 80,name: "InsulatorLength"},
+			{type:"Numeric",title:"前侧对地距离",  width: 80,name: "LandDist"},
+			{type:"Numeric",title:"前侧跨地距离",  width: 80,name: "ELecDist"},
+			{type:"Numeric",title:"前侧代表档距",  width: 80,name: "Lk"},
+			{type:"Numeric",title:"前侧模版k值",  width: 80,name: "kPline"},
+			{type:"Numeric",title:"前侧放松系数",  width: 80,name: "u"},
+		],
+
+		onbeforechange:beforeChangeEventtowerlisttable,
+		onafterchanges:Afterchangetowerlist,
+		contextMenu:function(obj,x,y,e){},
+
+	});
+	function Afterchangetowerlist(){
+		towerlist_tabledata = towerlist_table_res.getJson();
+	}
+	function beforeChangeEventtowerlisttable(instance, cell, x, y, value){
+		if(x!=0){
+			console.log(towerlist_tabledata);
+			return Number(value);
+		}
+	}
+
 
 	$("#piletable").hide();
 	$("#liPiletable").click(function () {
@@ -1232,14 +1141,19 @@
 		$("#mpiletable").hide();
 	})
 
-	$("#towerlisttable").draggable();
+	//$("#towerlisttable").draggable();
 	//window resize;
 	$("#towerlisttable").hide();
 	$("#liTowerlisttable").click(function () {
 		document.removeEventListener('mousewheel', onDocumentMouseWheel);
+		document.removeEventListener('mousemove', createGroundObj);
+		document.removeEventListener('mousedown', trackGroundObj);
+		document.removeEventListener('mousedown', onDocumentSelected);
+		document.removeEventListener('mousemove', onDocumentMsg);
 		$("#towerlisttable").show(function(){
+			$('#towerlist_table_res,.jexcel_container .jexcel_content').show();
 			towerlistCalc();
-			GridManager.refreshGrid(towerlist_tableId);
+			//GridManager.refreshGrid(towerlist_tableId);
 		});
 	})
 	$("#towerlistcloseTable").click(function () {
@@ -1809,7 +1723,7 @@
 					else res.TOWERLIST[i].PosOffset = res.TOWERLIST[i].Position+res.TOWERLIST[i].offset.toString();
 				}
 				TowerDraw(towerlist_tabledata);
-				GridManager.setAjaxData(towerlist_tableId,{"data":res.TOWERLIST});
+				//GridManager.setAjaxData(towerlist_tableId,{"data":res.TOWERLIST});
 
 			}
 		})
@@ -5316,8 +5230,8 @@
 						}
 						towerlist_tabledata = towerlist;
 						console.log(towerlist_tabledata);
-						GridManager.setAjaxData(towerlist_tableId, {"data": towerlist_tabledata});
-						GridManager.refreshGrid(towerlist_tableId);
+						// GridManager.setAjaxData(towerlist_tableId, {"data": towerlist_tabledata});
+						// GridManager.refreshGrid(towerlist_tableId);
 					}
 					else {
 						return false;
@@ -5975,8 +5889,8 @@
 			console.log(towerlist);
 			towerlist_tabledata = towerlist;
 			console.log(towerlist_tabledata);
-			GridManager.setAjaxData(towerlist_tableId, {"data": towerlist_tabledata});
-			GridManager.refreshGrid(towerlist_tableId);
+			// GridManager.setAjaxData(towerlist_tableId, {"data": towerlist_tabledata});
+			// GridManager.refreshGrid(towerlist_tableId);
 		}
 		if (event.button === 2){
 			document.body.style.cursor = "default";
@@ -6040,8 +5954,8 @@
 				console.log(towerlist);
 				towerlist_tabledata = towerlist;
 				console.log(towerlist_tabledata);
-				GridManager.setAjaxData(towerlist_tableId, {"data": towerlist_tabledata});
-				GridManager.refreshGrid(towerlist_tableId);
+				// GridManager.setAjaxData(towerlist_tableId, {"data": towerlist_tabledata});
+				// GridManager.refreshGrid(towerlist_tableId);
 			}
 			if (event.button === 2){
 				document.body.style.cursor = "default";
