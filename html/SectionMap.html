@@ -6,6 +6,14 @@
 </head>
 <body>
 <form class="layui-form" action="">
+    <div class="layui-form-item" >
+        <label class="layui-form-label">DEM文件</label>
+        <div class="layui-input-block">
+            <select id="demfilelist" style="width: auto">    //控制显示的个数
+            </select>
+        </div>
+    </div>
+
 
         <div class="layui-form-item" style="display: inline-block">
             <label class="layui-form-label">起始桩位</label>
@@ -49,18 +57,27 @@
         </div>
     </div>
 
-    <div class="layui-form-item" style="text-align-last: right">
-        <div class="layui-input-block">
+<!--    <label style="font-size: small">上传本地 DEM</label>-->
+<!--    <div style="height: 30px">-->
+<!--        <input type="file" style="float: left;width: 150px;" id="file">-->
+<!--        <progress id="DprogressBar" value="0" max="100" style="width: 50px;visibility: hidden" ></progress>-->
+<!--        <div  style="float: bottom;float:right;margin-bottom: 2%" >-->
+<!--            <button class="layui-layer-btn" id="localdemUpload">上传</button>-->
+<!--        </div>-->
+<!--    </div>-->
+
+    <div class="layui-form-item" style="text-align-last: right;">
+        <div class="layui-input-block" style="text-align-last: right;">
             <button class="layui-btn layui-layer-close" lay-submit lay-filter="formDemo" id="submit" onclick="iframetrans()">确定</button>
             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
         </div>
     </div>
 </form>
 <script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
+
+<script type="text/javascript" src="../config.js"></script>
 <script>
     let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-    //let mapjson;
-    //parent.layer.iframeAuto(index);
 
     function iframetrans(){
         console.log("valuebegin",$("#beginOp").find("option:selected").val());
@@ -76,10 +93,14 @@
             "sectionType":$("#sectypeOp").find("option:selected").val().toString(),
         };
         console.log("JSON"+JSON.stringify(transobj));
-        parent.GetSecDem(transobj);  //将子窗口的参数传递给父窗口
+        let demFile = $("#demfilelist").find("option:selected").text();
+        parent.GetSecDem(transobj,demFile);  //将子窗口的参数传递给父窗口
 
         parent.layer.close(index);
     }
+
+
+
 
 </script>
 </body>

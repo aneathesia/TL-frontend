@@ -183,7 +183,7 @@
 			<h4 style="margin-left: 20px;" id="mpiletable_title" >转角直线表</h4>
 		</div>
 		<div style="overflow: auto;resize: both;margin-right: 5px;width: 500px;">
-		<div id = "pile_table_res" class="jexcel_content" style="background: white;padding:3px;"></div>
+			<div id = "pile_table_res" class="jexcel_content" style="background: white;padding:3px;"></div>
 		</div>
 		<div class="line" style="outline-color: #1b1b1b;line-height: 5px;">-----</div>
 		<div style="bottom:5px">
@@ -199,15 +199,15 @@
 	</div>
 
 	<div class ="designParam" id="towerlisttable"  hidden>
-		<div id = "dragdi"  ondragend="dragEndHandle(event)" draggable="true" onmousedown="onmousedownHandle(event)">
+		<div>
 			<h4 style="margin-left:20px;" id="towerlisttable_title">杆塔排位成果表</h4>
 		</div>
-		<div style="overflow: auto;resize: both;margin-right: 5px;">
-		<div id = "towerlist_table_res" class="jexcel_content" style="background: white;padding:3px;"></div>
+		<div style="overflow: auto;resize: both;margin-right: 5px;width: 500px;">
+			<div id = "towerlist_table_res" class="jexcel_content" style="background: white;padding:3px;"></div>
 		</div>
 <!--		//<table id="towerlist_table"></table>-->
 		<div style="text-align-last:right;bottom: 5px">
-			<button class="xbutton xround" id="tb-towerlist-calc" style="text-align-last: right" onclick="towerlistCalc()">重算</button>
+			<button class="xbutton xround" id="tb-towerlist-calc" style="text-align-last: right" onclick="towerlistCalc()">更新绘制</button>
 			<button class="xbutton xround close_btn" id="towerlistcloseTable"style="text-align-last: right">关闭</button>
 		</div>
 		<span class="layui-layer-resize"></span>
@@ -217,7 +217,7 @@
 		<div class = "designParamtitle">
 			<h2 id="h2title">详细设计参数</h2>
 		</div>
-		<div class="paramBtn" style="display:inline-block;width: 19%" >
+		<div class="paramBtn" style="display:inline-block;width: 19%;vertical-align: top;" >
 			<p><button class="xbutton xround" id="guicheng">规程要求设置</button></p>
 			<p><button class="xbutton xround" id="daodixian">导地线参数</button></p>
 			<p><button class="xbutton xround" id="qixiang">气象条件</button></p>
@@ -640,6 +640,18 @@
 				optionList[1].options.length = 0;  //清空
 				$.ajax({
 					url: BASEURL+"/directory/"+projId, //提交的路径
+					type: "get",       //提交方式
+					dataType:"json",
+					headers:{"token":localStorage.getItem("token")},
+					success: function(data){
+						for (let i = 0; i < data.length; i++) {
+							var fileOption = new Option(data[i].name, i.toString());
+							optionList[1].options.add(fileOption);
+						}
+					}
+				})
+				$.ajax({
+					url: BASEURL+"/directory/DEM", //提交的路径
 					type: "get",       //提交方式
 					dataType:"json",
 					headers:{"token":localStorage.getItem("token")},
@@ -1091,15 +1103,15 @@
 			{type:"Numeric",title:"累距", width: 80,name: "Distance"},
 			{type:"Numeric",title:"桩位高程",  width: 80,name: "High"},
 			{type:"Numeric",title:"前侧档距",  width: 80,name: "l2"},
-			{type:"Numeric",title:"杆塔位置",  width: 80,name: "PosOffset"},
-			{type:"Numeric",title:"杆塔类型",  width: 80,name: "TowerType"},
+			{type:"text",title:"杆塔位置",  width: 80,name: "PosOffset"},
+			{type:"text",title:"杆塔类型",  width: 80,name: "TowerType"},
 			{type:"Numeric",title:"降基",  width: 80,name: "Base"},
 			{type:"Numeric",title:"转角数",  width: 80,name: "Angle"},
-			{type:"Numeric",title:"水平档距",  width: 80,name: "lh"},
-			{type:"Numeric",title:"垂直档距",  width: 80,name: "lv"},
+			{type:"Numeric",title:"水平档距",  width: 80,name: "Lh"},
+			{type:"Numeric",title:"垂直档距",  width: 80,name: "Lv"},
 			{type:"Numeric",title:"导线串长",  width: 80,name: "InsulatorLength"},
 			{type:"Numeric",title:"前侧对地距离",  width: 80,name: "LandDist"},
-			{type:"Numeric",title:"前侧跨地距离",  width: 80,name: "ELecDist"},
+			{type:"Numeric",title:"前侧跨地距离",  width: 80,name: "ElecDist"},
 			{type:"Numeric",title:"前侧代表档距",  width: 80,name: "Lk"},
 			{type:"Numeric",title:"前侧模版k值",  width: 80,name: "kPline"},
 			{type:"Numeric",title:"前侧放松系数",  width: 80,name: "u"},
@@ -1107,17 +1119,92 @@
 
 		onbeforechange:beforeChangeEventtowerlisttable,
 		onafterchanges:Afterchangetowerlist,
-		contextMenu:function(obj,x,y,e){},
+		contextMenu:towerlistrightbutton,
 
 	});
+	let changeIndex = -1;
 	function Afterchangetowerlist(){
-		towerlist_tabledata = towerlist_table_res.getJson();
+		let jsonres= towerlist_table_res.getJson()
+		// towerlist_tabledata = towerlist_table_res.getJson();
+		towerlist_tabledata[changeIndex].Name = jsonres[changeIndex].Name;
+		towerlist_tabledata[changeIndex].Distance = jsonres[changeIndex].Distance;
+		towerlist_tabledata[changeIndex].l2 = jsonres[changeIndex].l2;
+		towerlist_tabledata[changeIndex].PosOffset = jsonres[changeIndex].PosOffset;
+		towerlist_tabledata[changeIndex].TowerType = jsonres[changeIndex].TowerType;
+		towerlist_tabledata[changeIndex].Base = jsonres[changeIndex].Base;
+		towerlist_tabledata[changeIndex].Angle = jsonres[changeIndex].Angle;
+		towerlist_tabledata[changeIndex].Lh = jsonres[changeIndex].Lh;
+		towerlist_tabledata[changeIndex].Lv = jsonres[changeIndex].Lv;
+		towerlist_tabledata[changeIndex].InsulatorLength = jsonres[changeIndex].InsulatorLength;
+		towerlist_tabledata[changeIndex].LandDist = jsonres[changeIndex].LandDist;
+		towerlist_tabledata[changeIndex].ElecDist = jsonres[changeIndex].ElecDist;
+		towerlist_tabledata[changeIndex].Lk = jsonres[changeIndex].Lk;
+		towerlist_tabledata[changeIndex].kPline = jsonres[changeIndex].kPline;
+		towerlist_tabledata[changeIndex].u = jsonres[changeIndex].u;
+		// TowerGroup.children.length = 0;
+		// TowerScriptGroup.children.length = 0;
+		// FawCurveGroup.children.length = 0 ;
+		// TowerDraw(towerlist_tabledata);
+		// towerlist = towerlist_tabledata;
+		//
+		// for(let i=0;i<towerlist_tabledata.length;i++){
+		// 	if(towerlist_tabledata[i].offset>0)towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position+"+"+towerlist_tabledata[i].offset.toString();
+		// 	else if(towerlist_tabledata[i].offset==0)towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position.toString();//
+		// 	else towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position+towerlist_tabledata[i].offset.toString();
+		// }
+		towerlist = towerlist_tabledata;
+		towerlist_table_res.setData(towerlist_tabledata);
 	}
 	function beforeChangeEventtowerlisttable(instance, cell, x, y, value){
-		if(x!=0){
-			console.log(towerlist_tabledata);
+		changeIndex = y;
+		if(x!=0&&x!=4&&x!=5){
 			return Number(value);
 		}
+		else  return value;
+	}
+	function towerlistrightbutton(obj,x,y,e){
+		var items = [];
+		if (obj.options.allowDeleteRow == true) {
+			items.push({
+				title:'删去选中杆塔',
+				onclick:function() {
+					towerlist_tabledata.splice(y,obj.getSelectedRows().length);
+					console.log("after delete",towerlist_tabledata);
+					TowerGroup.children.length = 0;
+					TowerScriptGroup.children.length = 0;
+					FawCurveGroup.children.length = 0 ;
+					TowerDraw(towerlist_tabledata);
+					towerlist = towerlist_tabledata;
+
+					for(let i=0;i<towerlist_tabledata.length;i++){
+						if(towerlist_tabledata[i].offset>0)towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position+"+"+towerlist_tabledata[i].offset.toString();
+						else if(towerlist_tabledata[i].offset==0)towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position.toString();//
+						else towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position+towerlist_tabledata[i].offset.toString();
+					}
+					towerlist_table_res.setData(towerlist_tabledata);
+				}
+			});
+		}
+		items.push({
+			title:'重排编号',
+			onclick:function(){
+				var head =prompt("首字母","G");
+				var fid=prompt("起始编号","0");
+				for(let i=0;i<towerlist_tabledata.length;i++)
+				{
+					console.log(fid-"0"+i);
+					towerlist_tabledata[i].Name=head.toString()+(fid-"0"+i).toString();
+					towerlist[i].Name=head.toString()+(fid-"0"+i).toString();
+
+				}
+				console.log(towerlist_tabledata);
+				towerlistCalc();
+				towerlist_table_res.setData(towerlist_tabledata);
+				console.log("reset name");
+				console.log(towerlist_tabledata);
+			}
+		})
+		return items;
 	}
 
 
@@ -1138,6 +1225,8 @@
 	$("#closeTable").click(function () {
 		document.addEventListener('mousewheel', onDocumentMouseWheel, false);//兼容ie chrome
 		document.addEventListener('DOMMouseScroll', onDocumentMouseWheel, false);
+		document.addEventListener('mousedown', onDocumentSelected, false);
+		document.addEventListener('mousemove', onDocumentMsg, false);
 		$("#mpiletable").hide();
 	})
 
@@ -1159,6 +1248,8 @@
 	$("#towerlistcloseTable").click(function () {
 		document.addEventListener('mousewheel', onDocumentMouseWheel, false);//兼容ie chrome
 		document.addEventListener('DOMMouseScroll', onDocumentMouseWheel, false);
+		document.addEventListener('mousedown', onDocumentSelected, false);
+		document.addEventListener('mousemove', onDocumentMsg, false);
 		$("#towerlisttable").hide();
 	})
 
@@ -1723,7 +1814,7 @@
 					else res.TOWERLIST[i].PosOffset = res.TOWERLIST[i].Position+res.TOWERLIST[i].offset.toString();
 				}
 				TowerDraw(towerlist_tabledata);
-				//GridManager.setAjaxData(towerlist_tableId,{"data":res.TOWERLIST});
+				towerlist_table_res.setData(towerlist_tabledata);
 
 			}
 		})
@@ -1902,7 +1993,7 @@
 			layer.open({
 				type: 2,
 				title: 'DEM断面提取',
-				area: ['300px', '300px'],
+				area: ['300px', '330px'],
 				maxmin: true,
 				content: './html/SectionMap.html',
 				success: function (layero, index) {
@@ -1917,26 +2008,26 @@
 					for (let i = 0; i < pile_tabledata.length; i++) {
 						var newOption0 = new Option(pile_tabledata[i].name, i.toString());
 						var newOption1 = new Option(pile_tabledata[i].name, i.toString());
-						optionList[0].options.add(newOption0);
-						optionList[1].options.add(newOption1);
+						optionList[1].options.add(newOption0);
+						optionList[2].options.add(newOption1);
 					}
-					// $.ajax({
-					// 	url: BASEURL+"/directory/DEM" , //提交的路径
-					// 	type: "get",       //提交方式
-					// 	dataType:"json",
-					// 	headers:{"token":localStorage.getItem("token")},
-					// 	success: function(data){
-					// 		console.log(data);
-					// 		// for (let i = 0; i < data.length; i++) {
-					// 		// 	var filename = data[i].name;
-					// 		// 	var suffix = filename.substring(filename.lastIndexOf('.')+1);
-					// 		// 	if(suffix=="EGX"||suffix=="tif"||suffix=="asc"){
-					// 		// 		var fileOption = new Option(data[i].name, i.toString());
-					// 		// 		optionList[0].options.add(fileOption);
-					// 		// 	}
-					// 		// }
-					// 	}
-					// })
+					$.ajax({
+						url: BASEURL+"/directory/DEM" , //提交的路径
+						type: "get",       //提交方式
+						dataType:"json",
+						headers:{"token":localStorage.getItem("token")},
+						success: function(data){
+							for (let i = 0; i < data.length; i++) {
+								var filename = data[i].name;
+								var suffix = filename.substring(filename.lastIndexOf('.')+1);
+								if(suffix=="EGX"||suffix=="tif"||suffix=="asc"){
+									var fileOption = new Option(data[i].name, i.toString());
+									optionList[0].options.add(fileOption);
+								}
+							}
+							body.find("#demfilelist option:contains('"+demFile+"')").attr("selected",true);
+						}
+					})
 				},
 				yes: function (index, layero) {
 					console.log("yes function feedback" + layero + "" + index);
@@ -1948,13 +2039,15 @@
 
 	})
 
-	window.GetSecDem= function(transobj){
+
+	window.GetSecDem = function(transobj,demfile){
 		let loadInd = layer.load(2);
 		var formData = new FormData();
 		formData.append("SectionInfo",JSON.stringify(transobj)); //transobj get from sonPage SectionMap.html
 		formData.append("ProjectName", prjName);
 		formData.append("ProjectId", projId);
 		formData.append("pilelist",JSON.stringify({"pilelist":pile_tabledata}));
+		demFile = demfile;
 		formData.append("demFile",demFile);
 		console.log(demFile);
 		$.ajax({
@@ -1996,12 +2089,15 @@
 					horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
 					xMin = mp.m_From;
 					drawDEM(DEM);
-					console.log("addCrossFromMainSystem",msgtlProjData.cross);
-					msgtlProjData.cross = crossfillZ(msgtlProjData.cross,DEM.MID);
-					msgtlProjData.cross = CatenaryCrossHeight(msgtlProjData.cross);
-					for(let i= 0;i<msgtlProjData.cross.length;i++)cross.push(msgtlProjData.cross[i]);
-					console.log("addFromMainSysRes",cross);
-					cross = cross.unique();
+					console.log("msgdata",msgtlProjData);
+					if(msgtlProjData!=undefined){
+						console.log("addCrossFromMainSystem",msgtlProjData.cross);
+						msgtlProjData.cross = crossfillZ(msgtlProjData.cross,DEM.MID);
+						msgtlProjData.cross = CatenaryCrossHeight(msgtlProjData.cross);
+						for(let i= 0;i<msgtlProjData.cross.length;i++)cross.push(msgtlProjData.cross[i]);
+						console.log("addFromMainSysRes",cross);
+						cross = cross.unique();
+					}
 					MapCrossDraw(cross,false);  //cross added
 					TowerDraw(towerlist_tabledata);
 					window.initContent();
@@ -5230,7 +5326,7 @@
 						}
 						towerlist_tabledata = towerlist;
 						console.log(towerlist_tabledata);
-						// GridManager.setAjaxData(towerlist_tableId, {"data": towerlist_tabledata});
+						towerlist_table_res.setData(towerlist_tabledata);
 						// GridManager.refreshGrid(towerlist_tableId);
 					}
 					else {
@@ -5889,7 +5985,7 @@
 			console.log(towerlist);
 			towerlist_tabledata = towerlist;
 			console.log(towerlist_tabledata);
-			// GridManager.setAjaxData(towerlist_tableId, {"data": towerlist_tabledata});
+			towerlist_table_res.setData(towerlist_tabledata);
 			// GridManager.refreshGrid(towerlist_tableId);
 		}
 		if (event.button === 2){
@@ -5954,7 +6050,7 @@
 				console.log(towerlist);
 				towerlist_tabledata = towerlist;
 				console.log(towerlist_tabledata);
-				// GridManager.setAjaxData(towerlist_tableId, {"data": towerlist_tabledata});
+				towerlist_table_res.setData(towerlist_tabledata);
 				// GridManager.refreshGrid(towerlist_tableId);
 			}
 			if (event.button === 2){

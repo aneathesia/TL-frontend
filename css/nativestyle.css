@@ -122,13 +122,13 @@
 
 
 .designParam{
-    /*width: 800px;*/
+    width: min-content;
     /*height: 365px;*/
+
     left: 20%;
     top: 20%;
     position: relative;
     z-index: 9999;
-    margin:10px;
     border: groove;
     border-width: thin;
     background-color: #F0F0F0;

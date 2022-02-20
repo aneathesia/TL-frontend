@@ -27,6 +27,10 @@ function TowerPRKIndex (prk,val){
     }
 }
 
+
+
+
+
 Array.prototype.removed = function(val) {
     var index = this.findindexOf(val);
     if (index > -1) {

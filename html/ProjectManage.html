@@ -49,7 +49,20 @@
                 }
             }
         })
+        $.ajax({
+            url: BASEURL+"/directory/DEM", //提交的路径
+            type: "get",       //提交方式
+            dataType:"json",
+            headers:{"token":localStorage.getItem("token")},
+            success: function(data){
+                for (let i = 0; i < data.length; i++) {
+                    var fileOption = new Option(data[i].name, i.toString());
+                    $("#fileset").append(fileOption);
+                }
+            }
+        })
     }
+
     $("#downloadTLfile").click(function (){
         console.log($("#Projectset").find("option:selected").val(),$("#fileset").find("option:selected").text());
         $("#fileset").find("option:selected").text()
@@ -59,33 +72,61 @@
     $("#deleteTLfile").click(function (){
         var ProjectId=$("#Projectset").find("option:selected").val();
         var FileName=$("#fileset").find("option:selected").text();
-        let form = new FormData();
-        form.append("FileName", FileName);
-        form.append("ProjectId", ProjectId);
-        $.ajax({
-            url: BASEURL+"/deletefile", //提交的路径
-            type: "post",       //提交方式
-            data: form,    //提交的数据
-            contentType: false, // 告诉jQuery不要去设置Content-Type请求头
-            processData: false,
-            headers:{"token":localStorage.getItem("token")},
-            success: function(msg){
-                console.log(msg);
-                showfile();
-            },
-            error: function (errorMsg) {
-                alert(errorMsg);
-            }
-        })
+        var suffix = FileName.substring(FileName.lastIndexOf('.')+1);
+        if(suffix=="EGX"||suffix=="tif"||suffix=="asc"){
+            let form = new FormData();
+            form.append("FileName", FileName);
+            form.append("ProjectId", ProjectId);
+            $.ajax({
+                url: BASEURL+"/deleteDEMfile", //提交的路径
+                type: "post",       //提交方式
+                data: form,    //提交的数据
+                contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+                processData: false,
+                headers:{"token":localStorage.getItem("token")},
+                success: function(msg){
+                    console.log(msg);
+                    showfile();
+                },
+                error: function (errorMsg) {
+                    alert(errorMsg);
+                }
+            })
+        }
+        else{
+            let form = new FormData();
+            form.append("FileName", FileName);
+            form.append("ProjectId", ProjectId);
+            $.ajax({
+                url: BASEURL+"/deletefile", //提交的路径
+                type: "post",       //提交方式
+                data: form,    //提交的数据
+                contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+                processData: false,
+                headers:{"token":localStorage.getItem("token")},
+                success: function(msg){
+                    console.log(msg);
+                    showfile();
+                },
+                error: function (errorMsg) {
+                    alert(errorMsg);
+                }
+            })
+        }
+
     })
     $("#filesetUpload").click(function (){
         var xhr,ot,oloaded;
         var fileObj = document.getElementById("file").files[0]; // js 获取文件对象
         var ProjectId = $("#Projectset").find("option:selected").val();
-        console.log("uploadPath",ProjectId);
+        var url = BASEURL+"/fileUpload";
+        var filename = fileObj.name;
+        var suffix = filename.substring(filename.lastIndexOf('.')+1);
+        if(suffix=="EGX"||suffix=="tif"||suffix=="asc"){
+            url =  BASEURL+"/localUploadDEM"; // 接收上传文件的后台地址
+        }
         if(ProjectId===""){alert("选择工程"); return false}
         else{
-            var url =  BASEURL+"/fileUpload"; // 接收上传文件的后台地址
             var form = new FormData(); // FormData 对象
             form.append("file", fileObj); // 文件对象
             //form.append("ProjectName", ProjectName);//控制路径
@@ -107,13 +148,11 @@
 
 
     })
-    function uploadcomplete(evt) { document.getElementById("progressBar").style.visibility = 'hidden';showfile();}//上传成功响应
+    function uploadcomplete(evt) { document.getElementById("progressBar").style.visibility = 'hidden';showfile()}//上传成功响应
     function uploadfailed(evt) {alert("上传失败！");}//上传失败响应
     function progressFunction(event){
         var progressBar = document.getElementById("progressBar");
         progressBar.style.visibility = 'visible';
-
-        console.log(progressBar);
         if(event.lengthComputable) {
             progressBar.max = event.total;
             progressBar.value = event.loaded;
