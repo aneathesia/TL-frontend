@@ -178,9 +178,9 @@
 	</aside>
 
 
-	<div class ="designParam" id="mpiletable" ; hidden>
+	<div class ="designParam" id="piletable" ; hidden>
 		<div>
-			<h4 style="margin-left: 20px;" id="mpiletable_title" >转角直线表</h4>
+			<h4 style="margin-left: 20px;" id="piletable_title" >转角直线表</h4>
 		</div>
 		<div style="overflow: auto;resize: both;margin-right: 5px;width: 500px;">
 			<div id = "pile_table_res" class="jexcel_content" style="background: white;padding:3px;"></div>
@@ -909,14 +909,14 @@
 		data:pile_tabledata,
 		columns:[
 			{type:"text",title:"杆位名称", width: 80,name: "name"},
-			{type:"Numeric",title:"累距", width: 80,name: "dist"},
-			{type:"Numeric",title:"高程",  width: 80,name: "z"},
-			{type:"Numeric",title:"距离",  width: 80,name: "secdist"},
-			{type:"Numeric",title:"大地x坐标",  width: 80,name: "x"},
-			{type:"Numeric",title:"大地y坐标",  width: 80,name: "y"},
-			{type:"Numeric",title:"转角",  width: 80,name: "angle"},
-			{type:"Numeric",title:"点位误差",  width: 80,name: "my"},
-			{type:"Numeric",title:"航测断面误差",  width: 80,name: "error"},
+			{type:"Numeric",title:"累距", width: 80,name: "dist",mask:'0',decimal:'.'},
+			{type:"Numeric",title:"高程",  width: 80,name: "z",mask:'0.00',decimal:'.'},
+			{type:"Numeric",title:"距离",  width: 80,name: "secdist",mask:'0.00',decimal:'.'},
+			{type:"Numeric",title:"大地x坐标",  width: 80,name: "x",mask:'0.00',decimal:'.'},
+			{type:"Numeric",title:"大地y坐标",  width: 80,name: "y",mask:'0.00',decimal:'.'},
+			{type:"Numeric",title:"转角",  width: 80,name: "angle",mask:'0.0000',decimal:'.'},
+			{type:"Numeric",title:"点位误差",  width: 80,name: "my",mask:'0.00',decimal:'.'},
+			{type:"Numeric",title:"航测断面误差",  width: 80,name: "error",mask:'0.00',decimal:'.'},
 		],
 
 		onbeforechange:beforeChangeEventPiletable,
@@ -1039,7 +1039,7 @@
 
 
 	// piletable layout
-	const box = document.getElementById("mpiletable");
+	const box = document.getElementById("piletable");
 	let  x;let  y ;
 	// 兼容IE和火狐谷歌等的写法
 	if (window.getComputedStyle) {
@@ -1216,7 +1216,7 @@
 		document.removeEventListener('mousedown', onDocumentSelected);
 		document.removeEventListener('mousemove', onDocumentMsg);
 
-		$("#mpiletable").show(function(){
+		$("#piletable").show(function(){
 			$('#pile_table_res,.jexcel_container .jexcel_content').show();
 		});
 		//$('#pile_table_res,.jexcel_container .jexcel_content').show();
@@ -1227,7 +1227,7 @@
 		document.addEventListener('DOMMouseScroll', onDocumentMouseWheel, false);
 		document.addEventListener('mousedown', onDocumentSelected, false);
 		document.addEventListener('mousemove', onDocumentMsg, false);
-		$("#mpiletable").hide();
+		$("#piletable").hide();
 	})
 
 	//$("#towerlisttable").draggable();
@@ -1276,7 +1276,10 @@
 					towerlist_tabledata[i].Base,
 					-1,
 					towerlist_tabledata[i].InsulatorLength,
-					towerlist_tabledata[i].InsulatorPA);
+					towerlist_tabledata[i].InsulatorPA,
+					towerlist_tabledata[i].LandDist,
+					towerlist_tabledata[i].ElecDist
+			);
 			TowerGroup.add(towerset);
 			scene.add(TowerGroup);
 			var tlabel = createSpritelabel(towerlist_tabledata[i].Name,
@@ -2803,6 +2806,15 @@
 		guicheng = rguicheng1.getJson();
 	}
 	function Afterchangetcross(){
+		//tcross = rguicheng2.getJson();
+		console.log(tcross);
+		for(let i=0;i<towerlist_tabledata.length;i++){
+			towerlist_tabledata[i].LandDist = tcross[2].voltage;
+			towerlist_tabledata[i].ElecDist = tcross[9].voltage;
+			towerlist[i].LandDist = tcross[2].voltage;
+			towerlist[i].ElecDist = tcross[9].voltage;
+		}
+		TowerDraw(towerlist);
 		tcross = rguicheng2.getJson();
 	}
 	function AfterchangeWeather(){
@@ -2962,12 +2974,6 @@
 		if(tcross.length==0){}
 		else tcross = rguicheng2.getJson();
 
-		// for(let i =0;i<25;i++){
-		// 	if(prk.PRIMARY.m_standard[i]!=""){
-		// 		tcross.push({'contabbr':prk.PRIMARY.m_standard[i].dist,'voltage':prk.PRIMARY.m_standard[i].info});
-		// 	}
-		// }
-		// rguicheng2.setData(tcross);
 	})
 	$('#guicheng').click();
 
@@ -4819,7 +4825,7 @@
 	}
 
 
-	window.createTower = function(pos,name,towTypeName,towType,towerHei,Base,added,Insulatorlen,InsulatorName){ //added true from draw false from tabledata push new or not
+	window.createTower = function(pos,name,towTypeName,towType,towerHei,Base,added,Insulatorlen,InsulatorName,LandDist,ElecDist){ //added true from draw false from tabledata push new or not
 			if(added>-1){
 				towerlist.splice(added,0,{
 					"Name" : name,
@@ -4868,8 +4874,8 @@
 					"displayPower" : 1,		//显示导线
 					"displaySafe" :  1,	//显示导线对地
 					"displayCross" : 1,		//显示导线跨越
-					"LandDist" : 8.5,		// 对地安全距离
-					"ElecDist" : 6.0	// 电力线安全距离
+					"LandDist" : LandDist,		// 对地安全距离
+					"ElecDist" : ElecDist	// 电力线安全距离
 				});
 				m_start = 0;
 				m_end = towerlist.length - 1;
@@ -4886,7 +4892,7 @@
 			return towMesh;
 		}
 
-	function createTowerTemp(pos,towTypeName,towType,Insulatorlen,InsulatorName){
+	function createTowerTemp(pos,towTypeName,towType,Insulatorlen,InsulatorName,LandDist,ElecDist){
 			towerlist.push({
 				"Name" : "G",
 				"Distance" : pos.x/Gridsize*xdivision+xMin,
@@ -4934,8 +4940,8 @@
 				"displayPower" : 1,		//显示导线
 				"displaySafe" :  1,	//显示导线对地
 				"displayCross" : 1,		//显示导线跨越
-				"LandDist" : 8.5,		// 对地安全距离
-				"ElecDist" : 6.0	// 电力线安全距离
+				"LandDist" : LandDist,		// 对地安全距离
+				"ElecDist" : ElecDist	// 电力线安全距离
 			});
 		if(towType!=0){var towMesh = tower2(towerlist[towerlist.length-1].TowerHigh,towerlist[towerlist.length-1].Base);}
 		else {var towMesh = tower1(towerlist[towerlist.length-1].TowerHigh,towerlist[towerlist.length-1].Base,Insulatorlen);}
@@ -5076,7 +5082,9 @@
 					let towBase = Number(layer.getChildFrame('body',tpIndex).find("#flow")[0].value);
 					let InsulatorTypeName=layer.getChildFrame('body',tpIndex).find("#InsulatorName").find("option:selected").text();
 					let Insulatorlen = Number(layer.getChildFrame('body',tpIndex).find("#Insulatorlen")[0].value);
-					var towmesh = createTower(pos,"G"+putInd,towTypeName,towType,towerHei,towBase,putInd,Insulatorlen,InsulatorTypeName);
+					let LandDist = prk.PRIMARY.m_standard[2].dist;
+					let ElecDist = prk.PRIMARY.m_standard[9].dist;
+					var towmesh = createTower(pos,"G"+putInd,towTypeName,towType,towerHei,towBase,putInd,Insulatorlen,InsulatorTypeName,LandDist,ElecDist);
 					TowerGroup.add(towmesh);
 					scene.add(TowerGroup);
 					var tlabel = createSpritelabel(towerlist[m_end].Name,
@@ -5189,6 +5197,8 @@
 			let towTypeIndex=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").val();
 			let InsulatorTypeName=layer.getChildFrame('body',tpIndex).find("#InsulatorName").find("option:selected").text();
 			let Insulatorlen = Number(layer.getChildFrame('body',tpIndex).find("#Insulatorlen")[0].value);
+			let LandDist = prk.PRIMARY.m_standard[2].dist;
+			let ElecDist = prk.PRIMARY.m_standard[9].dist;
 			if(towTypeIndex == undefined ) return;
 			towerStartHei = prk.TOWER[towTypeIndex].StartHigh;
 			towerEndHei = prk.TOWER[towTypeIndex].EndHigh;
@@ -5200,7 +5210,7 @@
 			}
 			towerHei = limit(towerHeiArray,coorDif);
 
-			createTowerTemp(pos,towTypeName,towType,Insulatorlen,InsulatorTypeName);
+			createTowerTemp(pos,towTypeName,towType,Insulatorlen,InsulatorTypeName,LandDist,ElecDist);
 			let disToPile = []
 			for (let i = 0; i < pile_tabledata.length; i++) {
 				disToPile.push({"name": pile_tabledata[i].name,
@@ -5450,8 +5460,8 @@
 				"displayPower": 1,		//显示导线
 				"displaySafe": 1,	//显示导线对地
 				"displayCross": 1,		//显示导线跨越
-				"LandDist": 8.5,		// 对地安全距离
-				"ElecDist": 6.0	// 电力线安全距离
+				"LandDist": prk.PRIMARY.m_standard[2].dist,		// 对地安全距离
+				"ElecDist": prk.PRIMARY.m_standard[9].dist// 电力线安全距离
 			});
 			temptowerlistInsert.push(towerlist[insertInd]);
 				// createTowerTemp(pos,towTypeName,towType);
@@ -5566,8 +5576,8 @@
 					"displayPower": 1,		//显示导线
 					"displaySafe": 1,	//显示导线对地
 					"displayCross": 1,		//显示导线跨越
-					"LandDist": 8.5,		// 对地安全距离
-					"ElecDist": 6.0	// 电力线安全距离
+					"LandDist": prk.PRIMARY.m_standard[2].dist,		// 对地安全距离
+					"ElecDist": prk.PRIMARY.m_standard[9].dist	// 电力线安全距离
 				};
 				temptowerlist.Name = layer.getChildFrame('body',tpIndex).find("#towId")[0].value;
 				temptowerlist.Distance = Number(layer.getChildFrame('body',tpIndex).find("#dis")[0].value);
@@ -5602,7 +5612,9 @@
 						0,
 						insertInd ,
 						temptowerlist.InsulatorLength,
-						temptowerlist.InsulatorPA
+						temptowerlist.InsulatorPA,
+						temptowerlist.LandDist,
+						temptowerlist.ElecDist
 				);
 				TowerGroup.children.splice(insertInd,0,towMesh);
 				towerlist[insertInd].offset =  temptowerlist.offset;
@@ -5880,7 +5892,9 @@
 						towerlist[movingInd].Base,
 						-1,
 						towerlist[movingInd].InsulatorLength,
-						towerlist[movingInd].InsulatorPA
+						towerlist[movingInd].InsulatorPA,
+						towerlist[movingInd].LandDist,
+						towerlist[movingInd].ElecDist
 				);
 				m_end = towerlist.length-1;
 
@@ -5946,7 +5960,9 @@
 						towerlist[riseInd].Base,
 						-1,
 						towerlist[riseInd].InsulatorLength,
-						towerlist[riseInd].InsulatePA
+						towerlist[riseInd].InsulatePA,
+						towerlist[riseInd].LandDist,
+						towerlist[riseInd].ElecDist
 				);
 			}
 			//TowerScriptGroup.children[riseInd]=createSpritelabel();
@@ -6012,7 +6028,10 @@
 							towerlist[fallInd].Base,
 							-1,
 							towerlist[fallInd].InsulatorLength,
-							towerlist[fallInd].InsulatePA
+							towerlist[fallInd].InsulatePA,
+							towerlist[fallInd].LandDist,
+							towerlist[fallInd].ElecDist
+
 					);
 				}
 				//find towerlist index and change this
@@ -6138,6 +6157,8 @@
 		towerlist[editInd].InsulatorPA=layer.getChildFrame('body',tpIndex).find("#InsulatorName").find("option:selected").text();
 		towerlist[editInd].InsulatorPB=layer.getChildFrame('body',tpIndex).find("#InsulatorName").find("option:selected").text();
 		towerlist[editInd].InsulatorLength = Number(layer.getChildFrame('body',tpIndex).find("#Insulatorlen")[0].value);
+		towerlist[editInd].LandDist= prk.PRIMARY.m_standard[2].dist;
+		towerlist[editInd].ElecDist= prk.PRIMARY.m_standard[9].dist;
 		var tpos={};
 		tpos.x = (towerlist[editInd].Distance-xMin)/xdivision*Gridsize;
 		tpos.y = (towerlist[editInd].High - yMin)/ydivision*Gridsize;
@@ -6152,7 +6173,9 @@
 			towerlist[editInd].Base,
 			-1,
 			towerlist[editInd].InsulatorLength,
-			towerlist[editInd].InsulatorPA
+			towerlist[editInd].InsulatorPA,
+				towerlist[editInd].LandDist,
+				towerlist[editInd].ElecDist
 		);
 
 		ComputeHugeHigh(towerlist);
