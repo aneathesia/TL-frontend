@@ -1152,8 +1152,7 @@
 		// 	else if(towerlist_tabledata[i].offset==0)towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position.toString();//
 		// 	else towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position+towerlist_tabledata[i].offset.toString();
 		// }
-		towerlist = towerlist_tabledata;
-		towerlist_table_res.setData(towerlist_tabledata);
+		towerlistCalc();
 	}
 	function beforeChangeEventtowerlisttable(instance, cell, x, y, value){
 		changeIndex = y;
@@ -1169,10 +1168,11 @@
 				title:'删去选中杆塔',
 				onclick:function() {
 					towerlist_tabledata.splice(y,obj.getSelectedRows().length);
-					console.log("after delete",towerlist_tabledata);
+					console.log("start from y:",y,"length:",obj.getSelectedRows().length,"after delete",towerlist_tabledata);
 					TowerGroup.children.length = 0;
 					TowerScriptGroup.children.length = 0;
 					FawCurveGroup.children.length = 0 ;
+					//改成towerlistCacl()?
 					TowerDraw(towerlist_tabledata);
 					towerlist = towerlist_tabledata;
 
@@ -1287,6 +1287,12 @@
 					"/Kv:"+(towerlist_tabledata[i].Lv.toFixed(0)/towerlist_tabledata[i].Lh.toFixed(0)).toFixed(2),
 					towerlist_tabledata[i].TowerType+"-"+towerlist_tabledata[i].TowerHigh,
 					"#000000",150,0,tpos.x,tpos.y+(towerlist_tabledata[i].TowerHigh+towerlist_tabledata[i].Base)/ydivision*Gridsize+5,0);
+			// greenline
+			// let Greengeo = [];
+			// Greengeo.push( new THREE.Vector3( tpos.x, tpos.y, 0 ) );
+			// Greengeo.push( new THREE.Vector3( tpos.x, tpos.y-100, 0 ) );
+			// const Greenline = new THREE.Line( Greengeo, new THREE.LineBasicMaterial( { color: 0x00ff00 } ));
+			// TowerScriptGroup.add(Greenline);
 			TowerScriptGroup.add(tlabel);
 			scene.add(TowerScriptGroup);
 		}
@@ -1467,6 +1473,29 @@
 			}
 		}
 
+		if(SectionName.length == 0){
+			for(let i = 0; i<prk.SECTION.length;i++){
+				SectionName.push([prk.SECTION[i].name]);
+			}
+			for(let i = 0;i<prk.SECTION.length;i++){
+				Sectionset.push(sectionSample);
+				Sectionset[i][0].value = prk.SECTION[i].starJ;
+				Sectionset[i][1].value = prk.SECTION[i].from;
+				Sectionset[i][2].value = prk.SECTION[i].endJ;
+				Sectionset[i][3].value = prk.SECTION[i].to;
+				Sectionset[i][4].value = prk.SECTION[i].wertherName;
+				Sectionset[i][5].value = prk.SECTION[i].powerLine;
+				Sectionset[i][6].value = prk.SECTION[i].pLineK;
+				Sectionset[i][7].value = prk.SECTION[i].pLineF;
+				Sectionset[i][8].value = prk.SECTION[i].pLineC;
+				Sectionset[i][9].value = prk.SECTION[i].groundLine;
+				Sectionset[i][10].value = prk.SECTION[i].gLineK;
+				Sectionset[i][11].value = prk.SECTION[i].gLineF;
+				Sectionset[i][12].value = prk.SECTION[i].gLineC;
+				Sectionset[i][13].value = prk.SECTION[i].circuit;
+			}
+		}
+
 		if(towerset.length==0){
 			for(let i = 0; i<prk.TOWER.length;i++){
 				towerName.push([prk.TOWER[i].Name]);
@@ -1527,6 +1556,52 @@
 			}
 		}
 
+		if(insulateset.length==0){
+			for(let i = 0; i<prk.INSULATE.length;i++){
+				insulateName.push([prk.INSULATE[i].name]);
+			}
+			for(let i = 0; i<prk.INSULATE.length;i++){
+				var insu = [{'name':'绝缘子串类型','value':'导线悬垂串'},
+					{'name':'单联双联','value':1},
+					{'name':'每联片数','value':1},
+					{'name':'无冰串重(kg)','value':0},
+					{'name':'单片覆冰(kg)','value':3},
+					{'name':'等效串长(m)','value':5.5},
+					{'name':'单片受风面积(m^2)','value':0.03},
+					{'name':'金具受风折算系数','value':1.1},
+					{'name':'绝缘子常年荷载安全系数','value':4.0},
+					{'name':'绝缘子最大荷载安全系数','value':2.7},
+					{'name':'绝缘子断线工况安全系数','value':1.8},
+					{'name':'绝缘子破坏荷载(kN)','value':0},
+					{'name':'金具最大荷载安全系数','value':2.5},
+					{'name':'金具断线工况安全系数','value':1.5},
+					{'name':'金具破坏荷载(kN)','value':0},
+					{'name':'V型串夹角(°)','value':0},
+					{'name':'污秽区使用条件','value':0},
+					{'name':'绝缘子材料','value':0}];
+				insulateset.push(insu);
+				insulateset[i][0].value = insulateArr[prk.INSULATE[i].type];
+				insulateset[i][1].value = prk.INSULATE[i].Join;
+				insulateset[i][2].value = prk.INSULATE[i].Num;
+				insulateset[i][3].value = prk.INSULATE[i].Weight;
+				insulateset[i][4].value = prk.INSULATE[i].IceWeight;
+				insulateset[i][5].value = prk.INSULATE[i].Length;
+				insulateset[i][6].value = prk.INSULATE[i].area;
+				insulateset[i][7].value = prk.INSULATE[i].k;
+				insulateset[i][8].value = prk.INSULATE[i].avergeK;
+				insulateset[i][9].value = prk.INSULATE[i].maxK;
+				insulateset[i][10].value = prk.INSULATE[i].lineBrokeK;
+				insulateset[i][11].value = prk.INSULATE[i].Strength;
+				insulateset[i][12].value = prk.INSULATE[i].jjmaxK;
+				insulateset[i][13].value = prk.INSULATE[i].jjlineBrokeK;
+				insulateset[i][14].value = prk.INSULATE[i].jjStrength;
+				insulateset[i][15].value = prk.INSULATE[i].angleV;
+				insulateset[i][16].value = prk.INSULATE[i].dirtTpye;
+				insulateset[i][17].value = prk.INSULATE[i].metrialTpye;
+
+			}
+		}
+
 		$("#Paramtable").show();
 	})
 
@@ -1538,7 +1613,6 @@
 			ridconductor=conductorName.length-1;
 			rdaodixian.setData(conductorset[ridconductor]);
 			console.log(conductorName,conductorset,ridconductor);
-
 		};
 		if($("#rqixiang").is(":visible")){
 			weatherName.push([""]);
@@ -1547,6 +1621,14 @@
 			ridweather = weatherName.length-1;
 			rqixiang.setData(weatherset[ridweather]);
 			console.log(weatherName,weatherset);
+		}
+		if($("#rfenduan").is(":visible")){
+			SectionName.push([""]);
+			Sectionset.push(sectionSample);
+			lfenduan.setData(SectionName);
+			ridsection = SectionName.length-1;
+			rfenduan.setData(Sectionset[ridsection]);
+			console.log(SectionName,Sectionset);
 		}
 		if($("#rtower").is(":visible")){
 			addrow(towerName,towerset,[""],towerSample,ridtower,ltower,rtower);
@@ -1563,6 +1645,9 @@
 		if($("#rqixiang").is(":visible")){
 			insertrow(weatherName,weatherset,[""],weatherSample,ridweather,lqixiang,rqixiang);
 		}
+		if($("#rfenduan").is(":visible")){
+			insertrow(SectionName,Sectionset,[""],sectionSample,ridsection,lfenduan,rfenduan);
+		}
 		if($("#rtower").is(":visible")){
 			insertrow(towerName,towerset,[""],towerSample,ridtower,ltower,rtower);
 		}
@@ -1577,6 +1662,9 @@
 		};
 		if($("#rqixiang").is(":visible")){
 			deleterow(weatherName,weatherset,ridweather,lqixiang,rqixiang);
+		}
+		if($("#rfenduan").is(":visible")){
+			deleterow(SectionName,Sectionset,ridsection,lfenduan,rfenduan);
 		}
 		if($("#rtower").is(":visible")){
 			deleterow(towerName,towerset,ridtower,ltower,rtower);
@@ -1594,6 +1682,9 @@
 		if($("#rqixiang").is(":visible")){
 			clearrow(weatherName,weatherset,[""],weatherSample,ridweather,lqixiang,rqixiang);
 		}
+		if($("#rfenduan").is(":visible")){
+			clearrow(SectionName,Sectionset,[""],sectionSample,ridsection,lfenduan,rfenduan);
+		}
 		if($("#rtower").is(":visible")){
 			clearrow(towerName,towerset,[""],towerSample,ridtower,ltower,rtower);
 		}
@@ -1606,25 +1697,31 @@
 		if($("#rdaodixian").is(":visible")){
 			if(ridconductor>0){
 				upmoverow(conductorName,conductorset,ridconductor,ldaodixian,rdaodixian);
-				ridconductor--;
+				//ridconductor--;
 			}
 		};
 		if($("#rqixiang").is(":visible")){
 			if(ridweather>0){
 				upmoverow(weatherName,weatherset,ridweather,lqixiang,rqixiang);
-				ridweather--;
+				//ridweather--;
+			}
+		}
+		if($("#rfenduan").is(":visible")){
+			if(ridsection>0){
+				upmoverow(SectionName,Sectionset,ridsection,lfenduan,rfenduan);
+				//ridweather--;
 			}
 		}
 		if($("#rtower").is(":visible")){
 			if(ridtower>0){
 				upmoverow(towerName,towerset,ridtower,ltower,rtower);
-				ridtower--;
+				//ridtower--;
 			}
 		}
 		if($("#rinsulate").is(":visible")){
 			if(ridinsulate>0){
 				upmoverow(insulateName,insulateset,ridinsulate,linsulate,rinsulate);
-				ridinsulate--;
+				//ridinsulate--;
 			}
 		}
 	})
@@ -1633,26 +1730,32 @@
 		if($("#rdaodixian").is(":visible")){
 			if(ridconductor<conductorName.length-1){
 				downmoverow(conductorName,conductorset,ridconductor,ldaodixian,rdaodixian);
-				ridconductor++;
+				//ridconductor++;
 			}
 		};
 		if($("#rqixiang").is(":visible")){
 			if(ridweather<weatherName.length-1){
 				downmoverow(weatherName,weatherset,ridweather,lqixiang,rqixiang);
-				ridweather++;
+				//ridweather++;
+			}
+		}
+		if($("#rfenduan").is(":visible")){
+			if(ridsection<SectionName.length-1){
+				downmoverow(SectionName,Sectionset,ridsection,lfenduan,rfenduan);
+				//ridsection++;
 			}
 		}
 		if($("#rtower").is(":visible")){
 			if(ridtower<towerName.length-1){
 				downmoverow(towerName,towerset,ridtower,ltower,rtower);
-				ridtower++;
+				//ridtower++;
 			}
 		}
 		if($("#rinsulate").is(":visible")){
 			console.log(ridinsulate);
 			if(ridinsulate<insulateName.length-1){
 				downmoverow(insulateName,insulateset,ridinsulate,linsulate,rinsulate);
-				ridinsulate++;
+				//ridinsulate++;
 			}
 		}
 	})
@@ -1686,13 +1789,17 @@
 	}
 
 	function upmoverow(nameset,dataset,index,l,r){
+		console.log(index);
 		l.setData(nameset);
 		r.setData(dataset[index-1]);
+		l.updateSelectionFromCoords(0,index-1,1,index-1); //x1 y1 x2 y2
 	}
 
 	function downmoverow(nameset,dataset,index,l,r){
+		console.log(index);
 		l.setData(nameset);
 		r.setData(dataset[index+1]);
+		l.updateSelectionFromCoords(0,index+1,1,index+1); //x1 y1 x2 y2
 	}
 
     //prk database
@@ -1766,7 +1873,6 @@
 		form.append("ProjectName",prjName);
 		form.append("ProjectId",projId);
 		console.log("begindata");
-		console.log("towerlistTabledata",towerlist_tabledata);
 		console.log("towerlist",towerlist);
 		towerlist_tabledata = towerlist;
 		//position and offset setting "J0"+"±123"
@@ -1797,7 +1903,6 @@
 		}
 
 		form.append("table",JSON.stringify(towerlist_tabledata));
-		console.log("calcdata",towerlist_tabledata);
 		//console.log(pile_table.m_jPile);   //txt append jsondata
 
 		$.ajax({
@@ -1818,7 +1923,6 @@
 				}
 				TowerDraw(towerlist_tabledata);
 				towerlist_table_res.setData(towerlist_tabledata);
-
 			}
 		})
 
@@ -2568,7 +2672,6 @@
 				var e = document.createElement('select'); //Define custom selection
 				e.style.visibility = 'visible'; //Show dropdown on select
 				e.id = "insulateArr";
-				console.log(e);
 
 				//Construct custom dropdown
 				for(let i=0;i<towerArr.length;i++){
@@ -2794,6 +2897,10 @@
 		ridweather = y1;
 		rqixiang.setData(weatherset[y1]);
 	}
+	function selectionActivefenduan (instance, x1, y1, x2, y2, origin) {
+		ridsection = y1;
+		rfenduan.setData(Sectionset[y1]);
+	}
 	function selectionActiveTower(instance, x1, y1, x2, y2, origin) {
 		ridtower =y1;
 		rtower.setData(towerset[y1]);
@@ -2806,16 +2913,13 @@
 		guicheng = rguicheng1.getJson();
 	}
 	function Afterchangetcross(){
-		//tcross = rguicheng2.getJson();
-		console.log(tcross);
-		for(let i=0;i<towerlist_tabledata.length;i++){
-			towerlist_tabledata[i].LandDist = tcross[2].voltage;
-			towerlist_tabledata[i].ElecDist = tcross[9].voltage;
-			towerlist[i].LandDist = tcross[2].voltage;
-			towerlist[i].ElecDist = tcross[9].voltage;
-		}
-		TowerDraw(towerlist);
 		tcross = rguicheng2.getJson();
+		for(let i=0;i<towerlist_tabledata.length;i++){
+			towerlist_tabledata[i].LandDist = tcross[1].voltage;
+			towerlist_tabledata[i].ElecDist = tcross[8].voltage;
+			towerlist[i].LandDist = tcross[1].voltage;
+			towerlist[i].ElecDist = tcross[8].voltage;
+		}
 	}
 	function AfterchangeWeather(){
 		weatherset[ridweather]= rqixiang.getJson();
@@ -2909,7 +3013,7 @@
 			contextMenu: function(obj,x,y,e){},
 			columns:[
 				{type:"text",title:"型号/名称/图号",width: 150, name: "section"}],
-			// onselection: selectionActivefenduan
+			onselection: selectionActivefenduan
 		})
 	var rfenduan = jspreadsheet(document.getElementById('rfenduan'),{
 			contextMenu:function(obj,x,y,e){},
@@ -3334,7 +3438,7 @@
 			prk.INSULATE[i].name = insulateName[i][0];
 		}
 		prk.INSULATE.splice(insulateName.length,prk.INSULATE.length); //delete extra part
-
+		console.log(prk.INSULATE);
 		console.log("saveprk",prk);
 
 
@@ -3359,6 +3463,8 @@
 					alert(errorMsg);
 				}
 			});
+
+		towerlistCalc(); //update towerlist draw;
 		})
 
 	//draw  related
@@ -3484,9 +3590,9 @@
 	window.createSpritelabel= function(text1,text2,text3,color,x,y,posx,posy,rotate) {
 			let canvas = document.createElement("canvas");
 			var ctx = canvas.getContext("2d");
-			// ctx.strokeStyle = "red";
-			// ctx.moveTo(x,y);
-			// ctx.lineTo(x,y+100);
+			// ctx.strokeStyle = "Green";
+			// ctx.moveTo(x,mp.m_Frame[9]);
+			// ctx.lineTo(x,mp.m_Frame[9]+1000);
 			// ctx.stroke();
 
 			ctx.fillStyle = color;
@@ -3506,7 +3612,21 @@
 			textObj.position.set(posx, posy , 0);
 			return textObj;
 		}
-
+	window.createPlanelabel = function(color,x,y,posx,posy,rotate){
+		let canvas = document.createElement("canvas");
+		var ctx = canvas.getContext("2d");
+		ctx.strokeStyle = "Green";
+		ctx.moveTo(x,0);
+		ctx.lineTo(x,mp.m_Frame[9]+1000);
+		ctx.stroke();
+		let texture = new THREE.Texture(canvas);
+		texture.needsUpdate = true;
+		let material = new THREE.SpriteMaterial({map:texture,transparent:true,rotation:rotate});
+		let textObj = new THREE.Sprite(material);//使用Sprite显示文字
+		textObj.scale.set(40, 20, 1);
+		textObj.position.set(posx, posy , 0);
+		return textObj;
+	}
 	/* 图幅格网绘制 */
 	window.initContent= function() {
 
@@ -4882,6 +5002,12 @@
 				ComputeHugeHigh(towerlist);
 			}
 
+			const Towlabel = new THREE.Group();
+			const greenline = new THREE.Geometry();
+			console.log(pos.x,mp.m_Frame);
+			greenline.vertices.push(new THREE.Vector3(pos.x,mp.m_Frame[7]-mp.m_Frame[14]+5,0));
+			greenline.vertices.push(new THREE.Vector3(pos.x,mp.m_Frame[7]-mp.m_Frame[14]-5,0));
+			let gline = new THREE.Line(greenline,new THREE.LineBasicMaterial({color:0x00ff00}));
 			if(towType!=0){var towMesh = tower2(towerHei,Base);}
 			else {var towMesh = tower1(towerHei,Base,Insulatorlen);}
 			towMesh.position.x = pos.x;
@@ -4889,7 +5015,9 @@
 			towMesh.position.z = 0;
 			towMesh.name = "fixTower";
 			towMesh.geometry.name = name;
-			return towMesh;
+			Towlabel.add(towMesh);
+			Towlabel.add(gline);
+			return Towlabel;
 		}
 
 	function createTowerTemp(pos,towTypeName,towType,Insulatorlen,InsulatorName,LandDist,ElecDist){
@@ -6686,7 +6814,10 @@
 				let sumD = ((target[i].point.x/Gridsize) - parseInt((target[i].point.x/Gridsize)))*xdivision;
 				var cross_notehigh = createSprite(high.toFixed(2),"#000000",10,20,target[i].point.x+5,mp.m_Frame[13]-mp.m_Frame[14],Math.PI/2);
 				var cross_notesumD = createSprite(sumD.toFixed(0),"#000000",20,20,target[i].point.x+5,mp.m_Frame[11]-mp.m_Frame[14]+10,Math.PI/2);
-				var cross_note = createSprite(target[i].object.name,"#000000",10,20,target[i].point.x+5,mp.m_Frame[12]-mp.m_Frame[14],Math.PI/2);
+				let crossname = target[i].object.name.toString();
+				let inputname = crossname.substr(crossname.indexOf(":")+1,crossname.length) ;
+				//var cross_note = createSprite(target[i].object.name,"#000000",10,20,target[i].point.x+5,mp.m_Frame[12]-mp.m_Frame[14],Math.PI/2);
+				var cross_note = createSprite(inputname,"#000000",10,20,target[i].point.x+5,mp.m_Frame[12]-mp.m_Frame[14],Math.PI/2);
 
 				//cross label style add circle
 				// var	circlegeo = new THREE.Geometry();
@@ -6918,7 +7049,9 @@
 			let sumD = (leiju/xdivision-parseInt(leiju/xdivision))*xdivision;
 			var cross_notehigh = createSprite(high.toFixed(2),"#000000",10,20,target.x+5,mp.m_Frame[13]-mp.m_Frame[14],Math.PI/2);
 			var cross_notesumD = createSprite(sumD.toFixed(0),"#000000",20,20,target.x+5,mp.m_Frame[11]-mp.m_Frame[14]+10,Math.PI/2);
-			var cross_note = createSprite(scene.children[sceneIndex].children[0].name,"#000000",10,20,target.x+5,mp.m_Frame[12]-mp.m_Frame[14],Math.PI/2);
+			let crossname = scene.children[sceneIndex].children[0].name.toString();
+			let inputname = crossname.substr(crossname.indexOf(":")+1,crossname.length) ;
+			var cross_note = createSprite(inputname,"#000000",10,20,target.x+5,mp.m_Frame[12]-mp.m_Frame[14],Math.PI/2);
 
 			//cross label style add circle
 			let repeat = false;
