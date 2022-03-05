@@ -994,7 +994,8 @@
 					}
 				});
 			}
-		} else {
+		}
+		else {
 			// Insert new row
 			if (obj.options.allowInsertRow == true) {
 				items.push({
@@ -1026,9 +1027,24 @@
 					title:'删去选中行',
 					onclick:function() {
 						obj.deleteRow(obj.getSelectedRows().length ? undefined : parseInt(y));
+						let resJson = pile_table_res.getJson();
+						for(let i=0;i<resJson.length;i++){
+							for(let i = 0;i< resJson.length;i++){
+								if(resJson[i].dist==pile_tabledata[i].dist){}
+								else{pile_tabledata.splice(i,1);i--;}
+							}
+						}
 					}
 				});
 			}
+			items.push({
+				title:'删除全部',
+				onclick:function(){
+					pile_tabledata = [];
+					pilecalc();
+					towerlist_table_res.setData(pile_tabledata);
+				}
+			})
 
 
 		}
@@ -1105,6 +1121,7 @@
 			{type:"Numeric",title:"前侧档距",  width: 80,name: "l2"},
 			{type:"text",title:"杆塔位置",  width: 80,name: "PosOffset"},
 			{type:"text",title:"杆塔类型",  width: 80,name: "TowerType"},
+			{type:"Numeric",title:"杆塔高度",  width: 80,name: "TowerHigh"},
 			{type:"Numeric",title:"降基",  width: 80,name: "Base"},
 			{type:"Numeric",title:"转角数",  width: 80,name: "Angle"},
 			{type:"Numeric",title:"水平档距",  width: 80,name: "Lh"},
@@ -1120,17 +1137,17 @@
 		onbeforechange:beforeChangeEventtowerlisttable,
 		onafterchanges:Afterchangetowerlist,
 		contextMenu:towerlistrightbutton,
-
 	});
 	let changeIndex = -1;
 	function Afterchangetowerlist(){
-		let jsonres= towerlist_table_res.getJson()
+		let jsonres= towerlist_table_res.getJson();
 		// towerlist_tabledata = towerlist_table_res.getJson();
 		towerlist_tabledata[changeIndex].Name = jsonres[changeIndex].Name;
 		towerlist_tabledata[changeIndex].Distance = jsonres[changeIndex].Distance;
 		towerlist_tabledata[changeIndex].l2 = jsonres[changeIndex].l2;
 		towerlist_tabledata[changeIndex].PosOffset = jsonres[changeIndex].PosOffset;
 		towerlist_tabledata[changeIndex].TowerType = jsonres[changeIndex].TowerType;
+		towerlist_tabledata[changeIndex].TowerHigh = jsonres[changeIndex].TowerHigh;
 		towerlist_tabledata[changeIndex].Base = jsonres[changeIndex].Base;
 		towerlist_tabledata[changeIndex].Angle = jsonres[changeIndex].Angle;
 		towerlist_tabledata[changeIndex].Lh = jsonres[changeIndex].Lh;
@@ -1152,6 +1169,7 @@
 		// 	else if(towerlist_tabledata[i].offset==0)towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position.toString();//
 		// 	else towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position+towerlist_tabledata[i].offset.toString();
 		// }
+		towerlist = towerlist_tabledata;
 		towerlistCalc();
 	}
 	function beforeChangeEventtowerlisttable(instance, cell, x, y, value){
@@ -1163,47 +1181,121 @@
 	}
 	function towerlistrightbutton(obj,x,y,e){
 		var items = [];
-		if (obj.options.allowDeleteRow == true) {
-			items.push({
-				title:'删去选中杆塔',
-				onclick:function() {
-					towerlist_tabledata.splice(y,obj.getSelectedRows().length);
-					console.log("start from y:",y,"length:",obj.getSelectedRows().length,"after delete",towerlist_tabledata);
-					TowerGroup.children.length = 0;
-					TowerScriptGroup.children.length = 0;
-					FawCurveGroup.children.length = 0 ;
-					//改成towerlistCacl()?
-					TowerDraw(towerlist_tabledata);
-					towerlist = towerlist_tabledata;
-
-					for(let i=0;i<towerlist_tabledata.length;i++){
-						if(towerlist_tabledata[i].offset>0)towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position+"+"+towerlist_tabledata[i].offset.toString();
-						else if(towerlist_tabledata[i].offset==0)towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position.toString();//
-						else towerlist_tabledata[i].PosOffset = towerlist_tabledata[i].Position+towerlist_tabledata[i].offset.toString();
+		if (y == null) {
+			// Insert a new column
+			if (obj.options.allowInsertColumn == true) {
+				items.push({
+					title:obj.options.text.insertANewColumnBefore,
+					onclick:function() {
+						obj.insertColumn(1, parseInt(x), 1);
 					}
+				});
+			}
+
+			if (obj.options.allowInsertColumn == true) {
+				items.push({
+					title:obj.options.text.insertANewColumnAfter,
+					onclick:function() {
+						obj.insertColumn(1, parseInt(x), 0);
+					}
+				});
+			}
+
+			// Delete a column
+			if (obj.options.allowDeleteColumn == true) {
+				items.push({
+					title:obj.options.text.deleteSelectedColumns,
+					onclick:function() {
+						obj.deleteColumn(obj.getSelectedColumns().length ? undefined : parseInt(x));
+					}
+				});
+			}
+
+			// Rename column
+			if (obj.options.allowRenameColumn == true) {
+				items.push({
+					title:obj.options.text.renameThisColumn,
+					onclick:function() {
+						obj.setHeader(x);
+					}
+				});
+			}
+
+			// Sorting
+			if (obj.options.columnSorting == true) {
+				// Line
+				items.push({ type:'line' });
+
+				items.push({
+					title:obj.options.text.orderAscending,
+					onclick:function() {
+						obj.orderBy(x, 0);
+					}
+				});
+				items.push({
+					title:obj.options.text.orderDescending,
+					onclick:function() {
+						obj.orderBy(x, 1);
+					}
+				});
+			}
+		}
+		else {
+			if (obj.options.allowDeleteRow == true) {
+				items.push({
+					title:'删去选中行',
+					onclick:function() {
+						// let rowsNum = parseInt(obj.getSelectedRows().length);
+						// let starty= parseInt(y); //  rowsNum mid
+						// if(rowsNum%2==1){starty = starty - (rowsNum-1)/2;}
+						// else{starty = starty -(rowsNum/2-1);}
+						obj.deleteRow(obj.getSelectedRows().length ? undefined : parseInt(y));
+						console.log(towerlist_table_res.getJson());
+						let resJson = towerlist_table_res.getJson()
+						for(let i = 0;i< resJson.length;i++){
+							if(resJson[i].Distance==towerlist_tabledata[i].Distance){}
+							else{towerlist_tabledata.splice(i,1);i--;}
+						}
+						towerlist = towerlist_tabledata;
+						console.log("delete after match",towerlist_tabledata);
+						towerlistCalc();
+						//towerlist_tabledata.splice(parseInt(starty),rowsNum);
+						//console.log("origin y ",y,"length:",rowsNum,"after delete",towerlist_tabledata);
+						// console.log(obj.getSelectedRows(),obj);
+						// //console.log(obj,towerlist_table_res);
+						// towerlist_table_res.setData(towerlist_tabledata);
+					}
+				});
+			}
+			items.push({
+				title:'重排编号',
+				onclick:function(){
+					var head =prompt("首字母","G");
+					var fid=prompt("起始编号","0");
+					for(let i=0;i<towerlist_tabledata.length;i++)
+					{
+						console.log(fid-"0"+i);
+						towerlist_tabledata[i].Name=head.toString()+(fid-"0"+i).toString();
+						towerlist[i].Name=head.toString()+(fid-"0"+i).toString();
+
+					}
+					console.log(towerlist_tabledata);
+					towerlistCalc();
+					towerlist_table_res.setData(towerlist_tabledata);
+					console.log("reset name");
+					console.log(towerlist_tabledata);
+				}
+			})
+			items.push({
+				title:'删除全部',
+				onclick:function(){
+					towerlist_tabledata = [];
+					towerlist = towerlist_tabledata;
+					towerlistCalc();
 					towerlist_table_res.setData(towerlist_tabledata);
 				}
-			});
+			})
 		}
-		items.push({
-			title:'重排编号',
-			onclick:function(){
-				var head =prompt("首字母","G");
-				var fid=prompt("起始编号","0");
-				for(let i=0;i<towerlist_tabledata.length;i++)
-				{
-					console.log(fid-"0"+i);
-					towerlist_tabledata[i].Name=head.toString()+(fid-"0"+i).toString();
-					towerlist[i].Name=head.toString()+(fid-"0"+i).toString();
-
-				}
-				console.log(towerlist_tabledata);
-				towerlistCalc();
-				towerlist_table_res.setData(towerlist_tabledata);
-				console.log("reset name");
-				console.log(towerlist_tabledata);
-			}
-		})
 		return items;
 	}
 
@@ -5004,11 +5096,10 @@
 
 			const Towlabel = new THREE.Group();
 			const greenline = new THREE.Geometry();
-			console.log(pos.x,mp.m_Frame);
 			greenline.vertices.push(new THREE.Vector3(pos.x,mp.m_Frame[7]-mp.m_Frame[14]+5,0));
 			greenline.vertices.push(new THREE.Vector3(pos.x,mp.m_Frame[7]-mp.m_Frame[14]-5,0));
 			let gline = new THREE.Line(greenline,new THREE.LineBasicMaterial({color:0x00ff00}));
-			if(towType!=0){var towMesh = tower2(towerHei,Base);}
+			if(towType!=0){var towMesh = tower2(towerHei,Base);gline= new THREE.Line(greenline,new THREE.LineBasicMaterial({color:0x9400D3}));}
 			else {var towMesh = tower1(towerHei,Base,Insulatorlen);}
 			towMesh.position.x = pos.x;
 			towMesh.position.y = pos.y;
