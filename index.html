@@ -1029,11 +1029,10 @@
 						obj.deleteRow(obj.getSelectedRows().length ? undefined : parseInt(y));
 						let resJson = pile_table_res.getJson();
 						for(let i=0;i<resJson.length;i++){
-							for(let i = 0;i< resJson.length;i++){
 								if(resJson[i].dist==pile_tabledata[i].dist){}
 								else{pile_tabledata.splice(i,1);i--;}
-							}
 						}
+						pile_tabledata.splice(resJson.length,pile_tabledata.length);
 					}
 				});
 			}
@@ -1250,12 +1249,12 @@
 						// if(rowsNum%2==1){starty = starty - (rowsNum-1)/2;}
 						// else{starty = starty -(rowsNum/2-1);}
 						obj.deleteRow(obj.getSelectedRows().length ? undefined : parseInt(y));
-						console.log(towerlist_table_res.getJson());
-						let resJson = towerlist_table_res.getJson()
+						let resJson = towerlist_table_res.getJson();
 						for(let i = 0;i< resJson.length;i++){
 							if(resJson[i].Distance==towerlist_tabledata[i].Distance){}
 							else{towerlist_tabledata.splice(i,1);i--;}
 						}
+						towerlist_tabledata.splice(resJson.length,towerlist_tabledata.length);
 						towerlist = towerlist_tabledata;
 						console.log("delete after match",towerlist_tabledata);
 						towerlistCalc();
@@ -1964,8 +1963,6 @@
 		var form = new FormData();
 		form.append("ProjectName",prjName);
 		form.append("ProjectId",projId);
-		console.log("begindata");
-		console.log("towerlist",towerlist);
 		towerlist_tabledata = towerlist;
 		//position and offset setting "J0"+"±123"
 		for(let j=0;j<towerlist_tabledata.length;j++){
@@ -5251,7 +5248,6 @@
 			}
 			if (intersects.x<=horSize &&intersects.x>=0 && intersects.y<=verSize && intersects.y>=0){
 				putInd = towerlist.length;
-				console.log("clickdown",towerlist);
 				var tempLine2Cor = [];
 				for (let i = 0; i < m_linegroup.children.length; i++) {
 					for(let j=0;j<m_linegroup.children[i].geometry.vertices.length;j++){
@@ -5294,7 +5290,6 @@
 					pos = new THREE.Vector3(points.geometry.vertices[0].x, interPoint.features[0].geometry.coordinates[1], 0);
 				}
 
-				console.log("addtower",putInd,pos.x/Gridsize*xdivision,towerlist)
 				if(putInd==0||pos.x/Gridsize*xdivision>towerlist[putInd-1].Distance){  //防止向前
 					let towTypeName=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 					let towType =layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val();
@@ -5344,7 +5339,6 @@
 						}
 					}
 					let gaptoPile = layer.getChildFrame('body',tpIndex).find("#gap")[0];
-					console.log("gap pile", gap)
 					gaptoPile.value = gap.toFixed(2);
 					towerlist[towerlist.length-1].Position = pileName;
 					towerlist[towerlist.length-1].offset = Number(gap.toFixed(0));
@@ -5352,8 +5346,6 @@
 					towerlist[towerlist.length-1].TowerType = layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 
 					//whj 3.7 refresh GridManager 获取的只有参数  需要发起ajax请求帮助计算填充表格
-					console.log("set tower");
-					console.log(towerlist);
 					towerlist_tabledata=towerlist;
 					//GridManager.refreshGrid(towerlist_tableId);
 
@@ -6567,7 +6559,7 @@
 		}
 		for(let i=0;i<scene.children.length;i++){
 			if(scene.children[i].name =="redpoint"){
-				console.log("name =redpoint");
+				//console.log("name =redpoint");
 				scene.remove(scene.children[i]);
 			}
 		}
@@ -6646,13 +6638,11 @@
 
 						let crossIndex;
 						for(let ii = 0;ii<cross.length;ii++){
-							console.log("crossPosition",redcross.children[1].geometry.attributes.position.array[0]/Gridsize*xdivision+xMin,
-									cross[ii].CrossPoint[0].x);
 							if(redcross.children[0].name == cross[ii].AttrName&&
 									redcross.children[1].geometry.attributes.position.array[0]/Gridsize*xdivision+xMin-
 									cross[ii].CrossPoint[0].x<1){
 								crossIndex = ii;
-								console.log("crossIndex",crossIndex);
+								console.log("crossIndex",redcross,crossIndex);
 								break;
 							}
 						}
@@ -6660,7 +6650,7 @@
 						scene.add(redpoint);
 					// CrossPoint info to layer page
 					if(layer.getChildFrame('body',tpIndex).find("#shuxing")[0]!=undefined) {
-						console.log("edit cross",cross,crossIndex);
+						console.log("edit cross",crossIndex);
 
 						layer.getChildFrame('body', tpIndex).find("#shuxing")[0].value = cross[crossIndex].CrossPoint[j].c;
 						layer.getChildFrame('body', tpIndex).find("#leiju")[0].value = cross[crossIndex].CrossPoint[j].x.toFixed(2);
@@ -6845,7 +6835,7 @@
 		}
 		return cirmark;
 	}
-	window.createCrossLabel = function (towerhigh,codeId,added){
+	window.createCrossLabel = function (towerhigh,codeId,added,CrossPoint_Secp){
 		var ray = new THREE.Raycaster();
 		ray.set(new THREE.Vector3(-10,mp.m_Frame[7]-mp.m_Frame[14],0),new THREE.Vector3(1,0,0));   //-90 need to be set as mp.m_Frame[]
 		ray.params = {
@@ -6988,11 +6978,22 @@
 				}
 			}
 		}
-		//scene.children[scene.children.length-1].children[2].geometry.attributes.position.needsUpdate = true;
-		scene.children[scene.children.length-1].children[2].geometry.setFromPoints(secp);
-		scene.children[scene.children.length-1].children[2].geometry.setDrawRange(0, secp.length);
-		scene.children[scene.children.length-1].children[2].geometry.computeBoundingSphere();    //section point;
+		let secpp=[];
+		for(let i=0;i<CrossPoint_Secp.length;i++){
+			secpp.push(new THREE.Vector3((CrossPoint_Secp[i].x-xMin) / xdivision*Gridsize, (CrossPoint_Secp[i].z - yMin)/ydivision*Gridsize, 0));
+		}
 
+		//scene.children[scene.children.length-1].children[2].geometry.attributes.position.needsUpdate = true;
+		if(CrossPoint_Secp.length==0){
+			scene.children[scene.children.length - 1].children[2].geometry.setFromPoints(secp);
+			scene.children[scene.children.length - 1].children[2].geometry.setDrawRange(0, secp.length);
+			scene.children[scene.children.length - 1].children[2].geometry.computeBoundingSphere();    //section point;
+		}
+		else {
+			scene.children[scene.children.length - 1].children[2].geometry.setFromPoints(secpp);
+			scene.children[scene.children.length - 1].children[2].geometry.setDrawRange(0, secpp.length);
+			scene.children[scene.children.length - 1].children[2].geometry.computeBoundingSphere();    //section point;
+		}
 
 		//add to crosspoint to the Cross array
 		if(added) {
@@ -7058,7 +7059,7 @@
 				}
 			}
 			crossAttrName = cross[i].AttrName;
-			//console.log("GroundGroundCross",crossPoint);
+			//console.log("index",i,"GroundGroundCross",crossPoint);
 			createGroundCross(crossPoint,crossAttrName);
 			//GroundVertice = crossPoint;
 			let towerhigh=0;
@@ -7067,7 +7068,7 @@
 				if(cross[i].CrossPoint[ii].dc>2000) {codeId = cross[i].CrossPoint[ii].dc;};
 				if(cross[i].CrossPoint[ii].towerHigh>0&&cross[i].CrossPoint[ii].y ==0){towerhigh = cross[i].CrossPoint[ii].towerHigh;};
 			}
-			createCrossLabel(towerhigh,codeId,added);
+			createCrossLabel(towerhigh,codeId,added,cross[i].CrossPoint);
 		}
 		//each crosspoint modify
 		for(let i=0;i<cross.length;i++){
