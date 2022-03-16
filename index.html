@@ -5971,8 +5971,8 @@
 					"displayPower": 1,		//显示导线
 					"displaySafe": 1,	//显示导线对地
 					"displayCross": 1,		//显示导线跨越
-					"LandDist": 8.5,		// 对地安全距离
-					"ElecDist": 6.0	// 电力线安全距离
+					"LandDist": prk.PRIMARY.m_standard[2].dist,		// 对地安全距离
+					"ElecDist": prk.PRIMARY.m_standard[9].dist	// 电力线安全距离
 				});
 				if(movingInd<towerlist.length-1){temptowerlistMoving.push(towerlist[movingInd+1]);}
 
@@ -6017,8 +6017,9 @@
 				towMesh.name = "tower";
 				scene.add(towMesh);
 				m_end = temptowerlistMoving.length-1;
+				console.log("tempMoving",temptowerlistMoving);
 				ComputeHugeHigh(temptowerlistMoving);
-
+				console.log("tempMoving1",temptowerlistMoving);
 				for(let i = 0;i<m_end;i++){
 					var  tempCurve = DisplayFawCurve4(temptowerlistMoving[i],temptowerlistMoving[i+1],"move_wire");
 					scene.add(tempCurve[0]);scene.add(tempCurve[1]);scene.add(tempCurve[2]);
@@ -6089,6 +6090,8 @@
 				towerlist[movingInd].InsulatorPA=layer.getChildFrame('body',tpIndex).find("#InsulatorName").find("option:selected").text();
 				towerlist[movingInd].InsulatorPB=layer.getChildFrame('body',tpIndex).find("#InsulatorName").find("option:selected").text();
 				towerlist[movingInd].InsulatorLength = Number(layer.getChildFrame('body',tpIndex).find("#Insulatorlen")[0].value);
+				towerlist[movingInd].LandDist= prk.PRIMARY.m_standard[2].dist;
+				towerlist[movingInd].ElecDist= prk.PRIMARY.m_standard[9].dist;
 				console.log(towerlist[movingInd]);
 				console.log("towerlist after moving", towerlist);
 				var tpos = {};
@@ -6162,8 +6165,8 @@
 			console.log("towerIndex");console.log(towerIndex,prk.TOWER[towerIndex]);
 			if(towerlist[riseInd].TowerHigh< prk.TOWER[towerIndex].EndHigh){
 				 tempTowerHei = towerlist[riseInd].TowerHigh + prk.TOWER[towerIndex].Dhigh;
-				 console.log("tempTowerHigh");console.log(tempTowerHei);
-				TowerGroup.children[riseInd]=createTower(TowerGroup.children[riseInd].position,
+				 console.log("tempTower");console.log(TowerGroup);
+				TowerGroup.children[riseInd]=createTower(TowerGroup.children[riseInd].children[0].position,
 						towerlist[riseInd].Name,
 						towerlist[riseInd].TowerType,
 						towerlist[riseInd].Status,
@@ -6187,18 +6190,20 @@
 
 			ComputeHugeHigh(towerlist);
 
+			console.log("TowerGroup",TowerGroup);
+
 			TowerScriptGroup.children[riseInd] = createSpritelabel(towerlist[riseInd].Name,
 					"Lh:"+towerlist[riseInd].Lh.toFixed(0)+"/Lv:"+towerlist[riseInd].Lv.toFixed(0)+
 					"/Kv:"+(towerlist[riseInd].Lv.toFixed(0)/towerlist[riseInd].Lh.toFixed(0)).toFixed(2),
 					towerlist[riseInd].TowerType+"-"+towerlist[riseInd].TowerHigh,
-					"#000000",150,0,tpos.x,tpos.y+(towerlist[riseInd].TowerHigh+towerlist[riseInd].Base)/ydivision*Gridsize+5,0);
+					"#000000",150,0,TowerGroup.children[riseInd].children[0].position.x,TowerGroup.children[riseInd].children[0].position.y+(towerlist[riseInd].TowerHigh+towerlist[riseInd].Base)/ydivision*Gridsize+5,0);
 
 			if(riseInd>0){
 				var leftCurve = DisplayFawCurve4(towerlist[riseInd-1],towerlist[riseInd],"fixwire");
 				FawCurveGroup.children[(riseInd-1)*3] = leftCurve[0];
 				FawCurveGroup.children[(riseInd-1)*3+1] = leftCurve[1];
 				FawCurveGroup.children[(riseInd-1)*3+2] = leftCurve[2];
-				console.log(leftCurve);
+				console.log("1",leftCurve);
 			}
 			if(riseInd<towerlist.length){
 				var rightCurve = DisplayFawCurve4(towerlist[riseInd],towerlist[riseInd+1],"fixwire");
@@ -6231,7 +6236,7 @@
 				let towerIndex = TowerPRKIndex(prk,towerlist[fallInd].TowerType);
 				if(towerlist[fallInd].TowerHigh> prk.TOWER[towerIndex].StartHigh){
 					tempTowerHei = towerlist[fallInd].TowerHigh - prk.TOWER[towerIndex].Dhigh;
-					TowerGroup.children[fallInd]=createTower(TowerGroup.children[fallInd].position,
+					TowerGroup.children[fallInd]=createTower(TowerGroup.children[fallInd].children[0].position,
 							towerlist[fallInd].Name,
 							towerlist[fallInd].TowerType,
 							towerlist[fallInd].Status,
@@ -6257,7 +6262,7 @@
 						"Lh:"+towerlist[fallInd].Lh.toFixed(0)+"/Lv:"+towerlist[fallInd].Lv.toFixed(0)+
 						"/Kv:"+(towerlist[fallInd].Lv.toFixed(0)/towerlist[fallInd].Lh.toFixed(0)).toFixed(2),
 						towerlist[fallInd].TowerType+"-"+towerlist[fallInd].TowerHigh,
-						"#000000",150,0,tpos.x,tpos.y+(towerlist[fallInd].TowerHigh+towerlist[fallInd].Base)/ydivision*Gridsize+5,0);
+						"#000000",150,0,TowerGroup.children[fallInd].children[0].position.x,TowerGroup.children[fallInd].children[0].position.y+(towerlist[fallInd].TowerHigh+towerlist[fallInd].Base)/ydivision*Gridsize+5,0);
 
 
 
@@ -6415,7 +6420,7 @@
 		}
 
 	}
-
+	let factor=0;
 		/*    鼠标缩放移动事件     */
 	window.onDocumentMouseWheel= function(event) {
 			//let factor = 60;
@@ -6423,10 +6428,12 @@
 			mainCanvas = document.querySelector("#iframe_box canvas");
 			let glScreenX = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
 			let glScreenY = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
+
 			let vector = new THREE.Vector3(glScreenX, glScreenY, 0);
 			//获取当前显示框的场景宽度 控制缩放因子factor
 			let lt = new THREE.Vector3(-1,1,0);
 			let rb = new THREE.Vector3(1,-1,0);
+
 			lt.unproject(camera); //当前Z高度控制factor
 
 			//从屏幕向量转为3d空间向量
@@ -6459,7 +6466,15 @@
 			camera.updateProjectionMatrix();
 			renderer.render(scene, camera);
 			labelRenderer.render( scene, camera );
+
+		    //console.log("因子",lt.z);
+			factor= lt.z;
+
+
 		}
+
+		//let factor=inser();
+	    // console.log("因子",factor)
 
 	function onDocumentMouseDown(event) {
 			if (event.button != 1) return;
@@ -6517,6 +6532,7 @@
 
 	let selectedObj = null;
 	let selectedPoint = null;
+	let only=true;
 
 	function setPointSize(cameraZ){
 
@@ -6540,9 +6556,10 @@
 	}
 	window.onDocumentSelected= function(event) {
 		event.preventDefault();
-
+        //使上次的选中对象可视属性还原
 		for(let i=0;i<scene.children.length;i++){
 			if(scene.children[i].name =="crossObject"){
+				only=true;
 				scene.children[i].children[1].visible = false;
 				scene.children[i].children[2].visible = false;
 			}
@@ -6557,6 +6574,7 @@
 
 			selectedObj=null;
 		}
+		//清除上次的红点
 		for(let i=0;i<scene.children.length;i++){
 			if(scene.children[i].name =="redpoint"){
 				//console.log("name =redpoint");
@@ -6572,6 +6590,7 @@
 			selectedPoint = null;
 
 		}
+		//交互对象
 		const intersects = getIntersectsMapObj(event);
 
 		if(intersects==undefined) return ;
@@ -6593,6 +6612,7 @@
 			for(let j=0;j<DEM_pgroup.children[i].geometry.vertices.length;j++){
 				if(Math.abs(DEM_pgroup.children[i].geometry.vertices[j].x-coord_inter.x)<0.5&&Math.abs(DEM_pgroup.children[i].geometry.vertices[j].y-coord_inter.y)<0.5){
 					selectedPoint = DEM_pgroup.children[i];
+					console.log("point",selectedPoint);
 					selectedPoint.visible =true;
 					//create point;
 					var red = new THREE.Geometry();
@@ -6611,24 +6631,36 @@
 
 		//crossObject redPoint caught
 
-		for(let i=0;i<scene.children.length;i++){
-			var num = scene.children.length;
 
-			if(scene.children[i].name == "crossObject"){
+
+
+		for(let i=0;i<scene.children.length;i++){
+			//var num = scene.children.length;
+
+			if(scene.children[i].name == "crossObject"&&only){
 				var redcross = scene.children[i];
 				if(redcross.children[1].geometry.attributes.position.array!= undefined&&
 						redcross.children[2].geometry.attributes.position.array!= undefined){
 					var target1 =  redcross.children[1].geometry.attributes.position.array;
 					var target2 =  redcross.children[2].geometry.attributes.position.array;
 
+
+
 				}
 
 
-				for(let j = 0 ; j< target1.length/3;j=j+1){
-					if((Math.abs(target1[3*j]-coord_inter.x)<0.5&&Math.abs(target1[3*j+1]-coord_inter.y)<1)||
-							(Math.abs(target2[3*j]-coord_inter.x)<0.5&&Math.abs(target2[3*j+1]-coord_inter.y)<1)){
+				//console.log("因子2",factor)比例系数
+				const ScaleFactor=100;
+
+				for(let j = 0 ; j< target1.length/3;j++){
+					if((Math.abs(target1[3*j]-coord_inter.x)<(factor/ScaleFactor)&&Math.abs(target1[3*j+1]-coord_inter.y)<(factor/ScaleFactor))||
+							(Math.abs(target2[3*j]-coord_inter.x)<Math.abs(factor/ScaleFactor)&&Math.abs(target2[3*j+1]-coord_inter.y)<Math.abs(factor/ScaleFactor))){
+						//if((Math.abs(target1[3*j]-coord_inter.x)<0.5&&Math.abs(target1[3*j+1]-coord_inter.y)<1)||
+								//(Math.abs(target2[3*j]-coord_inter.x)<0.5&&Math.abs(target2[3*j+1]-coord_inter.y)<1)){
 						redcross.children[1].visible = true;
 						redcross.children[2].visible = true;
+						only=false;
+						console.log("only",only);
 						var red = new THREE.Geometry();
 						red.vertices.push(new THREE.Vector3(target2[3*j],target2[3*j+1],0));
 						red.vertices.push(new THREE.Vector3(target1[3*j],target1[3*j+1],0));
@@ -6648,7 +6680,7 @@
 						}
 
 						scene.add(redpoint);
-					// CrossPoint info to layer page
+					// CrossPoint info to layer page点信息窗口
 					if(layer.getChildFrame('body',tpIndex).find("#shuxing")[0]!=undefined) {
 						console.log("edit cross",crossIndex);
 
@@ -7080,6 +7112,100 @@
 			}
 		}
 
+	}
+
+	window.MapCrossModifyUUID = function(uuid,pointIndex,shuxing,leiju,pianju,gaocheng,dimiangao,ganxing){ //from 0
+
+		var sceneIndex;
+		for(let i=0;i<scene.children.length;i++){
+			var  obj = scene.children[i];
+			if(obj.name == "crossObject"){
+				var coordx = (obj.children[1].geometry.attributes.position.array[3*pointIndex])/Gridsize*xdivision+xMin;
+				//console.log("coordx",obj.children[1].geometry.attributes.position,coordx,leiju);
+				if(Math.abs(coordx-leiju)<1){
+					sceneIndex = i;
+					break;
+				}
+			}
+		}
+		if(sceneIndex==undefined||scene.children[sceneIndex]==undefined) {console.log('skip point',crossIndex,pointIndex,cross[crossIndex]); return;};
+		// modify the scene cause the original DSA didn't support
+		scene.children[sceneIndex].children[2].geometry.attributes.position.needsUpdate = true;
+		if(pianju!=0){
+			scene.children[sceneIndex].children[2].geometry.attributes.position.array[3*pointIndex+1]= (Number(gaocheng)-yMin)/ydivision*Gridsize;
+		}
+		else{ //search index and change label
+			scene.children[sceneIndex].children[2].geometry.attributes.position.array[3*pointIndex+1]= (Number(gaocheng)-yMin)/ydivision*Gridsize;
+			var subIndex=0;  //crossTowerPlace index
+			for(let ii = 0;ii<pointIndex;ii++){ if(cross[crossIndex].CrossPoint[ii].y==0)subIndex++;}
+			scene.children[sceneIndex].children.splice(3+6*subIndex,6);
+			//insert new label
+
+			const material = new THREE.LineBasicMaterial( { color: 0x0000ff } );
+			const points = [];
+			//dimiandian point1中可取
+			var target = new THREE.Vector3(scene.children[sceneIndex].children[1].geometry.attributes.position.array[3*pointIndex],
+					scene.children[sceneIndex].children[1].geometry.attributes.position.array[3*pointIndex+1],0);
+			var m_linetarget = new THREE.Vector3((leiju-xMin)/xdivision*Gridsize,(dimiangao-yMin)/ydivision*Gridsize,0);
+			points.push( target );
+			points.push( m_linetarget);
+
+
+
+			const geometry = new THREE.BufferGeometry().setFromPoints( points );
+			const line = new THREE.Line( geometry, material );
+			const pline2 = []; pline2.push(m_linetarget);
+			pline2.push(new THREE.Vector3((leiju-xMin)/xdivision*Gridsize,
+					(gaocheng-yMin)/ydivision*Gridsize,
+					0));
+
+			const line2 = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pline2),
+					new THREE.LineDashedMaterial( {
+						color: 0x00ff00,
+						linewidth: 1,
+						scale: 1,
+						dashSize: 3,
+						gapSize: 1,
+					} ));     //跨越杆高 towerHigh 虚线
+			line2.computeLineDistances();  //for DashedMaterial
+			line2.name =  ganxing;
+			let high = gaocheng;
+			let sumD = (leiju/xdivision-parseInt(leiju/xdivision))*xdivision;
+			var cross_notehigh = createSprite(high.toFixed(2),"#000000",10,20,target.x+5,mp.m_Frame[13]-mp.m_Frame[14],Math.PI/2);
+			var cross_notesumD = createSprite(sumD.toFixed(0),"#000000",20,20,target.x+5,mp.m_Frame[11]-mp.m_Frame[14]+10,Math.PI/2);
+			let crossname = scene.children[sceneIndex].children[0].name.toString();
+			let inputname = crossname.substr(crossname.indexOf(":")+1,crossname.length) ;
+			var cross_note = createSprite(inputname,"#000000",10,20,target.x+5,mp.m_Frame[12]-mp.m_Frame[14],Math.PI/2);
+
+			//cross label style add circle
+			let repeat = false;
+			if(shuxing == 3) repeat = false ;
+			else if(shuxing == 2||shuxing ==1) repeat = true;
+
+			var cross_cir = creatMark(2,m_linetarget.x,
+					(gaocheng-yMin)/ydivision*Gridsize,
+					m_linetarget.z,repeat);
+
+
+			scene.children[sceneIndex].children.splice(3+6*subIndex,0,cross_note);
+			scene.children[sceneIndex].children.splice(3+6*subIndex+1,0,cross_notehigh);
+			scene.children[sceneIndex].children.splice(3+6*subIndex+2,0,cross_notesumD);
+			scene.children[sceneIndex].children.splice(3+6*subIndex+3,0,line);
+			scene.children[sceneIndex].children.splice(3+6*subIndex+4,0,line2);
+			scene.children[sceneIndex].children.splice(3+6*subIndex+5,0,cross_cir);
+		}
+
+
+
+		//console.log("modify scene result",scene.children[sceneIndex].children)
+		/*cross data modify*/
+		cross[crossIndex].CrossPoint[pointIndex].c = shuxing;
+		cross[crossIndex].CrossPoint[pointIndex].dc = ganxing;
+		cross[crossIndex].CrossPoint[pointIndex].towerHigh = gaocheng-dimiangao;
+		cross[crossIndex].CrossPoint[pointIndex].x = leiju;
+		cross[crossIndex].CrossPoint[pointIndex].y = pianju;
+		cross[crossIndex].CrossPoint[pointIndex].z = gaocheng;
+		cross[crossIndex].CrossPoint[pointIndex].dz = dimiangao;
 	}
 
 	window.MapCrossModify = function(crossIndex,pointIndex,shuxing,leiju,pianju,gaocheng,dimiangao,ganxing){ //from 0
