@@ -2166,7 +2166,7 @@
 		layer.open({
 			type:2,
 			title:'修改节点信息',
-			area:['250px','390px'],
+			area:['250px','420px'],
 			maxmin:true,
 			content:'./html/EditCrossPoint.html',
 			shade:0,
@@ -5422,24 +5422,28 @@
 			towerHei = limit(towerHeiArray,coorDif);
 
 			createTowerTemp(pos,towTypeName,towType,Insulatorlen,InsulatorTypeName,LandDist,ElecDist);
-			let disToPile = []
-			for (let i = 0; i < pile_tabledata.length; i++) {
-				disToPile.push({"name": pile_tabledata[i].name,
-					"dis":Math.abs(pile_tabledata[i].dist - pos.x/Gridsize*xdivision),
-					"value":i
-				})
-			}
-			disToPile.sort(compare("dis"));
-			layer.getChildFrame('body',tpIndex).find("#pilelist").val(disToPile[0].value);
-
-			let gap;
-			for (let i = 0; i < pile_tabledata.length; i++) {
-				if (pile_tabledata[i].name == disToPile[0].name){
-					gap = pos.x/Gridsize*xdivision - pile_tabledata[i].dist;
+			let pilelen = pile_tabledata.length;
+			if(pilelen>0) {
+				let disToPile = []
+				for (let i = 0; i < pile_tabledata.length; i++) {
+					disToPile.push({
+						"name": pile_tabledata[i].name,
+						"dis": Math.abs(pile_tabledata[i].dist - pos.x / Gridsize * xdivision),
+						"value": i
+					})
 				}
+				disToPile.sort(compare("dis"));
+				layer.getChildFrame('body', tpIndex).find("#pilelist").val(disToPile[0].value);
+
+				let gap;
+				for (let i = 0; i < pile_tabledata.length; i++) {
+					if (pile_tabledata[i].name == disToPile[0].name) {
+						gap = pos.x / Gridsize * xdivision - pile_tabledata[i].dist;
+					}
+				}
+				let gaptoPile = layer.getChildFrame('body', tpIndex).find("#gap")[0];
+				gaptoPile.value = gap.toFixed(2);
 			}
-			let gaptoPile = layer.getChildFrame('body',tpIndex).find("#gap")[0];
-			gaptoPile.value = gap.toFixed(2);
 			var inputHei = layer.getChildFrame('body',tpIndex).find("#hei")[0];
 			var inputDis = layer.getChildFrame('body',tpIndex).find("#dis")[0];
 
@@ -5676,24 +5680,29 @@
 			});
 			temptowerlistInsert.push(towerlist[insertInd]);
 				// createTowerTemp(pos,towTypeName,towType);
+			let pilelen =  pile_tabledata.length;
+			if(pilelen>0) {
 				let disToPile = []
 				for (let i = 0; i < pile_tabledata.length; i++) {
-					disToPile.push({"name": pile_tabledata[i].name,
-						"dis":Math.abs(pile_tabledata[i].dist - pos.x/Gridsize*xdivision),
-						"value":i
+					disToPile.push({
+						"name": pile_tabledata[i].name,
+						"dis": Math.abs(pile_tabledata[i].dist - pos.x / Gridsize * xdivision),
+						"value": i
 					})
 				}
 				disToPile.sort(compare("dis"));
-				layer.getChildFrame('body',tpIndex).find("#pilelist").val(disToPile[0].value);
+				layer.getChildFrame('body', tpIndex).find("#pilelist").val(disToPile[0].value);
 
 				let gap;
 				for (let i = 0; i < pile_tabledata.length; i++) {
-					if (pile_tabledata[i].name == disToPile[0].name){
-						gap = pos.x/Gridsize*xdivision - pile_tabledata[i].dist;
+					if (pile_tabledata[i].name == disToPile[0].name) {
+						gap = pos.x / Gridsize * xdivision - pile_tabledata[i].dist;
 					}
 				}
-				let gaptoPile = layer.getChildFrame('body',tpIndex).find("#gap")[0];
+				let gaptoPile = layer.getChildFrame('body', tpIndex).find("#gap")[0];
 				gaptoPile.value = gap.toFixed(2);
+			}
+
 				var inputHei = layer.getChildFrame('body',tpIndex).find("#hei")[0];
 				var inputDis = layer.getChildFrame('body',tpIndex).find("#dis")[0];
 
@@ -5828,8 +5837,10 @@
 						temptowerlist.ElecDist
 				);
 				TowerGroup.children.splice(insertInd,0,towMesh);
-				towerlist[insertInd].offset =  temptowerlist.offset;
-				towerlist[insertInd].Position = layer.getChildFrame('body',tpIndex).find("#pilelist").find("option:selected")[0].innerHTML;
+				if(pile_tabledata.length>0){
+					towerlist[insertInd].offset =  temptowerlist.offset;
+					towerlist[insertInd].Position = layer.getChildFrame('body',tpIndex).find("#pilelist").find("option:selected")[0].innerHTML;
+				}
 
 
 				console.log("InsertAdd",towerlist);
@@ -5976,24 +5987,28 @@
 				});
 				if(movingInd<towerlist.length-1){temptowerlistMoving.push(towerlist[movingInd+1]);}
 
-				let disToPile = []
-				for (let i = 0; i < pile_tabledata.length; i++) {
-					disToPile.push({"name": pile_tabledata[i].name,
-						"dis":Math.abs(pile_tabledata[i].dist - pos.x/Gridsize*xdivision),
-						"value":i
-					})
-				}
-				disToPile.sort(compare("dis"));
-				layer.getChildFrame('body',tpIndex).find("#pilelist").val(disToPile[0].value);
-
-				let gap;
-				for (let i = 0; i < pile_tabledata.length; i++) {
-					if (pile_tabledata[i].name == disToPile[0].name){
-						gap = pos.x/Gridsize*xdivision - pile_tabledata[i].dist;
+				let pilelen = pile_tabledata.length;
+				if(pilelen>0) {
+					let disToPile = []
+					for (let i = 0; i < pile_tabledata.length; i++) {
+						disToPile.push({
+							"name": pile_tabledata[i].name,
+							"dis": Math.abs(pile_tabledata[i].dist - pos.x / Gridsize * xdivision),
+							"value": i
+						})
 					}
+					disToPile.sort(compare("dis"));
+					layer.getChildFrame('body', tpIndex).find("#pilelist").val(disToPile[0].value);
+
+					let gap;
+					for (let i = 0; i < pile_tabledata.length; i++) {
+						if (pile_tabledata[i].name == disToPile[0].name) {
+							gap = pos.x / Gridsize * xdivision - pile_tabledata[i].dist;
+						}
+					}
+					let gaptoPile = layer.getChildFrame('body', tpIndex).find("#gap")[0];
+					gaptoPile.value = gap.toFixed(2);
 				}
-				let gaptoPile = layer.getChildFrame('body',tpIndex).find("#gap")[0];
-				gaptoPile.value = gap.toFixed(2);
 				var inputHei = layer.getChildFrame('body',tpIndex).find("#hei")[0];
 				var inputDis = layer.getChildFrame('body',tpIndex).find("#dis")[0];
 
@@ -6671,8 +6686,8 @@
 						let crossIndex;
 						for(let ii = 0;ii<cross.length;ii++){
 							if(redcross.children[0].name == cross[ii].AttrName&&
-									redcross.children[1].geometry.attributes.position.array[0]/Gridsize*xdivision+xMin-
-									cross[ii].CrossPoint[0].x<1){
+									Math.abs(redcross.children[1].geometry.attributes.position.array[0]/Gridsize*xdivision+xMin-
+									cross[ii].CrossPoint[0].x)<1){
 								crossIndex = ii;
 								console.log("crossIndex",redcross,crossIndex);
 								break;
