@@ -2144,14 +2144,17 @@
 			shade:0,
 			success:function (layero,index) {
 				var body = layer.getChildFrame('body',index);
+				createGroundObj.continuity=true;
 		},
 
 			resizing:function(layero){
 				console.log(layero);
 			},
 			cancel: function(index, layero){
-
+				  //  createGroundObj.continuity=false;
+				    //createGroundObj();
 					document.removeEventListener('mousedown', window.createGroundObj);
+
 					document.removeEventListener('mousemove', window.trackGroundObj);
 					layer.close(index)
 
@@ -5246,7 +5249,7 @@
 					window_mouse =true;
 				}
 			}
-			if (intersects.x<=horSize &&intersects.x>=0 && intersects.y<=verSize && intersects.y>=0){
+			if (intersects.x<=horSize  && intersects.y<=verSize && intersects.y>=0){
 				putInd = towerlist.length;
 				var tempLine2Cor = [];
 				for (let i = 0; i < m_linegroup.children.length; i++) {
@@ -5257,7 +5260,13 @@
 				var tempLine2 = turf.lineString(tempLine2Cor);
 				var temppointLine1 = turf.lineString([[tempintersects.x,tempintersects.y+500],[tempintersects.x,0]]);  // +500? 4.8
 				var interPoint1 = turf.lineIntersect(temppointLine1, tempLine2);
-				tempintersects = new THREE.Vector3(tempintersects.x, interPoint1.features[0].geometry.coordinates[1], 0);
+				console.log(interPoint1);
+				if(interPoint1.features.length==0){
+					tempintersects = new THREE.Vector3(tempintersects.x, m_linegroup.children[0].geometry.vertices[0].y, 0);
+				}
+				else{
+					tempintersects = new THREE.Vector3(tempintersects.x, interPoint1.features[0].geometry.coordinates[1], 0);
+				}
 				//attach
 				for(let i=0;i<pile_tabledata.length;i++){
 					if(Math.abs(pile_tabledata[i].dist-xMin-intersects.x/Gridsize*xdivision)<20){
@@ -5269,26 +5278,36 @@
 ///goto
 				intersects.y+=20;
 
-				var pointsGeometry = new THREE.Geometry();
-				pointsGeometry.vertices.push(intersects);
-				var temppointsGeometry = new THREE.Geometry();
-				temppointsGeometry.vertices.push(tempintersects);
+				//  let pointsGeometry = new THREE.Geometry();
+				//  pointsGeometry.vertices.push(intersects);
+				//  let temppointsGeometry = new THREE.Geometry();
+				//  temppointsGeometry.vertices.push(tempintersects);
+				//
+				// var points = new THREE.Points(pointsGeometry, PMat_Red);
+				//  var temppoints = new THREE.Points(temppointsGeometry, PMat_Red);
+				//  pointArray.push(temppoints);
+				// putInd++;
 
-				var points = new THREE.Points(pointsGeometry, PMat_Red);
-				var temppoints = new THREE.Points(temppointsGeometry, PMat_Red);
-				pointArray.push(temppoints);
-				//putInd++;
-
-				var pos = new THREE.Vector3(points.geometry.vertices[0].x,points.geometry.vertices[0].y,0);
-				var tempLine1 = turf.lineString([[pos.x,pos.y],[pos.x,0]]);
-				var interPoint = turf.lineIntersect(tempLine1, tempLine2);
+				//var pos = new THREE.Vector3(points.geometry.vertices[0].x,points.geometry.vertices[0].y,0);
+				//var tempLine1 = turf.lineString([[pos.x,pos.y],[pos.x,0]]);
+				//var interPoint = turf.lineIntersect(tempLine1, tempLine2);
 				// first head point can't set tower
-				if(points.geometry.vertices[0].x <= 0) {
+				/*if(points.geometry.vertices[0].x <= 0) {
 					pos = new THREE.Vector3(0, tempLine2.geometry.coordinates[0][1], 0);
+					console.log("afterset",m_linegroup.children[0].geometry.vertices[0].y);
 				}
 				else {
 					pos = new THREE.Vector3(points.geometry.vertices[0].x, interPoint.features[0].geometry.coordinates[1], 0);
-				}
+				}*/
+				// if(points.geometry.vertices[0].x <= 0) {
+				// 	pos = new THREE.Vector3(0, m_linegroup.children[0].geometry.vertices[0].y, 0);
+				// 	console.log("pos",pos);
+				// }
+				// else {
+				// 	pos = new THREE.Vector3(points.geometry.vertices[0].x, interPoint.features[0].geometry.coordinates[1], 0);
+				// 	console.log("pos",pos);
+				// }
+				let pos=TowerSetMove(event);
 
 				if(putInd==0||pos.x/Gridsize*xdivision>towerlist[putInd-1].Distance){  //防止向前
 					let towTypeName=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
@@ -5299,6 +5318,7 @@
 					let LandDist = prk.PRIMARY.m_standard[2].dist;
 					let ElecDist = prk.PRIMARY.m_standard[9].dist;
 					var towmesh = createTower(pos,"G"+putInd,towTypeName,towType,towerHei,towBase,putInd,Insulatorlen,InsulatorTypeName,LandDist,ElecDist);
+					//createTowerTemp(pos,towTypeName,towType,Insulatorlen,InsulatorTypeName,LandDist,ElecDist);
 					TowerGroup.add(towmesh);
 					scene.add(TowerGroup);
 					var tlabel = createSpritelabel(towerlist[m_end].Name,
@@ -5373,7 +5393,7 @@
 		intersects = getIntersects(event);
 		tempintersects = intersects;
 		if(intersects!=undefined){
-		if (intersects.x<horSize &&intersects.x>=0 && intersects.y<verSize && intersects.y>0){
+		if (intersects.x<horSize  && intersects.y<verSize && intersects.y>0){
 			clearTempTow();
 			clearTempTow();
 			var tempLine2Cor = [];
@@ -5401,7 +5421,11 @@
 				pos = new THREE.Vector3(intersects.x, interPoint.features[0].geometry.coordinates[1], 0);
 				coorDif = intersects.y - interPoint.features[0].geometry.coordinates[1];
 			}
-
+			else
+			{
+				pos = new THREE.Vector3(0, m_linegroup.children[0].geometry.vertices[0].y, 0);
+				coorDif = intersects.y - m_linegroup.children[0].geometry.vertices[0].y;
+			}
 
 			let towTypeName=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 			let towType =layer.getChildFrame('body',tpIndex).find("input[type='radio']:checked").val();  //towType  Status
@@ -5462,6 +5486,8 @@
 			inputId.value = "G" + towerlist.length;
 		}
 		}
+		//console.log("pos",pos);
+		return pos;
 	}
 	//清除动态排杆中的临时数据
 	function clearTempTow(){
@@ -6575,6 +6601,7 @@
 		for(let i=0;i<scene.children.length;i++){
 			if(scene.children[i].name =="crossObject"){
 				only=true;
+				scene.children[i].selected=false;
 				scene.children[i].children[1].visible = false;
 				scene.children[i].children[2].visible = false;
 			}
@@ -6654,12 +6681,13 @@
 
 			if(scene.children[i].name == "crossObject"&&only){
 				var redcross = scene.children[i];
+				//console.log("aaaa",redcross);
 				if(redcross.children[1].geometry.attributes.position.array!= undefined&&
 						redcross.children[2].geometry.attributes.position.array!= undefined){
 					var target1 =  redcross.children[1].geometry.attributes.position.array;
 					var target2 =  redcross.children[2].geometry.attributes.position.array;
 
-
+					//console.log("redcross",redcross);
 
 				}
 
@@ -6674,11 +6702,19 @@
 								//(Math.abs(target2[3*j]-coord_inter.x)<0.5&&Math.abs(target2[3*j+1]-coord_inter.y)<1)){
 						redcross.children[1].visible = true;
 						redcross.children[2].visible = true;
+						// for(let iii=0;iii<scene.children.length;iii++){
+						// 	if(scene.children[iii].uuid===redcross.uuid){
+						// 		scene.children[iii].selected=true;
+						// 	}
+						// }
+						redcross.selected=true;
+						//console.log("bbbb",redcross);
 						only=false;
-						console.log("only",only);
+
 						var red = new THREE.Geometry();
 						red.vertices.push(new THREE.Vector3(target2[3*j],target2[3*j+1],0));
 						red.vertices.push(new THREE.Vector3(target1[3*j],target1[3*j+1],0));
+
 						var redpoint =new THREE.Points(red,PMat_Red);
 						redpoint.name="redpoint";
 						redpoint.userData={"dem":redcross.children[0].name,"j":j}; //output offset y
@@ -6690,6 +6726,7 @@
 									cross[ii].CrossPoint[0].x)<1){
 								crossIndex = ii;
 								console.log("crossIndex",redcross,crossIndex);
+								//return crossIndex;
 								break;
 							}
 						}
@@ -6716,7 +6753,7 @@
 
 			}
 		}
-
+    //return crossIndex;
 
 	}
 
@@ -6797,6 +6834,10 @@
 	window.createGroundObj = function(event){
 			if(event.button === 0){
 				console.log("left button");
+				//if(createGroundObj.continuity=false){
+					//GroundVertice.splice(0,GroundVertice.length);
+
+				//}
 				mouse.x = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
 				mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
 				let pos = getIntersects(event);
@@ -6860,6 +6901,27 @@
 		var Section_Point = new THREE.Points(Cross_geosp,PMat_Grey);  //Section_Point
 		Cross_line.name = crossAttrName;
 		let GroundGroup = new THREE.Group();
+		//GroundGroup.prototype.setControls=function () {
+			// window.onkeydown = e => {
+			// 	switch (e.key) {
+			// 		case 'Delete':
+			// 		case 'Backspace':
+			// 			//GroundGroup.parent.remove(GroundGroup);
+			// 			for (let i = 0; i < scene.children.length; i++) {
+			// 				if (scene.children[i].name === "crossObject"){
+			// 					for(let ii = 0;ii<cross.length;ii++){
+			// 						if(scene.children[i].children[0].name == cross[ii].AttrName&&
+			// 								Math.abs(scene.children[i].children[1].geometry.attributes.position.array[0]/Gridsize*xdivision+xMin-
+			// 										cross[ii].CrossPoint[0].x)<1) {
+			// 							cross.splice(ii,1);
+			// 						}
+			// 						}
+			// 					scene.remove(scene.children[i]);i=i-1;
+			// 				}
+			// 			}
+			// 	}
+			// }
+		//}
 		GroundGroup.name = "crossObject"
 		GroundGroup.add(Cross_line);
 		GroundGroup.add(Cross_Point)
@@ -6867,6 +6929,32 @@
 		GroundGroup.children[1].visible = false;
 		GroundGroup.children[2].visible = false;  //unvisible
 		scene.add(GroundGroup);
+	}
+
+	window.onkeydown = e => {
+		switch (e.key) {
+			case 'Delete':
+			case 'Backspace':
+				//let crossIndex=onDocumentSelected(event)
+				//GroundGroup.parent.remove(GroundGroup);
+
+				for (let i = 0; i < scene.children.length; i++) {
+					if (scene.children[i].selected === true){
+						for(let ii = 0;ii<cross.length;ii++){
+							if(scene.children[i].children[0].name == cross[ii].AttrName
+									&& Math.abs(scene.children[i].children[1].geometry.attributes.position.array[0]/Gridsize*xdivision+xMin-
+											cross[ii].CrossPoint[0].x)<1) {
+								console.log('删除对象cross',cross[ii]);
+								cross.splice(ii,1);
+							}
+						}
+						console.log('删除对象',scene.children[i]);
+						scene.remove(scene.children[i]);i=i-1;
+						break;
+						//i++;
+					}
+				}
+		}
 	}
 
 	function creatMark(rad,x,y,z,repeat){
