@@ -56,6 +56,7 @@
 		@import url(./css/nativestyle.css);
 	</style>
 	<header class="Hui-header cl" style="background-color: #006865">
+		<label style="margin-top: 10px;margin-left: 10px">WebTL</label>
 		<div style="float:right;margin-right: 2%;margin-top: 1%;display:none">
 			<li style="display: inline-block;"><a href="#"><label id="login" style="background: wheat">登录</label></a></li>
 			<li style="display: inline-block;"><a href="#"><label id="UserCenter" style="background: wheat">用户中心</label></a></li>
@@ -116,7 +117,7 @@
 	<!--					<li><a href="#"><label id="create_Object">创建地物</label></a></li>-->
 						<li><a href="#"><label id="inputDem" style="width:100%">断面线</label></a></li>
 						<li><a href="#"><label id="inputCorner" style="width:100%">桩位投影线</label></a></li>
-						<li><a href="#"><label id="select_code" style="width:100%">交叉跨域</label></a></li>
+						<li><a href="#"><label id="select_code" style="width:100%">交叉跨越</label></a></li>
 					</ul>
 				</dd>
 			</dl>
@@ -2151,10 +2152,8 @@
 				console.log(layero);
 			},
 			cancel: function(index, layero){
-				  //  createGroundObj.continuity=false;
-				    //createGroundObj();
-					document.removeEventListener('mousedown', window.createGroundObj);
 
+					document.removeEventListener('mousedown', window.createGroundObj);
 					document.removeEventListener('mousemove', window.trackGroundObj);
 					layer.close(index)
 
@@ -5260,7 +5259,6 @@
 				var tempLine2 = turf.lineString(tempLine2Cor);
 				var temppointLine1 = turf.lineString([[tempintersects.x,tempintersects.y+500],[tempintersects.x,0]]);  // +500? 4.8
 				var interPoint1 = turf.lineIntersect(temppointLine1, tempLine2);
-				console.log(interPoint1);
 				if(interPoint1.features.length==0){
 					tempintersects = new THREE.Vector3(tempintersects.x, m_linegroup.children[0].geometry.vertices[0].y, 0);
 				}
@@ -5365,15 +5363,11 @@
 
 					towerlist[towerlist.length-1].TowerType = layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
 
-					//whj 3.7 refresh GridManager 获取的只有参数  需要发起ajax请求帮助计算填充表格
+
 					towerlist_tabledata=towerlist;
-					//GridManager.refreshGrid(towerlist_tableId);
 
 					var inputId =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
 					inputId.value = "G" + putInd;
-					// for (let i = m_end-1; i < m_end; i++) {
-					// 	DisplayFawCurve4(towerlist[i], towerlist[i + 1], "fixwire");
-					// }
 
 				}
 			}
@@ -5943,6 +5937,10 @@
 					pos = new THREE.Vector3(intersects.x, interPoint.features[0].geometry.coordinates[1], 0);
 					coorDif = intersects.y - interPoint.features[0].geometry.coordinates[1];
 				}
+				else{
+					pos = new THREE.Vector3(0, m_linegroup.children[0].geometry.vertices[0].y, 0);
+					coorDif = intersects.y - m_linegroup.children[0].geometry.vertices[0].y;
+				}
 
 
 				let towTypeName=layer.getChildFrame('body',tpIndex).find("#TowerType").find("option:selected").text();
@@ -6049,18 +6047,24 @@
 						towerHigh[i].selected = true;
 					}
 				}
-				if (temptowerlistMoving[1].Status != 0) {
-					var towMesh = tower2(towerHei,temptowerlistMoving[1].Base);
+				//tempTowerlistMovinglength = 2  =3
+				var towMesh;
+				if(temptowerlistMoving.length==2&&temptowerlistMoving[0].Status != 0&&movingInd==0){
+					towMesh = tower2(towerHei,temptowerlistMoving[0].Base);
+				}
+				else if(temptowerlistMoving.length==2&&temptowerlistMoving[0].Status == 0&&movingInd==0){
+					towMesh = tower1(towerHei,temptowerlistMoving[0].Base,temptowerlistMoving[0].InsulatorLength);
+				}
+				else if (temptowerlistMoving[1].Status != 0) {
+					towMesh = tower2(towerHei,temptowerlistMoving[1].Base);
 				} else {
-					var towMesh = tower1(towerHei,temptowerlistMoving[1].Base,temptowerlistMoving[1].InsulatorLength);
+					towMesh = tower1(towerHei,temptowerlistMoving[1].Base,temptowerlistMoving[1].InsulatorLength);
 				}
 				towMesh.position.x = pos.x;towMesh.position.y = pos.y;towMesh.position.z = 0;
 				towMesh.name = "tower";
 				scene.add(towMesh);
 				m_end = temptowerlistMoving.length-1;
-				console.log("tempMoving",temptowerlistMoving);
 				ComputeHugeHigh(temptowerlistMoving);
-				console.log("tempMoving1",temptowerlistMoving);
 				for(let i = 0;i<m_end;i++){
 					var  tempCurve = DisplayFawCurve4(temptowerlistMoving[i],temptowerlistMoving[i+1],"move_wire");
 					scene.add(tempCurve[0]);scene.add(tempCurve[1]);scene.add(tempCurve[2]);
@@ -6681,13 +6685,12 @@
 
 			if(scene.children[i].name == "crossObject"&&only){
 				var redcross = scene.children[i];
-				//console.log("aaaa",redcross);
 				if(redcross.children[1].geometry.attributes.position.array!= undefined&&
 						redcross.children[2].geometry.attributes.position.array!= undefined){
 					var target1 =  redcross.children[1].geometry.attributes.position.array;
 					var target2 =  redcross.children[2].geometry.attributes.position.array;
 
-					//console.log("redcross",redcross);
+
 
 				}
 
@@ -6714,7 +6717,6 @@
 						var red = new THREE.Geometry();
 						red.vertices.push(new THREE.Vector3(target2[3*j],target2[3*j+1],0));
 						red.vertices.push(new THREE.Vector3(target1[3*j],target1[3*j+1],0));
-
 						var redpoint =new THREE.Points(red,PMat_Red);
 						redpoint.name="redpoint";
 						redpoint.userData={"dem":redcross.children[0].name,"j":j}; //output offset y
@@ -6726,7 +6728,6 @@
 									cross[ii].CrossPoint[0].x)<1){
 								crossIndex = ii;
 								console.log("crossIndex",redcross,crossIndex);
-								//return crossIndex;
 								break;
 							}
 						}
@@ -6753,7 +6754,7 @@
 
 			}
 		}
-    //return crossIndex;
+
 
 	}
 
@@ -6834,10 +6835,6 @@
 	window.createGroundObj = function(event){
 			if(event.button === 0){
 				console.log("left button");
-				//if(createGroundObj.continuity=false){
-					//GroundVertice.splice(0,GroundVertice.length);
-
-				//}
 				mouse.x = ((event.clientX  - mainCanvas.getBoundingClientRect().left)/ mainCanvas.offsetWidth) * 2 - 1;
 				mouse.y = -((event.clientY - mainCanvas.getBoundingClientRect().top)/ mainCanvas.offsetHeight) * 2 + 1;
 				let pos = getIntersects(event);
@@ -6901,27 +6898,6 @@
 		var Section_Point = new THREE.Points(Cross_geosp,PMat_Grey);  //Section_Point
 		Cross_line.name = crossAttrName;
 		let GroundGroup = new THREE.Group();
-		//GroundGroup.prototype.setControls=function () {
-			// window.onkeydown = e => {
-			// 	switch (e.key) {
-			// 		case 'Delete':
-			// 		case 'Backspace':
-			// 			//GroundGroup.parent.remove(GroundGroup);
-			// 			for (let i = 0; i < scene.children.length; i++) {
-			// 				if (scene.children[i].name === "crossObject"){
-			// 					for(let ii = 0;ii<cross.length;ii++){
-			// 						if(scene.children[i].children[0].name == cross[ii].AttrName&&
-			// 								Math.abs(scene.children[i].children[1].geometry.attributes.position.array[0]/Gridsize*xdivision+xMin-
-			// 										cross[ii].CrossPoint[0].x)<1) {
-			// 							cross.splice(ii,1);
-			// 						}
-			// 						}
-			// 					scene.remove(scene.children[i]);i=i-1;
-			// 				}
-			// 			}
-			// 	}
-			// }
-		//}
 		GroundGroup.name = "crossObject"
 		GroundGroup.add(Cross_line);
 		GroundGroup.add(Cross_Point)
