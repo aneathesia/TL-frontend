@@ -56,7 +56,7 @@
 		@import url(./css/nativestyle.css);
 	</style>
 	<header class="Hui-header cl" style="background-color: #006865">
-		<label style="margin-top: 10px;margin-left: 10px">WebTL</label>
+<!--		<label style="margin-top: 10px;margin-left: 10px">WebTL</label>-->
 		<div style="float:right;margin-right: 2%;margin-top: 1%;display:none">
 			<li style="display: inline-block;"><a href="#"><label id="login" style="background: wheat">登录</label></a></li>
 			<li style="display: inline-block;"><a href="#"><label id="UserCenter" style="background: wheat">用户中心</label></a></li>
@@ -487,19 +487,14 @@
 		pile_tabledata = msgtlProjData.polyline;
 		demFile = msgtlProjData.demid+"."+msgtlProjData.fileExt;
 
-		//caculate cross coordination and set crossPoint
-		for(let i = 0;i<msgtlProjData.cross.length;i++) {
-			console.log("msg.cross", msgtlProjData.cross[i]);
-			let res = SysCrossTransToMap(msgtlProjData.cross[i], pile_tabledata);
-			msgtlProjData.cross[i] = res;
-			msgtlProjData.cross[i] = CrossAddCrossPoint(msgtlProjData.cross[i]);
-		}
+
 
 		console.log(projId,prjName,MapFileName);
 		//return;
 		if(MapFileName == undefined) MapFileName = "空白";
 
 		autoCreateNew(projId,prjName,pile_tabledata,MapFileName);
+		autoCrossTransform();  //fill crossPoint and
 
 		//document.getElementById('span_id').innerHTML = prjName+"("+MapFileName+")";
 		MsgSource = event.source; MsgOrigin = event.origin;
@@ -525,6 +520,50 @@
 
 		// GridManager.setAjaxData(pile_tableId,{"data":polyline});
 		// GridManager.setAjaxData(pile_tableId,{"data":polyline});
+
+	}
+
+	function autoCrossTransform(){
+		//get CrossCenter
+		let clen = msgtlProjData.cross.length;
+		let plen = msgtlProjData.polyline.length;
+		for(let i=0;i<clen;i++){
+			for(let j = 0;j<plen;j++){
+
+
+			}
+		}
+
+
+
+		// fillcrossPointZ
+		// crossPoint Z fill from DEM file0
+		var Crossinfo = new FormData();
+		Crossinfo.append("ProjectName", prjName);
+		Crossinfo.append("ProjectId", projId);
+		Crossinfo.append("demFile", demFile);
+		Crossinfo.append("cross", JSON.stringify(msgtlProjData.cross));
+		$.ajax({
+			url: BASEURL+"/CrossfillZ", //提交的路径
+			type: "post",       //提交方式
+			data: Crossinfo,    //提交的数据
+			// dataType:"json",
+			// async: false,
+			// cache: false,
+			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+			processData: false,
+			headers:{"token":localStorage.getItem("token")},
+			success: function (data) {
+				console.log(data);
+				msgtlProjData.cross = data;
+				console.log("addCrossFillZ",msgtlProjData.cross);
+				//caculate cross y=0;
+
+			},
+			error: function (errorMsg) {
+				alert(errorMsg);
+			}
+		});
 
 	}
 
@@ -2290,7 +2329,7 @@
 					console.log("msgdata",msgtlProjData);
 					if(msgtlProjData!=undefined){
 						console.log("addCrossFromMainSystem",msgtlProjData.cross);
-						msgtlProjData.cross = crossfillZ(msgtlProjData.cross,DEM.MID);
+						//msgtlProjData.cross = crossfillZ(msgtlProjData.cross,demfile);
 						msgtlProjData.cross = CatenaryCrossHeight(msgtlProjData.cross);
 						for(let i= 0;i<msgtlProjData.cross.length;i++)cross.push(msgtlProjData.cross[i]);
 						console.log("addFromMainSysRes",cross);

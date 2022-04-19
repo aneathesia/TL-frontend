@@ -106,14 +106,49 @@
         }
     ]
 
-    let point = [{x:2669000,y:12484080,z:0},{x:2669000,y:12484200,z:0}];
-    let point2 = [{x:2669050,y:12484080,z:0},{x:2668920,y:12484210,z:0}];
+    let point = [{
+        "y": 12367130.463739606,
+        "x": 3587820.4270534343,
+        "c": 1,
+        "dc": 0,
+        "dz": 0,
+        "z": 0,
+        "towerHigh": 15
+    },{
+        "y": 12367140.463739606,
+        "x": 3587810.4270534343,
+        "c": 1,
+        "dc": 0,
+        "dz": 0,
+        "z": 0,
+        "towerHigh": 20
+    }]
+
 
     let templateCross = {
         "Attr":105,
         "AttrName":"0105:220KV",
         "AttrEx":0,
-        "CrossPoint":point,
+        "CrossPoint": [
+            {
+            "y": 12367130.463739606,
+            "x": 3587820.4270534343,
+            "c": 1,
+            "dc": 0,
+            "dz": 0,
+            "z": 0,
+            "towerHigh": 15
+            },
+            {
+            "y": 12367140.463739606,
+            "x": 3587810.4270534343,
+            "c": 1,
+            "dc": 0,
+            "dz": 0,
+            "z": 0,
+            "towerHigh": 20
+        }
+        ],
         "PointCount":2
     }
 
@@ -123,8 +158,8 @@
         "PointCount": 2,
         "CrossPoint": [
             {
-                "y": 12504536.50283943,
-                "x": 3800072.5915108467,
+                "y": 12361358.37553336,
+                "x": 3594284.011485962,
                 "c": 1,
                 "dc": 0,
                 "dz": 0,
@@ -132,8 +167,8 @@
                 "towerHigh": 15
             },
             {
-                "y": 12504836.50283943,
-                "x": 3800272.5915108467,
+                "y": 12361258.37553336,
+                "x": 3594284.011485962,
                 "c": 1,
                 "dc": 0,
                 "dz": 0,
@@ -144,7 +179,7 @@
         "Attr": 105
     }
     let  CrossArray  = [];
-    // CrossArray.push(templateCross);
+    CrossArray.push(templateCross);
     CrossArray.push(templateCross2);
 
     console.log(CrossArray);
@@ -240,9 +275,10 @@
     //     "fileExt": "tif",
     //     "cross": []
     // }
-    const tlProjData ={
-        "projectId": "5e317a0-588b-11ec-9287-15a4ba945512",
-        "projectName": "排3",
+    const tlProjData1 ={
+        "projectId": "220221",
+        "projectName": "Mon",
+        "maps":"move",
         "polyline": [
             {
                 "name": "J2",
@@ -301,9 +337,18 @@
         ],
         "demid": "6750eef0-5809-11ec-a637-213124b7c716",
         "fileExt": "tif",
+        "cross": CrossArray
+    }
+    const tlProjData ={
+        "projectId": "220221",
+        "projectName": "Mon",
+        "maps":"move",
+        "polyline": [],
+        "demid": "6750eef0-5809-11ec-a637-213124b7c716",
+        "fileExt": "tif",
         "cross": []
     }
-    const tlmsg = {type:'Data',payload:tlProjData}
+    const tlmsg = {type:'Data',payload:tlProjData1}
 
     //周期性的发送消息
     // setInterval(function(){

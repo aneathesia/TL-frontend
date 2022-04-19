@@ -140,10 +140,10 @@ function SysCrossTransToMap(cross,pilelist){
         MapCrossObject.CrossPoint.push(WebMercatorToSumDHigh(cross.CrossPoint[i],pilelist,pileIndex));
     }
     for(let i = 0; i < cross.PointCount ; i++){
-        MapCrossObject.CrossPoint[i].c=1;
-        MapCrossObject.CrossPoint[i].dc=0;
-        MapCrossObject.CrossPoint[i].dz=0;
-        MapCrossObject.CrossPoint[i].z=0;
+        MapCrossObject.CrossPoint[i].c=cross.CrossPoint[i].c;
+        MapCrossObject.CrossPoint[i].dc=cross.CrossPoint[i].dc;
+        MapCrossObject.CrossPoint[i].dz=cross.CrossPoint[i].dz;
+        MapCrossObject.CrossPoint[i].z=cross.CrossPoint[i].z;
         MapCrossObject.CrossPoint[i].towerHigh=cross.CrossPoint[i].towerHigh;
     }
     cross.CrossPoint = MapCrossObject.CrossPoint ;
