@@ -231,36 +231,19 @@ function pilelistfillZ(pilelist,MID){
     return pilelist
 }
 
-function crossfillZ(cross,MID){
-    let clen = cross.length;let mlen = MID.length;
-    if(MID == undefined||mlen==0) return cross;
-
+function crossfillZ(cross){
+    let clen = cross.length;
     for(let i= 0;i<clen;i++) {
         for(let p=0;p<cross[i].PointCount;p++){
-            cross[i].CrossPoint[p] = crossz(cross[i].CrossPoint[p],MID)
+            cross[i].CrossPoint[p] = crossz(cross[i].CrossPoint[p])
         }
     }
     return cross;
 }
 
-function crossz(point,MID){
-    let mlen = MID.length;
-    let flag= -1;
-    for(let i = 0;i<mlen-1;i++){
-
-        if(point.x<MID[i].Section[0].x) {flag=i-1;console.log("flag",flag); break;}
-    }
-    if(flag==-1){flag = mlen -1 };
-    let l = 0,r = MID[flag].Section.length; // Section index
-    while(l < r)
-    {
-        let m = l + r >> 1;
-        if(MID[flag].Section[m].x < point.x) {l = m + 1;}
-        else r = m;
-    }
+function crossz(point){
     //fill data dz 断面高  z 节点高度
-    point.dz = (MID[flag].Section[l].z - MID[flag].Section[l-1].z)*(point.x - MID[flag].Section[l-1].x)/
-    (MID[flag].Section[l].x - MID[flag].Section[l-1].x)+MID[flag].Section[l-1].z;
+    if(Math.abs(point.y)<0.0001) point.y=0; //返回是数据和转换之后有精度差异
     point.z = point.dz +point.towerHigh;
     return point;
 }
@@ -276,4 +259,46 @@ function CaculateCurveHeight(x1,y1,dmz1,z1,x2,y2,dmz2,z2,crossx,crossy,crossz) {
     let k = 0.00002;
     let f = sinh(k*l1)*sinh(k*l2)/k;
     return h0-f-crossz; // remain height h0-f-dmz
+}
+
+/**
+ * @param {number[]} start1
+ * @param {number[]} end1
+ * @param {number[]} start2
+ * @param {number[]} end2
+ * @return {number[]}
+ */
+
+var intersection = function (start1, end1, start2, end2) {
+    let k1 = null, b1 = null, k2 = null, b2 = null
+    if (end1[0] - start1[0] !== 0)
+        k1 = (end1[1] - start1[1]) / (end1[0] - start1[0])
+    if (k1!==null)
+        b1 = start1[1] - k1 * start1[0]
+    if (end2[0] - start2[0] !== 0)
+        k2 = (end2[1] - start2[1]) / (end2[0] - start2[0])
+    if (k2!==null)
+        b2 = start2[1] - k2 * start2[0]
+    if (k1 === null&& k2 === null) {
+        if (start1[0] == start2[0] && Math.min(start1[1], end1[1]) <= Math.max(start2[1], end2[1]) && Math.min(start2[1], end2[1]) <= Math.max(start1[1], end1[1]))
+            return [start1[0], Math.max(Math.min(start1[1], end1[1]), Math.min(start2[1], end2[1]))]
+    } else if (k1 === null) {
+        y = k2 * start1[0] + b2
+        if ((start2[1] - y) * (end2[1] - y) <= 0)
+            return [start1[0], y]
+    } else if (k2 === null) {
+        y = k1 * start2[0] + b1
+        if ((start1[1] - y) * (end1[1] - y) <= 0)
+            return [start2[0], y]
+    } else {
+        if (k1 == k2 && b1 == b2 && Math.min(start1[1], end1[1]) <= Math.max(start2[1], end2[1]) && Math.min(start2[1], end2[1]) <= Math.max(start1[1], end1[1])) {
+            return [Math.max(Math.min(start1[0], end1[0]), Math.min(start2[0], end2[0])), Math.max(Math.min(start1[1], end1[1]), Math.min(start2[1], end2[1]))]
+        } else if (k1 !== k2) {
+            x = (b2 - b1) / (k1 - k2)
+            y = k1 * x + b1
+            if ((start2[1] - y) * (end2[1] - y) <= 0 && (start1[1] - y) * (end1[1] - y) <= 0)
+                return [x, y]
+        }
+    }
+    return []
 }

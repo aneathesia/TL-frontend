@@ -527,12 +527,26 @@
 		//get CrossCenter
 		let clen = msgtlProjData.cross.length;
 		let plen = msgtlProjData.polyline.length;
+		console.log("clpl",clen,plen);
 		for(let i=0;i<clen;i++){
-			for(let j = 0;j<plen;j++){
-
-
+			let crossp = msgtlProjData.cross[i].CrossPoint;
+			for(let j = 0;j<plen-1;j++){
+				//求解两直线交点
+				for (let k = 0; k < crossp.length-1; ++k) {
+					let res = intersection([crossp[k].x,crossp[k].y],[crossp[k+1].x,crossp[k+1].y],
+							[msgtlProjData.polyline[j].x,msgtlProjData.polyline[j].y],[msgtlProjData.polyline[j+1].x,msgtlProjData.polyline[j+1].y]);
+					//
+					if(res[0]!=undefined){
+						msgtlProjData.cross[i].CrossPoint.splice(k+1,0,
+								{c:3,dc:2001,dz:0,towerHigh:0,x:res[0],y:res[1],z:0});
+						msgtlProjData.cross[i].PointCount++;
+						k=k+1;
+						console.log("after add centenPoint",msgtlProjData.cross[i].CrossPoint);
+					};
+				}
 			}
 		}
+		console.log("Add center",msgtlProjData.cross);
 
 
 
@@ -558,7 +572,12 @@
 				msgtlProjData.cross = data;
 				console.log("addCrossFillZ",msgtlProjData.cross);
 				//caculate cross y=0;
-
+				for(let i = 0;i<msgtlProjData.cross.length;i++) {
+				console.log("msg.cross", msgtlProjData.cross[i]);
+				let res = SysCrossTransToMap(msgtlProjData.cross[i], pile_tabledata);
+				msgtlProjData.cross[i] = res;
+				//msgtlProjData.cross[i] = CrossAddCrossPoint(msgtlProjData.cross[i]);
+				}
 			},
 			error: function (errorMsg) {
 				alert(errorMsg);
@@ -2329,7 +2348,7 @@
 					console.log("msgdata",msgtlProjData);
 					if(msgtlProjData!=undefined){
 						console.log("addCrossFromMainSystem",msgtlProjData.cross);
-						//msgtlProjData.cross = crossfillZ(msgtlProjData.cross,demfile);
+						msgtlProjData.cross = crossfillZ(msgtlProjData.cross);
 						msgtlProjData.cross = CatenaryCrossHeight(msgtlProjData.cross);
 						for(let i= 0;i<msgtlProjData.cross.length;i++)cross.push(msgtlProjData.cross[i]);
 						console.log("addFromMainSysRes",cross);
