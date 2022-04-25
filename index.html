@@ -484,22 +484,16 @@
 		prjName = msgtlProjData.projectName;
 		MapFileName = msgtlProjData.maps;
 		projId =msgtlProjData.projectId;
-		pile_tabledata = msgtlProjData.polyline;
 		demFile = msgtlProjData.demid+"."+msgtlProjData.fileExt;
+		autoPolylineZ();
 
 
-
-		console.log(projId,prjName,MapFileName);
-		//return;
-		if(MapFileName == undefined) MapFileName = "空白";
-
-		autoCreateNew(projId,prjName,pile_tabledata,MapFileName);
-		autoCrossTransform();  //fill crossPoint and
 
 		//document.getElementById('span_id').innerHTML = prjName+"("+MapFileName+")";
 		MsgSource = event.source; MsgOrigin = event.origin;
 
 	},false);
+
 
 	function autoCreateNew(projid,projname,polyline,mapname){
 		// check the map prj exist;
@@ -584,6 +578,49 @@
 			}
 		});
 
+	}
+
+	function autoPolylineZ(){
+		var Crossinfo = new FormData();
+		Crossinfo.append("ProjectName", prjName);
+		Crossinfo.append("ProjectId", projId);
+		Crossinfo.append("demFile", demFile);
+		Crossinfo.append("Polyline", JSON.stringify(msgtlProjData.polyline));
+		$.ajax({
+			url: BASEURL+"/PolylinefillZ", //提交的路径
+			type: "post",       //提交方式
+			data: Crossinfo,    //提交的数据
+			// dataType:"json",
+			// async: false,
+			// cache: false,
+			contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+			processData: false,
+			headers:{"token":localStorage.getItem("token")},
+			success: function (data) {
+				console.log("polyline fillZ");
+				console.log(data);
+
+				for(let i=0;i<data.length;i++){
+					msgtlProjData.polyline[i].z = data[i].z;
+				}
+				pile_tabledata = msgtlProjData.polyline; //fillZ
+
+				console.log("pile_tableData",pile_tabledata);
+
+				console.log(projId,prjName,MapFileName);
+				//return;
+				if(MapFileName == undefined) MapFileName = "空白";
+
+
+				autoCreateNew(projId,prjName,pile_tabledata,MapFileName);
+				autoCrossTransform();  //fill crossPoint and
+
+				//msgtlProjData.cross = data;
+			},
+			error: function (errorMsg) {
+				alert(errorMsg);
+			}
+		});
 	}
 
 
@@ -698,7 +735,7 @@
 				optionList[0].options[0].selected = "selected";
 				optionList[1].options.length = 0;  //清空
 				$.ajax({
-					url: BASEURL+"/directory/"+projId, //提交的路径
+					url: BASEURL+"/directory/Project/"+projId, //提交的路径
 					type: "get",       //提交方式
 					dataType:"json",
 					headers:{"token":localStorage.getItem("token")},
