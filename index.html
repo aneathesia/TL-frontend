@@ -34,7 +34,8 @@
 	<link rel="stylesheet" href="./css/jsuites.css" type="text/css" />
 
 
-	<script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
+	<script type="text/javascript" src="./js/turf.min.js"></script>
+
 	<script src="https://cdn.bootcss.com/FileSaver.js/2014-11-29/FileSaver.js"></script>
 	<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
 	<script type="text/javascript" src="lib/layui/layui.js"></script>
@@ -64,7 +65,7 @@
 
 		<a aria-hidden="false" class="Hui-nav-toggle" href="#"></a>
 	</header>
-	<aside class="Hui-aside">
+	<aside id="maside" class="Hui-aside">
 		<input runat="server" id="divScrollValue" type="hidden" value="" />
 		<div class="menu_dropdown bk_2">
 			<dl id="menu-newmap">
@@ -273,7 +274,8 @@
 
 	</div>
 
-	<div class="dislpayArrow"><a class="pngfix" href="javascript:void(0);" onClick="displaynavbar(this)"></a></div>
+<!--	<div class="dislpayArrow"><a class="pngfix" href="javascript:void(0);" onClick="displaynavbar(this)"></a></div>-->
+
 	<section class="Hui-article-box">
 		<div id="Hui-tabNav" class="Hui-tabNav">
 			<div class="Hui-tabNav-wp">
@@ -332,11 +334,11 @@
 	var columndataRight = [{key: 'name', text: '参数名称'}, {key: 'value', text: '参数数值'}];//表头
 	var conductorSample = [{'name':'导地线类型','value':'导线'},
 		{'name':'导地线截面积(mm²)','value':0},
-		{'name':'导地线直径','value':0},
-		{'name':'计算拉断力','value':0},
+		{'name':'导地线直径(mm)','value':0},
+		{'name':'计算拉断力(N)','value':0},
 		{'name':'单位长度质量(kg/m)','value':0},
 		{'name':'弹性系数(N/mm²)','value':0},
-		{'name':'膨胀系数/℃','value':0},
+		{'name':'膨胀系数(1/℃)','value':0},
 		{'name':'导线分裂数','value':0}];
 	var weatherSample =[
 	{name: "平均气温", wd: 0, fs: 0, fb: 0},
@@ -485,7 +487,7 @@
 		MapFileName = msgtlProjData.maps;
 		projId =msgtlProjData.projectId;
 		demFile = msgtlProjData.demid+"."+msgtlProjData.fileExt;
-		autoPolylineZ();
+		autoInit();
 
 
 
@@ -580,7 +582,9 @@
 
 	}
 
-	function autoPolylineZ(){
+	function autoInit(){
+		//fill Message polyline Z
+
 		var Crossinfo = new FormData();
 		Crossinfo.append("ProjectName", prjName);
 		Crossinfo.append("ProjectId", projId);
@@ -597,8 +601,6 @@
 			processData: false,
 			headers:{"token":localStorage.getItem("token")},
 			success: function (data) {
-				console.log("polyline fillZ");
-				console.log(data);
 
 				for(let i=0;i<data.length;i++){
 					msgtlProjData.polyline[i].z = data[i].z;
@@ -611,11 +613,10 @@
 				//return;
 				if(MapFileName == undefined) MapFileName = "空白";
 
-
+				//create Project
 				autoCreateNew(projId,prjName,pile_tabledata,MapFileName);
-				autoCrossTransform();  //fill crossPoint and
-
-				//msgtlProjData.cross = data;
+				//cross fill z and Transform coordination
+				autoCrossTransform();
 			},
 			error: function (errorMsg) {
 				alert(errorMsg);
@@ -811,7 +812,7 @@
 	}
 
 	function createMAP(projid,projname,projmap){
-
+		let loadInd = layer.load(2);
 		scene.children.length =0;
 		let mapform = new FormData();
 		mapform.append("FileName", projmap+".MAP");
@@ -851,7 +852,13 @@
 						}
 					});
 				}
-				else {console.log("MAP exist");OpenMap(data,projid,projmap);}
+				else {
+
+					console.log("MAP exist");
+					OpenMap(data,projid,projmap);
+
+				}
+				layer.close(loadInd);
 			},
 			error: function (errorMsg) {
 				alert(errorMsg);
@@ -929,21 +936,8 @@
 
 		drawDEM(DEM);
 		window.initContent();
-		// console.log("addCrossFromMainSystem",msgtlProjData.cross);
-		// msgtlProjData.cross = crossfillZ(msgtlProjData.cross,DEM.MID);
-		// console.log("crossfillz",msgtlProjData.cross);
-		// for(let i= 0;i<msgtlProjData.cross.length;i++)cross.push(msgtlProjData.cross[i]);
-		// cross = cross.unique();
-		// console.log("addFromMainSys",cross);
-
 		MapCrossDraw(cross,false);  //cross added
 		TowerDraw(towerlist_tabledata);
-		//drawGeo(pile_tabledata);
-
-	// 进入之前已经完成了添加中间穿越点的位置信息
-		//GroundVertice = tempCross;
-		// createGroundCross(tempCross,templateCross.AttrName);
-		// createCrossLabel(0,templateCross.Attr,true);
 		layer.close(loadInd);
 	}
 
@@ -1579,37 +1573,38 @@
 				}
 			})
 		}
-		if($("#rtower").is(":visible")){
-			layer.open({
-				type:2,
-				title:'读数据库',
-				resize :true,
-				content:'./html/DatabaseInput.html',
-				success:function (layero,index) {
-					var body = layer.getChildFrame('body',index);
-					body.find("#note").text("杆塔型号");
-					$.ajax({
-						url: BASEURL+"/tl/tower/list", //提交的路径
-						type: "get",
-						//async: false,
-						success: function (data){
-							console.log(data);
-							body.find("#DataSelect").empty();
-							for (let i = 0;i<data.length;i++){
-								var opt = document.createElement('option');
-								opt.text = data[i].name;
-								opt.value = i;
-								body.find("#DataSelect").append(opt);
-							}
-
-						},
-						error:function (error) {
-							console.log(error);
-						}
-					})
-				}
-			})
-		}
+		// database  tower catogoty 数据对不齐原系统没有Tower数据库额获取
+		// if($("#rtower").is(":visible")){
+		// 	layer.open({
+		// 		type:2,
+		// 		title:'读数据库',
+		// 		resize :true,
+		// 		content:'./html/DatabaseInput.html',
+		// 		success:function (layero,index) {
+		// 			var body = layer.getChildFrame('body',index);
+		// 			body.find("#note").text("杆塔型号");
+		// 			$.ajax({
+		// 				url: BASEURL+"/tl/tower/list", //提交的路径
+		// 				type: "get",
+		// 				//async: false,
+		// 				success: function (data){
+		// 					console.log(data);
+		// 					body.find("#DataSelect").empty();
+		// 					for (let i = 0;i<data.length;i++){
+		// 						var opt = document.createElement('option');
+		// 						opt.text = data[i].name;
+		// 						opt.value = i;
+		// 						body.find("#DataSelect").append(opt);
+		// 					}
+		//
+		// 				},
+		// 				error:function (error) {
+		// 					console.log(error);
+		// 				}
+		// 			})
+		// 		}
+		// 	})
+		// }
 	})
 
 	$("#designparameter").click(function () {
@@ -1623,11 +1618,11 @@
 			for(let i = 0;i<prk.CONDUCTOR.length;i++){
 				var conductor = [{'name':'导地线类型','value':'导线'},
 					{'name':'导地线截面积(mm²)','value':0},
-					{'name':'导地线直径','value':0},
-					{'name':'计算拉断力','value':0},
+					{'name':'导地线直径(mm)','value':0},
+					{'name':'计算拉断力(N)','value':0},
 					{'name':'单位长度质量(kg/m)','value':0},
 					{'name':'弹性系数(N/mm²)','value':0},
-					{'name':'膨胀系数/℃','value':0},
+					{'name':'膨胀系数(1/℃)','value':0},
 					{'name':'导线分裂数','value':0}];
 				conductorset.push(conductor);
 				if(prk.CONDUCTOR[i].type === 0 )conductorset[i][0].value = "导线";
@@ -2382,7 +2377,6 @@
 					horSize=(mp.m_To-mp.m_From)*mp.m_CScale/(mp.m_Grid*mp.m_DScale)*Gridsize;  verSize = (mp.m_MapWidth-mp.m_Frame[14])*mp.m_HScale/(1000*ydivision)*Gridsize;
 					xMin = mp.m_From;
 					drawDEM(DEM);
-					console.log("msgdata",msgtlProjData);
 					if(msgtlProjData!=undefined){
 						console.log("addCrossFromMainSystem",msgtlProjData.cross);
 						msgtlProjData.cross = crossfillZ(msgtlProjData.cross);
@@ -3285,11 +3279,11 @@
 			for(let i = 0;i<prk.CONDUCTOR.length;i++){
 				var conductor = [{'name':'导地线类型','value':'导线'},
 					{'name':'导地线截面积(mm²)','value':0},
-					{'name':'导地线直径','value':0},
-					{'name':'计算拉断力','value':0},
+					{'name':'导地线直径(mm)','value':0},
+					{'name':'计算拉断力(N)','value':0},
 					{'name':'单位长度质量(kg/m)','value':0},
 					{'name':'弹性系数(N/mm²)','value':0},
-					{'name':'膨胀系数/℃','value':0},
+					{'name':'膨胀系数(1/℃)','value':0},
 					{'name':'导线分裂数','value':0}];
 				conductorset.push(conductor);
 				if(prk.CONDUCTOR[i].type === 0 )conductorset[i][0].value = "导线";
@@ -3719,6 +3713,7 @@
 	var cameraX = 0 , cameraY = 0 , cameraZ=250;
 	var sceneX = 0 , sceneY = 0, sceneZ = 0;
 	var canvasdiv = document.getElementById('iframe_box');
+	// var canvasdiv = document.querySelector("#iframe_box canvas");
 	/* 场景 */
 	function initScene() {
 		scene = new THREE.Scene();
@@ -3901,8 +3896,9 @@
 					framegroup.add(gridHor);
 			}
 		}
+		// 平面图中的坐标线
 		for(let j = 0; j<9;j++){
-			var plangrid =  gridHor.clone();
+			var plangrid =  new THREE.Line(horGeometry, new THREE.LineBasicMaterial({color: 0x455454}));
 			plangrid.name = "plangrid"+j.toString();
 			plangrid.position.y=-(mp.m_Frame[14]-mp.m_Frame[j]);
 			framegroup.add(plangrid);
@@ -4569,11 +4565,11 @@
 				let down2top = GetDown2Top(towerlist[i].TowerType);
 				//计算杆塔的悬点高程
 				if(towerlist[i].Status==0)
-					towerlist[i].hugeHigh = towerlist[i].High + towerlist[i].Base + towerlist[i].TowerHigh - towerlist[i].InsulatorLength;
+					towerlist[i].hugeHigh = (towerlist[i].High + towerlist[i].Base + towerlist[i].TowerHigh - towerlist[i].InsulatorLength).toFixed(3);
 				else
-					towerlist[i].hugeHigh = towerlist[i].High + towerlist[i].Base + towerlist[i].TowerHigh ;
+					towerlist[i].hugeHigh = (towerlist[i].High + towerlist[i].Base + towerlist[i].TowerHigh).toFixed(3) ;
 				//地线悬点高
-				towerlist[i].hugeGround = towerlist[i].High + towerlist[i].Base + towerlist[i].TowerHigh + down2top;
+				towerlist[i].hugeGround = (towerlist[i].High + towerlist[i].Base + towerlist[i].TowerHigh + down2top).toFixed(3);
 			}
 			theWeather  =   {} ;
 			theLine  =   {} ;
@@ -5460,6 +5456,7 @@
 
 
 					towerlist_tabledata=towerlist;
+
 
 					var inputId =  layer.getChildFrame('body',tpIndex).find("#towId")[0];
 					inputId.value = "G" + putInd;
@@ -7252,6 +7249,8 @@
 		for(let i = 0 ;i<scene.children.length;i++){
 			if(scene.children[i].name == "crossObject"){scene.remove(scene.children[i]);i=i-1;}
 		}
+
+
 		for(let i=0;i<cross.length;i++){
 			let crossPoint = [];
 			let crossAttrName;
@@ -7821,6 +7820,35 @@
 
 		document.oncontextmenu=blockContextmen;//关闭右键默认菜单
 	}
+
+	let boxWidth = document.getElementById('iframe_box').style.width;
+	/*左侧菜单-隐藏显示*/
+	window.displaynavbar= function(obj){
+		if($(obj).hasClass("open")){
+			$(obj).removeClass("open");
+			$("body").removeClass("big-page");
+			canvasdiv.style.width = boxWidth+"px";
+			boxWidth = document.getElementById('iframe_box').style.width;
+
+			console.log(document.getElementById('iframe_box'), boxWidth);
+			console.log("index open function");
+		}else{
+			$(obj).addClass("open");
+			$("body").addClass("big-page");
+			// let box = document.querySelector("#iframe_box");
+			// let aside = document.querySelector("aside");
+			// console.log(aside.clientHeight,aside.clientWidth)
+			// console.log(box.clientWidth,box.clientHeight,box.offsetWidth,box.offsetHeight);
+			// console.log(canvasdiv.clientWidth,canvasdiv.clientHeight,canvasdiv.offsetWidth,canvasdiv.offsetHeight);
+			// console.log(canvasdiv.style.width) ;
+			canvasdiv.style.width = boxWidth.clientWidth+"px";
+			boxWidth = document.getElementById('iframe_box').style.width;
+			console.log(boxWidth);
+			onWindowResize();
+			console.log("index close function");
+		}
+	}
+
 
 	/* 循环调用 */
 	function animate() {

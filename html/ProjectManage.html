@@ -38,7 +38,7 @@
         var ProjectId = $("#Projectset").find("option:selected").val();
         $("#fileset").empty();  //清空
         $.ajax({
-            url: BASEURL+"/directory/"+ProjectId, //提交的路径
+            url: BASEURL+"/directory/Project/"+ProjectId, //提交的路径
             type: "get",       //提交方式
             dataType:"json",
             headers:{"token":localStorage.getItem("token")},
@@ -195,6 +195,9 @@
                     if(data=="") {alert(MapName+" not exist");return;}
                     parent.OpenMap(data,ProjectId,MapName);
                 }
+                //打开PRK
+
+                //打开PWF
 
             },
             error: function (errorMsg) {

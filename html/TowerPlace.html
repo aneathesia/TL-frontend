@@ -54,8 +54,6 @@
             $('input[type=radio]')[i].checked = false;
         }
         $(this).prop('checked',true) ;
-        console.log($(this));
-        console.log($("input[type='radio']:checked").val());
         $("#TowerType").empty();
         this.focus();
         for(let i = 0;i<tower.length;i++){
