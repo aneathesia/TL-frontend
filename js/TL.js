@@ -61,6 +61,15 @@ function arcsh(x) {
     let a = Math.log(x + Math.sqrt(x * x +1));
     return a;
 }
+function FindFNZTower(towerlist,index){
+    if(index>=towerlist.length||index<0){
+        return -1;
+    }
+    for(let j = index;j<towerlist.length;j++){
+        if(towerlist[j].Status!=0) return j;
+    }
+    return -1;
+}
 //求最近值
 function limit(arr, num){
     var newArr = [];
