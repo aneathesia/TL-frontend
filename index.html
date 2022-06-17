@@ -5556,8 +5556,6 @@
 					towerlist[setInd].Position = layer.getChildFrame('body',tpIndex).find("#pilelist").find("option:selected")[0].innerHTML;
 				}
 
-
-				console.log("Set Tower Add",towerlist);
 				ComputeHugeHigh(towerlist);
 				var setlabel = createSpritelabel(towerlist[setInd].Name,
 						"Lh:"+towerlist[setInd].Lh.toFixed(0)+"/Lv:"+towerlist[setInd].Lv.toFixed(0)+
@@ -5826,10 +5824,8 @@
 				if(towerlist.length>0&& pos.x / Gridsize * xdivision + xMin < (towerlist[towerlist.length-1].Distance+20)) {
 					setReady = false;
 					temptowerlistSet.pop();
-					console.log("error postion exit");
 					return;
 				}
-				console.log("Position test");
 
 				m_start = 0;
 				m_end = temptowerlistSet.length-1;
